@@ -104,7 +104,7 @@ _unur_set_params_multiexponential( UNUR_DISTR *distr, const double *sigma, const
   else {
     unur_distr_cvec_set_pdfparams_vec( distr, INDEX_THETA, theta, distr->dim ); 
   }
-  DISTR.n_params = 0.; 
+  DISTR.n_params = 0; 
   return UNUR_SUCCESS;
 } 
 int

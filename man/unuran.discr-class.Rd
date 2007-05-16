@@ -11,8 +11,25 @@
 \description{%
   The class "unuran.discr" provides am interface to UNU.RAN objects for
   discrete distributions.
-  \strong{Experimental. Do not use!}
+  The interface might be changed in future releases.
+  \strong{Do not use unnamed arguments!}
 }
+
+\details{
+  Create a new instance of an "unuran.discr" object using
+
+  \code{new ("unuran.discr",pv=NULL, pmf=NULL, lb=0, ub=Inf)}.
+
+  \describe{
+    \item{pv}{probability vector. (numeric vector)}
+    \item{pmf}{probability mass function. (\R function)}
+    \item{lb, ub}{lower and upper bound of domain. (numeric, integers)}
+  }
+
+  The user is responsible that the given informations are consistent.
+  It depends on the chosen method which information must be given / are
+  used.
+} 
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
@@ -26,7 +43,26 @@
 }
 
 \seealso{
-  \code{\link{unuran-class}}.
+  \code{\linkS4class{unuran}}, \code{\link{unuran.new}}.
+}
+
+\examples{
+## Create discrete distribution with given probability vector
+pv <- c(1.,2.,1.5,0.,3.,1.2)     ## PV need not be normalized
+dpv <- new("unuran.discr",pv=pv)
+## Make generator (using method DGT)
+unr <- unuran.new(dpv, "dgt")
+## Draw sample of size 100
+x <- unuran.sample(unr, 100)
+
+## Create discrete distribution with given probability mass function
+pmf <- function(x) dbinom(x,100,0.3)
+dpmf <- new("unuran.discr",pmf=pmf,lb=0,ub=100)
+## Make generator (using method DGT)
+unr <- unuran.new(dpmf, "dgt")
+## Draw sample of size 100
+x <- unuran.sample(unr, 100)
+
 }
 
 \keyword{classes}

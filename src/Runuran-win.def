@@ -1,5 +1,0 @@
-LIBRARY Runuran.dll
-EXPORTS
-	R_init_Runuran
-	Runuran_init
-	Runuran_sample

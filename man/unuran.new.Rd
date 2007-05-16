@@ -16,7 +16,7 @@
 unuran.new(distr,method="auto")
 }
 \arguments{
-  \item{distr}{a string describing the distribution.}
+  \item{distr}{a string or an S4 class describing the distribution.}
   \item{method}{a string describing the random variate generation
     method.}
 }
@@ -129,8 +129,35 @@ unuran.new(distr,method="auto")
       distribution can be helpful. It can be given using the \code{mode}
       keyword: \code{"mode=1.5"}.
     }
+
+    \item{Continuous multivariate distributions:}{
+      The string interface for distributions currently does not support
+      multivariate distributions. Please use the corresponding S4 class
+      \code{"unuran.cmv"} instead.
+    }
   }
 } %% -- end "The Distribution String"
+
+\section{The S4 Classes for Distributions}{
+  The package \pkg{Runuran} provides an alternative approach to describe
+  distributions. Thus the following S4 classes can be used.
+  \describe{
+    \item{class "unuran.cont"}{
+      for univariate continuous distributions,
+      see \code{\linkS4class{unuran.cont}}.
+    }
+    \item{class "unuran.discr"}{
+      for discrete distributions,
+      see \code{\linkS4class{unuran.discr}}.
+    }
+    \item{class "unuran.cmv"}{
+      for multivariate continuous distributions,
+      see \code{\linkS4class{unuran.cmv}}.
+    }
+  }
+  This interface allows to use \R functions and object to define
+  distributions.
+} %% -- end "The S4 Classes for Distributions"
 
 \section{The Method String}{
   The argument \code{method} describes generation method for drawing
@@ -153,12 +180,13 @@ unuran.new(distr,method="auto")
     }
   }
 
-  All other methods only work for continuous univariate or discrete
-  distributions. (We remark, that UNU.RAN also provides methods for
-  other types of distributions which are currently only partially
-  supported by the \pkg{Runuran} interface.)
+  All other methods only work for continuous univariate, discrete, or
+  continuous multivariate distributions.
+  (We remark, that UNU.RAN also provides methods for other types of
+  distributions which are currently only partially supported by the
+  \pkg{Runuran} interface.)
   All methods have optional parameters that allow to adjust the method
-  for the target distribution. However, most of these are only usefull
+  for the target distribution. However, most of these are only useful
   in rare situations with distributions with extreme properties. See
   the UNU.RAN manual if you need a the full list of paramters.
   
@@ -219,20 +247,63 @@ unuran.new(distr,method="auto")
       Alias-Urn method. Works for the same class of distributions as
       method \code{"DGT"}.
     }
-    \item{"DARI":}{
+    \item{\code{"DARI"}:}{
       Automatic Rejection Inversion. It is based on discrete
       rejection and requires the PMF of an  
       unimodal discrete distributions with tails not higher than
       \eqn{1/x^2}. Optionally the mode could be provided.
     }
   }
-}
+
+  \emph{For continuous multivariate distributions} the most important
+  methods are:
+  \describe{
+    \item{\code{"HITRO"}:}{
+      An easy to use Markov chain sampling algorithms based on
+      the Hit-and-Run sample in combination with the ratio-of-Uniforms
+      methods. It requires the density of the distribution.
+
+      Notice that MCMC samplers do not produce a sequence of independent
+      variates. The drawn sample follows the target distribution only
+      appropriately.
+
+      \strong{Beware: MCMC sampling can be dangerous!}
+      
+      Method HITRO provides two parameters that increase the quality the
+      generated sample: \code{"thinning"} and \code{"burnin"}.
+      By the first parameter only a fraction of the generated sequence
+      is returned while the second one discards the first part of the
+      sequence (\dQuote{burn-in phase}):
+      \code{"HITRO; thinning=3; burnin=1000"}.
+
+      There are some more parameter to control the behavior of the
+      algorithm. 
+      See the UNU.RAN manual and \code{\link{urhitro}} for more
+      informations.
+    }
+    \item{\code{"VNROU"}:}{
+      A naiv implementation of the multivariate Ratio-of-Uniforms
+      method. It uses rejection from the (minimal) bounded rectangle.
+      It requires the density function (or any multiple of it) which
+      should be log-concave. Otherwise the computation of the bounding
+      rectangle might fail and should be provided by the user.
+      This method only works for a small number of dimensions (up to
+      10). The acceptance rate (and the thus the marginal generation
+      times) can be prohibitive small when the number of dimensions are
+      too high or the shape the density function is not well-suited.
+    }
+  }
+} %% -- end "The Method String"
 
 \seealso{
   \code{\link{runif}} and \code{\link{.Random.seed}} about random number
-  generation, \code{\link{unuran-class}} for the UNU.RAN class,
-  \code{\link{unuran.sample}}, \code{\link{urdgt}} and
-  \code{\link{urdau}}.
+  generation, \code{\linkS4class{unuran}} for the UNU.RAN class,
+  \code{\link{unuran.sample}}, \code{\link{urtdr}}, \code{\link{urdgt}}
+  and \code{\link{urdau}}.
+
+  For distribution objects see \code{\linkS4class{unuran.cont}},
+  \code{\linkS4class{unuran.discr}}, and
+  \code{\linkS4class{unuran.cmv}}.
 }
 
 \references{

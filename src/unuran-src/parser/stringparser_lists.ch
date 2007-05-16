@@ -249,6 +249,14 @@ _unur_str_distr_set( UNUR_DISTR **ptr_distr, const char *key, char *value )
 			 }
 			 break;
 		 case 'l':
+			 if ( !strcmp(key, "logcdf") ) {
+				 result = _unur_str_distr_set_C(distr,key,type_args,args,unur_distr_cont_set_logcdfstr);
+				 break;
+			 }
+			 if ( !strcmp(key, "logcdfstr") ) {
+				 result = _unur_str_distr_set_C(distr,key,type_args,args,unur_distr_cont_set_logcdfstr);
+				 break;
+			 }
 			 if ( !strcmp(key, "logpdf") ) {
 				 result = _unur_str_distr_set_C(distr,key,type_args,args,unur_distr_cont_set_logpdfstr);
 				 break;

@@ -1,11 +1,5 @@
 
 (*) Add support for 'distr' package.
 
-(*) Add support for building non-standard distributions 
-    from scratch inside R (using 'function()', etc).
-    Maybe using the 'distr' package.
-
-(*) Add support for multivariate distributions.
-
 (*) Add support for 'rstream' package.
 

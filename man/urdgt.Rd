@@ -42,7 +42,7 @@ urdau(n, probvector, from = 0, by = 1)
 
 \seealso{
   \code{\link{runif}} and \code{\link{.Random.seed}} about random number
-  generation, \code{\link{unuran-class}} for the UNU.RAN class.
+  generation, \code{\linkS4class{unuran}} for the UNU.RAN class.
 }
 
 \references{

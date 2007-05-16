@@ -75,7 +75,7 @@ unur_hinv_new( const struct unur_distr *distr )
   PAR->guide_factor = 1.;         
   PAR->bleft = -1.e20;            
   PAR->bright = 1.e20;            
-  PAR->max_ivs = 1.e6;            
+  PAR->max_ivs = 1000000;         
   PAR->stp = NULL;                
   PAR->n_stp = 0;                 
   par->method   = UNUR_METH_HINV; 

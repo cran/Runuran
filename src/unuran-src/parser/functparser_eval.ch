@@ -2,7 +2,7 @@
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 double
-_unur_fstr_eval_tree (const struct ftreenode *root, const double x)
+_unur_fstr_eval_tree (const struct ftreenode *root, double x)
 {  
   CHECK_NULL(root,INFINITY);   COOKIE_CHECK(root,CK_FSTR_TNODE,INFINITY);
   return _unur_fstr_eval_node( root, x );
@@ -38,7 +38,7 @@ double v_sgn    (NODE_ARGS) { CHECK_INF(r);    return ((r<0.) ? -1. : ((r>0.) ? 
 #undef CHECK_INFS
 #undef NODE_ARGS
 double
-_unur_fstr_eval_node (const struct ftreenode *node, const double x)
+_unur_fstr_eval_node (const struct ftreenode *node, double x)
 {
   double val_l, val_r;
   CHECK_NULL(node,INFINITY);   COOKIE_CHECK(node,CK_FSTR_TNODE,INFINITY);

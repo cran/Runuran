@@ -122,6 +122,9 @@ _unur_init_discr( struct unur_par *par_auto )
       par = unur_dari_new(par_auto->distr);
       gen = unur_init(par);
       if (gen) break;
+      par = unur_dgt_new(par_auto->distr);
+      gen = unur_init(par);
+      if (gen) break;
     }
     par = unur_dstd_new(par_auto->distr);
     gen = unur_init(par);

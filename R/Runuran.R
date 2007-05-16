@@ -21,15 +21,17 @@
 setClass( "unuran", 
          ## slots:
          representation( 
-                        distr   = "character",     # distribution
-                        method  = "character",     # generation method
-                        unur    = "externalptr"    # pointer to UNU.RAN object
+                        unur       = "externalptr",   # pointer to UNU.RAN object
+                        distr      = "unuran.distr",   # pointer to S4 distribution object
+                        distr.str  = "character",     # distribution
+                        method.str = "character"      # generation method
                         ),
          ## defaults for slots
          prototype = list(
-                 distr  = character(),
-                 method = "auto",
-                 unur   = NULL
+                 unur       = NULL,
+                 distr      = NULL,
+                 distr.str  = character(),
+                 method.str = "auto"
                  ),
          ## misc
          sealed = TRUE
@@ -47,16 +49,19 @@ setMethod( "initialize", "unuran",
                           stop("'method' must be a character string", call.=FALSE) }
 
                   ## Store informations 
-                  .Object@distr <- ifelse(is.character(distr), distr, "[UNU.RAN distribution]")
-                  .Object@method <- method
+                  .Object@distr.str <- ifelse(is.character(distr), distr, "[S4 class]")
+                  .Object@method.str <- method
 
                   ## Create UNU.RAN object
                   if (is.character(distr)) {
-                          .Object@unur <-.Call("Runuran_init", distr, method, PACKAGE="Runuran")
-                  } else { if (class(distr)=="unuran.discr") {
-                          .Object@unur <-.Call("Runuran_init", distr@distr, method, PACKAGE="Runuran")
+                          .Object@unur <-.Call("Runuran_init", .Object, distr, method, PACKAGE="Runuran")
+                  } else { if (class(distr)=="unuran.discr" ||
+                               class(distr)=="unuran.cont"  ||
+                               class(distr)=="unuran.cmv") {
+                          .Object@unur <-.Call("Runuran_init", .Object, distr@distr, method, PACKAGE="Runuran")
+                          .Object@distr <- distr
                   } else {
-                          stop("'distr' must be a character string or an UNU.RAN distribution object", call.=FALSE)
+                          stop("'distr' must be a character string or a Runuran distribution object", call.=FALSE)
                   }}
 
                   ## Check UNU.RAN object
@@ -80,7 +85,7 @@ unuran.new <- function(distr,method="auto") {
 ## unuran.sample
 ## ( We avoid using a method as this has an expensive overhead. )
 unuran.sample <- function(unr,n=1) { 
-        .Call("Runuran_sample", unr@unur, n, PACKAGE="Runuran")
+        .Call("Runuran_sample", unr, n, PACKAGE="Runuran")
 }
 
 ## r
@@ -90,7 +95,7 @@ if(!isGeneric("r"))
 
 setMethod("r", "unuran",
           function(unur,n=1) {
-                  .Call("Runuran_sample", unr@unur, n, PACKAGE="Runuran")
+                  .Call("Runuran_sample", unur, n, PACKAGE="Runuran")
           } )
 
 ## Printing -----------------------------------------------------------------
@@ -99,8 +104,8 @@ setMethod("r", "unuran",
 setMethod( "print", "unuran",
           function(x, ...) {
                   cat("\nObject is UNU.RAN object:\n")
-                  cat("\tdistr:  ",x@distr,"\n")
-                  cat("\tmethod: ",x@method,"\n\n")
+                  cat("\tmethod: ",x@method.str,"\n")
+                  cat("\tdistr:  ",x@distr.str,"\n\n")
 } )
 
 setMethod( "show", "unuran",

@@ -20,7 +20,9 @@
 
   \itemize{
     \item{distribution:}{A character string that describes the target
-      distribution, see UNU.RAN User Manual.}
+      distribution (see UNU.RAN User Manual) or one of the S4 classes
+      "unuran.discr", "unuran.cont" or "unuran.cmv" that holds
+      information about the distribution.}
     \item{method:}{A character string that describes the chosen
       generation method, see UNU.RAN User Manual. If omitted method
       \code{"auto"} (automatic) is used.}
@@ -81,7 +83,10 @@
 
 \seealso{
   \code{\link{unuran.new}} and 
-  \code{\link{unuran.sample}}.
+  \code{\link{unuran.sample}} for faster creation and sampling routines,
+  \code{\linkS4class{unuran.cont}} and \code{\linkS4class{unuran.discr}}
+  for classes that contain information about continuous univariate and
+  discrete distributions, resp.
 }
 
 \examples{

@@ -15,6 +15,7 @@ static double _unur_distr_cont_eval_logpdf_tree( double x, const struct unur_dis
 static double _unur_distr_cont_eval_dpdf_tree( double x, const struct unur_distr *distr );
 static double _unur_distr_cont_eval_dlogpdf_tree( double x, const struct unur_distr *distr );
 static double _unur_distr_cont_eval_cdf_tree( double x, const struct unur_distr *distr );
+static double _unur_distr_cont_eval_logcdf_tree( double x, const struct unur_distr *distr );
 static double _unur_distr_cont_eval_hr_tree( double x, const struct unur_distr *distr );
 static void _unur_distr_cont_free( struct unur_distr *distr );
 static int _unur_distr_cont_find_mode( struct unur_distr *distr );
@@ -37,6 +38,7 @@ unur_distr_cont_new( void )
   DISTR.logpdf    = NULL;          
   DISTR.dlogpdf   = NULL;          
   DISTR.cdf       = NULL;          
+  DISTR.logcdf    = NULL;          
   DISTR.hr        = NULL;          
   DISTR.init      = NULL;          
   DISTR.n_params  = 0;               
@@ -60,6 +62,7 @@ unur_distr_cont_new( void )
   DISTR.logpdftree = NULL;         
   DISTR.dlogpdftree = NULL;        
   DISTR.cdftree    = NULL;         
+  DISTR.logcdftree = NULL;         
   DISTR.hrtree     = NULL;         
   return distr;
 } 
@@ -78,6 +81,7 @@ _unur_distr_cont_clone( const struct unur_distr *distr )
   CLONE.logpdftree  = (DISTR.logpdftree)  ? _unur_fstr_dup_tree(DISTR.logpdftree)  : NULL;
   CLONE.dlogpdftree = (DISTR.dlogpdftree) ? _unur_fstr_dup_tree(DISTR.dlogpdftree) : NULL;
   CLONE.cdftree  = (DISTR.cdftree)  ? _unur_fstr_dup_tree(DISTR.cdftree)  : NULL;
+  CLONE.logcdftree  = (DISTR.logcdftree)  ? _unur_fstr_dup_tree(DISTR.logcdftree)  : NULL;
   CLONE.hrtree   = (DISTR.hrtree)   ? _unur_fstr_dup_tree(DISTR.hrtree)   : NULL;
   for (i=0; i<UNUR_DISTR_MAXPARAMS; i++) {
     CLONE.n_param_vec[i] = DISTR.n_param_vec[i];
@@ -112,6 +116,7 @@ _unur_distr_cont_free( struct unur_distr *distr )
   if (DISTR.logpdftree)  _unur_fstr_free(DISTR.logpdftree);
   if (DISTR.dlogpdftree) _unur_fstr_free(DISTR.dlogpdftree);
   if (DISTR.cdftree)  _unur_fstr_free(DISTR.cdftree);
+  if (DISTR.logcdftree)  _unur_fstr_free(DISTR.logcdftree);
   if (DISTR.hrtree)   _unur_fstr_free(DISTR.hrtree);
   if (distr->base) _unur_distr_free(distr->base);
   if (distr->name_str) free(distr->name_str);
@@ -204,7 +209,7 @@ unur_distr_cont_set_cdf( struct unur_distr *distr, UNUR_FUNCT_CONT *cdf )
   _unur_check_NULL( NULL, distr, UNUR_ERR_NULL );
   _unur_check_NULL( distr->name, cdf,UNUR_ERR_NULL );
   _unur_check_distr_object( distr, CONT, UNUR_ERR_DISTR_INVALID );
-  if (DISTR.cdf != NULL) {
+  if (DISTR.cdf != NULL || DISTR.logcdf != NULL) {
     _unur_warning(distr->name,UNUR_ERR_DISTR_SET,"Overwriting of CDF not allowed");
     return UNUR_ERR_DISTR_SET;
   }
@@ -212,6 +217,31 @@ unur_distr_cont_set_cdf( struct unur_distr *distr, UNUR_FUNCT_CONT *cdf )
   distr->set &= ~UNUR_DISTR_SET_MASK_DERIVED;
   DISTR.cdf = cdf;
   return UNUR_SUCCESS;
+} 
+int
+unur_distr_cont_set_logcdf( struct unur_distr *distr, UNUR_FUNCT_CONT *logcdf )
+{
+  _unur_check_NULL( NULL, distr, UNUR_ERR_NULL );
+  _unur_check_NULL( distr->name, logcdf, UNUR_ERR_NULL );
+  _unur_check_distr_object( distr, CONT, UNUR_ERR_DISTR_INVALID );
+  if (DISTR.cdf != NULL || DISTR.logcdf != NULL) {
+    _unur_warning(distr->name,UNUR_ERR_DISTR_SET,"Overwriting of logCDF not allowed");
+    return UNUR_ERR_DISTR_SET;
+  }
+  if (distr->base) return UNUR_ERR_DISTR_INVALID;
+  distr->set &= ~UNUR_DISTR_SET_MASK_DERIVED;
+  DISTR.logcdf = logcdf;
+  DISTR.cdf = _unur_distr_cont_eval_cdf_from_logcdf;
+  return UNUR_SUCCESS;
+} 
+double
+_unur_distr_cont_eval_cdf_from_logcdf( double x, const struct unur_distr *distr )
+{
+  if (DISTR.logcdf == NULL) {
+    _unur_warning(distr->name,UNUR_ERR_DISTR_DATA,"");
+    return INFINITY;
+  }
+  return exp(_unur_cont_logCDF(x,distr));
 } 
 int
 unur_distr_cont_set_hr( struct unur_distr *distr, UNUR_FUNCT_CONT *hr )
@@ -298,6 +328,26 @@ unur_distr_cont_set_cdfstr( struct unur_distr *distr, const char *cdfstr )
   return UNUR_SUCCESS;
 } 
 int
+unur_distr_cont_set_logcdfstr( struct unur_distr *distr, const char *logcdfstr )
+{
+  _unur_check_NULL( NULL, distr, UNUR_ERR_NULL );
+  _unur_check_distr_object( distr, CONT, UNUR_ERR_DISTR_INVALID );
+  _unur_check_NULL( NULL, logcdfstr, UNUR_ERR_NULL );
+  if (DISTR.cdf != NULL || DISTR.logcdf != NULL) {
+    _unur_warning(distr->name,UNUR_ERR_DISTR_SET,"Overwriting of logCDF not allowed");
+    return UNUR_ERR_DISTR_SET;
+  }
+  if (distr->base) return UNUR_ERR_DISTR_INVALID;
+  distr->set &= ~UNUR_DISTR_SET_MASK_DERIVED;
+  if ( (DISTR.logcdftree = _unur_fstr2tree(logcdfstr)) == NULL ) {
+    _unur_error(distr->name,UNUR_ERR_DISTR_SET,"Syntax error in function string");
+    return UNUR_ERR_DISTR_SET;
+  }
+  DISTR.logcdf  = _unur_distr_cont_eval_logcdf_tree;
+  DISTR.cdf = _unur_distr_cont_eval_cdf_from_logcdf;
+  return UNUR_SUCCESS;
+} 
+int
 unur_distr_cont_set_hrstr( struct unur_distr *distr, const char *hrstr )
 {
   _unur_check_NULL( NULL, distr, UNUR_ERR_NULL );
@@ -340,6 +390,11 @@ double
 _unur_distr_cont_eval_cdf_tree( double x, const struct unur_distr *distr )
 {
   return ((DISTR.cdftree) ? _unur_fstr_eval_tree(DISTR.cdftree,x) : INFINITY);
+} 
+double
+_unur_distr_cont_eval_logcdf_tree( double x, const struct unur_distr *distr )
+{
+  return ((DISTR.logcdftree) ? _unur_fstr_eval_tree(DISTR.logcdftree,x) : INFINITY);
 } 
 double
 _unur_distr_cont_eval_hr_tree( double x, const struct unur_distr *distr )
@@ -387,6 +442,14 @@ unur_distr_cont_get_cdfstr( const struct unur_distr *distr )
   return _unur_fstr_tree2string(DISTR.cdftree,"x","CDF",TRUE);
 } 
 char *
+unur_distr_cont_get_logcdfstr( const struct unur_distr *distr )
+{
+  _unur_check_NULL( NULL, distr, NULL );
+  _unur_check_distr_object( distr, CONT, NULL );
+  _unur_check_NULL( NULL, DISTR.logcdftree, NULL );
+  return _unur_fstr_tree2string(DISTR.logcdftree,"x","logCDF",TRUE);
+} 
+char *
 unur_distr_cont_get_hrstr( const struct unur_distr *distr )
 {
   _unur_check_NULL( NULL, distr, NULL );
@@ -428,6 +491,13 @@ unur_distr_cont_get_cdf( const struct unur_distr *distr )
   _unur_check_NULL( NULL, distr, NULL );
   _unur_check_distr_object( distr, CONT, NULL );
   return DISTR.cdf;
+} 
+UNUR_FUNCT_CONT *
+unur_distr_cont_get_logcdf( const struct unur_distr *distr )
+{
+  _unur_check_NULL( NULL, distr, NULL );
+  _unur_check_distr_object( distr, CONT, NULL );
+  return DISTR.logcdf;
 } 
 UNUR_FUNCT_CONT *
 unur_distr_cont_get_hr( const struct unur_distr *distr )
@@ -490,6 +560,17 @@ unur_distr_cont_eval_cdf( double x, const struct unur_distr *distr )
     return INFINITY;
   }
   return _unur_cont_CDF(x,distr);
+} 
+double
+unur_distr_cont_eval_logcdf( double x, const struct unur_distr *distr )
+{
+  _unur_check_NULL( NULL, distr, INFINITY );
+  _unur_check_distr_object( distr, CONT, INFINITY );
+  if (DISTR.logcdf == NULL) {
+    _unur_warning(distr->name,UNUR_ERR_DISTR_DATA,"");
+    return INFINITY;
+  }
+  return _unur_cont_logCDF(x,distr);
 } 
 double
 unur_distr_cont_eval_hr( double x, const struct unur_distr *distr )
@@ -812,6 +893,7 @@ _unur_distr_cont_debug( const struct unur_distr *distr, const char *genid )
       fprintf(log,"%s:\t\tparam[%d] = %g\n",genid,i,DISTR.params[i]);
   fprintf(log,"%s:\tfunctions: ",genid);
   if (DISTR.cdf) fprintf(log,"CDF ");
+  if (DISTR.logcdf) fprintf(log,"logCDF ");
   if (DISTR.pdf) fprintf(log,"PDF ");
   if (DISTR.logpdf) fprintf(log,"logPDF ");
   if (DISTR.dpdf) fprintf(log,"dPDF ");

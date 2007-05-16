@@ -201,7 +201,7 @@ _unur_fstr_F_specfunct ( FILE *out, unsigned flags )
   return UNUR_SUCCESS;
 } 
 int
-_unur_fstr_print_F ( struct unur_string *output, const char *symb, const double number )
+_unur_fstr_print_F ( struct unur_string *output, const char *symb, double number )
 {
   char buf[128];
   char *here_is_e;

@@ -40,7 +40,7 @@ urcauchy(n, location=0, scale=1, lb = -Inf, ub = Inf)
 
 \seealso{
   \code{\link{runif}} and \code{\link{.Random.seed}} about random number
-  generation, \code{\link{unuran-class}} for the UNU.RAN class, and
+  generation, \code{\linkS4class{unuran}} for the UNU.RAN class, and
   \code{\link{rcauchy}} for the \R built-in generator.
 }
 

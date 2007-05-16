@@ -18,8 +18,8 @@
   \tabular{ll}{
     Package: \tab Runuran       \cr
     Type:    \tab Package       \cr
-    Version: \tab 0.4           \cr
-    Date:    \tab 2007-05-16    \cr
+    Version: \tab 0.5           \cr
+    Date:    \tab 2007-08-01    \cr
     License: \tab GPL 2 or later\cr
   }
   This package provides an interface to the UNU.RAN library for universal
@@ -27,7 +27,7 @@
 
   It provides the following two main calls:
   \describe{
-    \item{\code{unuran.new(dist.string,method.string)}}{
+    \item{\code{unuran.new(dist,method)}}{
       Create a UNU.RAN object. For details see
       \code{\link{unuran.new}}.
     }
@@ -40,15 +40,17 @@
 
   The \pkg{Runuran} package makes use of the string API of UNU.RAN,
   i.e., distributions and methods are described as strings and passed
-  directly to UNU.RAN. See \code{\link{unuran.new}} for a short
-  introduction to this interface. 
+  directly to UNU.RAN. The \pkg{Runuran} uses S4 classes to implemented
+  this interface to UNU.RAN.
+  Alternatively distributions can also be passed by
+  means of S4 classes that contain the required information.
+  See \code{\link{unuran.new}} for a short introduction to the interface. 
 
-  The \pkg{Runuran} uses S4 classes to implemented this interface to
-  UNU.RAN.
-
-  The functions \code{\link{urdgt}} and \code{\link{urdau}} are provided
-  to allow an easy to use interface when generating from discrete
-  distributions with given probability vectors.
+  Additionally there are some shortcuts that allow provide an easy to
+  use interface: \code{\link{urdgt}} and \code{\link{urdau}} for
+  discrete distributions with given probability vectors,
+  and \code{\link{urtdr}} for log-concave distributions with given
+  density function.
 
   To facilitate the use of the package for standard distributions
   the package also includes direct generation functions for
@@ -142,8 +144,8 @@
 }
 
 \seealso{
-  \code{\link{unuran.new}}, \link[Runuran:unuran-class]{unuran-class},
-  \code{\link{urdgt}} and \code{\link{urdau}}.
+  \code{\linkS4class{unuran}}, \code{\link{unuran.new}},
+  \code{\link{unuran.sample}}, \code{\linkS4class{unuran.distr}}.
 }
 
 \keyword{distribution}

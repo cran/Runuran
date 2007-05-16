@@ -1054,9 +1054,12 @@ _unur_cvec_PDF(const double *x, struct unur_distr *distr)
 int
 _unur_cvec_dPDF(double *result, const double *x, struct unur_distr *distr)
 {
+  int d;
   if ( (distr->set & UNUR_DISTR_SET_DOMAINBOUNDED) &&
-       !_unur_distr_cvec_is_indomain(x, distr) )
-    return 0.;
+       !_unur_distr_cvec_is_indomain(x, distr) ) {
+    for (d=0; d < distr->dim; d++) result[d] = 0.;
+    return UNUR_SUCCESS;
+  }
   return (*(distr->data.cvec.dpdf)) (result,x,distr);
 }
 double
@@ -1078,9 +1081,12 @@ _unur_cvec_logPDF(const double *x, struct unur_distr *distr)
 int
 _unur_cvec_dlogPDF(double *result, const double *x, struct unur_distr *distr)
 {
+  int d;
   if ( (distr->set & UNUR_DISTR_SET_DOMAINBOUNDED) &&
-       !_unur_distr_cvec_is_indomain(x, distr) )
-    return 0.;
+       !_unur_distr_cvec_is_indomain(x, distr) ) {
+    for (d=0; d < distr->dim; d++) result[d] = 0.;
+    return UNUR_SUCCESS;
+  }
   return (*(distr->data.cvec.dlogpdf)) (result,x,distr);
 }
 double

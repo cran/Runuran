@@ -25,7 +25,7 @@
 }
 
 \seealso{%
-  \code{\link{unuran-class}}.
+  \code{\linkS4class{unuran}}.
 }
 
 \note{

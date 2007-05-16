@@ -1,0 +1,51 @@
+\name{unuran.distr-class}
+\docType{class}
+
+\alias{unuran.distr-class}
+\alias{print,unuran.distr-method}
+\alias{show,unuran.distr-method}
+\alias{initialize,unuran.distr-method}
+
+\title{Experimental virtual class "unuran.distr"}
+
+\description{%
+  The virtual class "unuran.distr" provides am interface to UNU.RAN
+  objects for distributions.
+
+  The following classes extend this class:
+  \describe{
+    \item{class "unuran.cont"}{
+      for univariate continuous distributions,
+      see \code{\linkS4class{unuran.cont}}.
+    }
+    \item{class "unuran.discr"}{
+      for discrete distributions,
+      see \code{\linkS4class{unuran.discr}}.
+    }
+    \item{class "unuran.cmv"}{
+      for multivariate continuous distributions,
+      see \code{\linkS4class{unuran.cmv}}.
+    }
+  }
+}
+
+\author{
+  Josef Leydold and Wolfgang H\"ormann
+  \email{unuran@statmath.wu-wien.ac.at}.
+}
+
+\references{
+  J. Leydold and W. H\"ormann (2000-2007):
+  UNU.RAN User Manual, see
+  \url{http://statmath.wu-wien.ac.at/unuran/}.
+}
+
+\seealso{
+  \code{\linkS4class{unuran.cont}}, \code{\linkS4class{unuran.discr}},
+  \code{\linkS4class{unuran.cmv}};
+  \code{\linkS4class{unuran}}.
+}
+
+\keyword{classes}
+\keyword{distribution}
+\keyword{datagen}

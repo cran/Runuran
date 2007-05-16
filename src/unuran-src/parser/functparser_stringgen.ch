@@ -88,7 +88,7 @@ _unur_fstr_node2string ( struct unur_string *output, const struct ftreenode *nod
   return UNUR_SUCCESS;
 } 
 int
-_unur_fstr_print ( struct unur_string *output, const char *symb, const double number )
+_unur_fstr_print ( struct unur_string *output, const char *symb, double number )
 {
   if (symb)
     _unur_string_appendtext( output, symb );

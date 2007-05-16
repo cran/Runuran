@@ -36,7 +36,7 @@ urbinom(n, size, prob, lb = 0, ub = size)
 
 \seealso{
   \code{\link{runif}} and \code{\link{.Random.seed}} about random number
-  generation, \code{\link{unuran-class}} for the UNU.RAN class, and
+  generation, \code{\linkS4class{unuran}} for the UNU.RAN class, and
   \code{\link{rbinom}} for the \R built-in generator.
 }
 

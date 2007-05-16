@@ -1,7 +1,10 @@
 # configure script for compiling 'Runuran' package for Win32.
 # Assumes that the `cp' program exists.
 
+echo "Creating 'src/Makevars'"
+UNURAN_SRC=`cd ./src; ls -1 unuran-src/*/*.c | tr '\012' ' '`
+sed -e "s#@UNURAN_SRC@#${UNURAN_SRC}#" src/Makevars.in > src/Makevars 
+
 echo "Creating 'src/config.h'"
 echo "(Manual configuration might be required)"
-
 cp src/config.w32  src/config.h

@@ -43,23 +43,19 @@
 
 /*---------------------------------------------------------------------------*/
 
-/* #define DEBUG 1 */
-
-/*---------------------------------------------------------------------------*/
-
-static void Runuran_free(SEXP sexp_gen);
+static void _Runuran_free(SEXP sexp_gen);
 /*---------------------------------------------------------------------------*/
 /* Free UNU.RAN generator object.                                            */
 /*---------------------------------------------------------------------------*/
 
-static void Runuran_error_handler( 
+static void _Runuran_error_handler( 
 	const char *objid, const char *file, int line,
         const char *errortype, int errorcode, const char *reason );
 /*---------------------------------------------------------------------------*/
 /* Error handler for UNU.RAN routines.                                       */
 /*---------------------------------------------------------------------------*/
 
-static double Runuran_R_unif_rand (void *unused);
+static double _Runuran_R_unif_rand (void *unused);
 /*---------------------------------------------------------------------------*/
 /* Wrapper for R built-in uniform random number generator.                   */
 /*---------------------------------------------------------------------------*/
@@ -68,19 +64,24 @@ static double Runuran_R_unif_rand (void *unused);
 
 /* check pointer to generator object */
 #define CHECK_PTR(s) do { \
-    if (TYPEOF(s) != EXTPTRSXP || R_ExternalPtrTag(s) != Runuran_tag) \
+    if (TYPEOF(s) != EXTPTRSXP || R_ExternalPtrTag(s) != _Runuran_tag) \
         error("[UNU.RAN - error] invalid UNU.RAN object"); \
     } while (0)
 
 /* Use an external reference to store the UNU.RAN generator objects */
-static SEXP Runuran_tag = NULL;
+static SEXP _Runuran_tag = NULL;
 
 /*---------------------------------------------------------------------------*/
 
 SEXP
-Runuran_init (SEXP sexp_distr, SEXP sexp_method)
+Runuran_init (SEXP sexp_obj, SEXP sexp_distr, SEXP sexp_method)
      /*----------------------------------------------------------------------*/
      /* Create and initialize UNU.RAN generator object.                      */
+     /*                                                                      */
+     /* Parameters:                                                          */
+     /*   obj    ... S4 class that contains unuran generator object          */ 
+     /*   distr  ... distribution (string or S4 object)                      */
+     /*   method ... method (string)                                         */
      /*----------------------------------------------------------------------*/
 {
   SEXP sexp_gen;
@@ -88,7 +89,7 @@ Runuran_init (SEXP sexp_distr, SEXP sexp_method)
   const char *method;
 
   /* make tag for R object */
-  if (!Runuran_tag) Runuran_tag = install("R_UNURAN_TAG");
+  if (!_Runuran_tag) _Runuran_tag = install("R_UNURAN_TAG");
 
   /* check argument */
   if (!sexp_method || TYPEOF(sexp_method) != STRSXP)
@@ -126,13 +127,13 @@ Runuran_init (SEXP sexp_distr, SEXP sexp_method)
   }
 
   /* make R external pointer and store pointer to structure */
-  PROTECT(sexp_gen = R_MakeExternalPtr(gen, Runuran_tag, R_NilValue));
-  UNPROTECT(1);
+  PROTECT(sexp_gen = R_MakeExternalPtr(gen, _Runuran_tag, sexp_obj));
   
   /* register destructor as C finalizer */
-  R_RegisterCFinalizer(sexp_gen, Runuran_free);
+  R_RegisterCFinalizer(sexp_gen, _Runuran_free);
 
   /* return pointer to R */
+  UNPROTECT(1);
   return (sexp_gen);
 
 } /* end of Runuran_init() */
@@ -140,19 +141,23 @@ Runuran_init (SEXP sexp_distr, SEXP sexp_method)
 /*---------------------------------------------------------------------------*/
 
 SEXP
-Runuran_sample (SEXP sexp_gen, SEXP sexp_n)
+Runuran_sample (SEXP sexp_unur, SEXP sexp_n)
      /*----------------------------------------------------------------------*/
      /* Sample from UNU.RAN generator object.                                */
      /*----------------------------------------------------------------------*/
 {
   int n;
   struct unur_gen *gen;
-  int i;
-  SEXP res = NULL;
+  int i,k;
+  SEXP sexp_res = NULL;
+  double *res;
+  SEXP sexp_gen;
+  SEXP sexp_slotunur;
 
-#ifdef DEBUG
-  /* check pointer */
-  CHECK_PTR(sexp_gen);
+#ifdef RUNURAN_DEBUG
+  /* first argument must be S4 class */
+  if (!IS_S4_OBJECT(sexp_unur))
+    error("[UNU.RAN - error] invalid UNU.RAN object");
 #endif
 
   /* Extract and check sample size */
@@ -161,11 +166,14 @@ Runuran_sample (SEXP sexp_gen, SEXP sexp_n)
     error("sample size 'n' must be positive integer");
   }
 
-  /* Extract pointer to generator */
+  /* Extract pointer to UNU.RAN generator */
+  sexp_slotunur = Rf_install("unur");
+  sexp_gen = GET_SLOT(sexp_unur, sexp_slotunur);
+#ifdef RUNURAN_DEBUG
+  CHECK_PTR(sexp_gen);
+#endif
   gen = R_ExternalPtrAddr(sexp_gen);
-  
-#ifdef DEBUG
-  /* this must not be a NULL pointer */
+#ifdef RUNURAN_DEBUG
   if (gen == NULL)
     error("[UNU.RAN - error] bad UNU.RAN object");
 #endif
@@ -178,20 +186,35 @@ Runuran_sample (SEXP sexp_gen, SEXP sexp_n)
 
   case UNUR_DISTR_CONT:   /* univariate continuous distribution */
   case UNUR_DISTR_CEMP:   /* empirical continuous univariate distribution */
-    PROTECT(res = NEW_NUMERIC(n));
+    PROTECT(sexp_res = NEW_NUMERIC(n));
     for (i=0; i<n; i++) {
-      NUMERIC_POINTER(res)[i] = unur_sample_cont(gen); }
+      NUMERIC_POINTER(sexp_res)[i] = unur_sample_cont(gen); }
     UNPROTECT(1);
     break;
 
   case UNUR_DISTR_DISCR:  /* discrete univariate distribution */
-    PROTECT(res = NEW_NUMERIC(n));
+    PROTECT(sexp_res = NEW_NUMERIC(n));
     for (i=0; i<n; i++) {
-      NUMERIC_POINTER(res)[i] = (double) unur_sample_discr(gen); }
+      NUMERIC_POINTER(sexp_res)[i] = (double) unur_sample_discr(gen); }
     UNPROTECT(1);
     break;
 
   case UNUR_DISTR_CVEC:   /* continuous mulitvariate distribution */
+    {
+      int dim = unur_get_dimension(gen);
+      double *x = (double*) R_alloc(dim, sizeof(double) );
+      PROTECT(sexp_res = allocMatrix(REALSXP, n, dim));
+      res = REAL(sexp_res);
+      for (i=0; i<n; i++) {
+	if (unur_sample_vec(gen,x)!=UNUR_SUCCESS)
+	  for (k=0; k<dim; k++) res[i + n*k] = NA_REAL;
+	else
+	  for (k=0; k<dim; k++) res[i + n*k] = x[k];
+      }
+      UNPROTECT(1);
+    }
+    break;
+
   case UNUR_DISTR_CVEMP:  /* empirical continuous multivariate distribution */
   case UNUR_DISTR_MATR:   /* matrix distribution */
   default:
@@ -203,21 +226,21 @@ Runuran_sample (SEXP sexp_gen, SEXP sexp_n)
   PutRNGstate();
 
   /* return result to R */
-  return res;
+  return sexp_res;
  
 } /* end of Runuran_sample() */
 
 /*---------------------------------------------------------------------------*/
 
 void
-Runuran_free (SEXP sexp_gen)
+_Runuran_free (SEXP sexp_gen)
      /*----------------------------------------------------------------------*/
      /* Free UNU.RAN generator object.                                       */
      /*----------------------------------------------------------------------*/
 {
   struct unur_gen *gen;
 
-#ifdef DEBUG
+#ifdef RUNURAN_DEBUG
   /* check pointer */
   CHECK_PTR(sexp_gen);
   printf("Runuran_free called!\n");
@@ -231,7 +254,7 @@ Runuran_free (SEXP sexp_gen)
 
   R_ClearExternalPtr(sexp_gen);
 
-} /* end of Runuran_free() */
+} /* end of _Runuran_free() */
 
 /*---------------------------------------------------------------------------*/
 
@@ -242,11 +265,11 @@ R_init_Runuran (DllInfo *info)
      /*----------------------------------------------------------------------*/
 {
   /* Set new UNU.RAN error handler */
-  unur_set_error_handler( Runuran_error_handler );
+  unur_set_error_handler( _Runuran_error_handler );
 
   /* Set R built-in generator as default URNG */
-  unur_set_default_urng( unur_urng_new( Runuran_R_unif_rand, NULL) );
-  unur_set_default_urng_aux( unur_urng_new( Runuran_R_unif_rand, NULL) );
+  unur_set_default_urng( unur_urng_new( _Runuran_R_unif_rand, NULL) );
+  unur_set_default_urng_aux( unur_urng_new( _Runuran_R_unif_rand, NULL) );
 
   /* Register native routines */ 
   /* Not implemented yet */ 
@@ -258,7 +281,7 @@ R_init_Runuran (DllInfo *info)
 /*---------------------------------------------------------------------------*/
 
 void
-Runuran_error_handler( 
+_Runuran_error_handler( 
 	const char *objid,     /* id/type of object              */
         const char *file,      /* source file name (__FILE__)    */
         int line,              /* source line number (__LINE__)  */ 
@@ -270,6 +293,8 @@ Runuran_error_handler(
      /* Error handler for UNU.RAN routines                                   */
      /*----------------------------------------------------------------------*/
 {
+#ifdef RUNURAN_DEBUG
+#else
   /* we suppress some warnings */
   if (errortype[0] == 'w') {
     switch (errorcode) {
@@ -281,6 +306,7 @@ Runuran_error_handler(
       break;
     }
   }
+#endif
 
   /* print warning or error message */
   Rprintf("[UNU.RAN - %s] %s",errortype,unur_get_strerror(errorcode));
@@ -289,17 +315,17 @@ Runuran_error_handler(
   else
     Rprintf("\n");
   
-#ifdef DEBUG
+#ifdef RUNURAN_DEBUG
   /* print file and line number */
   Rprintf("\tfile: %s, line: %d\n",file,line);
 #endif
 
-} /* end of Runuran_error_handler() */
+} /* end of _Runuran_error_handler() */
 
 /*---------------------------------------------------------------------------*/
 
 double
-Runuran_R_unif_rand (void *unused)
+_Runuran_R_unif_rand (void *unused)
      /*----------------------------------------------------------------------*/
      /* Wrapper for R built-in uniform random number generator               */
      /*----------------------------------------------------------------------*/
@@ -313,6 +339,6 @@ Runuran_R_unif_rand (void *unused)
   /*   return x; */
 
   return unif_rand();
-} /* end Runuran_R_unif_rand() */
+} /* end _Runuran_R_unif_rand() */
 
 /*---------------------------------------------------------------------------*/

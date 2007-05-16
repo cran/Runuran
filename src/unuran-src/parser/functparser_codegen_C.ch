@@ -178,7 +178,7 @@ _unur_fstr_C_sec ( FILE *out )
   return UNUR_SUCCESS;
 } 
 int
-_unur_fstr_print_C ( struct unur_string *output, const char *symb, const double number )
+_unur_fstr_print_C ( struct unur_string *output, const char *symb, double number )
 {
   if (symb)
     _unur_string_appendtext( output, symb );

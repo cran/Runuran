@@ -1,5 +1,15 @@
+Version 0.5: 2007-08-01
+
+	- added S4 classes for distribution objects:
+
+	    This allows to define distributions by means of
+	    R functions instead of using the UNU.RAN string API
+	    (which is still supported)
+
+	- added support for multivariate distributions
+
+	- added routine 'urtdr'
 
 Version 0.4: 2007-05-16
 
         - First public release
-

@@ -4,6 +4,8 @@ import("methods")
 
 exportClass(unuran)
 exportClass(unuran.discr)
+exportClass(unuran.cont)
+exportClass(unuran.cmv)
 
 exportMethods(r)
 exportMethods(initialize)

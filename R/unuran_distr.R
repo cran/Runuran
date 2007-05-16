@@ -1,3 +1,4 @@
+
 #############################################################################
 ##                                                                         ##
 ##   Runuran                                                               ##
@@ -7,7 +8,7 @@
 ##                                                                         ##
 #############################################################################
 ##                                                                         ##
-##   Class: unuran.distr                                                   ##
+##   Virtual Class: unuran.dist                                            ##
 ##                                                                         ##
 ##   Interface to the UNU.RAN library for                                  ##
 ##   Universal Non-Uniform RANdom variate generators                       ##
@@ -18,59 +19,31 @@
 
 ## Class --------------------------------------------------------------------
 
-setClass( "unuran.discr", 
+setClass( "unuran.distr", 
          ## slots:
-         representation( 
-                        distr   = "externalptr"    # pointer to UNU.RAN distribution object
-                        ),
+         representation = representation( 
+                 distr = "externalptr",   # pointer to UNU.RAN distribution object
+                 env   = "environment"    # environment for evaluating R expressions
+                 ),
          ## defaults for slots
          prototype = list(
-                 unur   = NULL
+                 distr = NULL,
+                 env   = NULL
                  ),
-         ## misc
-         sealed = TRUE
+         ## indicate virtual class
+         contains = "VIRTUAL"
          )
 
-## Initialize ---------------------------------------------------------------
-
-setMethod( "initialize", "unuran.discr",
-          function(.Object, pv=NULL) {
-                  ## pv ... probability vector
-
-                  ## Check entries
-                  if (is.null(pv)) {
-                          stop("no probability vector given", call.=FALSE) }
-                  if (!is.double(pv)) {
-                          stop("'pv' must be a double vector", call.=FALSE) }
-
-                  ## Store informations 
-                  ## (currently nothing to do)
-
-                  ## Create UNUR_DISTR object
-                  .Object@distr <-.Call("Runuran_discr_init", pv, PACKAGE="Runuran")
-
-                  ## Check UNU.RAN object
-                  if (is.null(.Object@distr)) {
-                          stop("Cannot create UNU.RAN distribution object", call.=FALSE)
-                  }
-
-                  ## return new UNU.RAN object
-                  .Object
-          } )
-
-## Validity -----------------------------------------------------------------
-
-## Sampling -----------------------------------------------------------------
 
 ## Printing -----------------------------------------------------------------
 
 ## print strings of UNU.RAN object
-setMethod( "print", "unuran.discr",
+setMethod( "print", "unuran.distr",
           function(x, ...) {
                   cat("\nObject is UNU.RAN distribution object\n\n")
-} )
+          } )
 
-setMethod( "show", "unuran.discr",
+setMethod( "show", "unuran.distr",
           function(object) { print(object) } )
 
 ## End ----------------------------------------------------------------------

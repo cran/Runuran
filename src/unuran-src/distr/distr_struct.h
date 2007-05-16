@@ -7,6 +7,7 @@ struct unur_distr_cont {
   UNUR_FUNCT_CONT *cdf;         
   UNUR_FUNCT_CONT *logpdf;      
   UNUR_FUNCT_CONT *dlogpdf;     
+  UNUR_FUNCT_CONT *logcdf;      
   UNUR_FUNCT_CONT *hr;          
   double norm_constant;         
   double params[UNUR_DISTR_MAXPARAMS];  
@@ -23,6 +24,7 @@ struct unur_distr_cont {
   struct ftreenode *logpdftree; 
   struct ftreenode *dlogpdftree;
   struct ftreenode *cdftree;    
+  struct ftreenode *logcdftree; 
   struct ftreenode *hrtree;     
   int (*set_params)(struct unur_distr *distr, const double *params, int n_params );
   int (*upd_mode)(struct unur_distr *distr);

@@ -72,16 +72,16 @@ static struct ftreenode *_unur_fstr_create_node (const char *symb, double val, i
 						 struct ftreenode *right);
 static struct ftreenode *_unur_fstr_error_parse ( struct parser_data *pdata, int perrno, int line );
 static const char *_unur_fstr_error_code ( int perrno );
-static double _unur_fstr_eval_node (const struct ftreenode *node, const double x);
+static double _unur_fstr_eval_node (const struct ftreenode *node, double x);
 static void _unur_fstr_error_deriv (const struct ftreenode *node, int line);
 static int _unur_fstr_node2string ( struct unur_string *output, const struct ftreenode *node,
 				    const char *variable, const char *function, int spaces );
-static int _unur_fstr_print ( struct unur_string *output, const char *symb, const double number );
-static int _unur_fstr_print_C ( struct unur_string *output, const char *symb, const double number );
+static int _unur_fstr_print ( struct unur_string *output, const char *symb, double number );
+static int _unur_fstr_print_C ( struct unur_string *output, const char *symb, double number );
 static int _unur_fstr_C_specfunct ( FILE *out, unsigned flags );
 static int _unur_fstr_C_sgn ( FILE *out );
 static int _unur_fstr_C_sec ( FILE *out );
-static int _unur_fstr_print_F ( struct unur_string *output, const char *symb, const double number );
+static int _unur_fstr_print_F ( struct unur_string *output, const char *symb, double number );
 static int _unur_fstr_F_specfunct ( FILE *out, unsigned flags );
 static int _unur_fstr_J_specfunct ( FILE *out, unsigned flags );
 static int _unur_fstr_J_sgn ( FILE *out );
