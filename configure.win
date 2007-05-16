@@ -1,0 +1,7 @@
+# configure script for compiling 'Runuran' package for Win32.
+# Assumes that the `cp' program exists.
+
+echo "Creating 'src/config.h'"
+echo "(Manual configuration might be required)"
+
+cp src/config.w32  src/config.h

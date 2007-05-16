@@ -1,0 +1,46 @@
+# -*- Makefile -*- for Windows
+
+# --- Package name -----------------------------------------------------------
+
+pkg = Runuran
+
+# --- Location of UNU.RAN ----------------------------------------------------
+
+UNURAN_DIR := unuran-src
+UNURAN_SRC := $(wildcard ${UNURAN_DIR}/*/*.c)
+UNURAN_CPPFLAGS := -I. -I${UNURAN_DIR} -DHAVE_CONFIG_H
+
+# --- File lists -------------------------------------------------------------
+
+R_UNURAN_SRC := Runuran.c Runuran_distr.c ${UNURAN_SRC}
+R_UNURAN_OBJ := $(R_UNURAN_SRC:.c=.o)
+R_UNURAN_SHLIB := $(pkg).dll
+
+# --- Load make rules for windows --------------------------------------------
+
+include $(RHOME)/src/gnuwin32/MkRules
+
+# --- Compiler and linker flags ----------------------------------------------
+
+CPPFLAGS = $(PKG_CPPFLAGS) $(UNURAN_CPPFLAGS) -I$(RHOME)/include
+CFLAGS = $(CPPFLAGS) $(DEBUGFLAG) -O2 $(PKG_CFLAGS)
+
+DLLLIBS = -L$(RHOME)/src/gnuwin32 -L$(RHOME)/bin -lR
+
+# --- Create DLL -------------------------------------------------------------
+
+all: $(R_UNURAN_SHLIB)
+
+$(R_UNURAN_SHLIB): $(R_UNURAN_OBJ)
+	$(DLL) --shared -s -o $@ $(R_UNURAN_OBJ) $(DLLLIBS)
+
+# --- Clear working space ----------------------------------------------------
+
+mostlyclean: clean
+
+clean:
+	@echo "Clear working space"
+	@find ./ -type f -name '*.o' -exec rm -v {} ';'
+	@-rm -rf .libs _libs *.dll
+
+# --- End --------------------------------------------------------------------
