@@ -12,14 +12,13 @@
 \description{
   R interface to the UNU.RAN library for Universal Non-Uniform RANdom
   variate generators}
-}
 
 \details{
   \tabular{ll}{
     Package: \tab Runuran       \cr
     Type:    \tab Package       \cr
-    Version: \tab 0.5           \cr
-    Date:    \tab 2007-08-01    \cr
+    Version: \tab 0.6           \cr
+    Date:    \tab 2007-09-01    \cr
     License: \tab GPL 2 or later\cr
   }
   This package provides an interface to the UNU.RAN library for universal

@@ -12,7 +12,10 @@ static FILE *_unur_logfile_open( void );
 static FILE *unur_stream = NULL;
 static const char GENID_UNKNOWN[] = "UNURAN";
 void
-_unur_log_printf( const char *genid, const char *filename, int line, const char *format, ... )
+_unur_log_printf( const char *genid ATTRIBUTE__UNUSED,
+		  const char *filename ATTRIBUTE__UNUSED, 
+		  int line ATTRIBUTE__UNUSED, 
+		  const char *format ATTRIBUTE__UNUSED, ... )
 {
 #ifdef UNUR_ENABLE_LOGGING
   va_list ap;
@@ -29,7 +32,7 @@ _unur_log_printf( const char *genid, const char *filename, int line, const char 
 #endif
 } 
 void
-_unur_log_printf_simple( const char *format, ... )
+_unur_log_printf_simple( const char *format ATTRIBUTE__UNUSED, ... )
 {
 #ifdef UNUR_ENABLE_LOGGING
   va_list ap;

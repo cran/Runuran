@@ -375,7 +375,7 @@ unur_tdr_chg_truncated( struct unur_gen *gen, double left, double right )
     return UNUR_ERR_DISTR_SET;
   }
   Umin = _unur_tdr_eval_cdfhat(gen,left);
-  Umax = _unur_tdr_eval_cdfhat(gen,right);
+  Umax = (right < DISTR.domain[1]) ? _unur_tdr_eval_cdfhat(gen,right) : 1.;
   if (Umin > Umax) {
     _unur_error(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
     return UNUR_ERR_SHOULD_NOT_HAPPEN;

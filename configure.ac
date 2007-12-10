@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 
 dnl --- Initialize ----------------------------------------------------------- 
 AC_PREREQ(2.59)
-AC_INIT([Runuran],[0.5],[unuran@statmath.wu-wien.ac.at])
+AC_INIT([Runuran],[0.6],[unuran@statmath.wu-wien.ac.at])
 AC_CONFIG_HEADER([src/config.h])
 
 dnl --- Configure flags ------------------------------------------------------
@@ -32,6 +32,10 @@ export CFLAGS=`"${R_HOME}/bin/R" CMD config CFLAGS`
 export CPPFLAGS=`"${R_HOME}/bin/R" CMD config CPPFLAGS`
 AC_PROG_CC
 AC_PROG_CPP
+
+dnl --- Checks for libraries -------------------------------------------------
+dnl libm: the standard math library
+AC_CHECK_LIB([m], [sqrt])
 
 dnl --- Checks for header files ----------------------------------------------
 AC_HEADER_STDC

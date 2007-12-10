@@ -395,8 +395,9 @@ _Runuran_cont_eval_dpdf( double x, const struct unur_distr *distr )
 
 SEXP
 Runuran_cmv_init (SEXP sexp_obj, SEXP sexp_env, 
-		  SEXP sexp_dim, SEXP sexp_pdf, SEXP sexp_mode,
-		  SEXP sexp_domain)
+		  SEXP sexp_dim, SEXP sexp_pdf,
+		  SEXP sexp_mode, SEXP sexp_center,
+		  SEXP sexp_ll, SEXP sexp_ur)
      /*----------------------------------------------------------------------*/
      /* Create and initialize UNU.RAN object for continuous multivariate     */
      /* distribution.                                                        */
@@ -407,13 +408,16 @@ Runuran_cmv_init (SEXP sexp_obj, SEXP sexp_env,
      /*   dim    ... dimensions of distribution                              */
      /*   pdf    ... PDF of distribution                                     */
      /*   mode   ... mode of distribution                                    */
+     /*   center ... center of distribution                                  */
+     /*   ll, ur ... lower left and upper right vertex of rectangular domain */
      /*----------------------------------------------------------------------*/
 {
   SEXP sexp_distr;
   struct Runuran_distr_cmv *Rdistr;
   struct unur_distr *distr;
   const int *dim;
-  const double *mode;
+  const double *mode, *center;
+  const double *ll, *ur;
   unsigned int error = 0u;
 
   /* make tag for R object */
@@ -445,12 +449,25 @@ Runuran_cmv_init (SEXP sexp_obj, SEXP sexp_env,
   if (!isNull(sexp_pdf))
     error |= unur_distr_cvec_set_pdf(distr, _Runuran_cmv_eval_pdf);
 
+  /* set domain */
+  if (!isNull(sexp_ll) && !isNull(sexp_ur)) {
+    ll = REAL(sexp_ll);
+    ur = REAL(sexp_ur);
+    error |= unur_distr_cvec_set_domain_rect(distr, ll, ur);
+  }  
+  
   /* set mode */
   if (!isNull(sexp_mode)) {
     mode = REAL(sexp_mode);
     error |= unur_distr_cvec_set_mode(distr, mode);
   }
-  
+
+  /* set center */
+  if (!isNull(sexp_center)) {
+    center = REAL(sexp_center);
+    error |= unur_distr_cvec_set_center(distr, center);
+  }
+
   /* check return codes */
   if (error) {
     Free(Rdistr);

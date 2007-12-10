@@ -118,6 +118,7 @@
 #include <methods/hist.h>
 
 /* methods for continuous multivariate distributions */
+#include <methods/mvtdr.h>
 #include <methods/norta.h>
 #include <methods/vempk.h>
 #include <methods/vnrou.h>

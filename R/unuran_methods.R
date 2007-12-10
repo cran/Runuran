@@ -29,22 +29,29 @@
 
 urtdr <- function (n, pdf, dpdf, lb=-Inf, ub=Inf, islog=TRUE, ...) {
         ## the probability density function is obligatory and must be a function
+
         if (missing(pdf))
                 stop ("argument 'pdf' required")
         if (! is.function(pdf))
                 stop ("argument 'pdf' must be of class 'function'")
         f <- function(x) pdf(x, ...) 
+
         ## we also need the derivative of the PDF
         if (missing(dpdf)) {
                 ## use numerical derivative
-                dpdf <- function(x) {
+                df <- function(x) {
                         numerical.derivative(x,f)
                 }
         }
-        if (! is.function(dpdf) )
-                stop ("argument 'dpdf' must be of class 'function'")
+        else{ 
+          if (! is.function(dpdf) )
+               stop ("argument 'dpdf' must be of class 'function'")
+          else df <- function(x) dpdf(x,...)
+	}	
+        
+
         ## S4 class for continuous distribution
-        dist <- new("unuran.cont", pdf=pdf, dpdf=dpdf, lb=lb, ub=ub, islog=islog)
+        dist <- new("unuran.cont", pdf=f, dpdf=df, lb=lb, ub=ub, islog=islog)
         ## create UNU.RAN object
         unr <- unuran.new(dist, "tdr")
         ## draw sample
@@ -131,7 +138,7 @@ urdau <- function (n, probvector, from = 0, by = 1) {
 ## Generate continuous random variates from a given PDF
 ##
 
-urhitro <- function (n, dim=1, pdf, mode=NULL, thinning=1, burnin=0, ...) {
+urhitro <- function (n, dim=1, pdf, mode=NULL, center=NULL, ll=NULL, ur=NULL, thinning=1, burnin=0, ...) {
         ## the probability density function is obligatory and must be a function
         if (missing(pdf))
                 stop ("argument 'pdf' required")
@@ -139,7 +146,7 @@ urhitro <- function (n, dim=1, pdf, mode=NULL, thinning=1, burnin=0, ...) {
                 stop ("argument 'pdf' must be of class 'function'")
         f <- function(x) pdf(x, ...) 
         ## S4 class for continuous multivariate distribution
-        dist <- new("unuran.cmv", dim=dim, pdf=pdf, mode=mode)
+        dist <- new("unuran.cmv", dim=dim, pdf=f, mode=mode, center=center, ll=ll, ur=ur)
         ## create UNU.RAN object
         method <- paste("hitro;thinning=",thinning,";burnin=",burnin, sep="")
         cat(method,"\n")

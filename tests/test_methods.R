@@ -57,6 +57,24 @@ urtdr.norm.wlwod <- function (n) {
 unur.test.cont("urtdr.norm.wlwod", rfunc=urtdr.norm.wlwod, pfunc=pnorm)
 
 
+## test arguments passed to PDF
+urtdr.norm.param <- function (n) {
+        pdf <- function (x,a) { exp(a*x^2) }
+        urtdr(n, pdf=pdf, islog=FALSE, a=-1/2)
+}
+unur.test.cont("urtdr.norm.param", rfunc=urtdr.norm.param, pfunc=pnorm)
+
+urtdr.norm.R <- function (n) {
+        urtdr(n, pdf=dnorm, islog=FALSE)
+}
+unur.test.cont("urtdr.norm.R", rfunc=urtdr.norm.R, pfunc=pnorm)
+
+urtdr.t.R <- function (n,df) {
+        urtdr(n, pdf=dt, islog=FALSE,df=df)
+}
+unur.test.cont("urtdr.t.R", rfunc=urtdr.t.R, pfunc=pt, df=8)
+
+
 ## --- DISCR: Chi^2 goodness-of-fit test ------------------------------------
 
 ## DGT (Discrete Guide Table method)
@@ -97,6 +115,7 @@ urdau.binom <- function (n,lb=0,ub=size) {
 unur.test.discr("urdau.binom", rfunc=urdau.binom, dfunc=binom.pmf, domain=c(0,size))
 unur.test.discr("urdau.binom", rfunc=urdau.binom, pv=binom.probs, domain=c(0,size))
 
+
 ## --- CMV: Chi^2 goodness-of-fit test --------------------------------------
 
 samplesize <- 1.e4
@@ -124,6 +143,7 @@ vnrou.norm <- function (n) {
         unuran.sample(gen,n)
 }
 unur.test.cmv("vnrou.norm", rfunc=vnrou.norm, pfunc=pnorm)
+
 
 ## -- Print statistics ------------------------------------------------------
 

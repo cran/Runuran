@@ -37,9 +37,11 @@ setClass( "unuran.cmv",
 ## Initialize ---------------------------------------------------------------
 
 setMethod( "initialize", "unuran.cmv",
-          function(.Object, dim=1, pdf=NULL, mode=NULL) {
-                  ## dim .... dimension of distribution
-                  ## pdf .... probability density function (PDF)
+          function(.Object, dim=1, pdf=NULL, mode=NULL, center=NULL, ll=NULL, ur=NULL) {
+                  ## dim ..... dimension of distribution
+                  ## pdf ..... probability density function (PDF)
+                  ## mode .... mode of distribution
+                  ## ll, ur .. lower left and upper right vertex of rectangular domain
 
                   ## Check entries
                   ndim <- as.integer(dim)
@@ -51,6 +53,12 @@ setMethod( "initialize", "unuran.cmv",
                           stop("invalid argument 'mode'", call.=FALSE)
                   if( (! is.null(mode)) && length(mode)!=ndim ) 
                           stop("argument 'mode' must have length 'dim'", call.=FALSE)
+                  if( (! is.null(center)) && length(center)!=ndim ) 
+                          stop("argument 'center' must have length 'dim'", call.=FALSE)
+                  if( (! is.null(ll)) && length(ll)!=ndim ) 
+                          stop("argument 'll' must have length 'dim'", call.=FALSE)
+                  if( (! is.null(ur)) && length(ur)!=ndim ) 
+                          stop("argument 'ur' must have length 'dim'", call.=FALSE)
                   
                   ## Store informations (if provided)
                   .Object@ndim <- ndim
@@ -62,7 +70,7 @@ setMethod( "initialize", "unuran.cmv",
                   ## Create UNUR_DISTR object
                   .Object@distr <-.Call("Runuran_cmv_init",
                                         .Object, .Object@env,
-                                        .Object@ndim, .Object@pdf, mode,
+                                        .Object@ndim, .Object@pdf, mode, center, ll, ur,
                                         PACKAGE="Runuran")
 
                   ## Check UNU.RAN object

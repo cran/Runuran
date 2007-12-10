@@ -1,3 +1,17 @@
+Version 0.6: 2007-12-10
+
+        - added slot for a rectangular domain and the center 
+          (point in main region of distribution) for multivariate 
+          distribution class 'distr.cmv'
+
+        - new method MVTDR in UNU.RAN
+
+        - fixed broken optional arguments in routines urtdr() and urhitr()
+            (The optional arguments were not passed to the given
+            density function in contradiction to the help page of
+	    these routines.)
+
+
 Version 0.5: 2007-08-01
 
 	- added S4 classes for distribution objects:
@@ -9,6 +23,7 @@ Version 0.5: 2007-08-01
 	- added support for multivariate distributions
 
 	- added routine 'urtdr'
+
 
 Version 0.4: 2007-05-16
 

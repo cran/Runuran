@@ -106,7 +106,7 @@ for (i in 1:n.rep.params)
 for (i in 1:n.rep.domains)
         unur.test.cont("t", df=2, domain=sort(rnorm(2)))
 for (i in 1:n.rep.params)
-        unur.test.cont("t", df=rgamma(1,shape=2))
+        unur.test.cont("t", df=0.1+rgamma(1,shape=2))
 
 ## Weibull distribution - (replacement for rweibull) ------------------------
 for (i in 1:n.rep.domains) {

@@ -4,10 +4,11 @@
 #include <unur_source.h>
 unsigned _unur_default_debugflag = UNUR_DEBUGFLAG_DEFAULT;
 int
-unur_set_debug( struct unur_par *par, unsigned debug )
+unur_set_debug( struct unur_par *par ATTRIBUTE__UNUSED,
+		unsigned debug ATTRIBUTE__UNUSED )
 {
-  _unur_check_NULL( NULL,par,UNUR_ERR_NULL );
 #ifdef UNUR_ENABLE_LOGGING
+  _unur_check_NULL( NULL,par,UNUR_ERR_NULL );
   par->debug = debug;
   return UNUR_SUCCESS;
 #else
@@ -16,10 +17,11 @@ unur_set_debug( struct unur_par *par, unsigned debug )
 #endif
 } 
 int
-unur_chg_debug( struct unur_gen *gen, unsigned debug )
+unur_chg_debug( struct unur_gen *gen ATTRIBUTE__UNUSED,
+		unsigned debug ATTRIBUTE__UNUSED )
 {
-  CHECK_NULL( gen, UNUR_ERR_NULL );
 #ifdef UNUR_ENABLE_LOGGING
+  CHECK_NULL( gen, UNUR_ERR_NULL );
   gen->debug = debug;
   return UNUR_SUCCESS;
 #else
