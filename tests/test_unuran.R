@@ -29,6 +29,7 @@ unr <- new("unuran", "normal()")
 ## Print object
 unr
 print(unr)
+unuran.details(unr)
 
 ## Draw samples
 unuran.sample(unr)
@@ -50,6 +51,12 @@ x <- unuran.sample(unr, samplesize)
 pval <- chisq.test( hist(pnorm(x),plot=FALSE,breaks=breaks)$density )$p.value
 if (pval < alpha) stop("chisq test FAILED!  p-value=",signif(pval))
 
+## another example (for testing print)
+unr <- new("unuran", "normal()", "arou")
+unr
+print(unr)
+unuran.details(unr)
+
 ## --- Continuous distributions - S4 distribution object --------------------
 
 ## use PDF
@@ -57,6 +64,7 @@ gausspdf <- function (x) { exp(-0.5*x^2) }
 gaussdpdf <- function (x) { -x*exp(-0.5*x^2) }
 gauss <- new("unuran.cont", pdf=gausspdf, dpdf=gaussdpdf, islog=FALSE)
 unr <- 0; unr <- unuran.new(gauss, "tdr")
+unr
 x <- unuran.sample(unr, samplesize)
 pval <- chisq.test( hist(pnorm(x),plot=FALSE,breaks=breaks)$density )$p.value
 if (pval < alpha) stop("chisq test FAILED!  p-value=",signif(pval))
@@ -66,6 +74,17 @@ gausspdf <- function (x) { -0.5*x^2 }
 gaussdpdf <- function (x) { -x }
 gauss <- new("unuran.cont", pdf=gausspdf, dpdf=gaussdpdf, islog=TRUE)
 unr <- 0; unr <- unuran.new(gauss, "tdr")
+unr
+x <- unuran.sample(unr, samplesize)
+pval <- chisq.test( hist(pnorm(x),plot=FALSE,breaks=breaks)$density )$p.value
+if (pval < alpha) stop("chisq test FAILED!  p-value=",signif(pval))
+
+## use logPDF (use ARS to test 'print' function)
+gausspdf <- function (x) { -0.5*x^2 }
+gaussdpdf <- function (x) { -x }
+gauss <- new("unuran.cont", pdf=gausspdf, dpdf=gaussdpdf, islog=TRUE)
+unr <- 0; unr <- unuran.new(gauss, "ars")
+unr
 x <- unuran.sample(unr, samplesize)
 pval <- chisq.test( hist(pnorm(x),plot=FALSE,breaks=breaks)$density )$p.value
 if (pval < alpha) stop("chisq test FAILED!  p-value=",signif(pval))

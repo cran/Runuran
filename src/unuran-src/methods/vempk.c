@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -24,6 +24,9 @@ static int _unur_vempk_sample_cvec( struct unur_gen *gen, double *result );
 static int compute_mean_covar( double *data, int n_data, int dim, double *xbar, double *S );
 #ifdef UNUR_ENABLE_LOGGING
 static void _unur_vempk_debug_init( const struct unur_par *par, const struct unur_gen *gen );
+#endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_vempk_info( struct unur_gen *gen, int help );
 #endif
 #define DISTR_IN  distr->data.cvemp      
 #define PAR       ((struct unur_vempk_par*)par->datap) 
@@ -159,6 +162,9 @@ _unur_vempk_create( struct unur_par *par )
   GEN->smoothing = PAR->smoothing;    
   GEN->kerngen = NULL;               
   GEN->xbar = NULL;                  
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_vempk_info;
+#endif
   return gen;
 } 
 struct unur_gen *
@@ -280,5 +286,35 @@ _unur_vempk_debug_init( const struct unur_par *par, const struct unur_gen *gen )
   else
     fprintf(log,"%s: no variance correction\n",gen->genid);
   fprintf(log,"%s:\n",gen->genid);
+} 
+#endif   
+#ifdef UNUR_ENABLE_INFO
+void
+_unur_vempk_info( struct unur_gen *gen, int help )
+{
+  struct unur_string *info = gen->infostr;
+  _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
+  _unur_string_append(info,"distribution:\n");
+  _unur_distr_info_typename(gen);
+  _unur_string_append(info,"   dimension = %d\n",GEN->dim);
+  _unur_string_append(info,"   functions = DATA  [length=%d]\n", GEN->n_observ);
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"method: VEMPK (EMPirical distribution with Kernel smoothing)\n");
+  _unur_string_append(info,"   kernel type = multinormal\n");
+  _unur_string_append(info,"   smoothing factor = %g\n", GEN->smoothing);
+  _unur_string_append(info,"   bandwith = %g\n", GEN->hact);
+  if (gen->variant & VEMPK_VARFLAG_VARCOR)
+    _unur_string_append(info,"   variance correction factor = %g\n", GEN->corfac);
+  else
+    _unur_string_append(info,"   no variance correction\n");
+  _unur_string_append(info,"\n");
+  if (help) {
+    _unur_string_append(info,"parameters:\n");
+    _unur_string_append(info,"   smoothing = %g   %s\n", GEN->smoothing,
+			(gen->set & VEMPK_SET_SMOOTHING) ? "" : "[default]");
+    if (gen->variant & VEMPK_VARFLAG_VARCOR)
+      _unur_string_append(info,"   varcor = on\n");
+    _unur_string_append(info,"\n");
+  }
 } 
 #endif   

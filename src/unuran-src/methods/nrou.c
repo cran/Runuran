@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -12,6 +12,9 @@
 #include "x_gen_source.h"
 #include "nrou.h"
 #include "nrou_struct.h"
+#ifdef UNUR_ENABLE_INFO
+#  include <tests/unuran_tests.h>
+#endif
 #define NROU_RECT_SCALING (1.e-4)
 #define BD_MAX    (DBL_MAX/1000.)
 #define NROU_VARFLAG_VERIFY   0x002u   
@@ -34,6 +37,9 @@ static double _unur_aux_bound_umin(double x, void *p);
 static int _unur_nrou_rectangle( struct unur_gen *gen );
 #ifdef UNUR_ENABLE_LOGGING
 static void _unur_nrou_debug_init( const struct unur_gen *gen );
+#endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_nrou_info( struct unur_gen *gen, int help );
 #endif
 #define DISTR_IN  distr->data.cont      
 #define PAR       ((struct unur_nrou_par*)par->datap) 
@@ -174,10 +180,10 @@ int
 _unur_nrou_reinit( struct unur_gen *gen )
 {
   int rcode;
-  SAMPLE = _unur_nrou_getSAMPLE(gen);
   gen->set &= ~(NROU_SET_V | NROU_SET_U);
   if ( (rcode = _unur_nrou_check_par(gen)) != UNUR_SUCCESS)
     return rcode;
+  SAMPLE = _unur_nrou_getSAMPLE(gen);
   return _unur_nrou_rectangle(gen);
 } 
 struct unur_gen *
@@ -197,6 +203,9 @@ _unur_nrou_create( struct unur_par *par )
   GEN->vmax  = PAR->vmax;             
   GEN->center = PAR->center;          
   GEN->r = PAR->r;                    
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_nrou_info;
+#endif
   return gen;
 } 
 int
@@ -297,7 +306,7 @@ _unur_aux_bound_umax(double x, void *p)
   struct unur_gen *gen;
   gen = p; 
   if (_unur_isone(GEN->r)) 
-    return (x-GEN->center)*sqrt( _unur_cont_PDF((x),(gen->distr)) );
+    return (x-GEN->center) * sqrt( _unur_cont_PDF((x),(gen->distr)) );
   else
     return (x-GEN->center) * pow( _unur_cont_PDF((x),(gen->distr)),
 				 GEN->r / (1.+ GEN->r) );
@@ -386,5 +395,71 @@ _unur_nrou_debug_init( const struct unur_gen *gen )
   fprintf(log,"%s:    left  upper point = (%g,%g)\n",gen->genid,GEN->umin,GEN->vmax);
   fprintf(log,"%s:    right upper point = (%g,%g)\n",gen->genid,GEN->umax,GEN->vmax);
   fprintf(log,"%s:\n",gen->genid);
+} 
+#endif   
+#ifdef UNUR_ENABLE_INFO
+void
+_unur_nrou_info( struct unur_gen *gen, int help )
+{
+  struct unur_string *info = gen->infostr;
+  struct unur_distr *distr = gen->distr;
+  int samplesize = 10000;
+  double harea;
+  _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
+  _unur_string_append(info,"distribution:\n");
+  _unur_distr_info_typename(gen);
+  _unur_string_append(info,"   functions = PDF\n");
+  _unur_string_append(info,"   domain    = (%g, %g)\n", DISTR.domain[0],DISTR.domain[1]);
+  _unur_string_append(info,"   center    = %g", unur_distr_cont_get_center(distr));
+  if ( !(distr->set & UNUR_DISTR_SET_CENTER) ) {
+    if ( distr->set & UNUR_DISTR_SET_MODE )
+      _unur_string_append(info,"  [= mode]\n");
+    else 
+      _unur_string_append(info,"  [default]\n");
+  }
+  if (help) {
+    if ( distr->set & UNUR_DISTR_SET_MODE_APPROX ) 
+      _unur_string_append(info,"\n[ Hint: %s\n\t%s ]\n",
+			  "You may provide the \"mode\" or at least",
+			  "the \"center\" (a point near the mode)."); 
+  }
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"method: NROU (Naive Ratio-Of-Uniforms)\n");
+  _unur_string_append(info,"   r = %g\n\n", GEN->r);
+  _unur_string_append(info,"performance characteristics:\n");
+  _unur_string_append(info,"   bounding rectangle = (%g,%g) x (%g,%g)\n",
+		      GEN->umin,GEN->umax, 0.,GEN->vmax);
+  harea = (GEN->umax - GEN->umin) * GEN->vmax;
+  _unur_string_append(info,"   area(hat) = %g\n", harea);
+  _unur_string_append(info,"   rejection constant ");
+  if (distr->set & UNUR_DISTR_SET_PDFAREA)
+    _unur_string_append(info,"= %g\n", 2. * harea / DISTR.area);
+  else
+    _unur_string_append(info,"= %.2f [approx.]\n",
+			unur_test_count_urn(gen,samplesize,0,NULL)/(2.*samplesize));
+  _unur_string_append(info,"\n");
+  if (help) {
+    _unur_string_append(info,"parameters:\n");
+    _unur_string_append(info,"   r = %g  %s\n", GEN->r,
+			(gen->set & NROU_SET_R) ? "" : "[default]");
+    _unur_string_append(info,"   center = %g  %s\n",GEN->center,
+			(gen->set & NROU_SET_CENTER) ? "" : "[default]");
+    _unur_string_append(info,"   v = %g  %s\n", GEN->vmax,
+			(gen->set & NROU_SET_V) ? "" : "[numeric.]");
+    _unur_string_append(info,"   u = (%g, %g)  %s\n", GEN->umin,GEN->umax,
+			(gen->set & NROU_SET_U) ? "" : "[numeric.]");
+    if (gen->variant & NROU_VARFLAG_VERIFY)
+      _unur_string_append(info,"   verify = on\n");
+    _unur_string_append(info,"\n");
+  }
+  if (help) {
+    if ( !(gen->set & NROU_SET_V) )
+      _unur_string_append(info,"[ Hint: %s ]\n",
+			  "You can set \"v\" to avoid numerical estimate." );
+    if ( !(gen->set & NROU_SET_U) )
+      _unur_string_append(info,"[ Hint: %s ]\n",
+			  "You can set \"u\" to avoid slow (and inexact) numerical estimates." );
+    _unur_string_append(info,"\n");
+  }
 } 
 #endif   

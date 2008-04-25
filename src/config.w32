@@ -36,7 +36,7 @@
 #define HAVE_FLOAT_H 1
 
 /* Define to 1 if you have the `floor' function. */
-/* #undef HAVE_FLOOR */
+#define HAVE_FLOOR 1
 
 /* Define to 1 if you have the `gettimeofday' function. */
 #define HAVE_GETTIMEOFDAY 1
@@ -54,10 +54,10 @@
 #define HAVE_MEMORY_H 1
 
 /* Define to 1 if you have the `pow' function. */
-#undef HAVE_POW
+#define HAVE_POW 1
 
 /* Define to 1 if you have the `sqrt' function. */
-#undef HAVE_SQRT
+#define HAVE_SQRT 1
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1
@@ -102,19 +102,23 @@
 #define PACKAGE_NAME "Runuran"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Runuran 0.1"
+#define PACKAGE_STRING "Runuran 0.7"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "runuran"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.1"
+#define PACKAGE_VERSION "0.7"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
 #define TIME_WITH_SYS_TIME 1
+
+/* Define to 1 if you want to use the info routine for printing informations
+   about UNU.RAN objects */
+#define UNUR_ENABLE_INFO 1
 
 /* Define to 1 if you want to use a logfile for logging informations about
    UNU.RAN objects */

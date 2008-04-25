@@ -22,7 +22,7 @@ setClass( "unuran",
          ## slots:
          representation( 
                         unur       = "externalptr",   # pointer to UNU.RAN object
-                        distr      = "unuran.distr",   # pointer to S4 distribution object
+                        distr      = "unuran.distr",  # pointer to S4 distribution object
                         distr.str  = "character",     # distribution
                         method.str = "character"      # generation method
                         ),
@@ -106,10 +106,22 @@ setMethod( "print", "unuran",
                   cat("\nObject is UNU.RAN object:\n")
                   cat("\tmethod: ",x@method.str,"\n")
                   cat("\tdistr:  ",x@distr.str,"\n\n")
+                  .Call("Runuran_print", x@unur, FALSE, PACKAGE="Runuran")
+                  cat("")
 } )
 
 setMethod( "show", "unuran",
           function(object) { print(object) } )
+
+## unuran.details
+## (print for information and hints)
+unuran.details <- function(unur) {
+        cat("\nObject is UNU.RAN object:\n")
+        cat("\tmethod: ",unur@method.str,"\n")
+        cat("\tdistr:  ",unur@distr.str,"\n\n")
+        .Call("Runuran_print", unur@unur, TRUE, PACKAGE="Runuran")
+        cat("")
+}
 
 
 ## End ----------------------------------------------------------------------

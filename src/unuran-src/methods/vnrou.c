@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -16,6 +16,9 @@
 #include "x_gen_source.h"
 #include "vnrou.h"
 #include "vnrou_struct.h"
+#ifdef UNUR_ENABLE_INFO
+#  include <tests/unuran_tests.h>
+#endif
 #define VNROU_VARFLAG_VERIFY   0x002u   
 #define VNROU_DEBUG_REINIT   0x00000010u   
 #define VNROU_SET_U       0x001u     
@@ -32,6 +35,9 @@ static int _unur_vnrou_sample_check( struct unur_gen *gen, double *vec );
 static int _unur_vnrou_rectangle( struct unur_gen *gen );
 #ifdef UNUR_ENABLE_LOGGING
 static void _unur_vnrou_debug_init( const struct unur_gen *gen );
+#endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_vnrou_info( struct unur_gen *gen, int help );
 #endif
 #define DISTR_IN  distr->data.cvec      
 #define PAR       ((struct unur_vnrou_par*)par->datap) 
@@ -207,10 +213,10 @@ int
 _unur_vnrou_reinit( struct unur_gen *gen )
 {
   int rcode;
-  SAMPLE = _unur_vnrou_getSAMPLE(gen);
   if ( (rcode = _unur_vnrou_rectangle(gen))!=UNUR_SUCCESS) {
     return rcode;
   }
+  SAMPLE = _unur_vnrou_getSAMPLE(gen);
 #ifdef UNUR_ENABLE_LOGGING
     if (gen->debug & VNROU_DEBUG_REINIT) _unur_vnrou_debug_init(gen);
 #endif
@@ -236,6 +242,9 @@ _unur_vnrou_create( struct unur_par *par )
   if (PAR->umin != NULL) memcpy(GEN->umin, PAR->umin, GEN->dim * sizeof(double));
   if (PAR->umax != NULL) memcpy(GEN->umax, PAR->umax, GEN->dim * sizeof(double));
   GEN->center = unur_distr_cvec_get_center(gen->distr);
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_vnrou_info;
+#endif
   return gen;
 } 
 struct unur_gen *
@@ -391,5 +400,74 @@ _unur_vnrou_debug_init( const struct unur_gen *gen )
   fprintf(log,"%s:\n",gen->genid);
   fprintf(log,"%s:\tvolume = %g\t(hat = %g)\n",gen->genid, vol, vol*(GEN->r*GEN->dim+1));
   fprintf(log,"%s:\n",gen->genid);
+} 
+#endif   
+#ifdef UNUR_ENABLE_INFO
+void
+_unur_vnrou_info( struct unur_gen *gen, int help )
+{
+  struct unur_string *info = gen->infostr;
+  struct unur_distr *distr = gen->distr;
+  int samplesize = 10000;
+  int i;
+  double hvol;
+  _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
+  _unur_string_append(info,"distribution:\n");
+  _unur_distr_info_typename(gen);
+  _unur_string_append(info,"   dimension = %d\n",GEN->dim);
+  _unur_string_append(info,"   functions = PDF\n");
+  _unur_distr_cvec_info_domain(gen);
+  _unur_string_append(info,"   center    = ");
+  _unur_distr_info_vector( gen, GEN->center, GEN->dim);
+  if ( !(distr->set & UNUR_DISTR_SET_CENTER) ) {
+    if ( distr->set & UNUR_DISTR_SET_MODE )
+      _unur_string_append(info,"  [= mode]");
+    else
+      _unur_string_append(info,"  [default]");
+  }
+  _unur_string_append(info,"\n\n");
+  _unur_string_append(info,"method: VNROU (Naive Ratio-Of-Uniforms)\n");
+  _unur_string_append(info,"   r = %g\n", GEN->r);
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"performance characteristics:\n");
+  _unur_string_append(info,"   bounding rectangle = ");
+  for (i=0; i<GEN->dim; i++)
+    _unur_string_append(info,"%s(%g,%g)", i?"x":"", GEN->umin[i], GEN->umax[i]);
+  _unur_string_append(info," x (0,%g)\n", GEN->vmax);
+  hvol = GEN->vmax;
+  for (i=0; i<GEN->dim; i++)
+    hvol *= GEN->umax[i] - GEN->umin[i];
+  _unur_string_append(info,"   volume(hat) = %g\n", hvol);
+  _unur_string_append(info,"   rejection constant ");
+  if ((distr->set & UNUR_DISTR_SET_PDFVOLUME) && _unur_isone(GEN->r))
+    _unur_string_append(info,"= %g\n", (GEN->dim + 1.) * hvol / DISTR.volume);
+  else
+    _unur_string_append(info,"= %.2f  [approx.]\n",
+			unur_test_count_urn(gen,samplesize,0,NULL)/((1.+GEN->dim)*samplesize));
+  _unur_string_append(info,"\n");
+  if (help) {
+    _unur_string_append(info,"parameters:\n");
+    _unur_string_append(info,"   r = %g  %s\n", GEN->r,
+			(gen->set & VNROU_SET_R) ? "" : "[default]");
+    _unur_string_append(info,"   v = %g  %s\n", GEN->vmax,
+ 			(gen->set & VNROU_SET_V) ? "" : "[numeric.]");
+    _unur_string_append(info,"   u = ");
+    _unur_distr_info_vector( gen, GEN->umin, GEN->dim);
+    _unur_string_append(info," -- ");
+    _unur_distr_info_vector( gen, GEN->umax, GEN->dim);
+    _unur_string_append(info,"%s\n",(gen->set & VNROU_SET_U) ? "" : "  [numeric.]"); 
+    if (gen->variant & VNROU_VARFLAG_VERIFY)
+      _unur_string_append(info,"   verify = on\n");
+    _unur_string_append(info,"\n");
+  }
+  if (help) {
+    if ( !(gen->set & VNROU_SET_V) )
+      _unur_string_append(info,"[ Hint: %s ]\n",
+			  "You can set \"v\" to avoid numerical estimate." );
+    if ( !(gen->set & VNROU_SET_U) )
+      _unur_string_append(info,"[ Hint: %s ]\n",
+			  "You can set \"u\" to avoid slow (and inexact) numerical estimates." );
+    _unur_string_append(info,"\n");
+  }
 } 
 #endif   

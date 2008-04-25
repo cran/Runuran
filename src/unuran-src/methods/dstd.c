@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -11,6 +11,9 @@
 #include "x_gen_source.h"
 #include "dstd.h"
 #include "dstd_struct.h"
+#ifdef UNUR_ENABLE_INFO
+#  include <tests/unuran_tests.h>
+#endif
 #define DSTD_DEBUG_REINIT    0x00000010u   
 #define DSTD_DEBUG_CHG       0x00001000u   
 #define DSTD_SET_VARIANT          0x01u
@@ -24,6 +27,9 @@ static void _unur_dstd_free( struct unur_gen *gen);
 #ifdef UNUR_ENABLE_LOGGING
 static void _unur_dstd_debug_init( const struct unur_gen *gen );
 static void _unur_dstd_debug_chg_pmfparams( const struct unur_gen *gen );
+#endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_dstd_info( struct unur_gen *gen, int help );
 #endif
 #define DISTR_IN  distr->data.discr     
 #define PAR       ((struct unur_dstd_par*)par->datap) 
@@ -40,7 +46,7 @@ unur_dstd_new( const struct unur_distr *distr )
   if (distr->type != UNUR_DISTR_DISCR) {
     _unur_error(GENTYPE,UNUR_ERR_DISTR_INVALID,""); return NULL; }
   COOKIE_CHECK(distr,CK_DISTR_DISCR,NULL);
-  if (distr->id == UNUR_DISTR_GENERIC) {
+  if (!(distr->id & UNUR_DISTR_STD) ) {
     _unur_error(GENTYPE,UNUR_ERR_DISTR_INVALID,"standard distribution");
     return NULL;
   }
@@ -144,6 +150,9 @@ _unur_dstd_create( struct unur_par *par )
   GEN->sample_routine_name = NULL ;  
   GEN->umin        = 0;    
   GEN->umax        = 1;    
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_dstd_info;
+#endif
   return gen;
 } 
 int
@@ -223,5 +232,32 @@ _unur_dstd_debug_chg_pmfparams( const struct unur_gen *gen )
   fprintf(log,"%s: parameters of distribution changed:\n",gen->genid);
   for( i=0; i<DISTR.n_params; i++ )
       fprintf(log,"%s:\tparam[%d] = %g\n",gen->genid,i,DISTR.params[i]);
+} 
+#endif   
+#ifdef UNUR_ENABLE_INFO
+void
+_unur_dstd_info( struct unur_gen *gen, int help )
+{
+  struct unur_string *info = gen->infostr;
+  int samplesize = 10000;
+  _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
+  _unur_string_append(info,"distribution:\n");
+  _unur_distr_info_typename(gen);
+  _unur_string_append(info,"   domain    = (%d, %d)\n", DISTR.domain[0],DISTR.domain[1]);
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"method: DSTD (special generator for Discrete STandarD distribution)\n");
+  _unur_string_append(info,"   variant = %d  %s\n", gen->variant,
+		      (GEN->is_inversion)?"[implements inversion method]" : "");
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"performance characteristics:\n");
+  _unur_string_append(info,"   E [#urn] = %.2f  [approx.]\n",
+		      unur_test_count_urn(gen,samplesize,0,NULL)/((double)samplesize));
+  _unur_string_append(info,"\n");
+  if (help) {
+    _unur_string_append(info,"parameters:\n");
+    _unur_string_append(info,"   variant = %d  %s\n", gen->variant,
+			(gen->set & DSTD_SET_VARIANT) ? "" : "[default]");
+    _unur_string_append(info,"\n");
+  }
 } 
 #endif   

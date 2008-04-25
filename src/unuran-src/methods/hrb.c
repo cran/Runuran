@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -9,6 +9,10 @@
 #include "x_gen_source.h"
 #include "hrb.h"
 #include "hrb_struct.h"
+#ifdef UNUR_ENABLE_INFO
+#  include <tests/unuran_tests.h>
+#endif
+#define HRB_EMERGENCY_BREAK  (100000)
 #define HRB_VARFLAG_VERIFY     0x01u    
 #define HRB_DEBUG_REINIT    0x00000010u   
 #define HRB_DEBUG_SAMPLE    0x01000000u   
@@ -25,6 +29,9 @@ static double _unur_hrb_sample_check( struct unur_gen *gen );
 #ifdef UNUR_ENABLE_LOGGING
 static void _unur_hrb_debug_init( const struct unur_gen *gen );
 static void _unur_hrb_debug_sample( const struct unur_gen *gen, double x, int i );
+#endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_hrb_info( struct unur_gen *gen, int help );
 #endif
 #define DISTR_IN  distr->data.cont      
 #define PAR       ((struct unur_hrb_par*)par->datap) 
@@ -116,9 +123,9 @@ int
 _unur_hrb_reinit( struct unur_gen *gen )
 {
   int rcode;
-  SAMPLE = _unur_hrb_getSAMPLE(gen);
   if ( (rcode = _unur_hrb_check_par(gen)) != UNUR_SUCCESS)
     return rcode;
+  SAMPLE = _unur_hrb_getSAMPLE(gen);
   return UNUR_SUCCESS;
 } 
 struct unur_gen *
@@ -135,6 +142,9 @@ _unur_hrb_create( struct unur_par *par )
   gen->reinit = _unur_hrb_reinit;
   GEN->upper_bound = PAR->upper_bound;    
   GEN->left_border = 0.;             
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_hrb_info;
+#endif
   return gen;
 } 
 int
@@ -179,15 +189,20 @@ _unur_hrb_sample( struct unur_gen *gen )
 { 
   double U,V,E,X;
   double lambda;
+  int i;
   CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_HRB_GEN,INFINITY);
   lambda = GEN->upper_bound;
   X = GEN->left_border;
-  for(;;) {
+  for(i=1;;i++) {
     while ( _unur_iszero(U = 1.-_unur_call_urng(gen->urng)) );
     E = -log(U) / lambda;
     X += E;
     V =  lambda * _unur_call_urng(gen->urng);
     if( V <= HR(X) ) return X;
+    if (i > HRB_EMERGENCY_BREAK) {
+      _unur_warning(gen->genid,UNUR_ERR_GEN_SAMPLING,"maximum number of iterations exceeded");
+      return X;
+    }
   }
 } 
 double
@@ -212,6 +227,10 @@ _unur_hrb_sample_check( struct unur_gen *gen )
       if (gen->debug & HRB_DEBUG_SAMPLE)
 	_unur_hrb_debug_sample( gen, X, i );
 #endif
+      return X;
+    }
+    if (i > HRB_EMERGENCY_BREAK) {
+      _unur_warning(gen->genid,UNUR_ERR_GEN_SAMPLING,"maximum number of iterations exceeded");
       return X;
     }
   }
@@ -247,5 +266,39 @@ _unur_hrb_debug_sample( const struct unur_gen *gen, double x, int i )
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_HRB_GEN,RETURN_VOID);
   log = unur_get_stream();
   fprintf(log,"%s: X = %g\t #iterations = %d\n",gen->genid,x,i);
+} 
+#endif   
+#ifdef UNUR_ENABLE_INFO
+void
+_unur_hrb_info( struct unur_gen *gen, int help )
+{
+  struct unur_string *info = gen->infostr;
+  int samplesize = 10000;
+  _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
+  _unur_string_append(info,"distribution:\n");
+  _unur_distr_info_typename(gen);
+  _unur_string_append(info,"   functions = HR\n");
+  _unur_string_append(info,"   domain    = (%g, %g)\n", DISTR.domain[0],DISTR.domain[1]);
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"method: HRB (Hazard Rate Bounded)\n");
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"performance characteristics:\n");
+  _unur_string_append(info,"   E[#interations] = %.2f  [approx.]\n", 
+		      unur_test_count_urn(gen,samplesize,0,NULL)/((double)samplesize));
+  _unur_string_append(info,"\n");
+  if (help) {
+    _unur_string_append(info,"parameters:\n");
+    _unur_string_append(info,"  upperbound = %g  %s\n", GEN->upper_bound,
+ 			(gen->set & HRB_SET_UPPERBOUND) ? "" : "[default]");
+    if (gen->variant & HRB_VARFLAG_VERIFY)
+      _unur_string_append(info,"   verify = on\n");
+    _unur_string_append(info,"\n");
+  }
+  if (help) {
+    if ( !(gen->set & HRB_SET_UPPERBOUND))
+      _unur_string_append(info,"[ Hint: %s ]\n",
+			  "You should set \"upperbound\" for the given hazard rate.");
+    _unur_string_append(info,"\n");
+  }
 } 
 #endif   

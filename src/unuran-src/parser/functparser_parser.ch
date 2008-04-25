@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 struct ftreenode *
@@ -112,8 +112,9 @@ _unur_STerm (struct parser_data *pdata)
   char             *symb; 
   int              token;
   CHECK_NULL(pdata,NULL);  COOKIE_CHECK(pdata,CK_FSTR_PDATA,NULL);
-  if ( _unur_fstr_next_token(pdata,&token,&symb) == UNUR_SUCCESS &&
-       symb[0] == '-' ) {
+  if ( _unur_fstr_next_token(pdata,&token,&symb) != UNUR_SUCCESS)
+    return NULL;
+  if ( symb[0] == '-' ) {
     left = _unur_fstr_create_node(NULL,0.,s_uconst,NULL,NULL); 
     right = _unur_Term(pdata);
     if (pdata->perrno) return NULL; 

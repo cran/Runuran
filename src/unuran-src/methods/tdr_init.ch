@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include "tdr_gw_init.ch"
@@ -100,6 +100,9 @@ _unur_tdr_create( struct unur_par *par )
   GEN->darsfactor = PAR->darsfactor;  
   GEN->darsrule = PAR->darsrule;      
   GEN->max_ivs = _unur_max(2*PAR->n_starting_cpoints,PAR->max_ivs);  
+#ifdef UNUR_ENABLE_INFO
+  GEN->max_ivs_info = PAR->max_ivs;   
+#endif
   GEN->max_ratio = PAR->max_ratio;    
   GEN->bound_for_adding = PAR->bound_for_adding;
   if ( (gen->distr->set & UNUR_DISTR_SET_CENTER) ||
@@ -133,6 +136,9 @@ _unur_tdr_create( struct unur_par *par )
   GEN->Umax = 1.;
   if (!(gen->set & TDR_SET_USE_DARS) && !PAR->starting_cpoints)
     gen->variant |= TDR_VARFLAG_USEDARS;
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_tdr_info;
+#endif
   return gen;
 } 
 int
@@ -200,6 +206,7 @@ _unur_tdr_reinit( struct unur_gen *gen )
   if (gen->debug & TDR_DEBUG_REINIT)
     if (gen->debug) _unur_tdr_debug_reinit_finished(gen);
 #endif
+  SAMPLE = _unur_tdr_getSAMPLE(gen);
   return UNUR_SUCCESS;
 } 
 struct unur_gen *

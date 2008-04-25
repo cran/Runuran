@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -45,9 +45,12 @@ _unur_cdf_negativebinomial(int k, const UNUR_DISTR *distr)
 int
 _unur_upd_mode_negativebinomial( UNUR_DISTR *distr )
 {
-  double m;
-  m = (DISTR.r * (1. - DISTR.p) - 1.) / DISTR.p;
-  DISTR.mode = (m<0) ? 0 : (int) (m+1);
+  if (DISTR.r > 1.) {
+    DISTR.mode = (int) ((1.+UNUR_EPSILON) * (DISTR.r - 1.) * (1. - DISTR.p) / DISTR.p);
+  }
+  else { 
+    DISTR.mode = 0.;
+  }
   if (DISTR.mode < DISTR.domain[0]) 
     DISTR.mode = DISTR.domain[0];
   else if (DISTR.mode > DISTR.domain[1]) 

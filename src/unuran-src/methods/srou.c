@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -10,6 +10,9 @@
 #include "x_gen_source.h"
 #include "srou.h"
 #include "srou_struct.h"
+#ifdef UNUR_ENABLE_INFO
+#  include <tests/unuran_tests.h>
+#endif
 #define SROU_VARFLAG_VERIFY   0x002u   
 #define SROU_VARFLAG_SQUEEZE  0x004u   
 #define SROU_VARFLAG_MIRROR   0x008u   
@@ -33,6 +36,9 @@ static int _unur_srou_rectangle( struct unur_gen *gen );
 static int _unur_gsrou_envelope( struct unur_gen *gen );
 #ifdef UNUR_ENABLE_LOGGING
 static void _unur_srou_debug_init( const struct unur_gen *gen, int is_reinit );
+#endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_srou_info( struct unur_gen *gen, int help );
 #endif
 #define DISTR_IN  distr->data.cont      
 #define PAR       ((struct unur_srou_par*)par->datap) 
@@ -241,13 +247,13 @@ int
 _unur_srou_reinit( struct unur_gen *gen )
 {
   int rcode;
-  SAMPLE = _unur_srou_getSAMPLE(gen);
   if ( (rcode = _unur_srou_check_par(gen)) != UNUR_SUCCESS)
     return rcode;
   if (gen->set & SROU_SET_R)
     rcode = _unur_gsrou_envelope( gen );
   else
     rcode = _unur_srou_rectangle( gen );
+  SAMPLE = _unur_srou_getSAMPLE(gen);
 #ifdef UNUR_ENABLE_LOGGING
   if (gen->debug & SROU_DEBUG_REINIT) _unur_srou_debug_init(gen,TRUE);
 #endif
@@ -273,6 +279,9 @@ _unur_srou_create( struct unur_par *par )
   GEN->p = 0.;
   GEN->a = GEN->b = 0.;
   GEN->log_ab = 0.;
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_srou_info;
+#endif
   return gen;
 } 
 int
@@ -613,5 +622,84 @@ _unur_srou_debug_init( const struct unur_gen *gen, int is_reinit )
     fprintf(log,"%s:    right upper point = (%g,%g)\n",gen->genid,GEN->vr,GEN->um);
   }
   fprintf(log,"%s:\n",gen->genid);
+} 
+#endif   
+#ifdef UNUR_ENABLE_INFO
+void
+_unur_srou_info( struct unur_gen *gen, int help )
+{
+  struct unur_string *info = gen->infostr;
+  struct unur_distr *distr = gen->distr;
+  int samplesize = 10000;
+  double h_area, rc;
+  _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
+  _unur_string_append(info,"distribution:\n");
+  _unur_distr_info_typename(gen);
+  _unur_string_append(info,"   functions = PDF\n");
+  _unur_string_append(info,"   domain    = (%g, %g)\n", DISTR.domain[0],DISTR.domain[1]);
+  _unur_string_append(info,"   mode      = %g   %s\n", DISTR.mode,
+		      (distr->set & UNUR_DISTR_SET_MODE_APPROX) ? "[numeric.]" : "");
+  _unur_string_append(info,"   area(PDF) = %g\n", DISTR.area);
+  if (gen->set & SROU_SET_CDFMODE)
+    _unur_string_append(info,"   F(mode)   = %g\n", GEN->Fmode); 
+  else
+    _unur_string_append(info,"   F(mode)   = [unknown]\n"); 
+  if (help) {
+    if ( distr->set & UNUR_DISTR_SET_MODE_APPROX ) 
+      _unur_string_append(info,"\n[ Hint: %s ]\n",
+			  "You may provide the \"mode\"");
+  }
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"method: SROU (Simple Ratio-Of-Uniforms)\n");
+  _unur_string_append(info,"   r = %g  %s\n", GEN->r,
+		      (gen->set & SROU_SET_R) ? "[generalized version]" : "");
+  if (gen->set & SROU_SET_CDFMODE)
+    _unur_string_append(info,"   use CDF at mode\n");
+  if (gen->variant & SROU_VARFLAG_SQUEEZE)
+    _unur_string_append(info,"   use squeeze\n");
+  if (gen->variant & SROU_VARFLAG_MIRROR)
+    _unur_string_append(info,"   use mirror principle\n");
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"performance characteristics:\n");
+  if (gen->set & SROU_SET_R) {
+    rc = unur_test_count_urn(gen,samplesize,0,NULL)/(2.*samplesize);
+    _unur_string_append(info,"   enveloping rectangle = (%g,%g) x (%g,%g)\n",
+			GEN->vl,GEN->vr, 0.,GEN->um);
+    _unur_string_append(info,"   rejection constant = %.2f  [approx.]\n", rc);
+  }
+  else {
+    _unur_string_append(info,"   bounding rectangle = (%g,%g) x (%g,%g)\n",
+			GEN->vl,GEN->vr, 0.,GEN->um);
+    h_area = (GEN->vr - GEN->vl) * GEN->um;
+    _unur_string_append(info,"   area(hat) = %g\n", h_area);
+    if (gen->set & SROU_SET_CDFMODE) 
+      rc = 2.;
+    else 
+      rc = (gen->variant & SROU_VARFLAG_MIRROR) ? 2.829 : 4.;
+    _unur_string_append(info,"   rejection constant = %g\n", rc);
+  }
+  _unur_string_append(info,"\n");
+  if (help) {
+    _unur_string_append(info,"parameters:\n");
+    _unur_string_append(info,"     r = %g  %s\n", GEN->r,
+			(gen->set & SROU_SET_R) ? "" : "[default]");
+    if (gen->set & SROU_SET_CDFMODE)
+      _unur_string_append(info,"   cdfatmode = %g\n", GEN->Fmode); 
+    else
+      _unur_string_append(info,"   cdfatmode = [not set]\n"); 
+    if (gen->variant & SROU_VARFLAG_SQUEEZE)
+      _unur_string_append(info,"   usesqueeze\n");
+    if (gen->variant & SROU_VARFLAG_MIRROR)
+      _unur_string_append(info,"   usemirror\n");
+    if (gen->variant & SROU_VARFLAG_VERIFY)
+      _unur_string_append(info,"   verify = on\n");
+    _unur_string_append(info,"\n");
+  }
+  if (help) {
+    if ( !(gen->set & SROU_SET_CDFMODE))
+      _unur_string_append(info,"[ Hint: %s ]\n",
+			  "You can set \"cdfatmode\" to reduce the rejection constant.");
+    _unur_string_append(info,"\n");
+  }
 } 
 #endif   

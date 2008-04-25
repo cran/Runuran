@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 int
@@ -291,6 +291,10 @@ _unur_tdr_ps_interval_split( struct unur_gen *gen, struct unur_tdr_interval *iv,
   int success, success_r;
   CHECK_NULL(gen,UNUR_ERR_NULL); COOKIE_CHECK(gen,CK_TDR_GEN,UNUR_ERR_COOKIE);
   CHECK_NULL(iv,UNUR_ERR_NULL);  COOKIE_CHECK(iv,CK_TDR_IV,UNUR_ERR_COOKIE);
+  if (!_unur_isfinite(x)) {
+    _unur_warning(gen->genid,UNUR_ERR_GEN_DATA,"splitting point not finite (skipped)");
+    return UNUR_ERR_SILENT;
+  }
   if ( (GEN->n_ivs * (iv->Ahat - iv->Asqueeze) / (GEN->Atotal - GEN->Asqueeze))
        < GEN->bound_for_adding)
     return UNUR_ERR_SILENT;

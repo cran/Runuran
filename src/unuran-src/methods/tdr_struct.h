@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 struct unur_tdr_par { 
@@ -54,4 +54,7 @@ struct unur_tdr_gen {
   int retry_ncpoints;           
   double  darsfactor;           
   int     darsrule;             
+#ifdef UNUR_ENABLE_INFO
+  int     max_ivs_info;         
+#endif
 };

@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 typedef double UNUR_SAMPLING_ROUTINE_CONT(struct unur_gen *gen);
@@ -44,6 +44,10 @@ struct unur_gen {
   void (*destroy)(struct unur_gen *gen);  
   struct unur_gen* (*clone)(const struct unur_gen *gen ); 
   int (*reinit)(struct unur_gen *gen);  
+#ifdef UNUR_ENABLE_INFO
+  struct unur_string *infostr; 
+  void (*info)(struct unur_gen *gen, int help); 
+#endif
 #ifdef UNUR_COOKIES
   unsigned cookie;            
 #endif

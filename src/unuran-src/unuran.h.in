@@ -99,6 +99,7 @@
 
 /* methods for continuous distributions */
 #include <methods/arou.h>
+#include <methods/ars.h>
 #include <methods/hinv.h>
 #include <methods/hrb.h>
 #include <methods/hrd.h>
@@ -111,7 +112,6 @@
 #include <methods/ssr.h>
 #include <methods/tabl.h>
 #include <methods/tdr.h>
-#include <methods/tdrgw.h>
 #include <methods/utdr.h>
 #include <methods/empk.h>
 #include <methods/empl.h>
@@ -145,6 +145,7 @@
 
 #include <distr/deprecated_distr.h>
 #include <methods/deprecated_methods.h>
+#include <methods/deprecated_tdrgw.h>
 #include <methods/deprecated_vmt.h>
 
 /*****************************************************************************/

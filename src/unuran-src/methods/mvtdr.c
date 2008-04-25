@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -17,6 +17,9 @@
 #include "tdr.h"
 #include "mvtdr.h"
 #include "mvtdr_struct.h"
+#ifdef UNUR_ENABLE_INFO
+#  include <tests/unuran_tests.h>
+#endif
 #define GUIDE_TABLE_SIZE    1
 #define FIND_TP_TOL         0.001   
 #define TOLERANCE           (1.e-8)
@@ -64,6 +67,9 @@ static void _unur_mvtdr_debug_init_finished( const struct unur_gen *gen, int suc
 static void _unur_mvtdr_debug_vertices( const struct unur_gen *gen );
 static void _unur_mvtdr_debug_cones( const struct unur_gen *gen );
 #endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_mvtdr_info( struct unur_gen *gen, int help );
+#endif
 #define DISTR_IN  distr->data.cvec      
 #define PAR       ((struct unur_mvtdr_par*)par->datap) 
 #define GEN       ((struct unur_mvtdr_gen*)gen->datap) 
@@ -85,3 +91,4 @@ static void _unur_mvtdr_debug_cones( const struct unur_gen *gen );
 #include "mvtdr_init.ch"
 #include "mvtdr_sample.ch"
 #include "mvtdr_debug.ch"
+#include "mvtdr_info.ch"

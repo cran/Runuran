@@ -21,9 +21,14 @@ SEXP Runuran_init (SEXP sexp_obj, SEXP sexp_distr, SEXP sexp_method);
 /* Create and initialize UNU.RAN generator object.                           */
 /*---------------------------------------------------------------------------*/
 
-SEXP Runuran_sample (SEXP sexp_gen, SEXP sexp_n);
+SEXP Runuran_sample (SEXP sexp_unur, SEXP sexp_n);
 /*---------------------------------------------------------------------------*/
 /* Sample from UNU.RAN generator object.                                     */
+/*---------------------------------------------------------------------------*/
+
+SEXP Runuran_print (SEXP sexp_gen, SEXP sexp_help);
+/*---------------------------------------------------------------------------*/
+/* Print information about UNU.RAN generator object.                         */
 /*---------------------------------------------------------------------------*/
 
 SEXP Runuran_discr_init (SEXP sexp_obj, SEXP sexp_env,
@@ -47,6 +52,19 @@ SEXP Runuran_cmv_init (SEXP sexp_obj, SEXP sexp_env,
 /*---------------------------------------------------------------------------*/
 /* Create and initialize UNU.RAN object for cont. multivariate distribution. */
 /*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/*                                                                           */
+/*  Special wrapper functions                                                */
+/*                                                                           */
+/*---------------------------------------------------------------------------*/
+
+SEXP Runuran_qhinv (SEXP sexp_unur, SEXP sexp_U);
+/*---------------------------------------------------------------------------*/
+/* Evaluate approximate quantile function when a UNU.RAN object of type HINV */
+/* is given.                                                                 */
+/*---------------------------------------------------------------------------*/
+
 
 /*---------------------------------------------------------------------------*/
 /* Registering native routines */

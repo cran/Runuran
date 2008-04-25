@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -123,6 +123,9 @@ static void _unur_tdr_ps_debug_split_stop( const struct unur_gen *gen,
 					   const struct unur_tdr_interval *iv_middle,
 					   const struct unur_tdr_interval *iv_right );
 #endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_tdr_info( struct unur_gen *gen, int help );
+#endif
 #define DISTR_IN  distr->data.cont      
 #define PAR       ((struct unur_tdr_par*)par->datap) 
 #define GEN       ((struct unur_tdr_gen*)gen->datap) 
@@ -151,3 +154,4 @@ _unur_tdr_getSAMPLE( struct unur_gen *gen )
 #include "tdr_init.ch"
 #include "tdr_sample.ch"
 #include "tdr_debug.ch"
+#include "tdr_info.ch"

@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -33,7 +33,10 @@ inline static int _unur_empk_comp_stddev( double *data, int n_data,
 					  double *mean, double *stddev);
 inline static double _unur_empk_comp_iqrtrange( double *data, int n_data );
 #ifdef UNUR_ENABLE_LOGGING
-static void _unur_empk_debug_init( const struct unur_par *par, const struct unur_gen *gen );
+static void _unur_empk_debug_init( const struct unur_gen *gen );
+#endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_empk_info( struct unur_gen *gen, int help );
 #endif
 #define DISTR_IN  distr->data.cemp      
 #define PAR       ((struct unur_empk_par*)par->datap) 
@@ -279,11 +282,11 @@ _unur_empk_init( struct unur_par *par )
   iqrtrange = _unur_empk_comp_iqrtrange( GEN->observ, GEN->n_observ );
   sigma = iqrtrange / 1.34;
   if (GEN->stddev_observ < sigma) sigma = GEN->stddev_observ;
-  GEN->bwidth_opt = PAR->alpha * PAR->beta * sigma / exp(0.2 * log((double)GEN->n_observ));
-  GEN->bwidth = PAR->smoothing * GEN->bwidth_opt;
-  GEN->sconst = 1./sqrt(1. + PAR->kernvar * SQU( GEN->bwidth/GEN->stddev_observ ) );
+  GEN->bwidth_opt = GEN->alpha * GEN->beta * sigma / exp(0.2 * log((double)GEN->n_observ));
+  GEN->bwidth = GEN->smoothing * GEN->bwidth_opt;
+  GEN->sconst = 1./sqrt(1. + GEN->kernvar * SQU( GEN->bwidth/GEN->stddev_observ ) );
 #ifdef UNUR_ENABLE_LOGGING
-    if (gen->debug) _unur_empk_debug_init(par,gen);
+    if (gen->debug) _unur_empk_debug_init(gen);
 #endif
   _unur_par_free(par);
   return gen;
@@ -302,12 +305,17 @@ _unur_empk_create( struct unur_par *par )
   GEN->observ   = DISTR.sample;          
   GEN->n_observ = DISTR.n_sample;        
   GEN->smoothing = PAR->smoothing;    
+  GEN->alpha = PAR->alpha;            
+  GEN->beta = PAR->beta;              
   if (PAR->kerngen)
     GEN->kerngen = _unur_gen_clone(PAR->kerngen);
   else
     GEN->kerngen = PAR->kernel;
   GEN->kernvar = PAR->kernvar;
   gen->gen_aux = GEN->kerngen;
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_empk_info;
+#endif
   return gen;
 } 
 struct unur_gen *
@@ -387,10 +395,9 @@ _unur_empk_comp_iqrtrange( double *data, int n )
 } 
 #ifdef UNUR_ENABLE_LOGGING
 static void
-_unur_empk_debug_init( const struct unur_par *par, const struct unur_gen *gen )
+_unur_empk_debug_init( const struct unur_gen *gen )
 {
   FILE *log;
-  CHECK_NULL(par,RETURN_VOID);  COOKIE_CHECK(par,CK_EMPK_PAR,RETURN_VOID);
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_EMPK_GEN,RETURN_VOID);
   log = unur_get_stream();
   fprintf(log,"%s:\n",gen->genid);
@@ -400,8 +407,8 @@ _unur_empk_debug_init( const struct unur_par *par, const struct unur_gen *gen )
   _unur_distr_cemp_debug( gen->distr, gen->genid, (gen->debug & EMPK_DEBUG_PRINTDATA));
   fprintf(log,"%s: sampling routine = _unur_empk_sample()\n",gen->genid);
   fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: smoothing factor = %g",gen->genid, PAR->smoothing);
-  _unur_print_if_default(par,EMPK_SET_SMOOTHING); fprintf(log,"\n");
+  fprintf(log,"%s: smoothing factor = %g",gen->genid, GEN->smoothing);
+  _unur_print_if_default(gen,EMPK_SET_SMOOTHING); fprintf(log,"\n");
   if (gen->variant & EMPK_VARFLAG_POSITIVE)
     fprintf(log,"%s: positive random variable only; use mirroring \n",gen->genid);
   if (gen->variant & EMPK_VARFLAG_VARCOR)
@@ -418,19 +425,60 @@ _unur_empk_debug_init( const struct unur_par *par, const struct unur_gen *gen )
   else 
     fprintf(log,"[default kernel]\n");
   fprintf(log,"%s:    window width = %g\t(opt = %g)\n",gen->genid, GEN->bwidth, GEN->bwidth_opt);
-  fprintf(log,"%s:    alpha = %g",gen->genid, PAR->alpha);
-  _unur_print_if_default(par,EMPK_SET_ALPHA); fprintf(log,"\n");
+  fprintf(log,"%s:    alpha = %g",gen->genid, GEN->alpha);
+  _unur_print_if_default(gen,EMPK_SET_ALPHA); fprintf(log,"\n");
   if (gen->variant & EMPK_VARFLAG_VARCOR) {
-    fprintf(log,"%s:    kernel variance = %g",gen->genid, PAR->kernvar);
-    _unur_print_if_default(par,EMPK_SET_KERNELVAR); fprintf(log,"\n");
+    fprintf(log,"%s:    kernel variance = %g",gen->genid, GEN->kernvar);
+    _unur_print_if_default(gen,EMPK_SET_KERNELVAR); fprintf(log,"\n");
     fprintf(log,"%s:    variance correction factor = %g\n",gen->genid, GEN->sconst);
   }
   fprintf(log,"%s:\n",gen->genid);
   fprintf(log,"%s: Data:\n",gen->genid);
-  fprintf(log,"%s:    beta  = %g",gen->genid, PAR->beta);
-  _unur_print_if_default(par,EMPK_SET_BETA); fprintf(log,"\n");
+  fprintf(log,"%s:    beta  = %g",gen->genid, GEN->beta);
+  _unur_print_if_default(gen,EMPK_SET_BETA); fprintf(log,"\n");
   fprintf(log,"%s:    mean (data) = %g\n",gen->genid, GEN->mean_observ);
   fprintf(log,"%s:    stddev (data) = %g\n",gen->genid, GEN->stddev_observ);
   fprintf(log,"%s:\n",gen->genid);
+} 
+#endif   
+#ifdef UNUR_ENABLE_INFO
+void
+_unur_empk_info( struct unur_gen *gen, int help )
+{
+  struct unur_string *info = gen->infostr;
+  _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
+  _unur_string_append(info,"distribution:\n");
+  _unur_distr_info_typename(gen);
+  _unur_string_append(info,"   functions = DATA  [length=%d]\n", GEN->n_observ);
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"method: EMPK (EMPirical distribution with Kernel smoothing)\n");
+  _unur_string_append(info,"   kernel type = %s  (alpha=%g)  ", GEN->kerngen->distr->name, GEN->alpha);
+  if (gen->set & EMPK_SET_KERNGEN)
+    _unur_string_append(info,"[kernel generator set]\n");
+  else if (gen->set & EMPK_SET_KERNEL)
+    _unur_string_append(info,"[standard kernel]\n");
+  else 
+    _unur_string_append(info,"[default kernel]\n");
+  _unur_string_append(info,"   window width = %g  (opt = %g)\n", GEN->bwidth, GEN->bwidth_opt);
+  _unur_string_append(info,"   smoothing factor = %g\n", GEN->smoothing);
+  if (gen->variant & EMPK_VARFLAG_POSITIVE)
+    _unur_string_append(info,"   positive random variable only; use mirroring\n");
+  if (gen->variant & EMPK_VARFLAG_VARCOR)
+    _unur_string_append(info,"   variance correction factor = %g\n", GEN->sconst);
+  else
+    _unur_string_append(info,"   no variance correction\n");
+  _unur_string_append(info,"\n");
+  if (help) {
+    _unur_string_append(info,"parameters:\n");
+    _unur_string_append(info,"   smoothing = %g   %s\n", GEN->smoothing,
+			(gen->set & EMPK_SET_SMOOTHING) ? "" : "[default]");
+    if (gen->set & EMPK_SET_BETA)
+      _unur_string_append(info,"   beta = %g\n", GEN->beta);
+    if (gen->variant & EMPK_VARFLAG_VARCOR) 
+      _unur_string_append(info,"   varcor = on\n");
+    if (gen->variant & EMPK_VARFLAG_POSITIVE) 
+      _unur_string_append(info,"   positive = on\n");
+    _unur_string_append(info,"\n");
+  }
 } 
 #endif   

@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -9,6 +9,9 @@
 #include "x_gen_source.h"
 #include "hrd.h"
 #include "hrd_struct.h"
+#ifdef UNUR_ENABLE_INFO
+#  include <tests/unuran_tests.h>
+#endif
 #define HRD_VARFLAG_VERIFY     0x01u    
 #define HRD_DEBUG_REINIT    0x00000010u   
 #define HRD_DEBUG_SAMPLE       0x01000000u    
@@ -24,6 +27,9 @@ static double _unur_hrd_sample_check( struct unur_gen *gen );
 #ifdef UNUR_ENABLE_LOGGING
 static void _unur_hrd_debug_init( const struct unur_gen *gen );
 static void _unur_hrd_debug_sample( const struct unur_gen *gen, double x, int i );
+#endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_hrd_info( struct unur_gen *gen, int help );
 #endif
 #define DISTR_IN  distr->data.cont      
 #define PAR       ((struct unur_hrd_par*)par->datap) 
@@ -101,9 +107,9 @@ int
 _unur_hrd_reinit( struct unur_gen *gen )
 {
   int rcode;
-  SAMPLE = _unur_hrd_getSAMPLE(gen);
   if ( (rcode = _unur_hrd_check_par(gen)) != UNUR_SUCCESS)
     return rcode;
+  SAMPLE = _unur_hrd_getSAMPLE(gen);
   return UNUR_SUCCESS;
 } 
 struct unur_gen *
@@ -119,6 +125,9 @@ _unur_hrd_create( struct unur_par *par )
   gen->clone = _unur_hrd_clone;
   gen->reinit = _unur_hrd_reinit;
   GEN->left_border = 0.;             
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_hrd_info;
+#endif
   return gen;
 } 
 int
@@ -240,5 +249,31 @@ _unur_hrd_debug_sample( const struct unur_gen *gen, double x, int i )
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_HRD_GEN,RETURN_VOID);
   log = unur_get_stream();
   fprintf(log,"%s: X = %g\t #iterations = %d\n",gen->genid,x,i);
+} 
+#endif   
+#ifdef UNUR_ENABLE_INFO
+void
+_unur_hrd_info( struct unur_gen *gen, int help )
+{
+  struct unur_string *info = gen->infostr;
+  int samplesize = 10000;
+  _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
+  _unur_string_append(info,"distribution:\n");
+  _unur_distr_info_typename(gen);
+  _unur_string_append(info,"   functions = HR\n");
+  _unur_string_append(info,"   domain    = (%g, %g)\n", DISTR.domain[0],DISTR.domain[1]);
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"method: HRD (Hazard Rate Decreasing)\n");
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"performance characteristics:\n");
+  _unur_string_append(info,"   E[#interations] = %.2f  [approx.]\n",
+		      unur_test_count_urn(gen,samplesize,0,NULL)/((double)samplesize));
+  _unur_string_append(info,"\n");
+    if (help) {
+      _unur_string_append(info,"parameters:\n");
+      if (gen->variant & HRD_VARFLAG_VERIFY)
+	_unur_string_append(info,"   verify = on\n");
+      _unur_string_append(info,"\n");
+    }
 } 
 #endif   

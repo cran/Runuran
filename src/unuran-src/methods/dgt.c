@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -31,6 +31,9 @@ static int _unur_dgt_make_guidetable( struct unur_gen *gen );
 #ifdef UNUR_ENABLE_LOGGING
 static void _unur_dgt_debug_init( struct unur_gen *gen );
 static void _unur_dgt_debug_table( struct unur_gen *gen );
+#endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_dgt_info( struct unur_gen *gen, int help );
 #endif
 #define DISTR_IN  distr->data.discr      
 #define PAR       ((struct unur_dgt_par*)par->datap) 
@@ -123,13 +126,13 @@ int
 _unur_dgt_reinit( struct unur_gen *gen )
 {
   int rcode;
-  SAMPLE = _unur_dgt_getSAMPLE(gen);
   if ( (rcode = _unur_dgt_check_par(gen)) != UNUR_SUCCESS)
     return rcode;
   if ( ((rcode = _unur_dgt_create_tables(gen)) != UNUR_SUCCESS) ||
        ((rcode = _unur_dgt_make_guidetable(gen)) != UNUR_SUCCESS) ) {
     return rcode;
   }
+  SAMPLE = _unur_dgt_getSAMPLE(gen);
 #ifdef UNUR_ENABLE_LOGGING
   if (gen->debug & DGT_DEBUG_REINIT) _unur_dgt_debug_init(gen);
 #endif
@@ -150,6 +153,9 @@ _unur_dgt_create( struct unur_par *par )
   GEN->guide_factor = PAR->guide_factor;
   GEN->cumpv = NULL;
   GEN->guide_table = NULL;
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_dgt_info;
+#endif
   return gen;
 } 
 int
@@ -323,5 +329,33 @@ _unur_dgt_debug_table( struct unur_gen *gen )
           ((double)n_asts)/GEN->guide_size);
   fprintf(log,"%s:\n", gen->genid);
   fprintf(log,"%s:\n",gen->genid);
+} 
+#endif   
+#ifdef UNUR_ENABLE_INFO
+void
+_unur_dgt_info( struct unur_gen *gen, int help )
+{
+  struct unur_string *info = gen->infostr;
+  _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
+  _unur_string_append(info,"distribution:\n");
+  _unur_distr_info_typename(gen);
+  _unur_string_append(info,"   functions = PV  [length=%d%s]\n",
+		      DISTR.domain[1]-DISTR.domain[0]+1,
+		      (DISTR.pmf==NULL) ? "" : ", created from PMF");
+  _unur_string_append(info,"   domain    = (%d, %d)\n", DISTR.domain[0],DISTR.domain[1]);
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"method: DGT (Guide Table)\n");
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"performance characteristics:\n");
+  _unur_string_append(info,"   E [#look-ups] = %g\n", 1+1./GEN->guide_factor);
+  _unur_string_append(info,"\n");
+  if (help) {
+    _unur_string_append(info,"parameters:\n");
+    _unur_string_append(info,"   guidefactor = %g  %s\n", GEN->guide_factor,
+			(gen->set & DGT_SET_GUIDEFACTOR) ? "" : "[default]");
+    if (gen->set & DGT_SET_VARIANT)
+      _unur_string_append(info,"   variant = %d\n", gen->variant);
+    _unur_string_append(info,"\n");
+  }
 } 
 #endif   

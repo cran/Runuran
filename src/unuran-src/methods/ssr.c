@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -10,6 +10,9 @@
 #include "x_gen_source.h"
 #include "ssr.h"
 #include "ssr_struct.h"
+#ifdef UNUR_ENABLE_INFO
+#  include <tests/unuran_tests.h>
+#endif
 #define SSR_VARFLAG_VERIFY   0x002u    
 #define SSR_VARFLAG_SQUEEZE  0x004u    
 #define SSR_VARFLAG_MIRROR   0x008u    
@@ -28,6 +31,9 @@ static double _unur_ssr_sample_check( struct unur_gen *gen );
 static int _unur_ssr_hat( struct unur_gen *gen );
 #ifdef UNUR_ENABLE_LOGGING
 static void _unur_ssr_debug_init( const struct unur_gen *gen, int is_reinit );
+#endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_ssr_info( struct unur_gen *gen, int help );
 #endif
 #define DISTR_IN  distr->data.cont      
 #define PAR       ((struct unur_ssr_par*)par->datap) 
@@ -191,10 +197,10 @@ int
 _unur_ssr_reinit( struct unur_gen *gen )
 {
   int rcode;
-  SAMPLE = _unur_ssr_getSAMPLE(gen);
   if ( (rcode = _unur_ssr_check_par(gen)) != UNUR_SUCCESS)
     return rcode;
   rcode = _unur_ssr_hat( gen );
+  SAMPLE = _unur_ssr_getSAMPLE(gen);
 #ifdef UNUR_ENABLE_LOGGING
   if (gen->debug & SSR_DEBUG_REINIT) _unur_ssr_debug_init(gen,TRUE);
 #endif
@@ -215,6 +221,9 @@ _unur_ssr_create( struct unur_par *par )
   GEN->Fmode = PAR->Fmode;            
   GEN->fm    = PAR->fm;               
   GEN->um    = PAR->um;               
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_ssr_info;
+#endif
   return gen;
 } 
 int
@@ -435,8 +444,6 @@ _unur_ssr_debug_init( const struct unur_gen *gen, int is_reinit )
     fprintf(log,"%s: use universal squeeze\n",gen->genid);
   else
     fprintf(log,"%s: no (universal) squeeze\n",gen->genid);
-  if (gen->variant & SSR_VARFLAG_MIRROR)
-    fprintf(log,"%s: use mirror principle\n",gen->genid);
   fprintf(log,"%s:\n",gen->genid);
   fprintf(log,"%s: parts:\n",gen->genid);
   fprintf(log,"%s:\txl = %g\n",gen->genid,GEN->xl);
@@ -453,5 +460,67 @@ _unur_ssr_debug_init( const struct unur_gen *gen, int is_reinit )
   fprintf(log,"%s:\t   Ain = %g\n",gen->genid,GEN->Ain);
   fprintf(log,"%s:\tAtotal = %g\n",gen->genid,GEN->A);
   fprintf(log,"%s:\n",gen->genid);
+} 
+#endif   
+#ifdef UNUR_ENABLE_INFO
+void
+_unur_ssr_info( struct unur_gen *gen, int help )
+{
+  struct unur_string *info = gen->infostr;
+  struct unur_distr *distr = gen->distr;
+  int samplesize = 10000;
+  double rc, rc_approx;
+  _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
+  _unur_string_append(info,"distribution:\n");
+  _unur_distr_info_typename(gen);
+  _unur_string_append(info,"   functions = PDF\n");
+  _unur_string_append(info,"   domain    = (%g, %g)\n", DISTR.domain[0],DISTR.domain[1]);
+  _unur_string_append(info,"   mode      = %g   %s\n", DISTR.mode,
+		      (distr->set & UNUR_DISTR_SET_MODE_APPROX) ? "[numeric.]" : "");
+  _unur_string_append(info,"   area(PDF) = %g\n", DISTR.area);
+  if (gen->set & SSR_SET_CDFMODE)
+    _unur_string_append(info,"   F(mode)   = %g\n", GEN->Fmode); 
+  else
+    _unur_string_append(info,"   F(mode)   = [unknown]\n"); 
+  if (help) {
+    if ( distr->set & UNUR_DISTR_SET_MODE_APPROX ) 
+      _unur_string_append(info,"\n[ Hint: %s ]\n",
+			  "You may provide the \"mode\"");
+  }
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"method: SSR (Simple Ratio-Of-Uniforms)\n");
+  if (gen->set & SSR_SET_CDFMODE)
+    _unur_string_append(info,"   use CDF at mode\n");
+  if (gen->variant & SSR_VARFLAG_SQUEEZE)
+    _unur_string_append(info,"   use squeeze\n");
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"performance characteristics:\n");
+  rc = (gen->set & SSR_SET_CDFMODE) ? 2. : 4.;
+  if (_unur_isfinite(DISTR.BD_RIGHT) || _unur_isfinite(DISTR.BD_LEFT)) {
+    rc_approx = unur_test_count_urn(gen,samplesize,0,NULL)/(2.*samplesize);
+    _unur_string_append(info,"   rejection constant <= %g  [approx. = %.2f]\n", rc,rc_approx);
+  }
+  else {
+    _unur_string_append(info,"   rejection constant = %g\n", rc);
+  }
+  _unur_string_append(info,"\n");
+  if (help) {
+    _unur_string_append(info,"parameters:\n");
+    if (gen->set & SSR_SET_CDFMODE)
+      _unur_string_append(info,"   cdfatmode = %g\n", GEN->Fmode); 
+    else
+      _unur_string_append(info,"   cdfatmode = [not set]\n"); 
+    if (gen->variant & SSR_VARFLAG_SQUEEZE)
+      _unur_string_append(info,"   usesqueeze\n");
+    if (gen->variant & SSR_VARFLAG_VERIFY)
+      _unur_string_append(info,"   verify = on\n");
+    _unur_string_append(info,"\n");
+  }
+  if (help) {
+    if ( !(gen->set & SSR_SET_CDFMODE))
+      _unur_string_append(info,"[ Hint: %s ]\n",
+			  "You can set \"cdfatmode\" to reduce the rejection constant.");
+    _unur_string_append(info,"\n");
+  }
 } 
 #endif   

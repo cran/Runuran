@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -20,6 +20,9 @@ static int _unur_hist_create_tables( struct unur_gen *gen );
 static int _unur_hist_make_guidetable( struct unur_gen *gen );
 #ifdef UNUR_ENABLE_LOGGING
 static void _unur_hist_debug_init( const struct unur_gen *gen );
+#endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_hist_info( struct unur_gen *gen, int help );
 #endif
 #define DISTR_IN  distr->data.cemp      
 #define PAR       ((struct unur_hist_par*)par->datap) 
@@ -94,6 +97,9 @@ _unur_hist_create( struct unur_par *par )
   GEN->sum = 0.;
   GEN->cumpv = NULL;
   GEN->guide_table = NULL;
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_hist_info;
+#endif
   return gen;
 } 
 struct unur_gen *
@@ -198,5 +204,23 @@ _unur_hist_debug_init( const struct unur_gen *gen )
   fprintf(log,"%s: sampling routine = _unur_hist_sample()\n",gen->genid);
   fprintf(log,"%s:\n",gen->genid);
   fprintf(log,"%s:\n",gen->genid);
+} 
+#endif   
+#ifdef UNUR_ENABLE_INFO
+void
+_unur_hist_info( struct unur_gen *gen, int help )
+{
+  struct unur_string *info = gen->infostr;
+  _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
+  _unur_string_append(info,"distribution:\n");
+  _unur_distr_info_typename(gen);
+  _unur_string_append(info,"   functions = DATA  [histogram of size=%d]\n", DISTR.n_hist);
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"method: HIST (HISTogramm of empirical distribution)\n");
+  _unur_string_append(info,"\n");
+  if (help) {
+    _unur_string_append(info,"parameters: none\n");
+    _unur_string_append(info,"\n");
+  }
 } 
 #endif   

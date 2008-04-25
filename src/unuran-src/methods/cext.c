@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -10,6 +10,9 @@
 #include "x_gen_source.h"
 #include "cext.h"
 #include "cext_struct.h"
+#ifdef UNUR_ENABLE_INFO
+#  include <tests/unuran_tests.h>
+#endif
 #define GENTYPE "CEXT"         
 static struct unur_gen *_unur_cext_init( struct unur_par *par );
 static int _unur_cext_reinit( struct unur_gen *gen );
@@ -18,6 +21,9 @@ static struct unur_gen *_unur_cext_clone( const struct unur_gen *gen );
 static void _unur_cext_free( struct unur_gen *gen);
 #ifdef UNUR_ENABLE_LOGGING
 static void _unur_cext_debug_init( struct unur_gen *gen );
+#endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_cext_info( struct unur_gen *gen, int help );
 #endif
 #define DISTR_IN  distr->data.cont      
 #define PAR       ((struct unur_cext_par*)par->datap) 
@@ -148,6 +154,9 @@ _unur_cext_create( struct unur_par *par )
   GEN->param    = NULL;   
   GEN->size_param  = 0;   
   if (distr) _unur_distr_free(distr);
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_cext_info;
+#endif
   return gen;
 } 
 struct unur_gen *
@@ -190,5 +199,28 @@ _unur_cext_debug_init( struct unur_gen *gen )
   fprintf(log,"%s: method  = wrapper for external generator\n",gen->genid);
   fprintf(log,"%s:\n",gen->genid);
   _unur_distr_cont_debug( gen->distr, gen->genid );
+} 
+#endif   
+#ifdef UNUR_ENABLE_INFO
+void
+_unur_cext_info( struct unur_gen *gen, int help )
+{
+  struct unur_string *info = gen->infostr;
+  int samplesize = 10000;
+  _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
+  _unur_string_append(info,"distribution:\n");
+  _unur_distr_info_typename(gen);
+  _unur_string_append(info,"   domain    = (%g, %g)\n", DISTR.domain[0],DISTR.domain[1]);
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"method: CEXT (wrapper for Continuous EXTernal generators)\n");
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"performance characteristics:\n");
+  _unur_string_append(info,"   E [#urn] = %.2f  [approx.]\n",
+		      unur_test_count_urn(gen,samplesize,0,NULL)/((double)samplesize));
+  _unur_string_append(info,"\n");
+  if (help) {
+    _unur_string_append(info,"parameters: none\n");
+    _unur_string_append(info,"\n");
+  }
 } 
 #endif   

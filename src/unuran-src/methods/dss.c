@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -26,6 +26,9 @@ static void _unur_dss_free( struct unur_gen *gen);
 static int _unur_dss_sample( struct unur_gen *gen );
 #ifdef UNUR_ENABLE_LOGGING
 static void _unur_dss_debug_init( struct unur_gen *gen );
+#endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_dss_info( struct unur_gen *gen, int help );
 #endif
 #define DISTR_IN  distr->data.discr      
 #define PAR       ((struct unur_dss_par*)par->datap) 
@@ -87,9 +90,9 @@ int
 _unur_dss_reinit( struct unur_gen *gen )
 {
   int rcode;
-  SAMPLE = _unur_dss_getSAMPLE(gen);
   if ( (rcode = _unur_dss_check_par(gen)) != UNUR_SUCCESS)
     return rcode;
+  SAMPLE = _unur_dss_getSAMPLE(gen);
 #ifdef UNUR_ENABLE_LOGGING
   if (gen->debug & DSS_DEBUG_REINIT) _unur_dss_debug_init(gen);
 #endif
@@ -107,6 +110,9 @@ _unur_dss_create( struct unur_par *par )
   gen->destroy = _unur_dss_free;
   gen->clone = _unur_dss_clone;
   gen->reinit = _unur_dss_reinit;
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_dss_info;
+#endif
   return gen;
 } 
 int
@@ -217,5 +223,36 @@ _unur_dss_debug_init( struct unur_gen *gen )
     _unur_error(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
   }
   fprintf(log,"%s:\n",gen->genid);
+} 
+#endif   
+#ifdef UNUR_ENABLE_INFO
+void
+_unur_dss_info( struct unur_gen *gen, int help )
+{
+  struct unur_string *info = gen->infostr;
+  _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
+  _unur_string_append(info,"distribution:\n");
+  _unur_distr_info_typename(gen);
+  switch(gen->variant) {
+  case DSS_VARIANT_PV:
+    _unur_string_append(info,"   functions = PV  [length=%d]\n",DISTR.domain[1]-DISTR.domain[0]+1);
+    break;
+  case DSS_VARIANT_PMF:
+    _unur_string_append(info,"   functions = PMF\n");
+    break;
+  case DSS_VARIANT_CDF:
+    _unur_string_append(info,"   functions = CDF\n");
+    break;
+  }
+  _unur_string_append(info,"   domain    = (%d, %d)\n", DISTR.domain[0],DISTR.domain[1]);
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"method: DSS (Simple Sequential Search)\n");
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"performance characteristics: slow\n");
+  _unur_string_append(info,"\n");
+  if (help) {
+    _unur_string_append(info,"parameters: none\n");
+    _unur_string_append(info,"\n");
+  }
 } 
 #endif   

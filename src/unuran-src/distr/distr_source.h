@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #ifndef UNUR_DISTR_SOURCE_H_SEEN
@@ -20,6 +20,7 @@
 #define UNUR_DISTR_SET_GENERIC        0x00080000u 
 #define UNUR_DISTR_SET_MASK_DERIVED   0x0000ffffu
 #define UNUR_DISTR_SET_MODE           0x00000001u
+#define UNUR_DISTR_SET_MODE_APPROX    0x00000020u 
 #define UNUR_DISTR_SET_CENTER         0x00000002u
 #define UNUR_DISTR_SET_PDFAREA        0x00000004u
 #define UNUR_DISTR_SET_PMFSUM         0x00000008u
@@ -56,6 +57,7 @@ struct unur_distr *_unur_distr_cvemp_clone( const struct unur_distr *distr );
 struct unur_distr *_unur_distr_discr_clone( const struct unur_distr *distr );
 #define _unur_distr_clone(distr)    ((distr)->clone(distr))
 #define _unur_distr_free(distr)    do {if (distr) (distr)->destroy(distr);} while(0)
+#ifdef UNUR_ENABLE_LOGGING
 void _unur_distr_cont_debug( const UNUR_DISTR *distribution, const char *genid );
 void _unur_distr_corder_debug( const UNUR_DISTR *order_statistics, const char *genid );
 void _unur_distr_cxtrans_debug( const UNUR_DISTR *cxtrans, const char *genid );
@@ -65,6 +67,12 @@ void _unur_distr_cvec_debug( const UNUR_DISTR *distribution, const char *genid )
 void _unur_distr_condi_debug( const UNUR_DISTR *distribution, const char *genid );
 void _unur_distr_cvemp_debug( const UNUR_DISTR *distribution, const char *genid, unsigned printvector );
 void _unur_distr_discr_debug( const UNUR_DISTR *distribution, const char *genid, unsigned printvector );
+#endif
+#ifdef UNUR_ENABLE_INFO
+void _unur_distr_info_typename( struct unur_gen *gen );
+void _unur_distr_info_vector( struct unur_gen *gen, const double *vec, int n );
+void _unur_distr_cvec_info_domain( struct unur_gen *gen );
+#endif
 int _unur_distr_cvec_marginals_are_equal( struct unur_distr **marginals, int dim );
 int _unur_distr_cvec_duplicate_firstmarginal( struct unur_distr *distribution );
 int _unur_distr_cvec_is_indomain( const double *x, const struct unur_distr *distribution);

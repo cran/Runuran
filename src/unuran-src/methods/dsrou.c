@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -25,6 +25,9 @@ static int _unur_dsrou_sample_check( struct unur_gen *gen );
 static int _unur_dsrou_rectangle( struct unur_gen *gen );
 #ifdef UNUR_ENABLE_LOGGING
 static void _unur_dsrou_debug_init( const struct unur_gen *gen, int is_reinit );
+#endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_dsrou_info( struct unur_gen *gen, int help );
 #endif
 #define DISTR_IN  distr->data.discr     
 #define PAR       ((struct unur_dsrou_par*)par->datap) 
@@ -138,11 +141,11 @@ int
 _unur_dsrou_reinit( struct unur_gen *gen )
 {
   int result;
-  SAMPLE = _unur_dsrou_getSAMPLE(gen);
   if ( (result = _unur_dsrou_check_par(gen)) != UNUR_SUCCESS)
     return result;
   if ( (result = _unur_dsrou_rectangle(gen)) != UNUR_SUCCESS)
     return result;
+  SAMPLE = _unur_dsrou_getSAMPLE(gen);
 #ifdef UNUR_ENABLE_LOGGING
   if (gen->debug & DSROU_DEBUG_REINIT) _unur_dsrou_debug_init(gen,TRUE);
 #endif
@@ -161,6 +164,9 @@ _unur_dsrou_create( struct unur_par *par )
   gen->clone = _unur_dsrou_clone;
   gen->reinit = _unur_dsrou_reinit;
   GEN->Fmode = PAR->Fmode;            
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_dsrou_info;
+#endif
   return gen;
 } 
 int
@@ -318,5 +324,61 @@ _unur_dsrou_debug_init( const struct unur_gen *gen, int is_reinit )
 	  gen->genid,GEN->ar/GEN->ur,GEN->ur,GEN->ar,100.*GEN->ar/(-GEN->al+GEN->ar));
   fprintf(log,"%s:\n",gen->genid);
   fflush(log);
+} 
+#endif   
+#ifdef UNUR_ENABLE_INFO
+void
+_unur_dsrou_info( struct unur_gen *gen, int help )
+{
+  struct unur_string *info = gen->infostr;
+  struct unur_distr *distr = gen->distr;
+  _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
+  _unur_string_append(info,"distribution:\n");
+  _unur_distr_info_typename(gen);
+  _unur_string_append(info,"   functions = PMF\n");
+  _unur_string_append(info,"   domain    = (%d, %d)\n", DISTR.domain[0],DISTR.domain[1]);
+  _unur_string_append(info,"   mode      = %d   %s\n", DISTR.mode,
+                      (distr->set & UNUR_DISTR_SET_MODE_APPROX) ? "[numeric.]" : "");
+  _unur_string_append(info,"   sum(PMF)  = %g\n", DISTR.sum);
+  if (gen->set & DSROU_SET_CDFMODE)
+    _unur_string_append(info,"   F(mode)   = %g\n", GEN->Fmode);
+  else
+    _unur_string_append(info,"   F(mode)   = [unknown]\n");
+  _unur_string_append(info,"\n");
+  if (help) {
+    if ( distr->set & UNUR_DISTR_SET_MODE_APPROX ) 
+      _unur_string_append(info,"[ Hint: %s ]\n",
+			  "You may provide the \"mode\"");
+    _unur_string_append(info,"\n");
+  }
+  _unur_string_append(info,"method: DSROU (Discrete Simple Ratio-Of-Uniforms)\n");
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"performance characteristics:\n");
+  _unur_string_append(info,"   enveloping rectangle = (%g,%g) x (%g,%g)  [left]\n",
+		      (GEN->ul > 0.)?GEN->al/GEN->ul:0., 0.,
+		      0., (GEN->ul > 0.)?GEN->ul:0.);
+  _unur_string_append(info,"                          (%g,%g) x (%g,%g)  [right]\n",
+		      0.,GEN->ar/GEN->ur,  0., GEN->ur);
+  _unur_string_append(info,"   area(hat) = %g + %g = %g\n",
+		      fabs(GEN->al), GEN->ar, -GEN->al+GEN->ar);
+  _unur_string_append(info,"   rejection constant = %g\n",
+		      2. * (-GEN->al+GEN->ar) / DISTR.sum);
+  _unur_string_append(info,"\n");
+  if (help) {
+    _unur_string_append(info,"parameters:\n");
+    if (gen->set & DSROU_SET_CDFMODE)
+      _unur_string_append(info,"   cdfatmode = %g\n", GEN->Fmode);
+    else
+      _unur_string_append(info,"   cdfatmode = [not set]\n");
+    if (gen->variant & DSROU_VARFLAG_VERIFY)
+      _unur_string_append(info,"   verify = on\n");
+    _unur_string_append(info,"\n");
+  }
+  if (help) {
+    if ( !(gen->set & DSROU_SET_CDFMODE))
+      _unur_string_append(info,"[ Hint: %s ]\n",
+			  "You can set \"cdfatmode\" to reduce the rejection constant.");
+    _unur_string_append(info,"\n");
+  }
 } 
 #endif   

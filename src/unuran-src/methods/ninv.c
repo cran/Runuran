@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -10,6 +10,9 @@
 #include "x_gen_source.h"
 #include "ninv.h"
 #include "ninv_struct.h"
+#ifdef UNUR_ENABLE_INFO
+#  include <tests/unuran_tests.h>
+#endif
 #define INTERVAL_COVERS  (0.5)
 #define MAX_STEPS (100)
 #define STEPFAC  (0.4)
@@ -44,6 +47,9 @@ static void _unur_ninv_debug_sample_regula( const struct unur_gen *gen,
 static void _unur_ninv_debug_sample_newton( const struct unur_gen *gen, 
 					    double u, double x, double fx, int iter );
 static void _unur_ninv_debug_chg_truncated( const struct unur_gen *gen);
+#endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_ninv_info( struct unur_gen *gen, int help );
 #endif
 #define DISTR_IN  distr->data.cont      
 #define PAR       ((struct unur_ninv_par*)par->datap) 
@@ -300,7 +306,6 @@ int
 _unur_ninv_reinit( struct unur_gen *gen )
 {
   int rcode;
-  SAMPLE = _unur_ninv_getSAMPLE(gen);
   if ( (rcode = _unur_ninv_check_par(gen)) != UNUR_SUCCESS)
     return rcode;
   if (DISTR.upd_area != NULL)
@@ -312,6 +317,7 @@ _unur_ninv_reinit( struct unur_gen *gen )
     rcode = _unur_ninv_create_table(gen);
   else 
     rcode = unur_ninv_chg_start( gen, 0., 0. );
+  SAMPLE = _unur_ninv_getSAMPLE(gen);
 #ifdef UNUR_ENABLE_LOGGING
   if (gen->debug & NINV_DEBUG_REINIT) {
     _unur_distr_cont_debug( gen->distr, gen->genid );
@@ -340,6 +346,9 @@ _unur_ninv_create( struct unur_par *par )
   GEN->s[1] = PAR->s[1];
   GEN->table = NULL;
   GEN->f_table = NULL;
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_ninv_info;
+#endif
   return gen;
 } 
 int
@@ -866,5 +875,74 @@ _unur_ninv_debug_chg_truncated( const struct unur_gen *gen )
   fprintf(log,"%s: domain of (truncated) distribution changed:\n",gen->genid);
   fprintf(log,"%s:\tdomain = (%g, %g)\n",gen->genid, DISTR.trunc[0], DISTR.trunc[1]);
   fprintf(log,"%s:\tU in (%g,%g)\n",gen->genid,GEN->Umin,GEN->Umax);
+} 
+#endif   
+#ifdef UNUR_ENABLE_INFO
+void
+_unur_ninv_info( struct unur_gen *gen, int help )
+{
+  struct unur_string *info = gen->infostr;
+  double n_iter;
+  int samplesize = 10000;
+  int use_newton = (gen->variant==NINV_VARFLAG_NEWTON) ? TRUE : FALSE;
+  _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
+  _unur_string_append(info,"distribution:\n");
+  _unur_distr_info_typename(gen);
+  _unur_string_append(info,"   functions = CDF");
+  if (use_newton) 
+    _unur_string_append(info," PDF");
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"   domain    = (%g, %g)", DISTR.trunc[0],DISTR.trunc[1]);
+  if (gen->distr->set & UNUR_DISTR_SET_TRUNCATED) {
+    _unur_string_append(info,"   [truncated from (%g, %g)]", DISTR.domain[0],DISTR.domain[1]);
+  }
+  _unur_string_append(info,"\n\n");
+  _unur_string_append(info,"method: NINV (Numerical INVersion)\n");
+  if (use_newton) 
+    _unur_string_append(info,"   Newton method\n");
+  else
+    _unur_string_append(info,"   Regula falsi\n");
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"performance characteristics:\n");
+  n_iter = unur_test_count_pdf(gen,samplesize,FALSE,NULL)/(2.*samplesize);
+  if (!use_newton) n_iter *= 2.;
+  _unur_string_append(info,"   average number of iterations = %.2f  [approx.]\n", n_iter);
+  if (GEN->table_on) {
+    _unur_string_append(info,"   starting points = table of size %d\n", GEN->table_size);
+  }
+  else {
+    _unur_string_append(info,"   starting points = ");
+    if (use_newton) {
+      _unur_string_append(info,"%g (CDF = %g)  %s\n", GEN->s[0], GEN->CDFs[0],
+			  (gen->set & NINV_SET_START) ? "" : "[default]");
+    }
+    else {
+      _unur_string_append(info,"%g, %g  (CDF = %g, %g)   %s\n",
+			  GEN->s[0],GEN->s[1], GEN->CDFs[0],GEN->CDFs[1],
+			  (gen->set & NINV_SET_START) ? "" : "[default]");
+    }
+  }
+  _unur_string_append(info,"\n");
+  if (help) {
+    _unur_string_append(info,"parameters:\n");
+    if (use_newton) 
+      _unur_string_append(info,"   usenewton\n");
+    else
+      _unur_string_append(info,"   useregula  [default]\n");
+    _unur_string_append(info,"   x_resolution = %g  %s\n", GEN->rel_x_resolution,
+			(gen->set & NINV_SET_X_RESOLUTION) ? "" : "[default]");
+    _unur_string_append(info,"   max_iter = %d  %s\n", GEN->max_iter,
+			(gen->set & NINV_SET_MAX_ITER) ? "" : "[default]");
+    _unur_string_append(info,"\n");
+  }
+  if (help) {
+    if (! (gen->set & NINV_SET_X_RESOLUTION) )
+      _unur_string_append(info,"[ Hint: %s ]\n",
+			  "You can increase accuracy by decreasing \"x_resolution\".");
+    if (! (gen->set & NINV_SET_MAX_ITER) )
+      _unur_string_append(info,"[ Hint: %s ]\n",
+			  "You can increase \"max_iter\" if you encounter problems with accuracy.");
+    _unur_string_append(info,"\n");
+  }
 } 
 #endif   

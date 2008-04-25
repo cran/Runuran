@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -10,6 +10,9 @@
 #include "x_gen_source.h"
 #include "dari.h"
 #include "dari_struct.h"
+#ifdef UNUR_ENABLE_INFO
+#  include <tests/unuran_tests.h>
+#endif
 #define DARI_VARFLAG_VERIFY     0x01u   
 #define DARI_DEBUG_REINIT    0x00000010u   
 #define DARI_SET_CFACTOR        0x001u
@@ -26,6 +29,9 @@ static int _unur_dari_sample_check( struct unur_gen *gen );
 static int _unur_dari_hat( struct unur_gen *gen );
 #ifdef UNUR_ENABLE_LOGGING
 static void _unur_dari_debug_init( struct unur_gen *gen, const char *status );
+#endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_dari_info( struct unur_gen *gen, int help );
 #endif
 #define DISTR_IN  distr->data.discr     
 #define PAR       ((struct unur_dari_par*)par->datap) 
@@ -158,11 +164,11 @@ int
 _unur_dari_reinit( struct unur_gen *gen )
 {
   int result;
-  SAMPLE = _unur_dari_getSAMPLE(gen);
   if ( (result = _unur_dari_check_par(gen)) != UNUR_SUCCESS)
     return result;
   if ( (result = _unur_dari_hat( gen )) != UNUR_SUCCESS)
     return result;
+  SAMPLE = _unur_dari_getSAMPLE(gen);
 #ifdef UNUR_ENABLE_LOGGING
   if (gen->debug & DARI_DEBUG_REINIT)
     _unur_dari_debug_init(gen,"REINIT completed");
@@ -210,6 +216,9 @@ _unur_dari_create( struct unur_par *par )
   GEN->s[1]=0;           
   GEN->n[0]=0;           
   GEN->n[1]=0;           
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_dari_info;
+#endif
   return gen;
 } 
 int
@@ -532,5 +541,62 @@ _unur_dari_debug_init( struct unur_gen *gen, const char *status )
   fprintf(log,"%s:\n",gen->genid);
   fprintf(log,"%s: %s ************\n",gen->genid, status );
   fprintf(log,"%s:\n",gen->genid);
+} 
+#endif   
+#ifdef UNUR_ENABLE_INFO
+void
+_unur_dari_info( struct unur_gen *gen, int help )
+{
+  struct unur_string *info = gen->infostr;
+  struct unur_distr *distr = gen->distr;
+  int samplesize = 10000;
+  _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
+  _unur_string_append(info,"distribution:\n");
+  _unur_distr_info_typename(gen);
+  _unur_string_append(info,"   functions = PMF\n");
+  _unur_string_append(info,"   domain    = (%d, %d)\n", DISTR.domain[0],DISTR.domain[1]);
+  _unur_string_append(info,"   mode      = %d   %s\n", DISTR.mode,
+                      (distr->set & UNUR_DISTR_SET_MODE_APPROX) ? "[numeric.]" : "");
+  _unur_string_append(info,"   sum(PMF)  = %g   %s\n", DISTR.sum,
+                      (distr->set & UNUR_DISTR_SET_PMFSUM) ? "" : "[unkown]");
+  _unur_string_append(info,"\n");
+  if (help) {
+    if ( distr->set & UNUR_DISTR_SET_MODE_APPROX )
+      _unur_string_append(info,"[ Hint: %s ]\n",
+			  "You may provide the \"mode\".");
+    if (!(distr->set & UNUR_DISTR_SET_PMFSUM))
+      _unur_string_append(info,"[ Hint: %s ]\n",
+			  "You may provide the \"pmfsum\".");
+    _unur_string_append(info,"\n");
+  }
+  _unur_string_append(info,"method: DARI (Discrete Automatic Rejection Inversion)\n");
+  if (GEN->size == 0) 
+    _unur_string_append(info,"   no table\n");
+  else
+    _unur_string_append(info,"   use table of size %d\n", GEN->size);
+  if (GEN->squeeze)
+    _unur_string_append(info,"   use squeeze\n");
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"performance characteristics:\n");
+  _unur_string_append(info,"   sum(hat) = %g\n",GEN->vt);
+  _unur_string_append(info,"   rejection constant ");
+  if (distr->set & UNUR_DISTR_SET_PMFSUM)
+    _unur_string_append(info,"= %g\n", GEN->vt/DISTR.sum);
+  else
+    _unur_string_append(info,"= %.2f  [approx.]\n", 
+			unur_test_count_urn(gen,samplesize,0,NULL)/((double)samplesize));
+  _unur_string_append(info,"\n");
+  if (help) {
+    _unur_string_append(info,"parameters:\n");
+    _unur_string_append(info,"   tablesize = %d  %s\n", GEN->size,
+			(gen->set & DARI_SET_TABLESIZE) ? "" : "[default]");
+    if (GEN->squeeze)
+      _unur_string_append(info,"   squeeze = on\n");
+    if (gen->set & DARI_SET_CFACTOR)
+      _unur_string_append(info,"   cpfactor = %g\n",   GEN->c_factor);
+    if (gen->variant & DARI_VARFLAG_VERIFY)
+      _unur_string_append(info,"   verify = on\n");
+    _unur_string_append(info,"\n");
+  }
 } 
 #endif   

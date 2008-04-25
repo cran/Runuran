@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <ctype.h>
@@ -36,7 +36,9 @@ enum {
   ERR_EXPECT_VAR,       
   ERR_MISSING            
 };
+#define PARSER
 #include "functparser_symbols.h"
+#undef PARSER
 static struct ftreenode *_unur_fstr_2_tree (const char *functstr, int withDefFunct);
 static struct parser_data *_unur_fstr_parser_init (const char *fstr);
 static void _unur_fstr_symbols_init (void);
@@ -77,14 +79,6 @@ static void _unur_fstr_error_deriv (const struct ftreenode *node, int line);
 static int _unur_fstr_node2string ( struct unur_string *output, const struct ftreenode *node,
 				    const char *variable, const char *function, int spaces );
 static int _unur_fstr_print ( struct unur_string *output, const char *symb, double number );
-static int _unur_fstr_print_C ( struct unur_string *output, const char *symb, double number );
-static int _unur_fstr_C_specfunct ( FILE *out, unsigned flags );
-static int _unur_fstr_C_sgn ( FILE *out );
-static int _unur_fstr_C_sec ( FILE *out );
-static int _unur_fstr_print_F ( struct unur_string *output, const char *symb, double number );
-static int _unur_fstr_F_specfunct ( FILE *out, unsigned flags );
-static int _unur_fstr_J_specfunct ( FILE *out, unsigned flags );
-static int _unur_fstr_J_sgn ( FILE *out );
 #ifdef UNUR_ENABLE_LOGGING
 static void _unur_fstr_debug_input ( const char *fstr );
 static void _unur_fstr_debug_token ( const struct parser_data *pdata );
@@ -102,7 +96,4 @@ static void _unur_fstr_debug_deriv (const struct ftreenode *funct,
 #include "functparser_eval.ch"
 #include "functparser_deriv.ch"
 #include "functparser_stringgen.ch"
-#include "functparser_codegen_C.ch"
-#include "functparser_codegen_FORTRAN.ch"
-#include "functparser_codegen_JAVA.ch"
 #include "functparser_debug.ch"

@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -13,10 +13,13 @@
 #include "x_gen.h"
 #include "x_gen_source.h"
 #include "arou.h"
+#include "ars.h"
 #include "tdr.h"
-#include "tdrgw.h"
 #include "gibbs.h"
 #include "gibbs_struct.h"
+#ifdef UNUR_ENABLE_INFO
+#  include <tests/unuran_tests.h>
+#endif
 #define GIBBS_VARMASK_VARIANT     0x000fu    
 #define GIBBS_VARIANT_COORD       0x0001u    
 #define GIBBS_VARIANT_RANDOMDIR   0x0002u    
@@ -45,6 +48,9 @@ static void _unur_gibbs_debug_init_start( const struct unur_gen *gen );
 static void _unur_gibbs_debug_init_condi( const struct unur_gen *gen );
 static void _unur_gibbs_debug_burnin_failed( const struct unur_gen *gen );
 static void _unur_gibbs_debug_init_finished( const struct unur_gen *gen, int success );
+#endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_gibbs_info( struct unur_gen *gen, int help );
 #endif
 #define DISTR_IN  distr->data.cvec      
 #define PAR       ((struct unur_gibbs_par*)par->datap) 
@@ -237,8 +243,7 @@ _unur_gibbs_init( struct unur_par *par )
     thinning = GEN->thinning;
     GEN->thinning = 1;
     for (burnin = GEN->burnin; burnin>0; --burnin) {
-      _unur_sample_vec(gen,X);
-      if (!_unur_isfinite(X[0])) {
+      if ( _unur_sample_vec(gen,X) != UNUR_SUCCESS ) {
 #ifdef UNUR_ENABLE_LOGGING
 	_unur_gibbs_debug_burnin_failed(gen);
 	if (gen->debug) _unur_gibbs_debug_init_finished(gen,FALSE);
@@ -268,14 +273,15 @@ _unur_gibbs_coord_init( struct unur_gen *gen )
       break;
     switch( gen->variant & GIBBS_VARMASK_T ) {
     case GIBBS_VAR_T_LOG:
-      par_condi = unur_tdrgw_new(GEN->distr_condi);
-      unur_tdrgw_set_reinit_percentiles(par_condi,2,NULL);
+      par_condi = unur_ars_new(GEN->distr_condi);
+      unur_ars_set_reinit_percentiles(par_condi,2,NULL);
       break;
     case GIBBS_VAR_T_SQRT:
       par_condi = unur_tdr_new(GEN->distr_condi);
       unur_tdr_set_reinit_percentiles(par_condi,2,NULL);
       unur_tdr_set_c(par_condi,-0.5);
       unur_tdr_set_usedars(par_condi,FALSE);
+      unur_tdr_set_variant_gw(par_condi);
       break;
     case GIBBS_VAR_T_POW:
     default:
@@ -315,8 +321,8 @@ _unur_gibbs_randomdir_init( struct unur_gen *gen )
   GEN->distr_condi = unur_distr_condi_new( gen->distr, GEN->state, GEN->direction, 0);
   switch( gen->variant & GIBBS_VARMASK_T ) {
   case GIBBS_VAR_T_LOG:
-    par_condi = unur_tdrgw_new(GEN->distr_condi);
-    unur_tdrgw_set_reinit_percentiles(par_condi,2,NULL);
+    par_condi = unur_ars_new(GEN->distr_condi);
+    unur_ars_set_reinit_percentiles(par_condi,2,NULL);
     break;
   case GIBBS_VAR_T_SQRT:
     par_condi = unur_tdr_new(GEN->distr_condi);
@@ -378,6 +384,9 @@ _unur_gibbs_create( struct unur_par *par )
   for (i=0; i<GEN->dim; i++) GEN_CONDI[i] = NULL;
   GEN->direction = _unur_xmalloc( GEN->dim * sizeof(double));
   GEN->coord = (GEN->dim)-1;      
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_gibbs_info;
+#endif
   return gen;
 } 
 struct unur_gen *
@@ -432,9 +441,16 @@ _unur_gibbs_coord_sample_cvec( struct unur_gen *gen, double *vec )
     if (!_unur_isfinite(GEN->state[GEN->coord]))
       continue;
     unur_distr_condi_set_condition( GEN->distr_condi, GEN->state, NULL, GEN->coord);
-    unur_reinit(GEN_CONDI[GEN->coord]);
-    X = unur_sample_cont(GEN_CONDI[GEN->coord]);
-    GEN->state[GEN->coord] = X;
+    if (unur_reinit(GEN_CONDI[GEN->coord]) == UNUR_SUCCESS) {
+      X = unur_sample_cont(GEN_CONDI[GEN->coord]);
+      if (_unur_isfinite(X)) {
+	GEN->state[GEN->coord] = X;
+	continue;
+      }
+    }
+    _unur_warning(gen->genid,UNUR_ERR_GEN_SAMPLING,"reset chain");
+    unur_gibbs_reset_state(gen);
+    return UNUR_FAILURE;
   }
   memcpy(vec, GEN->state, GEN->dim * sizeof(double)); 
   return UNUR_SUCCESS;
@@ -452,10 +468,17 @@ _unur_gibbs_randomdir_sample_cvec( struct unur_gen *gen, double *vec )
       break;
     _unur_gibbs_random_unitvector( gen, GEN->direction );
     unur_distr_condi_set_condition( GEN->distr_condi, GEN->state, GEN->direction, 0);
-    unur_reinit(*GEN_CONDI);
-    X = unur_sample_cont(*GEN_CONDI);
-    for (i=0; i<GEN->dim; i++)
-      GEN->state[i] += X * GEN->direction[i];	  
+    if (unur_reinit(*GEN_CONDI) == UNUR_SUCCESS) {
+      X = unur_sample_cont(*GEN_CONDI);
+      if (_unur_isfinite(X)) {
+	for (i=0; i<GEN->dim; i++)
+	  GEN->state[i] += X * GEN->direction[i];	  
+	continue;
+      }
+    }
+    _unur_warning(gen->genid,UNUR_ERR_GEN_SAMPLING,"reset chain");
+    unur_gibbs_reset_state(gen);
+    return UNUR_FAILURE;
   }
   memcpy(vec, GEN->state, GEN->dim * sizeof(double)); 
   return UNUR_SUCCESS;
@@ -576,6 +599,65 @@ _unur_gibbs_debug_init_condi( const struct unur_gen *gen )
 	    GEN_NORMAL->genid);
     fprintf(log,"%s:\n",gen->genid);
     break;
+  }
+} 
+#endif   
+#ifdef UNUR_ENABLE_INFO
+void
+_unur_gibbs_info( struct unur_gen *gen, int help )
+{
+  struct unur_string *info = gen->infostr;
+  struct unur_distr *distr = gen->distr;
+  int samplesize = 10000;
+  _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
+  _unur_string_append(info,"distribution:\n");
+  _unur_distr_info_typename(gen);
+  _unur_string_append(info,"   dimension = %d\n",GEN->dim);
+  _unur_string_append(info,"   functions = PDF dPDF\n");
+  _unur_distr_cvec_info_domain(gen);
+  _unur_string_append(info,"   center    = ");
+  _unur_distr_info_vector( gen, unur_distr_cvec_get_center(gen->distr), GEN->dim);
+  if ( !(distr->set & UNUR_DISTR_SET_CENTER) ) {
+    if ( distr->set & UNUR_DISTR_SET_MODE )
+      _unur_string_append(info,"  [= mode]");
+    else
+      _unur_string_append(info,"  [default]");
+  }
+  _unur_string_append(info,"\n\n");
+  _unur_string_append(info,"method: GIBBS (GIBBS sampler [MCMC])\n");
+  _unur_string_append(info,"   variant = %s\n",
+		      ((gen->variant & GIBBS_VARMASK_VARIANT)==GIBBS_VARIANT_COORD)
+		      ? "coordinate sampling [default]" : "random direction sampling");
+  _unur_string_append(info,"   T_c(x) = ");
+  switch( gen->variant & GIBBS_VARMASK_T ) {
+  case GIBBS_VAR_T_LOG:
+    _unur_string_append(info,"log(x)  ... c = 0\n"); break;
+  case GIBBS_VAR_T_SQRT:
+    _unur_string_append(info,"-1/sqrt(x)  ... c = -1/2\n"); break;
+  case GIBBS_VAR_T_POW:
+    _unur_string_append(info,"-x^(%g)  ... c = %g\n",GEN->c_T,GEN->c_T); break;
+  }
+  _unur_string_append(info,"   thinning = %d\n", GEN->thinning);
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"performance characteristics:\n");
+  _unur_string_append(info,"   rejection constant = %.2f  [approx.]\n",
+		      unur_test_count_urn(gen,samplesize,0,NULL)/(2.*samplesize));
+  _unur_string_append(info,"\n");
+  if (help) {
+    _unur_string_append(info,"parameters:\n");
+    switch (gen->variant & GIBBS_VARMASK_VARIANT) {
+    case GIBBS_VARIANT_COORD:
+      _unur_string_append(info,"   variant_coordinate  [default]\n"); break;
+    case GIBBS_VARIANT_RANDOMDIR:
+      _unur_string_append(info,"   variant_random_direction\n"); break;
+    }
+    _unur_string_append(info,"   c = %g  %s\n", GEN->c_T,
+ 			(gen->set & GIBBS_SET_C) ? "" : "[default]");
+    _unur_string_append(info,"   thinning = %d  %s\n", GEN->thinning,
+ 			(gen->set & GIBBS_SET_THINNING) ? "" : "[default]");
+    _unur_string_append(info,"   burnin = %d  %s\n", GEN->burnin,
+ 			(gen->set & GIBBS_SET_THINNING) ? "" : "[default]");
+    _unur_string_append(info,"\n");
   }
 } 
 #endif   

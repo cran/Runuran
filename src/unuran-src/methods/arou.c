@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -54,6 +54,9 @@ static void _unur_arou_debug_split_stop( const struct unur_gen *gen,
 					 const struct unur_arou_segment *seg_left,
 					 const struct unur_arou_segment *seg_right );
 #endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_arou_info( struct unur_gen *gen, int help );
+#endif
 #define DISTR_IN  distr->data.cont      
 #define PAR       ((struct unur_arou_par*)par->datap) 
 #define GEN       ((struct unur_arou_gen*)gen->datap) 
@@ -89,7 +92,8 @@ unur_arou_new( const struct unur_distr *distr )
   PAR->max_segs            = 100;    
   PAR->max_ratio           = 0.99;   
   par->method   = UNUR_METH_AROU;             
-  par->variant  = AROU_VARFLAG_USECENTER;     
+  par->variant  = ( AROU_VARFLAG_USECENTER |
+		    AROU_VARFLAG_USEDARS );   
   par->set      = 0u;                          
   par->urng     = unur_get_default_urng(); 
   par->urng_aux = par->urng;               
@@ -333,6 +337,9 @@ _unur_arou_create( struct unur_par *par )
   GEN->Asqueeze    = 0.;
   GEN->guide_factor = PAR->guide_factor; 
   GEN->max_segs = PAR->max_segs;      
+#ifdef UNUR_ENABLE_INFO
+  GEN->max_segs_info = PAR->max_segs;   
+#endif
   GEN->max_ratio = PAR->max_ratio;    
   GEN->darsfactor = PAR->darsfactor;
   if ( (gen->distr->set & UNUR_DISTR_SET_CENTER) ||
@@ -346,6 +353,9 @@ _unur_arou_create( struct unur_par *par )
     GEN->center = 0.;
     gen->variant &= ~AROU_VARFLAG_USECENTER;
   }
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_arou_info;
+#endif
   return(gen);
 } 
 struct unur_gen *
@@ -1240,3 +1250,63 @@ _unur_arou_debug_split_stop( const struct unur_gen *gen,
   fflush(log);
 } 
 #endif    
+#ifdef UNUR_ENABLE_INFO
+void
+_unur_arou_info( struct unur_gen *gen, int help )
+{
+  struct unur_string *info = gen->infostr;
+  struct unur_distr *distr = gen->distr;
+  _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
+  _unur_string_append(info,"distribution:\n");
+  _unur_distr_info_typename(gen);
+  _unur_string_append(info,"   functions = PDF dPDF\n");
+  _unur_string_append(info,"   domain    = (%g, %g)\n", DISTR.domain[0],DISTR.domain[1]);
+  _unur_string_append(info,"   center    = %g", unur_distr_cont_get_center(distr));
+  if ( !(distr->set & UNUR_DISTR_SET_CENTER) ) {
+    if ( distr->set & UNUR_DISTR_SET_MODE )
+      _unur_string_append(info,"  [= mode]\n");
+    else 
+      _unur_string_append(info,"  [default]\n");
+  }
+  if (help) {
+    if ( !(distr->set & (UNUR_DISTR_SET_CENTER | UNUR_DISTR_SET_MODE )) ) 
+      _unur_string_append(info,"\n[ Hint: %s ]\n",
+			  "You may provide a point near the mode as \"center\"."); 
+  }
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"method: AROU (Automatic Ratio-Of-Uniforms)\n");
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"performance characteristics:\n");
+  _unur_string_append(info,"   area(hat) = %g\n", GEN->Atotal);
+  _unur_string_append(info,"   rejection constant ");
+  if (distr->set & UNUR_DISTR_SET_PDFAREA)
+    _unur_string_append(info,"= %g\n", GEN->Atotal/(0.5*DISTR.area));
+  else
+    _unur_string_append(info,"<= %g\n", GEN->Atotal/GEN->Asqueeze);
+  _unur_string_append(info,"   area ratio squeeze/hat = %g\n",
+ 		      GEN->Asqueeze/GEN->Atotal);
+  _unur_string_append(info,"   # segments = %d\n", GEN->n_segs);
+  _unur_string_append(info,"\n");
+  if (help) {
+    _unur_string_append(info,"parameters:\n");
+    _unur_string_append(info,"   max_sqhratio = %g  %s\n", GEN->max_ratio,
+			(gen->set & AROU_SET_MAX_SQHRATIO) ? "" : "[default]");
+    _unur_string_append(info,"   max_segments = %d  %s\n", GEN->max_segs_info,
+			(gen->set & AROU_SET_MAX_SEGS) ? "" : "[default]");
+    if (gen->variant & AROU_VARFLAG_VERIFY)
+      _unur_string_append(info,"   verify = on\n");
+    if (gen->variant & AROU_VARFLAG_PEDANTIC)
+      _unur_string_append(info,"   pedantic = on\n");
+    _unur_string_append(info,"\n");
+  }
+  if (help) {
+    if ( !(gen->set & AROU_SET_MAX_SQHRATIO) )
+      _unur_string_append(info,"[ Hint: %s ]\n",
+			  "You can set \"max_sqhratio\" closer to 1 to decrease rejection constant." );
+    if (GEN->Asqueeze/GEN->Atotal < GEN->max_ratio) 
+      _unur_string_append(info,"[ Hint: %s ]\n",
+			  "You should increase \"max_segments\" to obtain the desired rejection constant." );
+    _unur_string_append(info,"\n");
+  }
+} 
+#endif   

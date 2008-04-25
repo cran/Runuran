@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 struct unur_arou_par { 
@@ -36,4 +36,7 @@ struct unur_arou_gen {
   int     max_segs;             
   double  darsfactor;           
   double  center;               
+#ifdef UNUR_ENABLE_INFO
+  int     max_segs_info;        
+#endif
 };

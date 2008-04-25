@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 struct unur_empk_par {
@@ -20,4 +20,6 @@ struct unur_empk_gen {
   double  mean_observ; 
   double  stddev_observ; 
   double  sconst;      
+  double  alpha;       
+  double  beta;        
 };

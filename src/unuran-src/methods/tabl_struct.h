@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 struct unur_tabl_par { 
@@ -42,4 +42,7 @@ struct unur_tabl_gen {
   int     max_ivs;              
   double  max_ratio;            
   double  darsfactor;           
+#ifdef UNUR_ENABLE_INFO
+  int     max_ivs_info;         
+#endif
 };

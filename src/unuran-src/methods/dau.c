@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -27,6 +27,9 @@ static int _unur_dau_make_urntable( struct unur_gen *gen );
 #ifdef UNUR_ENABLE_LOGGING
 static void _unur_dau_debug_init( struct unur_gen *gen );
 static void _unur_dau_debug_table( struct unur_gen *gen );
+#endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_dau_info( struct unur_gen *gen, int help );
 #endif
 #define DISTR_IN  distr->data.discr      
 #define PAR       ((struct unur_dau_par*)par->datap) 
@@ -106,13 +109,13 @@ int
 _unur_dau_reinit( struct unur_gen *gen )
 {
   int rcode;
-  SAMPLE = _unur_dau_getSAMPLE(gen);
   if ( (rcode = _unur_dau_check_par(gen)) != UNUR_SUCCESS)
     return rcode;
   if ( ((rcode = _unur_dau_create_tables(gen)) != UNUR_SUCCESS) ||
        ((rcode = _unur_dau_make_urntable(gen)) != UNUR_SUCCESS) ) {
     return rcode;
   }
+  SAMPLE = _unur_dau_getSAMPLE(gen);
 #ifdef UNUR_ENABLE_LOGGING
   if (gen->debug & DAU_DEBUG_REINIT) _unur_dau_debug_init(gen);
 #endif
@@ -135,6 +138,9 @@ _unur_dau_create( struct unur_par *par)
   GEN->urn_size = 0;
   GEN->jx = NULL;
   GEN->qx = NULL;
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_dau_info;
+#endif
   return gen;
 } 
 int
@@ -326,6 +332,32 @@ _unur_dau_debug_table( struct unur_gen *gen )
 	fprintf(log,"-");
     fprintf(log," %5d  ", GEN->jx[i]);           
     fprintf(log,"  %6.3f%%\n", GEN->qx[i]*100);  
+  }
+} 
+#endif   
+#ifdef UNUR_ENABLE_INFO
+void
+_unur_dau_info( struct unur_gen *gen, int help )
+{
+  struct unur_string *info = gen->infostr;
+  _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
+  _unur_string_append(info,"distribution:\n");
+  _unur_distr_info_typename(gen);
+  _unur_string_append(info,"   functions = PV  [length=%d%s]\n",
+		      DISTR.domain[1]-DISTR.domain[0]+1,
+		      (DISTR.pmf==NULL) ? "" : ", created from PMF");
+  _unur_string_append(info,"   domain    = (%d, %d)\n", DISTR.domain[0],DISTR.domain[1]);
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"method: DAU (Alias-Urn)\n");
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"performance characteristics:\n");
+  _unur_string_append(info,"   E [#look-ups] = %g\n", 1+1./GEN->urn_factor);
+  _unur_string_append(info,"\n");
+  if (help) {
+    _unur_string_append(info,"parameters:\n");
+    _unur_string_append(info,"   urnfactor = %g  %s\n", GEN->urn_factor,
+			(gen->set & DAU_SET_URNFACTOR) ? "" : "[default]");
+    _unur_string_append(info,"\n");
   }
 } 
 #endif   

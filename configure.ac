@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 
 dnl --- Initialize ----------------------------------------------------------- 
 AC_PREREQ(2.59)
-AC_INIT([Runuran],[0.6],[unuran@statmath.wu-wien.ac.at])
+AC_INIT([Runuran],[0.7],[unuran@statmath.wu-wien.ac.at])
 AC_CONFIG_HEADER([src/config.h])
 
 dnl --- Configure flags ------------------------------------------------------
@@ -17,6 +17,19 @@ AC_ARG_ENABLE(logging,
 AS_IF([test "x$enable_logging" = xyes],
 	[AC_DEFINE([UNUR_ENABLE_LOGGING], [1], 
 	           [Define to 1 if you want to use a logfile for logging informations about UNU.RAN objects])], 
+	[])
+
+dnl UNU.RAN provides a function that returns a string with some information
+dnl about a given generator object.
+dnl This function is enabled by the '--enable-info' flag.
+AC_ARG_ENABLE(info,
+	[AS_HELP_STRING([--enable-info],
+		[Info: provide function with information about generator objects @<:@default=yes@:>@])],
+	[],
+	[enable_info=yes])
+AS_IF([test "x$enable_info" = xyes],
+	[AC_DEFINE([UNUR_ENABLE_INFO], [1], 
+	           [Define to 1 if you want to use the info routine for printing informations about UNU.RAN objects])], 
 	[])
 
 dnl --- Compiler and compiler flags ------------------------------------------
@@ -105,6 +118,7 @@ AC_MSG_RESULT([
 *  C Compiler:                ${CC}
 *
 *  Enable logging:            ${enable_logging}
+*  Enable info routine:       ${enable_info}
 *
 *========================================================
 ])

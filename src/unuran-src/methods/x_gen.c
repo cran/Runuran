@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -104,6 +104,26 @@ unur_free( struct unur_gen *gen )
 {                
   if (gen) gen->destroy(gen);
 } 
+const char *
+unur_gen_info( struct unur_gen *gen, int help )
+{
+#ifdef UNUR_ENABLE_INFO
+  _unur_check_NULL("",gen,NULL);
+  if (gen->info) {
+    if (gen->infostr == NULL) 
+      gen->infostr = _unur_string_new();
+    else 
+      _unur_string_clear(gen->infostr);
+    gen->info((struct unur_gen*) gen, help);
+    return gen->infostr->text;
+  }
+  else {
+    return NULL;
+  }
+#else
+  return "INFO string not enable";
+#endif
+} 
 int
 unur_get_dimension( const struct unur_gen *gen )
 {
@@ -186,6 +206,10 @@ _unur_generic_create( struct unur_par *par, size_t s )
   gen->gen_aux = NULL;              
   gen->gen_aux_list = NULL;         
   gen->status = UNUR_FAILURE;       
+#ifdef UNUR_ENABLE_INFO
+  gen->infostr = NULL;              
+  gen->info = NULL;                 
+#endif
   return gen;
 } 
 struct unur_gen *
@@ -197,6 +221,9 @@ _unur_generic_clone( const struct unur_gen *gen, const char *type )
   clone->datap = _unur_xmalloc(gen->s_datap);
   memcpy (clone->datap, gen->datap, gen->s_datap);
   clone->genid = _unur_set_genid(type);
+#ifdef UNUR_ENABLE_INFO
+  clone->infostr = NULL;
+#endif
   clone->distr_is_privatecopy = gen->distr_is_privatecopy;
   if (clone->distr_is_privatecopy) 
     clone->distr = (gen->distr) ? _unur_distr_clone(gen->distr) : NULL;
@@ -220,6 +247,9 @@ _unur_generic_free( struct unur_gen *gen )
   _unur_free_genid(gen);
   COOKIE_CLEAR(gen);
   free(gen->datap);
+#ifdef UNUR_ENABLE_INFO
+  if (gen->infostr) _unur_string_free(gen->infostr);  
+#endif
   free(gen);
 } 
 struct unur_gen ** 

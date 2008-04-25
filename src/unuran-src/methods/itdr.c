@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -10,6 +10,9 @@
 #include "x_gen_source.h"
 #include "itdr.h"
 #include "itdr_struct.h"
+#ifdef UNUR_ENABLE_INFO
+#  include <tests/unuran_tests.h>
+#endif
 #define C_MAX  (-0.1)
 #define DX (1.e-6)      
 #define NEAR_POLE  (1.e-8)
@@ -36,6 +39,9 @@ static double _unur_itdr_ilc( struct unur_gen *gen, double x );
 static double _unur_itdr_find_xt( struct unur_gen *gen, double b );
 #ifdef UNUR_ENABLE_LOGGING
 static void _unur_itdr_debug_init( const struct unur_gen *gen, int error );
+#endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_itdr_info( struct unur_gen *gen, int help );
 #endif
 #define DISTR_IN  distr->data.cont      
 #define PAR       ((struct unur_itdr_par*)par->datap) 
@@ -228,11 +234,11 @@ int
 _unur_itdr_reinit( struct unur_gen *gen )
 {
   int rcode;
-  SAMPLE = _unur_itdr_getSAMPLE(gen);
   gen->set &= ~(ITDR_SET_XI | ITDR_SET_CP | ITDR_SET_CT);
   if ( (rcode = _unur_itdr_check_par(gen)) != UNUR_SUCCESS)
     return rcode;
   rcode = _unur_itdr_get_hat(gen);
+  SAMPLE = _unur_itdr_getSAMPLE(gen);
 #ifdef UNUR_ENABLE_LOGGING
     if (gen->debug & ITDR_DEBUG_REINIT)
       _unur_itdr_debug_init(gen,rcode);
@@ -270,6 +276,9 @@ _unur_itdr_create( struct unur_par *par )
   GEN->sy = 0.;            
   GEN->sign = 1.;          
   GEN->bd_right = INFINITY; 
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_itdr_info;
+#endif
   return gen;
 } 
 int
@@ -753,5 +762,45 @@ _unur_itdr_debug_init( const struct unur_gen *gen, int error )
   fprintf(log,"%s: **** INIT %s ***\n",gen->genid,
 	  (error==UNUR_SUCCESS) ? "successful" : "failed" );   
   fprintf(log,"%s:\n",gen->genid);
+} 
+#endif   
+#ifdef UNUR_ENABLE_INFO
+void
+_unur_itdr_info( struct unur_gen *gen, int help )
+{
+  struct unur_string *info = gen->infostr;
+  struct unur_distr *distr = gen->distr;
+  int samplesize = 10000;
+  _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
+  _unur_string_append(info,"distribution:\n");
+  _unur_distr_info_typename(gen);
+  _unur_string_append(info,"   functions = PDF dPDF\n");
+  _unur_string_append(info,"   domain    = (%g, %g)\n", DISTR.domain[0],DISTR.domain[1]);
+  _unur_string_append(info,"   pole/mode = %g\n", DISTR.mode);
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"method: ITDR (Inverse Transformed Density Rejection -- 2 point method)\n");
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"performance characteristics:\n");
+  _unur_string_append(info,"   area(hat) = %g  [ = %g + %g + %g ]\n",
+		      GEN->Atot, GEN->Ap, GEN->Ac, GEN->At);
+  _unur_string_append(info,"   rejection constant = ");
+  if (distr->set & UNUR_DISTR_SET_PDFAREA)
+    _unur_string_append(info,"%g\n", GEN->Atot/DISTR.area);
+  else
+    _unur_string_append(info,"%.2f  [approx. ]\n",
+			unur_test_count_urn(gen,samplesize,0,NULL)/(2.*samplesize));
+  _unur_string_append(info,"\n");
+  if (help) {
+    _unur_string_append(info,"parameters:\n");
+    _unur_string_append(info,"   cp = %g  %s\n", GEN->cp,
+			(gen->set & ITDR_SET_CP) ? "" : " [computed]");
+    _unur_string_append(info,"   ct = %g  %s\n", GEN->cp,
+			(gen->set & ITDR_SET_CT) ? "" : " [computed]");
+    _unur_string_append(info,"   xi = %g  %s\n", GEN->xi,
+			(gen->set & ITDR_SET_XI) ? "" : " [computed]");
+    if (gen->variant & ITDR_VARFLAG_VERIFY)
+      _unur_string_append(info,"   verify = on\n");
+    _unur_string_append(info,"\n");
+  }
 } 
 #endif   

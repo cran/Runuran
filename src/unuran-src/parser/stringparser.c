@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <stdarg.h>
@@ -773,7 +773,7 @@ _unur_str_par_set_Di (UNUR_PAR *par, const char *key, char *type_args, char **ar
   return UNUR_ERR_STR_INVALID;
 } 
 UNUR_URNG *
-_unur_str2urng( char *str_urng )
+_unur_str2urng( char *str_urng ATTRIBUTE__UNUSED)
 {
 #if defined(UNUR_URNG_UNURAN) && defined(UNURAN_HAS_PRNG)
   UNUR_URNG *urng = NULL;
@@ -939,7 +939,7 @@ _unur_parse_dlist( char *liststr, double **darray )
   while (*token != '\0' && *token == '(')
     ++token;
   for ( next = token;
-	next != NULL && *token != '\0';
+	next != NULL && *token != '\0' &&*token != ')';
 	token = next ) {
     next = strchr(token,',');
     if (next != NULL) {

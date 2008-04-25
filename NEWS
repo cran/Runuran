@@ -1,12 +1,24 @@
+Version 0.7: 2008-04-21
+
+	- print() now shows some information about a generator
+          object
+
+	- new function unuran.details() for printing detailed 
+	  information about a generator object 
+
+	- new function uqhinv() for compting quantiles approximately
+	  using UNU.RAN method HINV
+
+
 Version 0.6: 2007-12-10
 
-        - added slot for a rectangular domain and the center 
+        - added slots for a rectangular domain and the center 
           (point in main region of distribution) for multivariate 
           distribution class 'distr.cmv'
 
         - new method MVTDR in UNU.RAN
 
-        - fixed broken optional arguments in routines urtdr() and urhitr()
+        - fixed broken optional arguments in routines urtdr() and urhitro()
             (The optional arguments were not passed to the given
             density function in contradiction to the help page of
 	    these routines.)

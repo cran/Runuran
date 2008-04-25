@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -43,17 +43,21 @@ static int _unur_hinv_interval_parameter( struct unur_gen *gen, struct unur_hinv
 static double _unur_hinv_eval_polynomial( double x, double *coeff, int order );
 static int _unur_hinv_list_to_array( struct unur_gen *gen );
 static int _unur_hinv_make_guide_table( struct unur_gen *gen );
+static double _unur_hinv_CDF( const struct unur_gen *gen, double x );
 #ifdef UNUR_ENABLE_LOGGING
 static void _unur_hinv_debug_init( const struct unur_gen *gen, int ok);
 static void _unur_hinv_debug_intervals( const struct unur_gen *gen );
 static void _unur_hinv_debug_chg_truncated( const struct unur_gen *gen);
+#endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_hinv_info( struct unur_gen *gen, int help );
 #endif
 #define DISTR_IN  distr->data.cont      
 #define PAR       ((struct unur_hinv_par*)par->datap) 
 #define GEN       ((struct unur_hinv_gen*)gen->datap) 
 #define DISTR     gen->distr->data.cont 
 #define SAMPLE    gen->sample.cont      
-#define CDF(x)  ((_unur_cont_CDF((x),(gen->distr))-GEN->CDFmin)/(GEN->CDFmax-GEN->CDFmin))
+#define CDF(x)  (_unur_hinv_CDF((gen),(x)))
 #define PDF(x)  (_unur_cont_PDF((x),(gen->distr))/(GEN->CDFmax-GEN->CDFmin)) 
 #define dPDF(x) (_unur_cont_dPDF((x),(gen->distr))/(GEN->CDFmax-GEN->CDFmin))
 #define _unur_hinv_getSAMPLE(gen)  (_unur_hinv_sample)
@@ -113,9 +117,13 @@ unur_hinv_set_u_resolution( struct unur_par *par, double u_resolution )
 {
   _unur_check_NULL( GENTYPE, par, UNUR_ERR_NULL );
   _unur_check_par_object( par, HINV );
-  if (u_resolution < 5.*DBL_EPSILON) {
+  if (u_resolution > 1.e-2) {
     _unur_warning(GENTYPE,UNUR_ERR_PAR_SET,"u-resolution");
     return UNUR_ERR_PAR_SET;
+  }
+  if (u_resolution < 5.*DBL_EPSILON ) {
+    _unur_warning(GENTYPE,UNUR_ERR_PAR_SET,"u-resolution");
+    u_resolution = 5.*DBL_EPSILON;
   }
   if (u_resolution < UNUR_EPSILON) {
     _unur_warning(GENTYPE,UNUR_ERR_PAR_SET,"u-resolution so small that problems may occur");
@@ -278,7 +286,6 @@ int
 _unur_hinv_reinit( struct unur_gen *gen )
 {
   int rcode;
-  SAMPLE = _unur_hinv_getSAMPLE(gen);
   if ( (rcode = _unur_hinv_check_par(gen)) != UNUR_SUCCESS)
     return rcode;
   if ( (rcode = _unur_hinv_create_table(gen)) != UNUR_SUCCESS)
@@ -286,6 +293,7 @@ _unur_hinv_reinit( struct unur_gen *gen )
   _unur_hinv_list_to_array( gen );
   GEN->Umin = _unur_max(0.,GEN->intervals[0]);
   GEN->Umax = _unur_min(1.,GEN->intervals[(GEN->N-1)*(GEN->order+2)]);
+  SAMPLE = _unur_hinv_getSAMPLE(gen);
 #ifdef UNUR_ENABLE_LOGGING
   if (gen->debug & HINV_DEBUG_REINIT) _unur_hinv_debug_init(gen,TRUE);
 #endif
@@ -323,6 +331,9 @@ _unur_hinv_create( struct unur_par *par )
   GEN->intervals = NULL;
   GEN->guide_size = 0; 
   GEN->guide = NULL;
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_hinv_info;
+#endif
   return gen;
 } 
 int
@@ -617,7 +628,7 @@ _unur_hinv_interval_adapt( struct unur_gen *gen, struct unur_hinv_interval *iv,
   if (_unur_FP_equal(p_new,iv->p) || _unur_FP_equal(p_new,iv->next->p)) {
     if(!(*error_count_shortinterval)){ 
       _unur_warning(gen->genid,UNUR_ERR_ROUNDOFF,
-		     "one or more intervals very short; possibly due to numerical problems with a pole");
+		     "one or more intervals very short; possibly due to numerical problems with a pole or very flat tail");
       (*error_count_shortinterval)++;
     } 
     _unur_hinv_interval_parameter(gen,iv);
@@ -634,6 +645,11 @@ _unur_hinv_interval_adapt( struct unur_gen *gen, struct unur_hinv_interval *iv,
   _unur_hinv_interval_parameter(gen,iv);
   x = _unur_hinv_eval_polynomial( 0.5, iv->spline, GEN->order );
   Fx = CDF(x);
+  if (_unur_isnan(x)) { 
+    _unur_error(gen->genid,UNUR_ERR_ROUNDOFF,
+ 		"NaN occured; possibly due to numerical problems with a pole or very flat tail");
+    return NULL;
+   }
   if (!(fabs(Fx - 0.5*(iv->next->u + iv->u)) < GEN->u_resolution)) {
     if(fabs(p_new-x)< HINV_XDEVIATION * (iv->next->p - iv->p))
       iv_new = _unur_hinv_interval_new(gen,x,Fx);
@@ -765,6 +781,17 @@ _unur_hinv_make_guide_table( struct unur_gen *gen )
     GEN->guide[j] = i;
   return UNUR_SUCCESS;
 } 
+double
+_unur_hinv_CDF( const struct unur_gen *gen, double x )
+{
+  double u;
+  if (x<=DISTR.domain[0]) return 0.;
+  if (x>=DISTR.domain[1]) return 1.;
+  u = (_unur_cont_CDF(x,gen->distr) - GEN->CDFmin) / (GEN->CDFmax - GEN->CDFmin);
+  if (u>1. && _unur_FP_equal(u,1.))
+    u = 1.;
+  return u;
+} 
 #ifdef UNUR_ENABLE_LOGGING
 void
 _unur_hinv_debug_init( const struct unur_gen *gen, int ok )
@@ -775,7 +802,7 @@ _unur_hinv_debug_init( const struct unur_gen *gen, int ok )
   log = unur_get_stream();
   fprintf(log,"%s:\n",gen->genid);
   fprintf(log,"%s: type    = continuous univariate random variates\n",gen->genid);
-  fprintf(log,"%s: method  = HINV (Spline approximation of INVerse CDF)\n",gen->genid);
+  fprintf(log,"%s: method  = HINV (Hermite approximation of INVerse CDF)\n",gen->genid);
   fprintf(log,"%s:\n",gen->genid);
   _unur_distr_cont_debug( gen->distr, gen->genid );
   fprintf(log,"%s: sampling routine = _unur_hinv_sample\n",gen->genid);
@@ -841,5 +868,71 @@ _unur_hinv_debug_chg_truncated( const struct unur_gen *gen )
   fprintf(log,"%s: domain of (truncated) distribution changed:\n",gen->genid);
   fprintf(log,"%s:\tdomain = (%g, %g)\n",gen->genid, DISTR.trunc[0], DISTR.trunc[1]);
   fprintf(log,"%s:\tU in (%g,%g)\n",gen->genid,GEN->Umin,GEN->Umax);
+} 
+#endif   
+#ifdef UNUR_ENABLE_INFO
+void
+_unur_hinv_info( struct unur_gen *gen, int help )
+{
+  struct unur_string *info = gen->infostr;
+  struct unur_distr *distr = gen->distr;
+  _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
+  _unur_string_append(info,"distribution:\n");
+  _unur_distr_info_typename(gen);
+  _unur_string_append(info,"   functions = CDF");
+  if (GEN->order > 1)
+    _unur_string_append(info," PDF");
+  if (GEN->order > 3)
+    _unur_string_append(info," dPDF");
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"   domain    = (%g, %g)", DISTR.trunc[0],DISTR.trunc[1]);
+  if (gen->distr->set & UNUR_DISTR_SET_TRUNCATED) {
+    _unur_string_append(info,"   [truncated from (%g, %g)]", DISTR.domain[0],DISTR.domain[1]);
+  }
+  _unur_string_append(info,"\n");
+  if (distr->set & UNUR_DISTR_SET_MODE) {
+    _unur_string_append(info,"   mode      = %g\n", DISTR.mode);
+  }
+  if (help)
+    if (! (distr->set & UNUR_DISTR_SET_MODE) )
+      _unur_string_append(info,"\n[ Hint: %s ]\n",
+			  "You may set the \"mode\" of the distribution in case of a high peak");
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"method: HINV (Hermite approximation of INVerse CDF)\n");
+  _unur_string_append(info,"   order of polynomial = %d\n", GEN->order);
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"performance characteristics:\n");
+  _unur_string_append(info,"   truncated domain = (%g,%g)\n",GEN->bleft,GEN->bright);
+  _unur_string_append(info,"   Prob(X<domain)   = %g\n", _unur_max(0,GEN->tailcutoff_left));
+  _unur_string_append(info,"   Prob(X>domain)   = %g\n", _unur_max(0,1.-GEN->tailcutoff_right));
+  {
+    double max_error=1.; double MAE=1.;
+    unur_hinv_estimate_error( gen, 10000, &max_error, &MAE );
+    _unur_string_append(info,"   u-error         <= %g  (mean = %g)\n", max_error, MAE);
+  }
+  _unur_string_append(info,"   # intervals      = %d\n", GEN->N-1);
+  _unur_string_append(info,"\n");
+  if (help) {
+    _unur_string_append(info,"parameters:\n");
+    _unur_string_append(info,"   order = %d  %s\n", GEN->order,
+ 			(gen->set & HINV_SET_ORDER) ? "" : "[default]");
+    _unur_string_append(info,"   u_resolution = %g  %s\n", GEN->u_resolution,
+ 			(gen->set & HINV_SET_U_RESOLUTION) ? "" : "[default]");
+    if (gen->set & HINV_SET_MAX_IVS)
+      _unur_string_append(info,"   max_intervals = %d\n", GEN->max_ivs);
+    _unur_string_append(info,"   boundary = (%g,%g)  %s\n", GEN->bleft, GEN->bright,
+			(gen->set & HINV_SET_BOUNDARY) ? "" : "[computed]");
+    _unur_string_append(info,"\n");
+  }
+  if (help) {
+    if ( GEN->order < 5 ) 
+      _unur_string_append(info,"[ Hint: %s ]\n",
+			  "You can set \"order=5\" to decrease #intervals");
+    if (! (gen->set & HINV_SET_U_RESOLUTION) )
+      _unur_string_append(info,"[ Hint: %s\n\t%s ]\n",
+			  "You can decrease the u-error by decreasing \"u_resolution\".",
+			  "(it is bounded by the machine epsilon, however.)");
+    _unur_string_append(info,"\n");
+  }
 } 
 #endif   

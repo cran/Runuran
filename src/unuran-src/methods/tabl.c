@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -69,6 +69,9 @@ static void _unur_tabl_debug_dars_start( const struct unur_par *par, const struc
 static void _unur_tabl_debug_free( const struct unur_gen *gen );
 static void _unur_tabl_debug_intervals( const struct unur_gen *gen, const char *header, int print_areas );
 #endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_tabl_info( struct unur_gen *gen, int help );
+#endif
 #define DISTR_IN  distr->data.cont      
 #define PAR       ((struct unur_tabl_par*)par->datap) 
 #define GEN       ((struct unur_tabl_gen*)gen->datap) 
@@ -93,3 +96,4 @@ _unur_tabl_getSAMPLE( struct unur_gen *gen )
 #include "tabl_init.ch"
 #include "tabl_sample.ch"
 #include "tabl_debug.ch"
+#include "tabl_info.ch"

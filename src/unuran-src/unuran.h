@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #undef __BEGIN_DECLS
@@ -339,6 +339,19 @@ int unur_arou_set_guidefactor( UNUR_PAR *parameters, double factor );
 int unur_arou_set_verify( UNUR_PAR *parameters, int verify );
 int unur_arou_chg_verify( UNUR_GEN *generator, int verify );
 int unur_arou_set_pedantic( UNUR_PAR *parameters, int pedantic );
+UNUR_PAR *unur_ars_new( const UNUR_DISTR* distribution );
+int unur_ars_set_max_intervals( UNUR_PAR *parameters, int max_ivs );
+int unur_ars_set_cpoints( UNUR_PAR *parameters, int n_cpoints, const double *cpoints );
+int unur_ars_set_reinit_percentiles( UNUR_PAR *parameters, int n_percentiles, const double *percentiles );
+int unur_ars_chg_reinit_percentiles( UNUR_GEN *generator, int n_percentiles, const double *percentiles );
+int unur_ars_set_reinit_ncpoints( UNUR_PAR *parameters, int ncpoints );
+int unur_ars_chg_reinit_ncpoints( UNUR_GEN *generator, int ncpoints );
+int unur_ars_set_max_iter( UNUR_PAR *parameters, int max_iter );
+int unur_ars_set_verify( UNUR_PAR *parameters, int verify );
+int unur_ars_chg_verify( UNUR_GEN *generator, int verify );
+int unur_ars_set_pedantic( UNUR_PAR *parameters, int pedantic );
+double unur_ars_get_loghatarea( const UNUR_GEN *generator );
+double unur_ars_eval_invcdfhat( const UNUR_GEN *generator, double u );
 UNUR_PAR *unur_hinv_new( const UNUR_DISTR *distribution );
 int unur_hinv_set_order( UNUR_PAR *parameters, int order);
 int unur_hinv_set_u_resolution( UNUR_PAR *parameters, double u_resolution);
@@ -461,18 +474,6 @@ int unur_tdr_set_pedantic( UNUR_PAR *parameters, int pedantic );
 double unur_tdr_eval_invcdfhat( const UNUR_GEN *generator, double u, 
 				double *hx, double *fx, double *sqx );
 int _unur_tdr_is_ARS_running( const UNUR_GEN *generator );
-UNUR_PAR *unur_tdrgw_new( const UNUR_DISTR* distribution );
-int unur_tdrgw_set_max_intervals( UNUR_PAR *parameters, int max_ivs );
-int unur_tdrgw_set_cpoints( UNUR_PAR *parameters, int n_cpoints, const double *cpoints );
-int unur_tdrgw_set_reinit_percentiles( UNUR_PAR *parameters, int n_percentiles, const double *percentiles );
-int unur_tdrgw_chg_reinit_percentiles( UNUR_GEN *generator, int n_percentiles, const double *percentiles );
-int unur_tdrgw_set_reinit_ncpoints( UNUR_PAR *parameters, int ncpoints );
-int unur_tdrgw_chg_reinit_ncpoints( UNUR_GEN *generator, int ncpoints );
-int unur_tdrgw_set_verify( UNUR_PAR *parameters, int verify );
-int unur_tdrgw_chg_verify( UNUR_GEN *generator, int verify );
-int unur_tdrgw_set_pedantic( UNUR_PAR *parameters, int pedantic );
-double unur_tdrgw_get_loghatarea( const UNUR_GEN *generator );
-double unur_tdrgw_eval_invcdfhat( const UNUR_GEN *generator, double u );
 UNUR_PAR *unur_utdr_new( const UNUR_DISTR *distribution );
 int unur_utdr_set_pdfatmode( UNUR_PAR *parameters, double fmode );
 int unur_utdr_set_cpfactor( UNUR_PAR *parameters, double cp_factor );
@@ -612,6 +613,30 @@ int unur_utdr_upd_mode( UNUR_GEN *generator );
 int unur_utdr_chg_pdfarea( UNUR_GEN *generator, double area );
 int unur_utdr_upd_pdfarea( UNUR_GEN *generator );
 #endif  
+#define unur_tdrgw_new( distr ) \
+   (unur_ars_new( distr ))
+#define unur_tdrgw_set_max_intervals( par,max_ivs ) \
+   (unur_ars_set_max_intervals( (par),(max_ivs) ))
+#define unur_tdrgw_set_cpoints( par,n_cpoints,cpoints ) \
+   (unur_ars_set_cpoints( (par),(n_cpoints),(cpoints) ))
+#define unur_tdrgw_set_reinit_percentiles( par,n_percentiles,percentiles ) \
+   (unur_ars_set_reinit_percentiles( (par),(n_percentiles),(percentiles) ))
+#define unur_tdrgw_chg_reinit_percentiles( gen,n_percentiles,percentiles ) \
+   (unur_ars_chg_reinit_percentiles( (gen),(n_percentiles),(percentiles) ))
+#define unur_tdrgw_set_reinit_ncpoints( par,ncpoints ) \
+   (unur_ars_set_reinit_ncpoints( (par),(ncpoints) ))
+#define unur_tdrgw_chg_reinit_ncpoints( gen,ncpoints ) \
+   (unur_ars_chg_reinit_ncpoints( (gen),(ncpoints) ))
+#define unur_tdrgw_set_verify( par,verify ) \
+   (unur_ars_set_verify( (par),(verify) ))
+#define unur_tdrgw_chg_verify( gen,verify ) \
+   (unur_ars_chg_verify( (gen),(verify) ))
+#define unur_tdrgw_set_pedantic( par,pedantic ) \
+   (unur_ars_set_pedantic( (par),(pedantic) ))
+#define unur_tdrgw_get_loghatarea( gen ) \
+   (unur_ars_get_loghatarea( gen ))
+#define unur_tdrgw_eval_invcdfhat( gen,u ) \
+   (unur_ars_eval_invcdfhat( (gen),(u) ))
 UNUR_PAR *unur_vmt_new( const UNUR_DISTR *distribution );
 UNUR_GEN *unur_str2gen( const char *string );
 UNUR_DISTR *unur_str2distr( const char *string );
@@ -625,6 +650,7 @@ double unur_sample_cont(UNUR_GEN *generator);
 int    unur_sample_vec(UNUR_GEN *generator, double *vector);
 int    unur_sample_matr(UNUR_GEN *generator, double *matrix);
 void  unur_free( UNUR_GEN *generator );
+const char *unur_gen_info( UNUR_GEN *generator, int help );
 int unur_get_dimension( const UNUR_GEN *generator );
 const char *unur_get_genid( const UNUR_GEN *generator );
 UNUR_DISTR *unur_get_distr( const UNUR_GEN *generator );
@@ -635,62 +661,63 @@ void unur_par_free( UNUR_PAR *par);
 #define UNURAN_DISTRIBUTIONS_H_SEEN
 #ifndef UNUR_STDDISTR_H_SEEN
 #define UNUR_STDDISTR_H_SEEN
+#define UNUR_DISTR_STD         (0x00000001u)  
 enum {
-  UNUR_DISTR_GENERIC  = 0x0u,
-  UNUR_DISTR_CORDER,              
-  UNUR_DISTR_CXTRANS,             
-  UNUR_DISTR_CONDI,               
-  UNUR_DISTR_BETA,                
-  UNUR_DISTR_CAUCHY,              
-  UNUR_DISTR_CHI,                 
-  UNUR_DISTR_CHISQUARE,           
-  UNUR_DISTR_EPANECHNIKOV,        
-  UNUR_DISTR_EXPONENTIAL,         
-  UNUR_DISTR_EXTREME_I,           
-  UNUR_DISTR_EXTREME_II,          
-  UNUR_DISTR_F,                   
-  UNUR_DISTR_GAMMA,               
-  UNUR_DISTR_GIG,                 
-  UNUR_DISTR_LAPLACE,             
-  UNUR_DISTR_LOGISTIC,            
-  UNUR_DISTR_LOGNORMAL,           
-  UNUR_DISTR_LOMAX,               
-  UNUR_DISTR_NORMAL   = 0x0100u,  
-   UNUR_DISTR_GAUSSIAN = 0x0100u, 
-  UNUR_DISTR_PARETO,              
-  UNUR_DISTR_POWEREXPONENTIAL,    
-  UNUR_DISTR_RAYLEIGH,            
-  UNUR_DISTR_SLASH,               
-  UNUR_DISTR_STUDENT,             
-  UNUR_DISTR_TRIANGULAR,          
-  UNUR_DISTR_UNIFORM = 0x0200u,   
-   UNUR_DISTR_BOXCAR = 0x0200u,   
-  UNUR_DISTR_WEIBULL,             
-  UNUR_DISTR_BURR_I,              
-  UNUR_DISTR_BURR_II,             
-  UNUR_DISTR_BURR_III,            
-  UNUR_DISTR_BURR_IV,             
-  UNUR_DISTR_BURR_V,              
-  UNUR_DISTR_BURR_VI,             
-  UNUR_DISTR_BURR_VII,            
-  UNUR_DISTR_BURR_VIII,           
-  UNUR_DISTR_BURR_IX,             
-  UNUR_DISTR_BURR_X,              
-  UNUR_DISTR_BURR_XI,             
-  UNUR_DISTR_BURR_XII,            
-  UNUR_DISTR_BINOMIAL,            
-  UNUR_DISTR_GEOMETRIC,           
-  UNUR_DISTR_HYPERGEOMETRIC,      
-  UNUR_DISTR_LOGARITHMIC,         
-  UNUR_DISTR_NEGATIVEBINOMIAL,    
-  UNUR_DISTR_POISSON,             
-  UNUR_DISTR_ZIPF,                
-  UNUR_DISTR_MCAUCHY,             
-  UNUR_DISTR_MNORMAL,             
-  UNUR_DISTR_MSTUDENT,            
-  UNUR_DISTR_MEXPONENTIAL,        
-  UNUR_DISTR_COPULA,              
-  UNUR_DISTR_MCORRELATION         
+  UNUR_DISTR_GENERIC          = 0x00000000u,
+  UNUR_DISTR_CORDER           = 0x00000010u,  
+  UNUR_DISTR_CXTRANS          = 0x00000020u,  
+  UNUR_DISTR_CONDI            = 0x00000030u,  
+  UNUR_DISTR_BETA             = 0x00000101u,  
+  UNUR_DISTR_CAUCHY           = 0x00000201u,  
+  UNUR_DISTR_CHI              = 0x00000301u,  
+  UNUR_DISTR_CHISQUARE        = 0x00000401u,  
+  UNUR_DISTR_EPANECHNIKOV     = 0x00000501u,  
+  UNUR_DISTR_EXPONENTIAL      = 0x00000601u,  
+  UNUR_DISTR_EXTREME_I        = 0x00000701u,  
+  UNUR_DISTR_EXTREME_II       = 0x00000801u,  
+  UNUR_DISTR_F                = 0x00000901u,  
+  UNUR_DISTR_GAMMA            = 0x00000a01u,  
+  UNUR_DISTR_GIG              = 0x00000b01u,  
+  UNUR_DISTR_LAPLACE          = 0x00000c01u,  
+  UNUR_DISTR_LOGISTIC         = 0x00000d01u,  
+  UNUR_DISTR_LOGNORMAL        = 0x00000e01u,  
+  UNUR_DISTR_LOMAX            = 0x00000f01u,  
+  UNUR_DISTR_NORMAL           = 0x00001001u,  
+   UNUR_DISTR_GAUSSIAN        = 0x00001001u,  
+  UNUR_DISTR_PARETO           = 0x00001101u,  
+  UNUR_DISTR_POWEREXPONENTIAL = 0x00001201u,  
+  UNUR_DISTR_RAYLEIGH         = 0x00001301u,  
+  UNUR_DISTR_SLASH            = 0x00001401u,  
+  UNUR_DISTR_STUDENT          = 0x00001501u,  
+  UNUR_DISTR_TRIANGULAR       = 0x00001601u,  
+  UNUR_DISTR_UNIFORM          = 0x00002001u,  
+   UNUR_DISTR_BOXCAR          = 0x00002001u,  
+  UNUR_DISTR_WEIBULL          = 0x00001801u,  
+  UNUR_DISTR_BURR_I           = 0x0000b001u,  
+  UNUR_DISTR_BURR_II          = 0x0000b101u,  
+  UNUR_DISTR_BURR_III         = 0x0000b201u,  
+  UNUR_DISTR_BURR_IV          = 0x0000b301u,  
+  UNUR_DISTR_BURR_V           = 0x0000b401u,  
+  UNUR_DISTR_BURR_VI          = 0x0000b501u,  
+  UNUR_DISTR_BURR_VII         = 0x0000b601u,  
+  UNUR_DISTR_BURR_VIII        = 0x0000b701u,  
+  UNUR_DISTR_BURR_IX          = 0x0000b801u,  
+  UNUR_DISTR_BURR_X           = 0x0000b901u,  
+  UNUR_DISTR_BURR_XI          = 0x0000ba01u,  
+  UNUR_DISTR_BURR_XII         = 0x0000bb01u,  
+  UNUR_DISTR_BINOMIAL         = 0x00010001u,  
+  UNUR_DISTR_GEOMETRIC        = 0x00020001u,  
+  UNUR_DISTR_HYPERGEOMETRIC   = 0x00030001u,  
+  UNUR_DISTR_LOGARITHMIC      = 0x00040001u,  
+  UNUR_DISTR_NEGATIVEBINOMIAL = 0x00050001u,  
+  UNUR_DISTR_POISSON          = 0x00060001u,  
+  UNUR_DISTR_ZIPF             = 0x00070001u,  
+  UNUR_DISTR_MCAUCHY          = 0x01000001u,  
+  UNUR_DISTR_MNORMAL          = 0x02000001u,  
+  UNUR_DISTR_MSTUDENT         = 0x03000001u,  
+  UNUR_DISTR_MEXPONENTIAL     = 0x04000001u,  
+  UNUR_DISTR_COPULA           = 0x05000001u,  
+  UNUR_DISTR_MCORRELATION     = 0x10000001u   
 };
 #endif  
 UNUR_DISTR *unur_distr_beta(const double *params, int n_params);

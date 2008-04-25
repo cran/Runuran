@@ -232,6 +232,46 @@ Runuran_sample (SEXP sexp_unur, SEXP sexp_n)
 
 /*---------------------------------------------------------------------------*/
 
+SEXP
+Runuran_print (SEXP sexp_gen, SEXP sexp_help)
+     /*----------------------------------------------------------------------*/
+     /* Print information about UNU.RAN generator object.                    */
+     /*----------------------------------------------------------------------*/
+{
+  struct unur_gen *gen;
+  int help;
+  const char *info;
+
+#ifdef RUNURAN_DEBUG
+  CHECK_PTR(sexp_gen);
+#endif
+
+  gen = R_ExternalPtrAddr(sexp_gen);
+#ifdef RUNURAN_DEBUG
+  if (gen == NULL)
+    error("[UNU.RAN - error] bad UNU.RAN object");
+#endif
+  
+  /* Extract help flag */
+  help = *(INTEGER (AS_INTEGER (sexp_help)));
+
+  /* get info string */
+  info = unur_gen_info(gen,help);
+
+  /* print info string */
+  if (info) {
+    Rprintf("%s",info);
+  }
+  /*   else { */
+  /*     /\* no info string available *\/ */
+  /*     Rprintf("nix\n");  */
+  /*   } */
+  
+  /* nothing to return */
+  return R_NilValue;
+} /* end of Runuran_print() */
+
+/*---------------------------------------------------------------------------*/
 void
 _Runuran_free (SEXP sexp_gen)
      /*----------------------------------------------------------------------*/

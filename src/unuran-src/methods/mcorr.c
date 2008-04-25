@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -29,6 +29,9 @@ static int _unur_mcorr_sample_matr_HH( struct unur_gen *gen, double *mat );
 static int _unur_mcorr_sample_matr_eigen( struct unur_gen *gen, double *mat );
 #ifdef UNUR_ENABLE_LOGGING
 static void _unur_mcorr_debug_init( const struct unur_gen *gen );
+#endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_mcorr_info( struct unur_gen *gen, int help );
 #endif
 #define DISTR_IN  distr->data.matr      
 #define PAR       ((struct unur_mcorr_par*)par->datap) 
@@ -195,6 +198,9 @@ _unur_mcorr_create( struct unur_par *par )
   else {
     GEN->H = _unur_xmalloc(GEN->dim * GEN->dim * sizeof(double));
   }
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_mcorr_info;
+#endif
   return gen;
 } 
 struct unur_gen *
@@ -385,5 +391,36 @@ _unur_mcorr_debug_init( const struct unur_gen *gen )
   else
     fprintf(log,"%s: sampling routine = _unur_mcorr_sample_matr_HH()\n",gen->genid);
   fprintf(log,"%s:\n",gen->genid);
+} 
+#endif   
+#ifdef UNUR_ENABLE_INFO
+void
+_unur_mcorr_info( struct unur_gen *gen, int help )
+{
+  struct unur_string *info = gen->infostr;
+  _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
+  _unur_string_append(info,"distribution:\n");
+  _unur_distr_info_typename(gen);
+  _unur_string_append(info,"   dimension = %d x %d   (= %d)\n", 
+		      DISTR.n_rows, DISTR.n_cols, gen->distr->dim);
+  if (gen->set && MCORR_SET_EIGENVALUES) {
+    _unur_string_append(info,"   eigenvalues = ");
+    _unur_distr_info_vector( gen, GEN->eigenvalues, GEN->dim);
+    _unur_string_append(info,"\n");
+  }
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"method: MCORR (Random CORRelation matrix)\n");
+  if (gen->set && MCORR_SET_EIGENVALUES)
+    _unur_string_append(info,"   generate correlation matrix with given eigenvalues\n");
+  _unur_string_append(info,"\n");
+  if (help) {
+    _unur_string_append(info,"parameters: \n");
+    if (gen->set && MCORR_SET_EIGENVALUES) {
+      _unur_string_append(info,"   eigenvalues = ");
+      _unur_distr_info_vector( gen, GEN->eigenvalues, GEN->dim);
+      _unur_string_append(info,"\n");
+    }
+    _unur_string_append(info,"\n");
+  }
 } 
 #endif   

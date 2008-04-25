@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -264,6 +264,16 @@ unur_distr_cont_set_pdfstr( struct unur_distr *distr, const char *pdfstr )
   _unur_check_NULL( NULL, distr, UNUR_ERR_NULL );
   _unur_check_distr_object( distr, CONT, UNUR_ERR_DISTR_INVALID );
   _unur_check_NULL( NULL, pdfstr, UNUR_ERR_NULL );
+  if ( DISTR.pdftree || DISTR.logpdftree ) {
+    if (DISTR.pdftree)  _unur_fstr_free(DISTR.pdftree);
+    if (DISTR.dpdftree) _unur_fstr_free(DISTR.dpdftree);
+    if (DISTR.logpdftree)  _unur_fstr_free(DISTR.logpdftree);
+    if (DISTR.dlogpdftree) _unur_fstr_free(DISTR.dlogpdftree);
+    DISTR.pdf = NULL;
+    DISTR.dpdf = NULL;
+    DISTR.logpdf = NULL;
+    DISTR.dlogpdf = NULL;
+  }
   if (DISTR.pdf != NULL) {
     _unur_warning(distr->name,UNUR_ERR_DISTR_SET,"Overwriting of PDF not allowed");
     return UNUR_ERR_DISTR_SET;
@@ -286,6 +296,16 @@ unur_distr_cont_set_logpdfstr( struct unur_distr *distr, const char *logpdfstr )
   _unur_check_NULL( NULL, distr, UNUR_ERR_NULL );
   _unur_check_distr_object( distr, CONT, UNUR_ERR_DISTR_INVALID );
   _unur_check_NULL( NULL, logpdfstr, UNUR_ERR_NULL );
+  if ( DISTR.pdftree || DISTR.logpdftree ) {
+    if (DISTR.pdftree)  _unur_fstr_free(DISTR.pdftree);
+    if (DISTR.dpdftree) _unur_fstr_free(DISTR.dpdftree);
+    if (DISTR.logpdftree)  _unur_fstr_free(DISTR.logpdftree);
+    if (DISTR.dlogpdftree) _unur_fstr_free(DISTR.dlogpdftree);
+    DISTR.pdf = NULL;
+    DISTR.dpdf = NULL;
+    DISTR.logpdf = NULL;
+    DISTR.dlogpdf = NULL;
+  }
   if (DISTR.pdf != NULL || DISTR.logpdf != NULL) {
     _unur_warning(distr->name,UNUR_ERR_DISTR_SET,"Overwriting of logPDF not allowed");
     return UNUR_ERR_DISTR_SET;
@@ -321,10 +341,12 @@ unur_distr_cont_set_cdfstr( struct unur_distr *distr, const char *cdfstr )
     return UNUR_ERR_DISTR_SET;
   }
   DISTR.cdf  = _unur_distr_cont_eval_cdf_tree;
-  if ( (DISTR.pdftree = _unur_fstr_make_derivative(DISTR.cdftree)) != NULL )
-    DISTR.pdf = _unur_distr_cont_eval_pdf_tree;
-  if ( (DISTR.dpdftree = _unur_fstr_make_derivative(DISTR.pdftree)) != NULL )
-    DISTR.dpdf = _unur_distr_cont_eval_dpdf_tree;
+  if (DISTR.pdftree == NULL)
+    if ( (DISTR.pdftree = _unur_fstr_make_derivative(DISTR.cdftree)) != NULL )
+      DISTR.pdf = _unur_distr_cont_eval_pdf_tree;
+  if (DISTR.dpdftree == NULL)
+    if ( (DISTR.dpdftree = _unur_fstr_make_derivative(DISTR.pdftree)) != NULL )
+      DISTR.dpdf = _unur_distr_cont_eval_dpdf_tree;
   return UNUR_SUCCESS;
 } 
 int
@@ -853,7 +875,7 @@ _unur_distr_cont_find_mode( struct unur_distr *distr )
   mode = _unur_util_find_max( pdf, DISTR.domain[0], DISTR.domain[1], DISTR.center );
   if (_unur_isfinite(mode)){
     DISTR.mode = mode;
-    distr->set |= UNUR_DISTR_SET_MODE; 
+    distr->set |= UNUR_DISTR_SET_MODE | UNUR_DISTR_SET_MODE_APPROX ; 
     return UNUR_SUCCESS;
   }
   else {

@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #ifndef UNUR_METHODS_SOURCE_H_SEEN
@@ -12,6 +12,7 @@
 #define UNUR_METH_DSS      0x01000005u
 #define UNUR_METH_CONT     0x02000000u
 #define UNUR_METH_AROU     0x02000100u
+#define UNUR_METH_ARS      0x02000d00u
 #define UNUR_METH_HINV     0x02000200u
 #define UNUR_METH_HRB      0x02000300u
 #define UNUR_METH_HRD      0x02000400u
@@ -23,7 +24,6 @@
 #define UNUR_METH_SSR      0x02000a00u
 #define UNUR_METH_TABL     0x02000b00u
 #define UNUR_METH_TDR      0x02000c00u
-#define UNUR_METH_TDRGW    0x02000d00u
 #define UNUR_METH_UNIF     0x02000e00u
 #define UNUR_METH_UTDR     0x02000f00u
 #define UNUR_METH_CEMP     0x04000000u

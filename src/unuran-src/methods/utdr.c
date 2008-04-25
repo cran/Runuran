@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -10,6 +10,9 @@
 #include "x_gen_source.h"
 #include "utdr.h"
 #include "utdr_struct.h"
+#ifdef UNUR_ENABLE_INFO
+#  include <tests/unuran_tests.h>
+#endif
 #define UTDR_VARFLAG_VERIFY     0x01u   
 #define UTDR_DEBUG_REINIT    0x00000010u   
 #define UTDR_SET_CPFACTOR       0x001u
@@ -29,6 +32,9 @@ static int _unur_utdr_hat( struct unur_gen *gen );
 static void _unur_utdr_debug_init( const struct unur_gen *gen, 
 				   double ttly, double ttlys, double ttry, double ttrys,
 				   double cfac, int setupok, double c );
+#endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_utdr_info( struct unur_gen *gen, int help );
 #endif
 #define DISTR_IN  distr->data.cont      
 #define PAR       ((struct unur_utdr_par*)par->datap) 
@@ -175,11 +181,11 @@ int
 _unur_utdr_reinit( struct unur_gen *gen )
 {
   int rcode;
-  SAMPLE = _unur_utdr_getSAMPLE(gen);
   if ( (rcode = _unur_utdr_check_par(gen)) != UNUR_SUCCESS)
     return rcode;
   GEN->il = DISTR.BD_LEFT;
   GEN->ir = DISTR.BD_RIGHT;
+  SAMPLE = _unur_utdr_getSAMPLE(gen);
   return _unur_utdr_hat( gen );
 } 
 struct unur_gen *
@@ -218,6 +224,9 @@ _unur_utdr_create( struct unur_par *par )
   GEN->dlal = 0.; 
   GEN->ooar2 = 0.; 
   GEN->ooal2 = 0.;
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_utdr_info;
+#endif
   return gen;
 } 
 int
@@ -554,5 +563,41 @@ _unur_utdr_debug_init( const struct unur_gen *gen,
   fprintf(log,"%s:\tcfac=%e setupok=%d volcompl=%e pdf_area=%e\n",gen->genid,cfac,setupok,GEN->volcompl,DISTR.area);
   fprintf(log,"%s:\n",gen->genid);
   fprintf(log,"%s: INIT completed **********************\n",gen->genid);
+} 
+#endif   
+#ifdef UNUR_ENABLE_INFO
+void
+_unur_utdr_info( struct unur_gen *gen, int help )
+{
+  struct unur_string *info = gen->infostr;
+  struct unur_distr *distr = gen->distr;
+  int samplesize = 10000;
+  _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
+  _unur_string_append(info,"distribution:\n");
+  _unur_distr_info_typename(gen);
+  _unur_string_append(info,"   functions = PDF\n");
+  _unur_string_append(info,"   domain    = (%g, %g)\n", DISTR.domain[0],DISTR.domain[1]);
+  _unur_string_append(info,"   mode      = %g   %s\n", unur_distr_cont_get_mode(distr),
+		      (distr->set & UNUR_DISTR_SET_MODE_APPROX) ? "[numeric.]" : "");
+  _unur_string_append(info,"   area(PDF) = %g\n", DISTR.area);
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"method: UTDR (Universal Transformed Density Rejection -- 3 point method)\n");
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"performance characteristics:\n");
+  _unur_string_append(info,"   rejection constant = %.2f  [approx]\n",
+		      unur_test_count_urn(gen,samplesize,0,NULL)/(2.*samplesize));
+  _unur_string_append(info,"\n");
+  if (help) {
+    _unur_string_append(info,"parameters:\n");
+    _unur_string_append(info,"   deltafactor = %g  %s\n", GEN->delta_factor,
+			(gen->set & UTDR_SET_DELTA) ? "" : "[default]");
+    if (gen->set & UTDR_SET_PDFMODE)
+      _unur_string_append(info,"   pdfatmode = %g\n", GEN->fm);
+    if (gen->set & UTDR_SET_CPFACTOR)
+      _unur_string_append(info,"   cpfactor = %g\n", GEN->c_factor);
+    if (gen->variant & UTDR_VARFLAG_VERIFY)
+      _unur_string_append(info,"   verify = on\n");
+    _unur_string_append(info,"\n");
+  }
 } 
 #endif   

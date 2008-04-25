@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -14,6 +14,9 @@ static struct unur_gen *_unur_unif_create( struct unur_par *par );
 static struct unur_gen *_unur_unif_clone( const struct unur_gen *gen );
 static void _unur_unif_free( struct unur_gen *gen);
 static double _unur_unif_sample( struct unur_gen *gen );
+#ifdef UNUR_ENABLE_INFO
+static void _unur_unif_info( struct unur_gen *gen, int help );
+#endif
 #define PAR       ((struct unur_unif_par*)par->datap) 
 #define GEN       ((struct unur_unif_gen*)gen->datap) 
 #define SAMPLE  gen->sample.cont
@@ -66,6 +69,9 @@ _unur_unif_create( struct unur_par *par )
   gen->destroy = _unur_unif_free;
   gen->clone = _unur_unif_clone;
   gen->reinit = _unur_unif_reinit;
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_unif_info;
+#endif
   return gen;
 } 
 struct unur_gen *
@@ -96,4 +102,17 @@ _unur_unif_sample( struct unur_gen *gen )
   return _unur_call_urng(gen->urng);
 } 
 #ifdef UNUR_ENABLE_LOGGING
+#endif   
+#ifdef UNUR_ENABLE_INFO
+void
+_unur_unif_info( struct unur_gen *gen, int help )
+{
+  struct unur_string *info = gen->infostr;
+  _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
+  _unur_string_append(info,"distribution: uniform (0,1)\n\n");
+  _unur_string_append(info,"method: UNIF (wrapper for UNIForm random number generator)\n\n");
+  if (help) {
+    _unur_string_append(info,"[Remark: allows using uniform random number generator in UNU.RAN framework]\n");
+  }
+} 
 #endif   

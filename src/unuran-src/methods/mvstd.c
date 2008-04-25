@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -11,6 +11,9 @@
 #include "x_gen_source.h"
 #include "mvstd.h"
 #include "mvstd_struct.h"
+#ifdef UNUR_ENABLE_INFO
+#  include <tests/unuran_tests.h>
+#endif
 #define MVSTD_DEBUG_REINIT   0x00000010u   
 #define GENTYPE "MVSTD"        
 static struct unur_gen *_unur_mvstd_init( struct unur_par *par );
@@ -21,6 +24,9 @@ static struct unur_gen *_unur_mvstd_clone( const struct unur_gen *gen );
 static void _unur_mvstd_free( struct unur_gen *gen);
 #ifdef UNUR_ENABLE_LOGGING
 static void _unur_mvstd_debug_init( struct unur_gen *gen );
+#endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_mvstd_info( struct unur_gen *gen, int help );
 #endif
 #define DISTR_IN  distr->data.cvec      
 #define PAR       ((struct unur_mvstd_par*)par->datap) 
@@ -106,6 +112,9 @@ _unur_mvstd_create( struct unur_par *par )
   gen->clone = _unur_mvstd_clone;
   gen->reinit = _unur_mvstd_reinit;
   GEN->sample_routine_name = NULL ;  
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_mvstd_info;
+#endif
   return gen;
 } 
 int
@@ -159,5 +168,32 @@ _unur_mvstd_debug_init( struct unur_gen *gen )
     fprintf(log,"(Unknown)\n");
   fprintf(log,"%s:\n",gen->genid);
   fflush(log);
+} 
+#endif   
+#ifdef UNUR_ENABLE_INFO
+void
+_unur_mvstd_info( struct unur_gen *gen, int help )
+{
+  struct unur_string *info = gen->infostr;
+  int dim = gen->distr->dim;
+  int samplesize = 10000;
+  double E_urn;
+  _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
+  _unur_string_append(info,"distribution:\n");
+  _unur_distr_info_typename(gen);
+  _unur_string_append(info,"   dimension = %d\n",dim);
+  _unur_distr_cvec_info_domain(gen);
+  _unur_string_append(info,"\n\n");
+  _unur_string_append(info,"method: MVSTD (special generator for MultiVariate continuous STandarD distribution)\n");
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"performance characteristics:\n");
+  E_urn = unur_test_count_urn(gen,samplesize,0,NULL)/((double)samplesize);
+  _unur_string_append(info,"   E [#urn] = %.2f x %d = %.2f  [approx.]\n",
+		      E_urn / dim, dim, E_urn);
+  _unur_string_append(info,"\n");
+  if (help) {
+    _unur_string_append(info,"parameters: none\n");
+    _unur_string_append(info,"\n");
+  }
 } 
 #endif   

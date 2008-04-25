@@ -63,6 +63,32 @@ numerical.derivative <- function (x, func, lb=-Inf, ub=Inf, xmin=1, delta=1.e-7)
         df <- (func(x+h)-func(x-h))/(2*h)
 }
 
+## -- HINV: Hermite interpolation for approximate INVersion -----------------
+##
+## Type: Inversion
+##
+## Generate continuous random variates from a given CDF/PDF
+##
+
+## Quantile function
+uqhinv <- function (unur, U) {
+        ## 'unur' ... generator object of type HINV
+
+        ## check arguments
+        if (missing(unur))
+                stop ("argument 'unur' required")
+        if (!is(unur,"unuran"))
+                stop ("argument 'unur' must be  UNU.RAN object")
+        
+        if (missing(U))
+                stop ("argument 'U' required")
+        U <- as.double(U)
+
+        ## compute quantile
+        .Call("Runuran_qhinv", unur, U, PACKAGE="Runuran")
+}
+
+
 #############################################################################
 ##                                                                          #
 ## Sampling methods for discrete univariate Distributions                   #

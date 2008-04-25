@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -32,8 +32,7 @@ _unur_pdf_beta(double x, const UNUR_DISTR *distr)
     x = (x-a) / (b-a);
   if (x > 0. && x < 1.)
     return exp((p-1.)*log(x) + (q-1.)*log(1.-x) - LOGNORMCONSTANT);
-  if ((_unur_iszero(x) && _unur_isone(p)) 
-      || (_unur_isone(x) && _unur_isone(q)))
+  if ((_unur_iszero(x) && _unur_isone(p)) || (_unur_isone(x) && _unur_isone(q)))
     return exp(-LOGNORMCONSTANT);
   if ((_unur_iszero(x) && p<1.) || (_unur_isone(x) && q<1.))
     return INFINITY;

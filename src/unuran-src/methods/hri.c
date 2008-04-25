@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -9,6 +9,10 @@
 #include "x_gen_source.h"
 #include "hri.h"
 #include "hri_struct.h"
+#ifdef UNUR_ENABLE_INFO
+#  include <tests/unuran_tests.h>
+#endif
+#define HRI_EMERGENCY_BREAK  (10000)
 #define HRI_VARFLAG_VERIFY     0x01u    
 #define HRB_DEBUG_REINIT    0x00000010u   
 #define HRI_DEBUG_SAMPLE    0x01000000u    
@@ -26,6 +30,9 @@ static double _unur_hri_sample_check( struct unur_gen *gen );
 static void _unur_hri_debug_init( const struct unur_gen *gen );
 static void _unur_hri_debug_sample( const struct unur_gen *gen,
 				    double x, double p1, int i0, int i1 );
+#endif
+#ifdef UNUR_ENABLE_INFO
+static void _unur_hri_info( struct unur_gen *gen, int help );
 #endif
 #define DISTR_IN  distr->data.cont      
 #define PAR       ((struct unur_hri_par*)par->datap) 
@@ -117,9 +124,9 @@ int
 _unur_hri_reinit( struct unur_gen *gen )
 {
   int rcode;
-  SAMPLE = _unur_hri_getSAMPLE(gen);
   if ( (rcode = _unur_hri_check_par(gen)) != UNUR_SUCCESS)
     return rcode;
+  SAMPLE = _unur_hri_getSAMPLE(gen);
   return UNUR_SUCCESS;
 } 
 struct unur_gen *
@@ -138,6 +145,9 @@ _unur_hri_create( struct unur_par *par )
   GEN->left_border = 0.;             
   GEN->hrp0 = 0.;                    
   GEN->left_border = 0.;             
+#ifdef UNUR_ENABLE_INFO
+  gen->info = _unur_hri_info;
+#endif
   return gen;
 } 
 int
@@ -189,10 +199,12 @@ _unur_hri_sample( struct unur_gen *gen )
 { 
   double U, V, E, X, hrx1;
   double lambda0, p1, lambda1;
+  int i0 = 0;
+  int i1 = 0;
   CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_HRI_GEN,INFINITY);
   lambda0 = GEN->hrp0;
   X = GEN->left_border;
-  for(;;) {
+  for(i0=1;;i0++) {
     while ( _unur_iszero(U = 1.-_unur_call_urng(gen->urng)) );
     E = -log(U) / lambda0;
     X += E;
@@ -200,6 +212,10 @@ _unur_hri_sample( struct unur_gen *gen )
     V =  lambda0 * _unur_call_urng(gen->urng);
     if( V <= hrx1 )
       break;
+    if (i0>HRI_EMERGENCY_BREAK) {
+      _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"abort computation");
+      return INFINITY;
+    }
   }
   if (X <= GEN->p0)
     return X;
@@ -208,7 +224,7 @@ _unur_hri_sample( struct unur_gen *gen )
     return X;
   p1 = X;
   X = GEN->p0;
-  for(;;) {
+  for(i1=1;;i1++) {
     while ( _unur_iszero(U = 1.-_unur_call_urng(gen->urng)) );
     E = -log(U) / lambda1;
     X += E;
@@ -217,6 +233,10 @@ _unur_hri_sample( struct unur_gen *gen )
       break;
     if (V <= HR(X))
       break;
+    if (i1>HRI_EMERGENCY_BREAK) {
+      _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"abort computation");
+      return INFINITY;
+    }
   }
   return ((X <= p1) ? X : p1);
 } 
@@ -237,10 +257,15 @@ _unur_hri_sample_check( struct unur_gen *gen )
     hrx1 = HR(X);
     V =  lambda0 * _unur_call_urng(gen->urng);
     if ( (X <= GEN->p0 && (1.+UNUR_EPSILON) * lambda0 < hrx1 ) || 
-	 (X >= GEN->p0 && (1.-UNUR_EPSILON) * lambda0 > hrx1 ) )
+	 (X >= GEN->p0 && (1.-UNUR_EPSILON) * lambda0 > hrx1 ) ) {
       _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"HR not increasing");
+    }
     if( V <= hrx1 )
       break;
+    if (i0>HRI_EMERGENCY_BREAK) {
+      _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"abort computation");
+      return INFINITY;
+    }
   }
   if (X <= GEN->p0) {
 #ifdef UNUR_ENABLE_LOGGING
@@ -272,6 +297,10 @@ _unur_hri_sample_check( struct unur_gen *gen )
       break;
     if (V <= hrx)
       break;
+    if (i1>HRI_EMERGENCY_BREAK) {
+      _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"abort computation");
+      return INFINITY;
+    }
   }
 #ifdef UNUR_ENABLE_LOGGING
   if (gen->debug & HRI_DEBUG_SAMPLE)
@@ -316,5 +345,39 @@ _unur_hri_debug_sample( const struct unur_gen *gen,
     fprintf(log,"   2nd loop\n");
   else
     fprintf(log,"\n");
+} 
+#endif   
+#ifdef UNUR_ENABLE_INFO
+void
+_unur_hri_info( struct unur_gen *gen, int help )
+{
+  struct unur_string *info = gen->infostr;
+  int samplesize = 10000;
+  _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
+  _unur_string_append(info,"distribution:\n");
+  _unur_distr_info_typename(gen);
+  _unur_string_append(info,"   functions = HR\n");
+  _unur_string_append(info,"   domain    = (%g, %g)\n", DISTR.domain[0],DISTR.domain[1]);
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"method: HRI (Hazard Rate Increasing)\n");
+  _unur_string_append(info,"\n");
+  _unur_string_append(info,"performance characteristics:\n");
+  _unur_string_append(info,"   E[#interations] = %.2f  [approx.]\n",
+		      unur_test_count_urn(gen,samplesize,0,NULL)/((double)samplesize));
+  _unur_string_append(info,"\n");
+  if (help) {
+    _unur_string_append(info,"parameters:\n");
+    _unur_string_append(info,"   p0 = %g  %s\n", GEN->p0,
+  			(gen->set & HRI_SET_P0) ? "" : "[default]"); 
+    if (gen->variant & HRI_VARFLAG_VERIFY)
+      _unur_string_append(info,"   verify = on\n");
+    _unur_string_append(info,"\n");
+  }
+  if (help) {
+    if ( !(gen->set & HRI_SET_P0))
+      _unur_string_append(info,"[ Hint: %s ]\n",
+			  "You can set the design point \"p0\" to increase performance.");
+    _unur_string_append(info,"\n");
+  }
 } 
 #endif   

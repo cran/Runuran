@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -601,10 +601,12 @@ _unur_distr_discr_find_mode(struct unur_distr *distr )
   fx[2] = unur_distr_discr_eval_pv(x[2], distr);
   if (x[2] <= x[0] + 1) {
     DISTR.mode = (fx[0] <= fx[2]) ? x[2] : x[0];
-    distr->set |= UNUR_DISTR_SET_MODE;
+    distr->set |= UNUR_DISTR_SET_MODE | UNUR_DISTR_SET_MODE_APPROX ; 
     return UNUR_SUCCESS;
   }
-  x[1]  = (x[0] + x[2])/2;
+  x[1]  = (x[0]/2) + (x[2]/2);
+  if (x[1]<=x[0]) x[1]++;
+  if (x[1]>=x[2]) x[1]--;
   fx[1] = unur_distr_discr_eval_pv(x[1], distr); 
   if ( !(fx[1]>0.)) {
     xnew = (DISTR.domain[0]!=INT_MIN) ? DISTR.domain[0] : 0;
@@ -649,7 +651,7 @@ _unur_distr_discr_find_mode(struct unur_distr *distr )
     if (x[0]+1 >= x[1] && x[1] >= x[2]-1) {
       DISTR.mode = (fx[0]>fx[2]) ? x[0] : x[2];
       if (fx[1]>DISTR.mode) DISTR.mode = x[1];
-      distr->set |= UNUR_DISTR_SET_MODE;
+      distr->set |= UNUR_DISTR_SET_MODE | UNUR_DISTR_SET_MODE_APPROX ; 
       return UNUR_SUCCESS;
     } 
     xnew  = (int) (r*x[0] + (1.-r)*x[2]);
@@ -677,7 +679,7 @@ _unur_distr_discr_find_mode(struct unur_distr *distr )
 	fxnew = unur_distr_discr_eval_pv(xnew,distr);
 	if (_unur_FP_less(fxnew,fx[1])) {
 	  DISTR.mode = x[1];
-	  distr->set |= UNUR_DISTR_SET_MODE;
+	  distr->set |= UNUR_DISTR_SET_MODE | UNUR_DISTR_SET_MODE_APPROX ; 
 	  return UNUR_SUCCESS;
 	}
       }
@@ -692,7 +694,7 @@ _unur_distr_discr_find_mode(struct unur_distr *distr )
       x[1] = xnew; fx[1] = fxnew;
     }
   }   
-  distr->set |= UNUR_DISTR_SET_MODE;
+  distr->set |= UNUR_DISTR_SET_MODE | UNUR_DISTR_SET_MODE_APPROX ; 
   return UNUR_SUCCESS;
 } 
 #undef DISTR

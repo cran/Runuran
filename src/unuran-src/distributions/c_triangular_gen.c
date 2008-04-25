@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -28,9 +28,16 @@ _unur_stdgen_triangular_init( struct unur_par *par, struct unur_gen *gen )
 double _unur_stdgen_sample_triangular_inv( struct unur_gen *gen )
 {
   double U,X;
+  double tmp;
   CHECK_NULL(gen,INFINITY);
   COOKIE_CHECK(gen,CK_CSTD_GEN,INFINITY);
   U = GEN->umin + uniform() * (GEN->umax-GEN->umin);
-  X = (U<=H) ? sqrt(H*U) : 1. - sqrt( (1-H)*(1-U) );
+  if (U<=H) {
+    X = sqrt(H*U);
+  }
+  else {
+    tmp = (1.-H)*(1.-U);
+    X = (tmp>0.) ? (1.-sqrt(tmp)) : 1.;
+  }
   return X;
 } 

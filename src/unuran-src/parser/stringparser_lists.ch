@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2007 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 struct unur_distr *
@@ -381,6 +381,10 @@ _unur_str_par_new( const char *method, const UNUR_DISTR *distr )
 			 par = unur_arou_new(distr);
 			 break;
 		 }
+		 if ( !strcmp( method, "ars") ) {
+			 par = unur_ars_new(distr);
+			 break;
+		 }
 		 if ( !strcmp( method, "auto") ) {
 			 par = unur_auto_new(distr);
 			 break;
@@ -509,10 +513,6 @@ _unur_str_par_new( const char *method, const UNUR_DISTR *distr )
 			 par = unur_tdr_new(distr);
 			 break;
 		 }
-		 if ( !strcmp( method, "tdrgw") ) {
-			 par = unur_tdrgw_new(distr);
-			 break;
-		 }
 		 break;
 	 case 'u':
 		 if ( !strcmp( method, "unif") ) {
@@ -603,6 +603,47 @@ _unur_str_par_set( UNUR_PAR *par, const char *key, char *value, struct unur_slis
 		 case 'v':
 			 if ( !strcmp(key, "verify") ) {
 				 result = _unur_str_par_set_i(par,key,type_args,args,unur_arou_set_verify);
+				 break;
+			 }
+		 }
+		 break;
+	 case UNUR_METH_ARS:
+		 switch (*key) {
+		 case 'c':
+			 if ( !strcmp(key, "cpoints") ) {
+				 result = _unur_str_par_set_iD(par,key,type_args,args,unur_ars_set_cpoints,mlist);
+				 break;
+			 }
+			 break;
+		 case 'm':
+			 if ( !strcmp(key, "max_intervals") ) {
+				 result = _unur_str_par_set_i(par,key,type_args,args,unur_ars_set_max_intervals);
+				 break;
+			 }
+			 if ( !strcmp(key, "max_iter") ) {
+				 result = _unur_str_par_set_i(par,key,type_args,args,unur_ars_set_max_iter);
+				 break;
+			 }
+			 break;
+		 case 'p':
+			 if ( !strcmp(key, "pedantic") ) {
+				 result = _unur_str_par_set_i(par,key,type_args,args,unur_ars_set_pedantic);
+				 break;
+			 }
+			 break;
+		 case 'r':
+			 if ( !strcmp(key, "reinit_ncpoints") ) {
+				 result = _unur_str_par_set_i(par,key,type_args,args,unur_ars_set_reinit_ncpoints);
+				 break;
+			 }
+			 if ( !strcmp(key, "reinit_percentiles") ) {
+				 result = _unur_str_par_set_iD(par,key,type_args,args,unur_ars_set_reinit_percentiles,mlist);
+				 break;
+			 }
+			 break;
+		 case 'v':
+			 if ( !strcmp(key, "verify") ) {
+				 result = _unur_str_par_set_i(par,key,type_args,args,unur_ars_set_verify);
 				 break;
 			 }
 		 }
@@ -1245,43 +1286,6 @@ _unur_str_par_set( UNUR_PAR *par, const char *key, char *value, struct unur_slis
 			 }
 			 if ( !strcmp(key, "verify") ) {
 				 result = _unur_str_par_set_i(par,key,type_args,args,unur_tdr_set_verify);
-				 break;
-			 }
-		 }
-		 break;
-	 case UNUR_METH_TDRGW:
-		 switch (*key) {
-		 case 'c':
-			 if ( !strcmp(key, "cpoints") ) {
-				 result = _unur_str_par_set_iD(par,key,type_args,args,unur_tdrgw_set_cpoints,mlist);
-				 break;
-			 }
-			 break;
-		 case 'm':
-			 if ( !strcmp(key, "max_intervals") ) {
-				 result = _unur_str_par_set_i(par,key,type_args,args,unur_tdrgw_set_max_intervals);
-				 break;
-			 }
-			 break;
-		 case 'p':
-			 if ( !strcmp(key, "pedantic") ) {
-				 result = _unur_str_par_set_i(par,key,type_args,args,unur_tdrgw_set_pedantic);
-				 break;
-			 }
-			 break;
-		 case 'r':
-			 if ( !strcmp(key, "reinit_ncpoints") ) {
-				 result = _unur_str_par_set_i(par,key,type_args,args,unur_tdrgw_set_reinit_ncpoints);
-				 break;
-			 }
-			 if ( !strcmp(key, "reinit_percentiles") ) {
-				 result = _unur_str_par_set_iD(par,key,type_args,args,unur_tdrgw_set_reinit_percentiles,mlist);
-				 break;
-			 }
-			 break;
-		 case 'v':
-			 if ( !strcmp(key, "verify") ) {
-				 result = _unur_str_par_set_i(par,key,type_args,args,unur_tdrgw_set_verify);
 				 break;
 			 }
 		 }
