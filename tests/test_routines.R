@@ -48,7 +48,7 @@ library(Runuran)
 
 ## --- CONT: Function for running chi^2 goodness-of-fit test ----------------
 
-unur.test.cont <- function (distr, rfunc=NULL, pfunc=NULL, domain=NA, ...) {
+unur.test.cont <- function (distr, rfunc=NULL, pfunc=NULL, domain, ...) {
         ##  Run a chi^2 test and evaluate p-value.
         ##  Repeat test once if it fails
         ##  (we do not check the validity of the algorithm
@@ -62,7 +62,7 @@ unur.test.cont <- function (distr, rfunc=NULL, pfunc=NULL, domain=NA, ...) {
         ##
 
         ## -- domain ?
-        have.domain = ifelse( is.na(domain), FALSE, TRUE )
+        have.domain = ifelse( missing(domain), FALSE, TRUE )
         lb <- ifelse( have.domain, domain[1], -Inf)
         ub <- ifelse( have.domain, domain[2], Inf)
         
@@ -151,7 +151,7 @@ unur.test.cont <- function (distr, rfunc=NULL, pfunc=NULL, domain=NA, ...) {
 
 ## --- DISCR: Function for running chi^2 goodness-of-fit test ---------------
 
-unur.test.discr <- function (distr, rfunc=NULL, dfunc=NULL, pv=NA, domain, ...) {
+unur.test.discr <- function (distr, rfunc=NULL, dfunc=NULL, pv, domain, ...) {
         ##  Run a chi^2 test and evaluate p-value.
         ##  Repeat test once if it fails
         ##  (we do not check the validity of the algorithm
@@ -181,7 +181,7 @@ unur.test.discr <- function (distr, rfunc=NULL, dfunc=NULL, pv=NA, domain, ...) 
                 rfunc <- match.fun(rfuncname, descend=FALSE)
         }
         ## -- function for computing probability vector
-        if (is.null(dfunc) && is.na(pv)) {
+        if (is.null(dfunc) && missing(pv)) {
                 dfuncname <- paste("d",distr,sep="")
                 if (!exists(dfuncname))
                         stop("undefined function '",dfuncname,"'")
@@ -190,20 +190,20 @@ unur.test.discr <- function (distr, rfunc=NULL, dfunc=NULL, pv=NA, domain, ...) 
         
         ## -- run test and repeat once when failed the first time
         for (i in 1:2) {
-                
+
                 ## -- create probability vector
-                if (is.na(pv)) 
+                if (missing(pv))
                         probs <- dfunc(lb:ub,...)
                 else
                         probs <- pv
-                
+
                 ## -- random sample
                 x <- rfunc(samplesize,lb=lb,ub=ub,...)
 
                 ## -- test domain
                 too.small <- length(x[x<lb])
                 too.large <- length(x[x>ub])
-                if (too.small > 1 || too.small > 1) {
+                if (too.small > 1 || too.large > 1) {
                         too.small <- 100*too.small/samplesize
                         too.large <- 100*too.large/samplesize
                         stop("X out of domain (",too.small,"%|",too.large,"%)", call.=FALSE)
@@ -212,9 +212,15 @@ unur.test.discr <- function (distr, rfunc=NULL, dfunc=NULL, pv=NA, domain, ...) 
                 ## -- random distribution
                 hits <- hist(x,breaks=(lb:(ub+1)-0.5),plot=FALSE)$counts
 
-                ## -- ignore some of the classes
-                probs <- probs[hits>5]
-                hits <- hits[hits>5]
+                ## -- collapse classes with too few entries
+                expect <- samplesize * probs
+                if (any (expect>5) ) {
+                        accept <- which(expect > 5)
+                        probs <- probs[accept]
+                        hits <- hits[accept]
+                        probs[1] <- probs[1] + sum(probs[-accept])
+                        hits[1] <- hits[1] + sum(hits[-accept])
+                }
 
                 ## -- run unur.chiq.test --
                 pval <- chisq.test(hits,p=probs,rescale.p=TRUE)$p.value

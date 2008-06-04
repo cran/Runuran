@@ -236,7 +236,7 @@ _unur_tdr_gw_improve_hat( struct unur_gen *gen, struct unur_tdr_interval *iv,
   result = _unur_tdr_gw_interval_split(gen, iv, x, fx);
   if (result!=UNUR_SUCCESS && result!=UNUR_ERR_SILENT && result!=UNUR_ERR_INF) {
     _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"");
-    if (gen->variant & TDR_VARFLAG_PEDANTIC) {
+    if (gen->variant & TDR_VARFLAG_PEDANTIC || result == UNUR_ERR_ROUNDOFF) {
       SAMPLE = _unur_sample_cont_error;
       return UNUR_ERR_GEN_CONDITION;
     }

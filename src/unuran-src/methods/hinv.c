@@ -434,6 +434,7 @@ unur_hinv_eval_approxinvcdf( const struct unur_gen *gen, double u )
   }
   if (u<=0.) return DISTR.domain[0];
   if (u>=1.) return DISTR.domain[1];
+  u = GEN->Umin + u * (GEN->Umax - GEN->Umin);
   x = _unur_hinv_eval_approxinvcdf(gen,u);
   if (x<DISTR.domain[0]) x = DISTR.domain[0];
   if (x>DISTR.domain[1]) x = DISTR.domain[1];
@@ -628,7 +629,7 @@ _unur_hinv_interval_adapt( struct unur_gen *gen, struct unur_hinv_interval *iv,
   if (_unur_FP_equal(p_new,iv->p) || _unur_FP_equal(p_new,iv->next->p)) {
     if(!(*error_count_shortinterval)){ 
       _unur_warning(gen->genid,UNUR_ERR_ROUNDOFF,
-		     "one or more intervals very short; possibly due to numerical problems with a pole or very flat tail");
+		    "one or more intervals very short; possibly due to numerical problems with a pole or very flat tail");
       (*error_count_shortinterval)++;
     } 
     _unur_hinv_interval_parameter(gen,iv);

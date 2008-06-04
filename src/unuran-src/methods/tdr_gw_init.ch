@@ -274,8 +274,12 @@ _unur_tdr_gw_interval_split( struct unur_gen *gen, struct unur_tdr_interval *iv_
   GEN->Asqueeze = ( GEN->Asqueeze - iv_bak.Asqueeze
 		   + iv_oldl->Asqueeze + ((iv_newr) ? iv_newr->Asqueeze : 0. ) );
 #ifdef UNUR_ENABLE_LOGGING
-    if (gen->debug & TDR_DEBUG_SPLIT)
-      _unur_tdr_gw_debug_split_stop( gen,iv_oldl,iv_newr );
+  if (gen->debug & TDR_DEBUG_SPLIT)
+    _unur_tdr_gw_debug_split_stop( gen,iv_oldl,iv_newr );
 #endif
+  if (GEN->Atotal <= 1.e10 * DBL_MIN) {
+    _unur_error(gen->genid,UNUR_ERR_ROUNDOFF,"error below hat (almost) 0");
+    return UNUR_ERR_ROUNDOFF;
+  }
   return UNUR_SUCCESS;
 } 

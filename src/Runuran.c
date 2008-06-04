@@ -152,7 +152,6 @@ Runuran_sample (SEXP sexp_unur, SEXP sexp_n)
   SEXP sexp_res = NULL;
   double *res;
   SEXP sexp_gen;
-  SEXP sexp_slotunur;
 
 #ifdef RUNURAN_DEBUG
   /* first argument must be S4 class */
@@ -167,8 +166,8 @@ Runuran_sample (SEXP sexp_unur, SEXP sexp_n)
   }
 
   /* Extract pointer to UNU.RAN generator */
-  sexp_slotunur = Rf_install("unur");
-  sexp_gen = GET_SLOT(sexp_unur, sexp_slotunur);
+  sexp_gen = GET_SLOT(sexp_unur, install("unur"));
+
 #ifdef RUNURAN_DEBUG
   CHECK_PTR(sexp_gen);
 #endif
@@ -178,7 +177,7 @@ Runuran_sample (SEXP sexp_unur, SEXP sexp_n)
     error("[UNU.RAN - error] bad UNU.RAN object");
 #endif
 
-  /* TODO: this must not be called when we do not use the R built-in URNG */
+  /* TODO: this need not be called when we do not use the R built-in URNG */
   GetRNGstate();
 
   /* generate random vector of length n */
@@ -189,14 +188,12 @@ Runuran_sample (SEXP sexp_unur, SEXP sexp_n)
     PROTECT(sexp_res = NEW_NUMERIC(n));
     for (i=0; i<n; i++) {
       NUMERIC_POINTER(sexp_res)[i] = unur_sample_cont(gen); }
-    UNPROTECT(1);
     break;
 
   case UNUR_DISTR_DISCR:  /* discrete univariate distribution */
     PROTECT(sexp_res = NEW_NUMERIC(n));
     for (i=0; i<n; i++) {
       NUMERIC_POINTER(sexp_res)[i] = (double) unur_sample_discr(gen); }
-    UNPROTECT(1);
     break;
 
   case UNUR_DISTR_CVEC:   /* continuous mulitvariate distribution */
@@ -211,7 +208,6 @@ Runuran_sample (SEXP sexp_unur, SEXP sexp_n)
 	else
 	  for (k=0; k<dim; k++) res[i + n*k] = x[k];
       }
-      UNPROTECT(1);
     }
     break;
 
@@ -226,6 +222,7 @@ Runuran_sample (SEXP sexp_unur, SEXP sexp_n)
   PutRNGstate();
 
   /* return result to R */
+  UNPROTECT(1);
   return sexp_res;
  
 } /* end of Runuran_sample() */
