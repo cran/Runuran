@@ -420,46 +420,46 @@ _unur_ssr_hat( struct unur_gen *gen )
 static void
 _unur_ssr_debug_init( const struct unur_gen *gen, int is_reinit )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_SSR_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s:\n",gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s:\n",gen->genid);
   if (!is_reinit) {
-    fprintf(log,"%s: type    = continuous univariate random variates\n",gen->genid);
-    fprintf(log,"%s: method  = ssr (simple universal transformed density rection)\n",gen->genid);
+    fprintf(LOG,"%s: type    = continuous univariate random variates\n",gen->genid);
+    fprintf(LOG,"%s: method  = ssr (simple universal transformed density rection)\n",gen->genid);
   }
   else
-    fprintf(log,"%s: reinit!\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
+    fprintf(LOG,"%s: reinit!\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
   _unur_distr_cont_debug( gen->distr, gen->genid );
-  fprintf(log,"%s: sampling routine = _unur_ssr_sample",gen->genid);
+  fprintf(LOG,"%s: sampling routine = _unur_ssr_sample",gen->genid);
   if (gen->variant & SSR_VARFLAG_VERIFY)
-    fprintf(log,"_check");
-  fprintf(log,"()\n%s:\n",gen->genid);
+    fprintf(LOG,"_check");
+  fprintf(LOG,"()\n%s:\n",gen->genid);
   if (gen->set & SSR_SET_CDFMODE)
-    fprintf(log,"%s: CDF at mode = %g\n",gen->genid,GEN->Fmode);
+    fprintf(LOG,"%s: CDF at mode = %g\n",gen->genid,GEN->Fmode);
   else
-    fprintf(log,"%s: CDF at mode unknown\n",gen->genid);
+    fprintf(LOG,"%s: CDF at mode unknown\n",gen->genid);
   if (gen->variant & SSR_VARFLAG_SQUEEZE)
-    fprintf(log,"%s: use universal squeeze\n",gen->genid);
+    fprintf(LOG,"%s: use universal squeeze\n",gen->genid);
   else
-    fprintf(log,"%s: no (universal) squeeze\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: parts:\n",gen->genid);
-  fprintf(log,"%s:\txl = %g\n",gen->genid,GEN->xl);
-  fprintf(log,"%s:\txr = %g\n",gen->genid,GEN->xr);
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: PDF at mode:\n",gen->genid);
-  fprintf(log,"%s:\tfm = %g\n",gen->genid,GEN->fm);
-  fprintf(log,"%s:\tum = %g\n",gen->genid,GEN->um);
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: areas:\n",gen->genid);
-  fprintf(log,"%s:\t    al = %g\n",gen->genid,GEN->al);
-  fprintf(log,"%s:\t    ar = %g\n",gen->genid,GEN->ar);
-  fprintf(log,"%s:\t Aleft = %g\n",gen->genid,GEN->Aleft);
-  fprintf(log,"%s:\t   Ain = %g\n",gen->genid,GEN->Ain);
-  fprintf(log,"%s:\tAtotal = %g\n",gen->genid,GEN->A);
-  fprintf(log,"%s:\n",gen->genid);
+    fprintf(LOG,"%s: no (universal) squeeze\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: parts:\n",gen->genid);
+  fprintf(LOG,"%s:\txl = %g\n",gen->genid,GEN->xl);
+  fprintf(LOG,"%s:\txr = %g\n",gen->genid,GEN->xr);
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: PDF at mode:\n",gen->genid);
+  fprintf(LOG,"%s:\tfm = %g\n",gen->genid,GEN->fm);
+  fprintf(LOG,"%s:\tum = %g\n",gen->genid,GEN->um);
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: areas:\n",gen->genid);
+  fprintf(LOG,"%s:\t    al = %g\n",gen->genid,GEN->al);
+  fprintf(LOG,"%s:\t    ar = %g\n",gen->genid,GEN->ar);
+  fprintf(LOG,"%s:\t Aleft = %g\n",gen->genid,GEN->Aleft);
+  fprintf(LOG,"%s:\t   Ain = %g\n",gen->genid,GEN->Ain);
+  fprintf(LOG,"%s:\tAtotal = %g\n",gen->genid,GEN->A);
+  fprintf(LOG,"%s:\n",gen->genid);
 } 
 #endif   
 #ifdef UNUR_ENABLE_INFO

@@ -231,9 +231,17 @@ _unur_dari_check_par( struct unur_gen *gen )
       return UNUR_ERR_DISTR_REQUIRED;
     }
   }
+  if (DISTR.BD_LEFT > DISTR.mode)
+    DISTR.mode = DISTR.BD_LEFT;
+  else if (DISTR.BD_RIGHT < DISTR.mode)
+    DISTR.mode = DISTR.BD_RIGHT;
   if (!(gen->distr->set & UNUR_DISTR_SET_PMFSUM))
     if (unur_distr_discr_upd_pmfsum(gen->distr)!=UNUR_SUCCESS)
       _unur_warning(GENTYPE,UNUR_ERR_DISTR_REQUIRED,"sum over PMF; use default");
+  if (DISTR.sum <= 0.) {
+    _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"sum <= 0");
+    return UNUR_ERR_GEN_DATA;
+  }
   return UNUR_SUCCESS;
 } 
 struct unur_gen *
@@ -279,10 +287,7 @@ _unur_dari_sample( struct unur_gen *gen )
     if (U<=GEN->vc) {
       X = U * (GEN->ac[1]-GEN->ac[0]) / GEN->vc + GEN->ac[0]; 
       k = (int)(X+0.5);
-      if (k<GEN->m)
-	i=0; 
-      else
-	i=1;
+      i = (k<GEN->m) ? 0 : 1;
       if (GEN->squeeze && sign[i]*(GEN->ac[i]-GEN->s[i]) > sign[i]*(X-k))
 	return k;
       if (sign[i]*k <= sign[i]*GEN->n[i]) {
@@ -341,10 +346,7 @@ _unur_dari_sample_check( struct unur_gen *gen )
     if (U <= GEN->vc) {
       X = U * (GEN->ac[1]-GEN->ac[0]) / GEN->vc + GEN->ac[0]; 
       k = (int)(X+0.5);
-      if (k<GEN->m)
-	i=0; 
-      else
-	i=1;
+      i = (k<GEN->m) ? 0 : 1;
       if (GEN->squeeze && sign[i]*(GEN->ac[i]-GEN->s[i]) > sign[i]*(X-k))
 	return k;
       if (sign[i]*k <= sign[i]*GEN->n[i]) {
@@ -432,19 +434,15 @@ _unur_dari_hat( struct unur_gen *gen )
   int rep = 1;
   CHECK_NULL( gen, UNUR_ERR_NULL );
   COOKIE_CHECK( gen, CK_DARI_GEN, UNUR_ERR_COOKIE );
-  if (DISTR.BD_LEFT > DISTR.mode)
-    DISTR.mode = DISTR.BD_LEFT;
-  else if (DISTR.BD_RIGHT < DISTR.mode)
-    DISTR.mode = DISTR.BD_RIGHT;
-  if (DISTR.sum <= 0.) {
-    _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"sum <= 0");
-    return UNUR_ERR_GEN_DATA;
-  }
   GEN->m = DISTR.mode;
   b[0] = DISTR.BD_LEFT;
   b[1] = DISTR.BD_RIGHT;
   GEN->pm = PMF(GEN->m);
   d = _unur_max(2, (int)( GEN->c_factor/(GEN->pm/DISTR.sum)));
+  if (_unur_iszero(GEN->pm)) {
+    _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"PMF(mode)=0");
+    return UNUR_ERR_GEN_DATA;
+  }
   do {
     for(i=0; i<=1; i++) {
       GEN->x[i] = GEN->m + sign[i] * d;
@@ -462,7 +460,7 @@ _unur_dari_hat( struct unur_gen *gen )
         else {
 	  GEN->s[i] = (int)(0.5+GEN->x[i]+(T(GEN->pm)-GEN->y[i])/GEN->ys[i]);
 	  GEN->Hat[i] = ( F(GEN->y[i]+GEN->ys[i]*(GEN->s[i]+sign[i]*1.5-GEN->x[i])) /
-			 GEN->ys[i]-sign[i]*PMF(GEN->s[i]+sign[i]) ); 
+			  GEN->ys[i]-sign[i]*PMF(GEN->s[i]+sign[i]) ); 
 	  at[i] = GEN->x[i] + (FM(GEN->ys[i]*GEN->Hat[i])-GEN->y[i]) / GEN->ys[i]; 
           if(GEN->squeeze)
 	    GEN->xsq[i] = sign[i]*(at[i]-(GEN->s[i]+sign[i]));
@@ -492,13 +490,13 @@ _unur_dari_hat( struct unur_gen *gen )
 	rep=0;
       else { 
 	setup = 2;
-	d = ((int)t0) / GEN->pm;
+	d = (int) (t0 / GEN->pm);
       }
     }
     else 
       rep=0; 
   } while(rep);
-  if (setup == -2 || GEN->vt > 100.*t0 || GEN->vt <0.) {
+  if (setup == -2 || GEN->vt > 100.*t0 || !(GEN->vt > 0.)) {
 #ifdef UNUR_ENABLE_LOGGING
     if (gen->debug)
       _unur_dari_debug_init(gen,"RE/INIT failed try again");
@@ -512,35 +510,35 @@ _unur_dari_hat( struct unur_gen *gen )
 void
 _unur_dari_debug_init( struct unur_gen *gen, const char *status )
 {
-  FILE *log;
+  FILE *LOG;
   int i;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_DARI_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: type    = discrete univariate random variates\n",gen->genid);
-  fprintf(log,"%s: method  = dari (discrete automatic rejection inversion)\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: type    = discrete univariate random variates\n",gen->genid);
+  fprintf(LOG,"%s: method  = dari (discrete automatic rejection inversion)\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
   _unur_distr_discr_debug( gen->distr, gen->genid, FALSE );
-  fprintf(log,"%s: sampling routine = _unur_dari_sample",gen->genid);
+  fprintf(LOG,"%s: sampling routine = _unur_dari_sample",gen->genid);
   if (gen->variant & DARI_VARFLAG_VERIFY)
-    fprintf(log,"_check()\n");
+    fprintf(LOG,"_check()\n");
   else
-    fprintf(log,"()\n");
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: Data for hat and squeeze:\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s:area below hat: total %f center: %f, left tail %f, right tail %f\n", gen->genid,
+    fprintf(LOG,"()\n");
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: Data for hat and squeeze:\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s:area below hat: total %f center: %f, left tail %f, right tail %f\n", gen->genid,
 	  GEN->vt, GEN->vc, GEN->vt-GEN->vcr, GEN->vcr-GEN->vc);
-  fprintf(log,"%s: mode %d and mode probability %f\n",gen->genid, GEN->m, GEN->pm); 
+  fprintf(LOG,"%s: mode %d and mode probability %f\n",gen->genid, GEN->m, GEN->pm); 
   for(i=0;i<=1;i++) {
-    fprintf(log,"%s:i=%d: x=%d; Hat=%f; ac=%f; s=%d;\n", gen->genid,
+    fprintf(LOG,"%s:i=%d: x=%d; Hat=%f; ac=%f; s=%d;\n", gen->genid,
 	    i, GEN->x[i], GEN->Hat[i], GEN->ac[i], GEN->s[i]);
-    fprintf(log,"%s:i=%d: xsq=%f; y=%f; ys=%f; n:=%d (for aux.table)\n", gen->genid,
+    fprintf(LOG,"%s:i=%d: xsq=%f; y=%f; ys=%f; n:=%d (for aux.table)\n", gen->genid,
 	    i, GEN->xsq[i], GEN->y[i], GEN->ys[i], GEN->n[i]);
   }
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: %s ************\n",gen->genid, status );
-  fprintf(log,"%s:\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: %s ************\n",gen->genid, status );
+  fprintf(LOG,"%s:\n",gen->genid);
 } 
 #endif   
 #ifdef UNUR_ENABLE_INFO

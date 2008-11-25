@@ -9,6 +9,8 @@
   UNU.RAN random variate generator for the Binomial distribution
   with parameters \code{size}and \code{prob}.
   It also allows sampling from the truncated distribution.
+  
+  [Distribution] -- Sampling Function: Binomial.  %% Discrete
 }
 
 \usage{
@@ -52,7 +54,7 @@ urbinom(n, size, prob, lb = 0, ub = size)
 }
 
 \note{
-  This function is wrapper for the UNU.RAN class in \R.
+  This function is a wrapper for the UNU.RAN class in \R.
   Compared to \code{rbinom}, \code{urbinom} is faster, especially for
   larger sample sizes.
   However, in opposition to \code{rbinom} vector arguments are ignored,
@@ -60,7 +62,7 @@ urbinom(n, size, prob, lb = 0, ub = size)
 }
 
 \examples{
-## Create a sample of size 1000
+## Create a sample of size 1000 from the binomial distribution 
 x <- urbinom(n=1000,size=10,prob=0.3)
 }
 

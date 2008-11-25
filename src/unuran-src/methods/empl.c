@@ -133,16 +133,16 @@ _unur_empl_sample( struct unur_gen *gen )
 static void
 _unur_empl_debug_init( const struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_EMPL_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: type    = continuous univariate random variates\n",gen->genid);
-  fprintf(log,"%s: method  = EMPL (EMPirical distribution with Linear interpolation)\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: type    = continuous univariate random variates\n",gen->genid);
+  fprintf(LOG,"%s: method  = EMPL (EMPirical distribution with Linear interpolation)\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
   _unur_distr_cemp_debug( gen->distr, gen->genid, (gen->debug & EMPL_DEBUG_PRINTDATA));
-  fprintf(log,"%s: sampling routine = _unur_empl_sample()\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: sampling routine = _unur_empl_sample()\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
 } 
 #endif   
 #ifdef UNUR_ENABLE_INFO

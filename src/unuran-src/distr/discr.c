@@ -536,49 +536,49 @@ unur_distr_discr_get_pmfsum( struct unur_distr *distr )
 void
 _unur_distr_discr_debug( const struct unur_distr *distr, const char *genid, unsigned printvector )
 {
-  FILE *log;
+  FILE *LOG;
   int i;
   CHECK_NULL(distr,RETURN_VOID);
   COOKIE_CHECK(distr,CK_DISTR_DISCR,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s: distribution:\n",genid);
-  fprintf(log,"%s:\ttype = discrete univariate distribution\n",genid);
-  fprintf(log,"%s:\tname = %s\n",genid,distr->name);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s: distribution:\n",genid);
+  fprintf(LOG,"%s:\ttype = discrete univariate distribution\n",genid);
+  fprintf(LOG,"%s:\tname = %s\n",genid,distr->name);
   if ( DISTR.pmf ) {
-    fprintf(log,"%s:\tPMF with %d argument(s)\n",genid,DISTR.n_params);
+    fprintf(LOG,"%s:\tPMF with %d argument(s)\n",genid,DISTR.n_params);
     for( i=0; i<DISTR.n_params; i++ )
-      fprintf(log,"%s:\t\tparam[%d] = %g\n",genid,i,DISTR.params[i]);
+      fprintf(LOG,"%s:\t\tparam[%d] = %g\n",genid,i,DISTR.params[i]);
   }
   if (DISTR.n_pv>0) {
-    fprintf(log,"%s:\tprobability vector of length %d",genid,DISTR.n_pv);
+    fprintf(LOG,"%s:\tprobability vector of length %d",genid,DISTR.n_pv);
     if (printvector) {
       for (i=0; i<DISTR.n_pv; i++) {
 	if (i%10 == 0)
-	  fprintf(log,"\n%s:\t",genid);
-	fprintf(log,"  %.5f",DISTR.pv[i]);
+	  fprintf(LOG,"\n%s:\t",genid);
+	fprintf(LOG,"  %.5f",DISTR.pv[i]);
       }
     }
-    fprintf(log,"\n%s:\n",genid);
+    fprintf(LOG,"\n%s:\n",genid);
   }
   if ( DISTR.pmf ) {
-    fprintf(log,"%s:\tdomain for pmf = (%d, %d)",genid,DISTR.domain[0],DISTR.domain[1]);
+    fprintf(LOG,"%s:\tdomain for pmf = (%d, %d)",genid,DISTR.domain[0],DISTR.domain[1]);
     _unur_print_if_default(distr,UNUR_DISTR_SET_DOMAIN);
-    fprintf(log,"\n%s:\n",genid);
+    fprintf(LOG,"\n%s:\n",genid);
   }
   if (DISTR.n_pv>0) {
-    fprintf(log,"%s:\tdomain for pv = (%d, %d)",genid,DISTR.domain[0],DISTR.domain[0]-1+DISTR.n_pv);
+    fprintf(LOG,"%s:\tdomain for pv = (%d, %d)",genid,DISTR.domain[0],DISTR.domain[0]-1+DISTR.n_pv);
     _unur_print_if_default(distr,UNUR_DISTR_SET_DOMAIN);
-    fprintf(log,"\n%s:\n",genid);
+    fprintf(LOG,"\n%s:\n",genid);
   }
   if (distr->set & UNUR_DISTR_SET_MODE)
-    fprintf(log,"%s:\tmode = %d\n",genid,DISTR.mode);
+    fprintf(LOG,"%s:\tmode = %d\n",genid,DISTR.mode);
   else
-    fprintf(log,"%s:\tmode unknown\n",genid);
+    fprintf(LOG,"%s:\tmode unknown\n",genid);
   if (distr->set & UNUR_DISTR_SET_PMFSUM)
-    fprintf(log,"%s:\tsum over PMF = %g\n",genid,DISTR.sum);
+    fprintf(LOG,"%s:\tsum over PMF = %g\n",genid,DISTR.sum);
   else
-    fprintf(log,"%s:\tsum over PMF unknown\n",genid);
-  fprintf(log,"%s:\n",genid);
+    fprintf(LOG,"%s:\tsum over PMF unknown\n",genid);
+  fprintf(LOG,"%s:\n",genid);
 } 
 #endif    
 int 

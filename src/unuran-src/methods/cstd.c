@@ -256,49 +256,49 @@ _unur_cstd_free( struct unur_gen *gen )
 void
 _unur_cstd_debug_init( struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_CSTD_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: type    = continuous univariate random variates\n",gen->genid);
-  fprintf(log,"%s: method  = generator for standard distribution\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: type    = continuous univariate random variates\n",gen->genid);
+  fprintf(LOG,"%s: method  = generator for standard distribution\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
   _unur_distr_cont_debug( gen->distr, gen->genid );
-  fprintf(log,"%s: sampling routine = ",gen->genid);
+  fprintf(LOG,"%s: sampling routine = ",gen->genid);
   if (GEN->sample_routine_name)
-    fprintf(log,"%s()",GEN->sample_routine_name);
+    fprintf(LOG,"%s()",GEN->sample_routine_name);
   else
-    fprintf(log,"(Unknown)");
+    fprintf(LOG,"(Unknown)");
   if (GEN->is_inversion)
-    fprintf(log,"   (Inversion)");
-  fprintf(log,"\n%s:\n",gen->genid);
+    fprintf(LOG,"   (Inversion)");
+  fprintf(LOG,"\n%s:\n",gen->genid);
   if (!(gen->distr->set & UNUR_DISTR_SET_STDDOMAIN)) {
-    fprintf(log,"%s: domain has been changed. U in (%g,%g)\n",gen->genid,GEN->umin,GEN->umax);
-    fprintf(log,"%s:\n",gen->genid);
+    fprintf(LOG,"%s: domain has been changed. U in (%g,%g)\n",gen->genid,GEN->umin,GEN->umax);
+    fprintf(LOG,"%s:\n",gen->genid);
   }
 } 
 void 
 _unur_cstd_debug_chg_pdfparams( struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   int i;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_CSTD_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s: parameters of distribution changed:\n",gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s: parameters of distribution changed:\n",gen->genid);
   for( i=0; i<DISTR.n_params; i++ )
-      fprintf(log,"%s:\tparam[%d] = %g\n",gen->genid,i,DISTR.params[i]);
+      fprintf(LOG,"%s:\tparam[%d] = %g\n",gen->genid,i,DISTR.params[i]);
   if (gen->distr->set & UNUR_DISTR_SET_TRUNCATED)
-    fprintf(log,"%s:\tU in (%g,%g)\n",gen->genid,GEN->umin,GEN->umax);
+    fprintf(LOG,"%s:\tU in (%g,%g)\n",gen->genid,GEN->umin,GEN->umax);
 } 
 void 
 _unur_cstd_debug_chg_truncated( struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_CSTD_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s: domain of truncated distribution changed:\n",gen->genid);
-  fprintf(log,"%s:\tdomain = (%g, %g)\n",gen->genid, DISTR.trunc[0], DISTR.trunc[1]);
-  fprintf(log,"%s:\tU in (%g,%g)\n",gen->genid,GEN->umin,GEN->umax);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s: domain of truncated distribution changed:\n",gen->genid);
+  fprintf(LOG,"%s:\tdomain = (%g, %g)\n",gen->genid, DISTR.trunc[0], DISTR.trunc[1]);
+  fprintf(LOG,"%s:\tU in (%g,%g)\n",gen->genid,GEN->umin,GEN->umax);
 } 
 #endif   
 #ifdef UNUR_ENABLE_INFO

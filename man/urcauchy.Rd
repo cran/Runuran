@@ -9,6 +9,8 @@
   UNU.RAN random variate generator for the Cauchy distribution with
   location parameter \code{location} and scale parameter \code{scale}.
   It also allows sampling from the truncated distribution.
+  
+  [Distribution] -- Sampling Function: Cauchy.  %% Continuous
 }
 
 \usage{

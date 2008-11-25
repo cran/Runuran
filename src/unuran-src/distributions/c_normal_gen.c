@@ -53,7 +53,8 @@ _unur_stdgen_normal_init( struct unur_par *par, struct unur_gen *gen )
     return UNUR_FAILURE;
   }
 } 
-double _unur_stdgen_sample_normal_inv( struct unur_gen *gen )
+double 
+_unur_stdgen_sample_normal_inv( struct unur_gen *gen )
 {
   double U,X;
   CHECK_NULL(gen,INFINITY);
@@ -64,7 +65,7 @@ double _unur_stdgen_sample_normal_inv( struct unur_gen *gen )
 } 
 #define Xstore  GEN->gen_param[0]
 #define flag    GEN->flag
-inline static int
+int
 normal_bm_init( struct unur_gen *gen )
 {
   CHECK_NULL(gen,UNUR_ERR_NULL);
@@ -99,7 +100,7 @@ _unur_stdgen_sample_normal_bm( struct unur_gen *gen )
 #undef flag
 #define Xstore  GEN->gen_param[0]
 #define flag    GEN->flag
-inline static int
+int
 normal_pol_init( struct unur_gen *gen )
 {
   CHECK_NULL(gen,UNUR_ERR_NULL);
@@ -266,8 +267,6 @@ _unur_stdgen_sample_normal_kr( struct unur_gen *gen )
   }
 #undef XI
 #undef PIhochK 
-#undef min
-#undef max
   return ((DISTR.n_params==0) ? X : mu + sigma * X );
 } 
 double

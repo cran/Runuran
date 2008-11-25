@@ -1,0 +1,573 @@
+
+% ---------------------------------------------------------------------------
+
+\section{A Short Introduction to Random Variate Generation}
+\label{sec:random-variate-generation}
+
+Random variate generation is the small field of research that deals
+with algorithms to generate random variates from various
+distributions. It is common to assume that a uniform random number
+generator is available, that is, a program that produces a sequence of
+independent and identically  distributed continuous $U(0,1)$ random
+variates (i.e., uniform random variates on the interval $(0,1)$). Of
+course real world computers can never generate ideal random numbers
+and they cannot produce numbers of arbitrary precision but
+state-of-the-art uniform random number generators come close to this
+aim. Thus random variate generation deals with the problem of
+transforming such a sequence of uniform random numbers into
+non-uniform random variates. 
+
+In this section we shortly explain the basic ideas of the
+\emph{inversion}, \emph{rejection}, and the \emph{ratio of uniforms}
+method. How these ideas can be used to design a particular automatic
+random variate generation algorithms that can be applied to large
+classes of distributions is shortly explained in the description of
+the different methods included in this manual. 
+   
+For a deeper treatment of the ideas presented here, for other basic
+methods and for automatic generators we refer the interested reader to
+our book \citep{Hoermann;Leydold;Derflinger:2004a}.
+
+% ---------------------------------------------------------------------------
+
+\subsection{The Inversion Method}
+\label{sec:inversion}.
+
+When the inverse $F^{-1}$ of the cumulative distribution function is
+known, then random variate generation is easy. We just generate a
+uniformly $U(0,1)$ distributed random number $U$ and return 
+\[
+X=F^{-1}(U)\;.
+\]
+\autoref{fig:inversion} shows how the inversion method works for
+the exponential distribution.
+
+\begin{figure}[ht]
+  \centering
+  \begin{tikzpicture}[xscale=1.5,yscale=4,>=stealth,line width=1pt]
+    \draw [use as bounding box] (0,-0.1) (5,1.2);
+    \draw [blue!80!black,line width=1.5pt] plot coordinates { 
+      \Sexpr{paste("(",paste((0:23)/5,round(pexp((0:23)/5),3),sep=",",collapse=")("),")",sep="",collapse="")} };
+    \draw [black!30!white] (0,1) -- (4.6,1);
+    \draw (0,1) node[left] {$1$};
+    \draw [<->] (0,1.20) -- (0,0) -- (5,0);
+    \draw [->,line width=1.5pt,red!80!black] (0,0.75) node[left] {$U$}
+    -- (\Sexpr{round(qexp(0.75),3)},0.75) -- (\Sexpr{round(qexp(0.75),3)},0)
+    node [below] {\makebox[2ex][l]{$X = F^{-1}(U)$}};
+  \end{tikzpicture}
+  \caption{Inversion method for exponential distribution, $X=\log(1-U)$.}
+  \label{fig:inversion}
+\end{figure}
+
+
+This algorithm is simple so that inversion is certainly the method
+of choice if the inverse CDF is available in closed form. This is
+the case, e.g., for the exponential and the Cauchy distribution. 
+
+The inversion method also has other special advantages that make it
+even more attractive for simulation purposes:
+\begin{itemize}
+\item 
+  It preserves the structural properties of the underlying uniform
+  pseudo-random number generator.
+\end{itemize}
+Consequently,
+\begin{itemize}
+\item 
+  it can be used for variance reduction techniques;
+\item
+  it is easy to sample from truncated distributions;
+\item
+  it is easy to sample from marginal distributions and thus is
+  suitable for using with copul\ae;
+\item
+  the quality of the generated random variables depends only on the
+  underlying uniform (pseudo-) random number generator.
+\end{itemize}
+Another important advantage of the inversion method is that we can
+easily characterize its performance. To generate one random variate
+we always need exactly one uniform variate and one evaluation of
+the inverse CDF. So its speed mainly depends on the costs for
+evaluating the inverse CDF. Hence inversion is often considered as
+the method of choice in the simulation literature.
+
+Unfortunately computing the inverse CDF is often comparatively
+difficult and slow, e.g., for standard distributions like normal,
+student, gamma, and beta distributions. Often no such routines are
+available in standard programming libraries. 
+Then numerical methods for inverting the CDF are necessary, e.g.,
+Newton's method or interpolation. Such procedures, however, have the
+disadvantage that they may be slow or not exact, i.e. they compute
+approximate values. The methods \texttt{HINV}, \texttt{HINV} and
+\texttt{PINV} of UNU.RAN are such numerical inversion methods. 
+
+% ---------------------------------------------------------------------------
+
+\subsection{The Acceptance-Rejection Method}
+\label{sec:rejection}
+
+The acceptance-rejection method has been suggested by John von Neumann
+in 1951 \citep{Neumann:1951a}.
+Since then it has proven to be the most flexible and most efficient 
+method to generate variates from continuous distributions. 
+
+We explain the rejection principle first for the density
+$f(x) = \sin(x)/2$ on the interval $(0,\pi)$.
+To generate random variates from this distribution we also can
+sample random points that are uniformly distributed in the region
+between the graph of $f(x)$ and the $x$-axis, i.e., the shaded region
+in \autoref{fig:rejection}.
+
+<<fig:rejection,echo=FALSE,result=FALSE>>=
+x <- c((0:31)/10,3.1416)
+y <- round(sin(c((0:31)/10,3.1416)),3)
+pdf.sin <- paste("(",paste(x,y,sep=",",collapse=") ("),")",sep="",collapse="")
+rm(x,y)
+@ 
+
+\begin{figure}[ht]
+  \centering
+  \begin{tikzpicture}[xscale=3,yscale=6,>=stealth,line width=1pt]
+    \draw [use as bounding box] (-0.2,-0.05)(3.6,1.20);
+    %% shaded region
+    \fill [blue!01!white] (0,0) -- (0,1) -- (3.1416,1) -- (3.1416,0);
+    \fill [green!20!white] plot coordinates { \Sexpr{pdf.sin} };
+    \fill [green!35!white] (0,0) -- (1.5708,1) -- (3.1416,0);
+    %% squeeze
+    \draw [dashed,line width=1.5pt,red!50!black] (0,0) -- (1.5708,1) -- (3.1416,0);
+    %% hat
+    \draw [line width=2pt,blue!80!black] (0,1) -- (3.1416,1);
+    \draw [line width=1pt,blue!80!black] (3.1416,1) -- (3.1416,0);
+    \draw (0,1) node [left] {$\frac{1}{2}$};
+    \draw (3.1416,0) node [below] {${\pi}$};
+    %% PDF
+    \draw [green!80!black,line width=2pt] plot coordinates { \Sexpr{pdf.sin} };
+    %% axes
+    \draw [<->] (0,1.20) -- (0,0) -- (3.5,0);
+    %% random points
+    \draw (0.1061,0.1713) ellipse (1pt and 0.5pt);
+    \draw (0.3747,0.7649) ellipse (1pt and 0.5pt);
+    \fill (0.7809,0.5783) ellipse (1pt and 0.5pt);
+    \draw [line width=1.5pt] (0.7809,-0.02) -- (0.7809,0.02);
+    \fill (0.9633,0.2115) ellipse (1pt and 0.5pt);
+    \draw [line width=1.5pt] (0.9633,-0.02) -- (0.9633,0.02);
+    \fill (1.073,0.4075) ellipse (1pt and 0.5pt);
+    \draw [line width=1.5pt] (1.073,-0.02) -- (1.073,0.02);
+    \draw (1.215,0.9781) ellipse (1pt and 0.5pt);
+    \fill (1.476,0.7321) ellipse (1pt and 0.5pt);
+    \draw [line width=1.5pt] (1.476,-0.02) -- (1.476,0.02);
+    \fill (1.676,0.2321) ellipse (1pt and 0.5pt);
+    \draw [line width=1.5pt] (1.676,-0.02) -- (1.676,0.02);
+    \fill (1.736,0.5303) ellipse (1pt and 0.5pt);
+    \draw [line width=1.5pt] (1.736,-0.02) -- (1.736,0.02);
+    \fill (1.912,0.0392) ellipse (1pt and 0.5pt);
+    \draw [line width=1.5pt] (1.912,-0.02) -- (1.912,0.02);
+    \fill (2.168,0.3703) ellipse (1pt and 0.5pt);
+    \draw [line width=1.5pt] (2.168,-0.02) -- (2.168,0.02);
+    \fill (2.202,0.304) ellipse (1pt and 0.5pt);
+    \draw [line width=1.5pt] (2.202,-0.02) -- (2.202,0.02);
+    \fill (2.306,0.4357) ellipse (1pt and 0.5pt);
+    \draw [line width=1.5pt] (2.306,-0.02) -- (2.306,0.02);
+    \draw (2.504,0.9575) ellipse (1pt and 0.5pt);
+    \draw (2.647,0.6701) ellipse (1pt and 0.5pt);
+    \fill (2.692,0.08871) ellipse (1pt and 0.5pt);
+    \draw [line width=1.5pt] (2.692,-0.02) -- (2.692,0.02);
+    \draw (2.907,0.437) ellipse (1pt and 0.5pt);
+    \draw (3.015,0.8269) ellipse (1pt and 0.5pt);
+  \end{tikzpicture}
+  \caption{Acceptance-rejection method. 
+    Points are drawn randomly in $[0,\pi]\times[0,1]$. 
+    Points above the density ($\circ$) are rejected;
+    points below the density ($\bullet$) are accepted and their
+    $x$-coordinates are returned. Notice that there is no need to
+    evaluate the density whenever a points falls into the region below
+    the dashed triangle (squeeze).}
+  \label{fig:rejection}
+\end{figure}
+ 
+In general this is not a trivial task but in this example we can
+easily use the rejection trick:  
+Sample a random point $(X,Y)$ uniformly in the bounding rectangle 
+$(0,\pi)\times(0,1/2)$. This is easy since each coordinate can be
+sampled independently from the respective uniform distributions
+$U(0,\pi)$ and $U(0,1/2)$. 
+Whenever the point falls into the shaded region below the graph 
+(indicated by dots in the figure), i.e., when $Y < \sin(X)/2$, 
+we accept it and return $X$ as a random variate from the distribution
+with density $f(x)$. Otherwise we have to reject the point (indicated
+by small circles in the figure), and try again.
+
+It is quite clear that this idea works for every distribution with a
+bounded density on a bounded domain. Moreover, we can use this
+procedure with any multiple of the density, i.e., with any positive
+bounded function with bounded integral and it is not necessary to 
+know the integral of this function. So we use the term density in
+the sequel for any positive function with bounded integral.
+
+From the figure we can conclude that the performance of a rejection
+algorithm depends heavily on the area of the enveloping
+rectangle. Moreover, the method does not work if the target 
+distribution has infinite tails (or is unbounded). Hence
+non-rectangular shaped regions for the envelopes are important and 
+we have to solve the problem of sampling points uniformly from such
+domains. Looking again at the example above we notice that the
+$x$-coordinate of the random point $(X,Y)$ was sampled by inversion
+from the uniform distribution on the domain of the given density. This
+motivates us to replace the density of the uniform distribution by the
+(multiple of a) density $h(x)$ of some other appropriate
+distribution. We only have to take care that it is chosen such that it
+is always an upper bound, i.e., $h(x) >= f(x)$ for all $x$ in the
+domain of the distribution. To generate the pair $(X,Y)$ we generate
+$X$ from the distribution with density proportional to $h(x)$ and $Y$
+uniformly between $0$ and $h(X)$. The first step (generate $X$) is
+usually done by inversion, see \autoref{sec:inversion}.
+
+Thus the general rejection algorithm for a hat $h(x)$ with 
+inverse CDF $H^{-1}$ consists of the following steps:
+\begin{enumerate}[1.]
+\item
+  Generate a $U(0,1)$ random number $U$.
+\item
+  Set $X \leftarrow H^{-1}(U)$.
+\item
+  Generate a $U(0,1)$ random number $V$.
+\item
+  Set $Y \leftarrow V\,h(X)$.
+\item
+  If $Y \leq f(X)$ accept and return $X$.
+\item
+  Else try again.
+\end{enumerate}
+
+If the evaluation of the density $f(x)$ is expensive
+(i.e., time consuming) it is possible to use a simple lower bound
+of the density as so called \emph{squeeze function}
+$s(x)$ (the triangular shaped function in \autoref{fig:rejection}
+is an example for such a squeeze). We can then accept $X$ when $Y \leq
+s(X)$ and can thus often save the evaluation of the density. 
+
+We have seen so far that the rejection principle leads to
+short and simple generation algorithms. The main practical problem
+to apply the rejection algorithm is the search for a good fitting
+hat function and squeezes. We do not discuss these topics here
+as they are the heart of the different automatic algorithms
+implemented in UNU.RAN. Information about the construction of hat
+and squeeze can therefore be found in the descriptions of the
+methods. 
+   
+The performance characteristics of rejection algorithms mainly
+depend on the fit of the hat and the squeeze. It is not difficult
+to prove that:
+\begin{itemize}
+\item
+  The expected number of trials to generate one variate is the ratio
+  between the area below the hat and the area below the density. 
+\item
+  The expected number of evaluations of the density necessary to
+  generate one variate is equal to the ratio between the area below
+  the hat and the area below the density, when no squeeze is used.
+  Otherwise, when a squeeze is given it is equal to the ratio
+  between the area between hat and squeeze and the area below the hat.
+\item
+  The \texttt{sqhratio} (i.e., the ratio between the area below the
+  squeeze and the area below the hat) used in some of the UNU.RAN
+  methods is easy to compute. It is useful as its reciprocal is an
+  upper bound for the expected number of trials of the rejection
+  algoritm. The expected number of evaluations of the density is
+  bounded by $(1/\mbox{\texttt{sqhratio}})-1$.
+\end{itemize}
+
+% ---------------------------------------------------------------------------
+
+\subsection{The Composition Method}
+\label{sec:composition}
+
+The composition method is an important principle to facilitate and
+speed up random variate generation. The basic idea is simple. 
+To generate random variates with a given density we first split the
+domain of the density into subintervals. Then we select one of
+these randomly with probabilities given by the area below the
+density in the respective subintervals. Finally we generate a
+random variate from the density of the selected part by inversion
+and return it as random variate of the full distribution.
+
+Composition can be combined with rejection. Thus it is possible to
+decompose the domain of the distribution into subintervals and to
+construct hat and squeeze functions seperatly in every
+subinterval. The area below the hat must be determined in every
+subinterval. Then the Composition rejection algorithm contains the
+following steps:
+
+\begin{enumerate}[1.]
+\item
+  Generate the index $J$ of the subinterval as the
+  realisation of a discrete random variate with probabilities
+  proportional to the area below the hat.
+\item
+  Generate a random variate $X$ proportional to the hat in
+  interval $J$.
+\item
+  Generate the $U(0,f(X))$ random number $Y$.
+\item
+  If $Y \leq f(X)$ accept and return $X$.
+\item
+  Else start again with generating the index $J$ (Step~1).
+\end{enumerate}
+
+The first step can be done in constant time (i.e., independent of
+the number of chosen subintervals) by means of the indexed search
+method (\autoref{sec:indexed-search}).
+  
+It is possible to reduce the number of uniform random numbers
+required in the above algorithm by recycling the random numbers
+used in Step 1 and additionally by applying the principle of
+\emph{immediate acceptance}. 
+For details see \citep[Sect.~3.1]{Hoermann;Leydold;Derflinger:2004a}.
+
+% ---------------------------------------------------------------------------
+
+\subsection{The Ratio-of-Uniforms Method}
+\label{sec:ratio-of-uniforms}
+
+The construction of an appropriate hat function for the given
+density is the crucial step for constructing rejection algorithms.
+Equivalently we can try to find an appropriate envelope for the region
+between the graph of the density and the $x$-axis, such
+that we can easily sample uniformly distributed random points.
+This task could become easier if we can find transformations that map
+the region between the density and the axis into a region of more
+suitable shape (for example into a bounded region).
+
+As a first example we consider the following simple algorithm for
+the Cauchy distribution.
+\begin{enumerate}[1.]
+\item 
+  Generate a $U(-1,1)$ random number $U$ and a
+  $U(0,1)$ random number $V$.
+\item
+  If $U^2 + V^2 \leq 1$ accept and return $X=U/V$.
+\item
+  Else try again.
+\end{enumerate}
+
+It is possible to prove that the above algorithm indeed  generates
+Cauchy random variates. The fundamental principle behind this
+algorithm is the fact that a half-disc in the $UV$-plane is mapped
+into the region below the density by the transformation
+\[
+(U,V)\mapsto(X,Y)=(U/V,V^2)
+\]
+in such a way that the ratio between the area of 
+the image to the area of the preimage is constant. This is due to
+the fact that that the Jacobian of this transformation is constant.
+
+\begin{figure}[ht]
+  \centering
+  \begin{tikzpicture}[xscale=4,yscale=4,>=stealth,line width=1pt]
+    \draw [use as bounding box] (-1.2,-0.1)(1.2,1.20);
+    %% bounding rectangle
+    \draw [line width=1.5pt,blue!80!black,fill=blue!01!white] (-1,0) -- (-1,1) -- (1,1) -- (1,0);
+    %% region of acceptance
+    \draw [line width=2pt,green!80!black,fill=green!35!white] (-1,0) arc (180:0:1);
+    %% axes 
+    \draw [->] (-1.20,0) -- (1.20,0);
+    \draw [->] (0,0) -- (0,1.20);
+  \end{tikzpicture}
+  \caption{Ratio-of-Uniforms method. The region below the density of
+    the Cauchy distribution is transformed into a half-circle. Points
+    are then sampled uniformly in the bounding rectangle and accepted
+    or rejected.}
+  \label{fig:rou-cauchy}
+\end{figure}
+
+The above example is a special case of a more general principle,
+called the \emph{Ratio-of-Uniforms (RoU) method}
+\citep{Kinderman;Monahan:1977a}. It is based on
+the fact that for a random variable $X$ with density
+$f(x)$ and some constant $\mu$ we can generate
+$X$ from the desired density by calculating
+$X=U/V+\mu$ for a pair $(U,V)$ uniformly
+distributed in the set
+\[
+\mathcal{A}_f= \{(u,v)\colon 0 < v \leq \sqrt{f(u/v+\mu)}\}\;.
+\]
+
+For most distributions it is best to set the constant
+$\mu$ equal to the mode of the distribution. For sampling
+random points uniformly distributed in $\mathcal{A}_f$ rejection
+from a convenient enveloping region is used, usually the minimal
+bounding rectangle, i.e., the smallest possible rectangle that
+contains $\mathcal{A}_f$ (see \autoref{fig:rou-cauchy}).
+It is given by $(u^-,u^+)\times (0,v^+)$ where
+\begin{eqnarray*}
+  v^+ &=& \sup\limits_{b_l<x<b_r}         \sqrt{f(x)}\;, \\
+  u^- &=& \inf\limits_{b_l<x<b_r} (x-\mu) \sqrt{f(x)}\;, \\
+  u^+ &=& \sup\limits_{b_l<x<b_r} (x-\mu) \sqrt{f(x)}\;.
+\end{eqnarray*}
+Then the Ratio-of-Uniforms method consists of the following simple
+steps:
+\begin{enumerate}[1.]
+\item
+  Generate a $U(u^-,u^+)$ random number $U$ and a
+  $U(0,v^+)$ random number $V$.
+\item
+  Set $X \leftarrow U/V+\mu$.
+\item
+  If $V^2 \leq f(X)$ accept and return $X$.
+\item
+  Else try again.
+\end{enumerate}
+
+To apply the Ratio-of-Uniforms algorithm to a certain density 
+we have to solve the simple optimization problems in the
+definitions above to obtain the design constants $u^-$,
+$u^+$, and $v^+$.  
+This simple algorithm works for all distributions
+with bounded densities that have subquadratic tails (i.e.,
+tails like $1/x^2$ or lower). For most standard
+distributions it has quite good rejection constants
+(e.g., $1.3688$ for the normal and $1.4715$ for the exponential
+distribution).
+
+Nevertheless, we use more sophisticated method that construct
+better fitting envelopes, like method \texttt{AROU}, or even
+avoid the computation of these design constants and thus have
+almost no setup, like method \texttt{SROU}.
+
+% ...........................................................................
+
+\subsection{The Generalized Ratio-of-Uniforms Method}
+\label{sec:generalized-ratio-of-uniforms}
+
+The Ratio-of-Uniforms method can be generalized in the following way
+\citep{Stefanescu;Vaduva:1987a,Wakefield;Gelfand;Smith:1991a}:
+If a point $(U,V)$ is uniformly distributed in the set
+\[
+\mathcal{A}_f= \{(u,v)\colon 0 < v \leq (f(u/v^r+\mu))^{1/(r+1)}\}
+\]
+for some real number $r>0$, then $X=U/V^r+\mu$ has the denity $f(x)$.
+The minimal bounding rectangle of this region is given by 
+$(u^-,u^+)\times (0,v^+)$ where
+\begin{eqnarray*}
+  v^+ &=& \sup\limits_{b_l<x<b_r}         (f(x))^{1/(r+1)}\;, \\
+  u^- &=& \inf\limits_{b_l<x<b_r} (x-\mu) (f(x))^{r/(r+1)}\;, \\
+  u^+ &=& \sup\limits_{b_l<x<b_r} (x-\mu) (f(x))^{r/(r+1)}\;.
+\end{eqnarray*}
+The above algorithm has then to be adjusted accordingly.
+Notice that the original Ratio-of-Uniforms method is the special
+case with $r=1$.
+
+% ---------------------------------------------------------------------------
+
+\subsection{Inversion for Discrete Distributions}
+\label{sec:discrete-inversion}
+
+We have already presented the idea of the inversion method to
+generate from continuous random variables
+(\autoref{sec:inversion}). For a discrete random variable $X$ we can
+write it formally in the same way:
+\[
+X = F^{-1}(U)\;,
+\]
+where $F$ is the CDF of the desired distribution and 
+$U$ is a uniform $U(0,1)$ random number. The
+difference compared to the continuous case is that $F$ is
+now a step-function. The following figure illustrates the idea of
+discrete inversion for a simple distribution. 
+
+\begin{figure}[ht]
+  \centering
+  \begin{tikzpicture}[xscale=1.5,yscale=4,>=stealth,line width=1pt]
+    \draw [use as bounding box] (0,-0.2) (5.5,1.2);
+    %% CDF
+    \draw [blue!80!black,line width=2pt] (0,0.1) -- (1,0.1);
+    \draw [blue!80!black,line width=2pt] (1,0.4) -- (2,0.4);
+    \draw [blue!80!black,line width=2pt] (2,0.8) -- (3,0.8);
+    \draw [blue!80!black,line width=2pt] (3,1) -- (5,1);
+    \draw [blue!20!white,dashed] (1,0.1) -- (1,0.4);
+    \draw [blue!20!white,dashed] (2,0.4) -- (2,0.8);
+    \draw [blue!20!white,dashed] (3,0.8) -- (3,1);
+    %% axes and auxilliary lines
+    \draw [black!30!white] (0,1) -- (5,1);
+    \draw (0,1) node[left] {$1$};
+    \draw [<->] (0,1.2) -- (0,0) -- (5.5,0);
+    \foreach \x in {0,1,2,3,4,5}
+    \draw (\x,0.05) -- (\x,0) node [below] {$\x$};
+    %% inverse 
+    \draw [->,line width=1.5pt,red!80!black] (0,0.60) node[left] {$U$} 
+    -- (2,0.60) -- (2,0);
+    \draw [red!80!black] (2,-0.1) node [below] {\makebox[2ex][l]{$X = F^{-1}(U)$}};
+  \end{tikzpicture}
+  \caption{Discrete inversion}
+  \label{fig:discrete-inversion}
+\end{figure}
+
+To realize this idea on a computer we have to use a search
+algorithm. For the simplest version called \emph{Sequential Search}
+the CDF is computed on-the-fly as sum of the probabilities
+$p(k)$, since this is usually much cheaper than computing
+the CDF directly. It is obvious that the basic form of the search
+algorithm only works for discrete random variables with probability
+mass functions $p(k)$ for nonnegative $k$. The sequential search
+algorithm consists of the following basic steps: 
+\begin{enumerate}[1.]
+\item 
+  Generate a $U(0,1)$ random number $U$.
+\item
+  Set $X \leftarrow 0$ and $P \leftarrow p(0)$.
+\item
+  Do while $U > P$
+\item
+  ~~~~~~Set $X \leftarrow X+1$ and $P \leftarrow P+p(X)$.
+\item
+  Return $X$.
+\end{enumerate}
+
+With the exception of some very simple discrete distributions,
+sequential search algorithms become very slow as the while-loop has
+to be repeated very often. The expected number of iterations,
+i.e., the number of comparisons in the while condition, is equal to
+the expectation of the distribution plus $1$.
+It can therefore become arbitrary large or even infinity if the tail
+of the distribution is very heavy. Another serious problem can be
+critical round-off errors due to summing up many probabilities
+$p(k)$. To speed up the search procedure it is best to use
+indexed search.
+
+% ---------------------------------------------------------------------------
+
+\subsection{Indexed Search (Guide Table Method)}
+\label{sec:indexed-search}
+
+The idea to speed up the sequential search algorithm is easy to
+understand \citep{Chen;Asau:1974a}. Instead of starting always at $0$
+we store a table of size $C$ with starting points for our search. For
+this table we compute $F^{-1}(U)$ for $C$
+equidistributed values of $U$, i.e., for $u_i = i/C$, $i=0,...,C-1$. 
+Such a table is called \emph{guide table} or \emph{hash  table}. 
+Then it is easy to prove that for every $U$ in
+$(0,1)$ the guide table entry for $k=\lfloor U\,C \rfloor$
+is bounded by $F^{-1}(U)$. This shows that we can start our sequential
+search procedure from the table entry with index $k$ which can be
+found quickly by means of the truncation operation. 
+
+The two main differences between \emph{indexed search} and 
+\emph{sequential search} are that we start searching at the number
+determined by the guide table, and that we have to compute and
+store the cumulative probabilities in the setup as we have to know
+the cumulative probability for the starting point of the search
+algorithm. The rounding problems that can occur in the sequential
+search algorithm can occur here as well. 
+Compared to sequential search we have now the obvious drawback
+of a slow setup. The computation of the cumulative probabilities
+grows linear with the size of the domain of the distribution
+$L$. What we gain is really high speed as the marginal
+execution time of the sampling algorithm becomes very small. The
+expected number of comparisons is bounded by $1+L/C$.
+This shows that there is a trade-off between speed and
+the size of the guide table. Cache-effects in modern computers will
+however slow down the speed-up for really large table sizes. 
+Thus we recommend to use a guide table that is about two times
+larger than the probability vector to obtain optimal speed. 
+
+% ---------------------------------------------------------------------------

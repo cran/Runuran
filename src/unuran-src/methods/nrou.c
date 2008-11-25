@@ -375,26 +375,26 @@ _unur_nrou_rectangle( struct unur_gen *gen )
 void
 _unur_nrou_debug_init( const struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_NROU_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: type    = continuous univariate random variates\n",gen->genid);
-  fprintf(log,"%s: method  = nrou (naive ratio-of-uniforms)\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: type    = continuous univariate random variates\n",gen->genid);
+  fprintf(LOG,"%s: method  = nrou (naive ratio-of-uniforms)\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
   _unur_distr_cont_debug( gen->distr, gen->genid );
-  fprintf(log,"%s: sampling routine = _unur_nrou_sample",gen->genid);
-  if (gen->variant & NROU_VARFLAG_VERIFY) fprintf(log,"_check");
-  fprintf(log,"()\n%s:\n",gen->genid);
-  fprintf(log,"%s: r-parameter = %g",gen->genid, GEN->r);
+  fprintf(LOG,"%s: sampling routine = _unur_nrou_sample",gen->genid);
+  if (gen->variant & NROU_VARFLAG_VERIFY) fprintf(LOG,"_check");
+  fprintf(LOG,"()\n%s:\n",gen->genid);
+  fprintf(LOG,"%s: r-parameter = %g",gen->genid, GEN->r);
   _unur_print_if_default(gen,NROU_SET_R);
-  fprintf(log,"\n%s:\n",gen->genid);
-  fprintf(log,"%s: center = %g\n",gen->genid,GEN->center);
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: Rectangle:\n",gen->genid);
-  fprintf(log,"%s:    left  upper point = (%g,%g)\n",gen->genid,GEN->umin,GEN->vmax);
-  fprintf(log,"%s:    right upper point = (%g,%g)\n",gen->genid,GEN->umax,GEN->vmax);
-  fprintf(log,"%s:\n",gen->genid);
+  fprintf(LOG,"\n%s:\n",gen->genid);
+  fprintf(LOG,"%s: center = %g\n",gen->genid,GEN->center);
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: Rectangle:\n",gen->genid);
+  fprintf(LOG,"%s:    left  upper point = (%g,%g)\n",gen->genid,GEN->umin,GEN->vmax);
+  fprintf(LOG,"%s:    right upper point = (%g,%g)\n",gen->genid,GEN->umax,GEN->vmax);
+  fprintf(LOG,"%s:\n",gen->genid);
 } 
 #endif   
 #ifdef UNUR_ENABLE_INFO
@@ -416,6 +416,9 @@ _unur_nrou_info( struct unur_gen *gen, int help )
       _unur_string_append(info,"  [= mode]\n");
     else 
       _unur_string_append(info,"  [default]\n");
+  }
+  else {
+    _unur_string_append(info,"\n");
   }
   if (help) {
     if ( distr->set & UNUR_DISTR_SET_MODE_APPROX ) 

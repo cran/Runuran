@@ -9,6 +9,8 @@
   UNU.RAN random variate generator for the Powerexponential (Subbotin)
   distribution with shape parameter \code{shape}.
   It also allows sampling from the truncated distribution.
+  
+  [Distribution] -- Sampling Function: Powerexponential (Subbotin).  %% Continuous
 }
 
 \usage{

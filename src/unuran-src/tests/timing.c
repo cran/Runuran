@@ -120,7 +120,7 @@ unur_test_timing_total( const UNUR_PAR *par, int samplesize, double avg_duration
   _unur_check_NULL(test_name,par,-1.);
   if (samplesize < 0) return -1.;
   avg_duration = (avg_duration < 1.e-3) ? 1000. : 1.e6 * avg_duration;
-  repeat_pilot = 11 - log((double)samplesize)/M_LN2;
+  repeat_pilot = 11 - (int)(log((double)samplesize)/M_LN2);
   if (repeat_pilot<1) repeat_pilot = 1;
   size_pilot = _unur_min(samplesize,1000);
   time_pilot = unur_test_timing_total_run(par, size_pilot, repeat_pilot);
@@ -219,7 +219,7 @@ double unur_test_timing_total_run( const struct unur_par *par, int samplesize, i
 double
 unur_test_timing_uniform( const struct unur_par *par, int log_samplesize )
 {
-#define TIMING_REPETITIONS 21
+#define TIMING_REPETITIONS (21)
   struct unur_gen *gen_urng;
   static double uniform_time = -1.;
   double time[TIMING_REPETITIONS];
@@ -238,7 +238,7 @@ unur_test_timing_uniform( const struct unur_par *par, int log_samplesize )
 	x = unur_sample_cont(gen_urng);
       time[n] = (_unur_get_time() - time[n])/samplesize;
     }
-    qsort( time, TIMING_REPETITIONS, sizeof(double), compare_doubles);
+    qsort( time, (size_t)TIMING_REPETITIONS, sizeof(double), compare_doubles);
     uniform_time = time[TIMING_REPETITIONS/2];
     _unur_free(gen_urng);
   }
@@ -248,7 +248,7 @@ unur_test_timing_uniform( const struct unur_par *par, int log_samplesize )
 double
 unur_test_timing_exponential( const struct unur_par *par, int log_samplesize )
 {
-#define TIMING_REPETITIONS 21
+#define TIMING_REPETITIONS (21)
   struct unur_distr *unit_distr;
   struct unur_par   *unit_par;
   struct unur_gen   *unit_gen;
@@ -272,7 +272,7 @@ unur_test_timing_exponential( const struct unur_par *par, int log_samplesize )
 	x = unur_sample_cont(unit_gen);
       time[n] = (_unur_get_time() - time[n])/samplesize;
     }
-    qsort( time, TIMING_REPETITIONS, sizeof(double), compare_doubles);
+    qsort( time, (size_t)TIMING_REPETITIONS, sizeof(double), compare_doubles);
     exponential_time = time[TIMING_REPETITIONS/2];
     unur_distr_free(unit_distr);
     unur_free(unit_gen);

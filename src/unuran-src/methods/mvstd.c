@@ -153,21 +153,21 @@ _unur_mvstd_free( struct unur_gen *gen )
 void
 _unur_mvstd_debug_init( struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_MVSTD_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: type    = continuous multivariate random variates\n",gen->genid);
-  fprintf(log,"%s: method  = generator for standard distribution\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: type    = continuous multivariate random variates\n",gen->genid);
+  fprintf(LOG,"%s: method  = generator for standard distribution\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
   _unur_distr_cvec_debug( gen->distr, gen->genid );
-  fprintf(log,"%s: sampling routine = ",gen->genid);
+  fprintf(LOG,"%s: sampling routine = ",gen->genid);
   if (GEN->sample_routine_name)
-    fprintf(log,"%s()\n",GEN->sample_routine_name);
+    fprintf(LOG,"%s()\n",GEN->sample_routine_name);
   else
-    fprintf(log,"(Unknown)\n");
-  fprintf(log,"%s:\n",gen->genid);
-  fflush(log);
+    fprintf(LOG,"(Unknown)\n");
+  fprintf(LOG,"%s:\n",gen->genid);
+  fflush(LOG);
 } 
 #endif   
 #ifdef UNUR_ENABLE_INFO

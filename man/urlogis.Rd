@@ -9,6 +9,8 @@
   UNU.RAN random variate generator for the Logistic distribution with
   parameters \code{location} and \code{scale}.
   It also allows sampling from the truncated distribution.
+  
+  [Distribution] -- Sampling Function: Logistic.  %% Continuous
 }
 
 \usage{
@@ -58,7 +60,7 @@ urlogis(n, location=0, scale=1, lb=-Inf, ub=Inf)
 }
 
 \note{
-  This function is wrapper for the UNU.RAN class in \R.
+  This function is a wrapper for the UNU.RAN class in \R.
   Compared to \code{rlogis}, \code{urlogis} is faster, especially for
   larger sample sizes.
   However, in opposition to \code{rlogis} vector arguments are ignored,

@@ -9,6 +9,8 @@
   UNU.RAN random variate generator for the Logarithmic distribution with
   shape parameter \code{shape}.
   It also allows sampling from the truncated distribution.
+  
+  [Distribution] -- Sampling Function: Logarithmic.  %% Discrete
 }
 
 \usage{
@@ -58,7 +60,7 @@ urlogarithmic(n, shape, lb = 1, ub = Inf)
 }
 
 \note{
-  This function is wrapper for the UNU.RAN class in \R.
+  This function is a wrapper for the UNU.RAN class in \R.
 }
 
 \examples{

@@ -6,24 +6,31 @@
 \alias{show,unuran.discr-method}
 \alias{initialize,unuran.discr-method}
 
-\title{Experimental class "unuran.discr"}
+\title{Class "unuran.discr" for Discrete Distribution}
 
 \description{%
-  The class "unuran.discr" provides am interface to UNU.RAN objects for
+  Class \code{unuran.discr} provides an interface to UNU.RAN objects for
   discrete distributions.
   The interface might be changed in future releases.
   \strong{Do not use unnamed arguments!}
+  
+  [Advanced] -- Discrete Distribution Object.
 }
 
 \details{
-  Create a new instance of an "unuran.discr" object using
+  Create a new instance of a \code{unuran.discr} object using
 
-  \code{new ("unuran.discr",pv=NULL, pmf=NULL, lb=0, ub=Inf)}.
+  \code{new ("unuran.discr", pv=NULL, pmf=NULL, mode=NA, lb=0, ub=Inf,
+             sum=NA, name=NA)}.
 
   \describe{
     \item{pv}{probability vector. (numeric vector)}
     \item{pmf}{probability mass function. (\R function)}
+    \item{mode}{mode of distribution. (numeric, integer)}
     \item{lb, ub}{lower and upper bound of domain. (numeric, integers)}
+    \item{sum}{sum over \code{pv} / \code{pmf}; used for computing
+      normalization constants if required. (numeric)}
+    \item{name}{name of distribution. (string)}
   }
 
   The user is responsible that the given informations are consistent.
@@ -43,25 +50,19 @@
 }
 
 \seealso{
-  \code{\linkS4class{unuran}}, \code{\link{unuran.new}}.
+  \code{\link{unuran.discr.new}}, \code{\link{unuran.new}},
+  \code{\linkS4class{unuran}}.
 }
 
 \examples{
 ## Create discrete distribution with given probability vector
-pv <- c(1.,2.,1.5,0.,3.,1.2)     ## PV need not be normalized
-dpv <- new("unuran.discr",pv=pv)
-## Make generator (using method DGT)
-unr <- unuran.new(dpv, "dgt")
-## Draw sample of size 100
-x <- unuran.sample(unr, 100)
+## (the PV need not be normalized)
+pv <- c(1.,2.,1.5,0.,3.,1.2)     
+dpv <- new("unuran.discr", pv=pv)
 
-## Create discrete distribution with given probability mass function
+## Create discrete distribution with given PMF
 pmf <- function(x) dbinom(x,100,0.3)
 dpmf <- new("unuran.discr",pmf=pmf,lb=0,ub=100)
-## Make generator (using method DGT)
-unr <- unuran.new(dpmf, "dgt")
-## Draw sample of size 100
-x <- unuran.sample(unr, 100)
 
 }
 

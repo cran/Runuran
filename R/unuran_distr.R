@@ -23,12 +23,14 @@ setClass( "unuran.distr",
          ## slots:
          representation = representation( 
                  distr = "externalptr",   # pointer to UNU.RAN distribution object
-                 env   = "environment"    # environment for evaluating R expressions
+                 env   = "environment",   # environment for evaluating R expressions
+                 name  = "character"      # name of distribution
                  ),
          ## defaults for slots
          prototype = list(
                  distr = NULL,
-                 env   = NULL
+                 env   = NULL,
+                 name  = NULL
                  ),
          ## indicate virtual class
          contains = "VIRTUAL"

@@ -11,6 +11,9 @@
   probability vector.
   It applies the Guide-Table Method (\code{urdgt}) for discrete
   inversion or the Alias-Urn Method (\code{urdau}).
+  
+  [ \strong{Deprecated}.
+  Use \code{\link{dgt.new}} or \code{\link{dau.new}} instead. ]
 }
 
 \usage{
@@ -41,8 +44,8 @@ urdau(n, probvector, from = 0, by = 1)
 }
 
 \seealso{
-  \code{\link{runif}} and \code{\link{.Random.seed}} about random number
-  generation, \code{\linkS4class{unuran}} for the UNU.RAN class.
+  \code{\link{dau.new}}, \code{dgt.new}, and \code{\link{ur}}
+  for replacement.
 }
 
 \references{
@@ -69,18 +72,7 @@ urdau(n, probvector, from = 0, by = 1)
 urdgt() and urdau() are very fast for probvector not longer than about 1000.
 }
 
-\examples{
-## Create a sample of size 10000 for a 
-## binomial distribution with size=115, prob=0.5
-x <- urdgt(n=10000, probvector=dbinom(0:115,115,0.5))
-
-## same but with method DAU
-x <- urdau(n=10000, probvector=dbinom(0:115,115,0.5))
-
-## Creata a sample of size 10000 standard normal variates rounded to two
-## decimal places 
-x <- urdgt(n=10000, probvector=dnorm(seq(-5,5,0.01)), from=-5, by=0.01)
-}
+%%\examples{}
 
 \keyword{distribution}
 \keyword{datagen}

@@ -10,11 +10,11 @@
 #define GEN       ((struct unur_dstd_gen*)gen->datap) 
 #define DISTR     gen->distr->data.discr 
 #define uniform()  _unur_call_urng(gen->urng) 
-#define MAX_gen_params   8     
-#define MAX_gen_iparams  6     
-#define N  (DISTR.params[0])
-#define M  (DISTR.params[1])
-#define n  (DISTR.params[2])
+#define MAX_gen_params  (8)   
+#define MAX_gen_iparams (9)   
+#define par_N  (DISTR.params[0])
+#define par_M  (DISTR.params[1])
+#define par_n  (DISTR.params[2])
 inline static int hypergeometric_hruec_init( struct unur_gen *gen );
 static int _unur_stdgen_sample_hypergeometric_hruec( struct unur_gen *gen );
 inline static int h_util(int N_, int M_, int n_, int k_);
@@ -34,12 +34,15 @@ _unur_stdgen_hypergeometric_init( struct unur_par *par, struct unur_gen *gen )
 } 
 #define flogfak(k) (_unur_sf_ln_factorial(k))
 #define delta(k) (flogfak(k)+flogfak(Mc-k)+flogfak(nc-k)+flogfak(NMn+k))
-#define b       (GEN->gen_iparam[0])
-#define m       (GEN->gen_iparam[1])
-#define NMn     (GEN->gen_iparam[2])
-#define Mc      (GEN->gen_iparam[3])
-#define nc      (GEN->gen_iparam[4])
-#define N_half  (GEN->gen_iparam[5])
+#define N       (GEN->gen_iparam[0])
+#define M       (GEN->gen_iparam[1])
+#define n       (GEN->gen_iparam[2])
+#define b       (GEN->gen_iparam[3])
+#define m       (GEN->gen_iparam[4])
+#define NMn     (GEN->gen_iparam[5])
+#define Mc      (GEN->gen_iparam[6])
+#define nc      (GEN->gen_iparam[7])
+#define N_half  (GEN->gen_iparam[8])
 #define NMnp    (GEN->gen_param[0])
 #define Np      (GEN->gen_param[1])
 #define Mp      (GEN->gen_param[2])
@@ -59,14 +62,17 @@ hypergeometric_hruec_init( struct unur_gen *gen )
     GEN->n_gen_param = MAX_gen_params;
     GEN->gen_param = _unur_xmalloc(GEN->n_gen_param * sizeof(double));
     GEN->n_gen_iparam = MAX_gen_iparams;
-    GEN->gen_iparam = _unur_xmalloc(GEN->n_gen_param * sizeof(int));
+    GEN->gen_iparam = _unur_xmalloc(GEN->n_gen_iparam * sizeof(int));
   }
+  N = (int) par_N;
+  M = (int) par_M;
+  n = (int) par_n;
   N_half = N/2;                      
   Mc = (M<=N_half) ? M : N-M;        
   nc = (n<=N_half) ? n : N-n;        
-  Np = (double)N;
-  Mp = (double)Mc;
-  np = (double)nc;
+  Np = (double) N;
+  Mp = (double) Mc;
+  np = (double) nc;
   NMn = N - Mc - nc;
   NMnp = Np - Mp - np;
   p = Mp / Np;
@@ -123,7 +129,7 @@ _unur_stdgen_sample_hypergeometric_hruec( struct unur_gen *gen )
       u = uniform();
       x = a + h*(uniform()-0.5) / u;
     } while (x < 0 || ((k=(int)x) > b));        
-    if (m <= 20 || labs(m-k) <= 15) {           
+    if (m <= 20 || abs(m-k) <= 15) {           
       f = 1.0;
       if (m<k) {
 	for (i=m+1;i<=k;i++)
@@ -145,6 +151,9 @@ _unur_stdgen_sample_hypergeometric_hruec( struct unur_gen *gen )
   }
   return (h_util(N,M,n,k));
 } 
+#undef N
+#undef M
+#undef n
 #undef b    
 #undef m   
 #undef NMn 
@@ -161,9 +170,9 @@ _unur_stdgen_sample_hypergeometric_hruec( struct unur_gen *gen )
 #undef p0  
 #undef delta
 #undef flogfak
-#undef N
-#undef M
-#undef n
+#undef par_N
+#undef par_M
+#undef par_n
 int
 h_util(int N_, int M_, int n_, int k)
 {

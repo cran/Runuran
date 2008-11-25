@@ -1,0 +1,155 @@
+
+% ---------------------------------------------------------------------------
+
+\section{Introduction}
+\label{sec:introduction}
+
+The \R\ package \Runuran\ is a wrapper to UNU.RAN (\emph{Universal
+  Non-Uniform RANdom variate generators}), a library for generating
+random variates for large classes of distributions. It also allows to
+compute quantiles (inverse cumulative distribution 
+functions) of these distributions efficiently. This is in particular a
+prerequisite for quasi-Monte Carlo integration and copula methods.
+UNU.RAN implements so called \emph{universal} (\emph{automatic} or
+\emph{black-box}) generators. 
+In order to use UNU.RAN one must supply some data about the target
+distribution, usually the density, probability vector or cumulative
+distribution function and (optinonally) some other information (such
+as the mode of the distibrubtion). These are then used to draw random
+samples.
+\Runuran\ functions provide both a simplified interface to this
+library for common distributions as well access to the full power of
+this library.
+
+\Runuran\ functions are alternatives to standard built-in functions in
+\R\ which are faster or are suitable for particalur applications.
+\Runuran\ is the package you are looking for if you need
+\begin{itemize}
+\item
+  robust and easy-to-use sampling and quantile functions for
+  continuous and discrete distributions (such as Normal, Beta, Gamma, 
+  Generalized Hyperbolic, Binomial, \ldots\ distri\-bu\-tions);
+\item
+  to draw samples from truncated distributions;
+\item 
+  random samples for special applications like variate reduction
+  techniques, QMC or copula methods;
+\item 
+  simuilate random variates from some unusual, nameless distribution
+  that you just found in a paper or derived from your statistical model;
+\item 
+  to find out properties of various generation methods (such as speed,
+  quality of generated point set, conservation of structures, \ldots).
+\end{itemize}
+
+If your aim is just (1) and you are not keen on learning more about
+universal generators please proceed to \autoref{sec:distribution}.
+
+\emph{Universal} algorithms for non-uniform random variate generation
+work for quite large classes of distributions but require the
+following three steps: 
+\begin{enumerate}[(U1)]
+\item 
+  \textbf{Information gathering:}
+  The user has to provide some information about the
+  \emph{distribution}. The kind of information depends on the chosen
+  method.
+\item 
+  \textbf{Creation of tables:}
+  In the \emph{setup} tables are created. These adjust the algorithm
+  for sampling from the target distribution. 
+  The table size depends on the chosen method but can be controlled to
+  some extend.
+\item 
+  \textbf{Generation of a random sample:}
+  These tables are then used to \emph{generate} a random sample.
+\end{enumerate}
+It is obvious that table size, setup time, and marginal generation
+time strongly depend on the chosen method.
+By a rule-of-thumb methods with large tables have very fast marginal
+generation times that hardly depend on (or are even independent from)
+the given target distribution. But then they have an expensive setup.
+Vice versa, when the table is small we have fast setup and slow
+marginal generation times or the generated points are less accurate in
+case of approximate methods. 
+Many of the algorithms allow to control the table size to some
+extend.
+
+The choice of the generation method itself depends on the application
+for which the random sample is requested. Of course, the target
+distribution has to satisfy certain conditions for each of these
+algorithms. We refer the user to our extensive monograph
+\citep{Hoermann;Leydold;Derflinger:2004a} for detailed information
+about these generation methods. For convenience we have added a (very)
+short survey on the basic principles of random variate generation in
+\autoref{sec:random-variate-generation}
+(\hyperref[sec:random-variate-generation]{\emph{A Short Introduction to Random Variate Generation}}).
+Terms and concepts that are used in the description of the methods in
+this manual are listed in \autoref{sec:glossary} 
+(\hyperref[sec:glossary]{\emph{Glossary}}).
+
+We have compiled a collection of such universal algorithms in
+UNU.RAN. The source code and a detailed manual can be found in
+\citep{Leydold;Hoermann:UNURAN}. The library is written in ANSI C and
+provides an interface to Steps (U1)--(U3) for such universal algorithms.
+The setup is sometimes quite expensive even if the
+required table is small, since there are checks whether the
+conditions for the chosen method (e.g., log-concavity) are satisfied
+as well as checks for the consistency of the given data for the target
+distribution. Thus the \emph{setup} and the \emph{generation} are
+split, such that the former part creates an object that can be used
+many times for creating random samples.
+
+\R\ package \Runuran\ provides a wrapper to the
+UNU.RAN library\footnote{We first described such a package in
+  \citep{Tirler;Leydold:2003a}. However, the interface has been
+  changed and extended since then.}.
+The package implements three sets of functions of increasing power
+(and thus complexity):
+\begin{itemize}
+\item 
+  \textbf{\hyperref[sec:distribution]{\Runuran\ -- Distribution}}
+  (\autoref{sec:distribution}):
+
+  These functions provide easy-to-use sampling algorithms for
+  particular distributions. Their syntax is similar to the
+  built-in sampling algorithms (but usually have an additional domain
+  argument). They can be used as replacements for the respective \R\
+  functions (if the latter exists), e.g., \code{urnorm}
+  can be used instead of \code{rnorm} for generating normal random
+  variates. 
+  These functions also show the interested user how we used the more
+  powerful functions below.
+
+\item 
+  \textbf{\hyperref[sec:universal]{\Runuran\ -- Universal}} 
+  (\autoref{sec:universal}):
+
+  These functions provide more flexibility. They offer an interface to
+  use a carefully selected collection of UNU.RAN methods with their most
+  important variants. Their arguments allow setting all required
+  data and parameters. Thus they combine Steps~(U1) and (U2) in a
+  single function. On the contrary to functions like \code{urnorm},
+  they do not return a random sample but a UNU.RAN generator object
+  that can be used for sampling (Step~U3).
+  For example, the function \code{tdr.new} creates a generator object that
+  applies the \emph{transformed density rejection} (TDR) method.
+  
+\item 
+  \textbf{\hyperref[sec:advanced]{\Runuran\ -- Advanced}}
+  (\autoref{sec:advanced}):
+  
+  These functions implement a wrapper to the UNU.RAN string API and is
+  thus the most powerful interface. Thus more generation methods and
+  more parameters for all UNU.RAN methods are available. Now
+  Steps~(U1) and (U2) are split in two different tasks.
+  
+\end{itemize}
+
+\paragraph{Uniform random numbers.}
+All UNU.RAN methods use the \R\ built-in random number generator as
+the source of (pseudo-) random numbers. Thus the generated samples depend
+on the state \code{.Random.seed} and can be controlled by the
+\R\ functions \code{RNGkind} and \code{set.seed}.
+
+% ---------------------------------------------------------------------------

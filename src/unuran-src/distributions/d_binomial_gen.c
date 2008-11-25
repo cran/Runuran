@@ -12,10 +12,10 @@ static int _unur_stdgen_sample_binomial_bruec( struct unur_gen *gen );
 #define GEN       ((struct unur_dstd_gen*)gen->datap) 
 #define DISTR     gen->distr->data.discr 
 #define uniform()  _unur_call_urng(gen->urng) 
-#define MAX_gen_params   11    
-#define MAX_gen_iparams   2    
-#define n  (DISTR.params[0])
-#define p  (DISTR.params[1])
+#define MAX_gen_params  (11)   
+#define MAX_gen_iparams  (3)   
+#define par_n  (DISTR.params[0])
+#define par_p  (DISTR.params[1])
 int 
 _unur_stdgen_binomial_init( struct unur_par *par, struct unur_gen *gen )
 {
@@ -32,8 +32,10 @@ _unur_stdgen_binomial_init( struct unur_par *par, struct unur_gen *gen )
   }
 } 
 #define flogfak(k) _unur_sf_ln_factorial(k)
-#define b       (GEN->gen_iparam[0])
-#define m       (GEN->gen_iparam[1])
+#define p       (DISTR.params[1])
+#define n       (GEN->gen_iparam[0])
+#define b       (GEN->gen_iparam[1])
+#define m       (GEN->gen_iparam[2])
 #define par     (GEN->gen_param[0])
 #define q1      (GEN->gen_param[1])
 #define np      (GEN->gen_param[3])
@@ -55,9 +57,10 @@ binomial_bruec_init( struct unur_gen *gen )
     GEN->n_gen_param = MAX_gen_params;
     GEN->gen_param = _unur_xmalloc(GEN->n_gen_param * sizeof(double));
     GEN->n_gen_iparam = MAX_gen_iparams;
-    GEN->gen_iparam = _unur_xmalloc(GEN->n_gen_param * sizeof(int));
+    GEN->gen_iparam = _unur_xmalloc(GEN->n_gen_iparam * sizeof(int));
   }
-  par = _unur_min(p,1.0-p);
+  n = (int) par_n;
+  par = _unur_min(p, 1.-p);
   q1 = 1.0 - par;
   np = n*par;                                
   if (np < 5) {
@@ -114,7 +117,7 @@ _unur_stdgen_sample_binomial_bruec( struct unur_gen *gen )
       u = uniform();
       x = a+h*(uniform()-0.5)/u;
     } while (x < 0 || ((k=(int)x) > b));    
-    if ((labs(m-k)<=15) && ((k>29)||(n-k>29)) ) {
+    if ((abs(m-k)<=15) && ((k>29)||(n-k>29)) ) {
       f = 1.0;                              
       if (m<k) {
 	for (i=m;i<k;) 
@@ -137,16 +140,19 @@ _unur_stdgen_sample_binomial_bruec( struct unur_gen *gen )
   }
   return((p > 0.5) ? n-k : k);
 } 
-#undef b       
-#undef m       
-#undef b       
-#undef par     
-#undef q1      
-#undef np      
-#undef al      
-#undef h       
-#undef g       
-#undef r       
-#undef t       
-#undef r1      
-#undef p0      
+#undef p
+#undef n
+#undef m
+#undef b
+#undef par
+#undef q1
+#undef np
+#undef al
+#undef h
+#undef g
+#undef r
+#undef t
+#undef r1
+#undef p0
+#undef par_n
+#undef par_p

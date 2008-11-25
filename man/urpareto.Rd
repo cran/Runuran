@@ -9,6 +9,8 @@
   UNU.RAN random variate generator for the Pareto distribution (of first
   kind) with shape parameters \code{k} and \code{a}.
   It also allows sampling from the truncated distribution.
+  
+  [Distribution] -- Sampling Function: Pareto (of first kind).  %% Continuous
 }
 
 \usage{

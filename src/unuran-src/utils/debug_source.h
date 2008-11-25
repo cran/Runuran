@@ -5,7 +5,7 @@ char *_unur_make_genid( const char *gentype );
 #define _unur_set_genid(gentype) _unur_make_genid(gentype)
 #define _unur_free_genid(gen)    do {if (gen->genid) free((gen)->genid);} while(0)
 extern unsigned _unur_default_debugflag;     
-#define _unur_print_if_default(par,flag)   if(!((par)->set & (flag))) fprintf(log,"  [default]")
+#define _unur_print_if_default(par,flag)   if(!((par)->set & (flag))) fprintf(LOG,"  [default]")
 #ifdef UNUR_ENABLE_CHECKNULL
 #define CHECK_NULL(ptr,rval)             \
   if (!(ptr)) {                          \

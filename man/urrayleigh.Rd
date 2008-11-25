@@ -9,6 +9,8 @@
   UNU.RAN random variate generator for the Rayleigh distribution with
   scale parameter \code{scale}.
   It also allows sampling from the truncated distribution.
+  
+  [Distribution] -- Sampling Function: Rayleigh.  %% Continuous
 }
 
 \usage{
@@ -59,11 +61,11 @@ urrayleigh(n, scale=1, lb = 0, ub = Inf)
 }
 
 \note{
-  This function is wrapper for the UNU.RAN class in \R.
+  This function is a wrapper for the UNU.RAN class in \R.
 }
 
 \examples{
-## Create a sample of size 1000
+## Create a sample of size 1000 from Rayleigh distribution with scale=1
 x <- urrayleigh(n=1000,scale=1)
 }
 

@@ -183,27 +183,27 @@ _unur_upd_area_corder( UNUR_DISTR *os )
 void
 _unur_distr_corder_debug( const struct unur_distr *os, const char *genid )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(os,RETURN_VOID);
   COOKIE_CHECK(os,CK_DISTR_CONT,RETURN_VOID);
   CHECK_NULL(os->base,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s: distribution:\n",genid);
-  fprintf(log,"%s:\ttype = order statistics of continuous univariate distribution\n",genid);
-  fprintf(log,"%s:\tname = %s\n",genid,os->name);
-  fprintf(log,"%s:\tsample size\tn = %d\n",genid,(int)(OS.params[0]+0.5));
-  fprintf(log,"%s:\trank\t\tk = %d\n",genid,(int)(OS.params[1]+0.5));
-  fprintf(log,"%s:\n",genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s: distribution:\n",genid);
+  fprintf(LOG,"%s:\ttype = order statistics of continuous univariate distribution\n",genid);
+  fprintf(LOG,"%s:\tname = %s\n",genid,os->name);
+  fprintf(LOG,"%s:\tsample size\tn = %d\n",genid,(int)(OS.params[0]+0.5));
+  fprintf(LOG,"%s:\trank\t\tk = %d\n",genid,(int)(OS.params[1]+0.5));
+  fprintf(LOG,"%s:\n",genid);
   if (os->set & UNUR_DISTR_SET_MODE)
-    fprintf(log,"%s:\tmode = %g\n",genid,OS.mode);
+    fprintf(LOG,"%s:\tmode = %g\n",genid,OS.mode);
   else
-    fprintf(log,"%s:\tmode unknown\n",genid);
-  fprintf(log,"%s:\tdomain = (%g, %g)",genid,OS.domain[0],OS.domain[1]);
+    fprintf(LOG,"%s:\tmode unknown\n",genid);
+  fprintf(LOG,"%s:\tdomain = (%g, %g)",genid,OS.domain[0],OS.domain[1]);
   _unur_print_if_default(os,UNUR_DISTR_SET_DOMAIN);
-  fprintf(log,"\n%s:\tarea below PDF = %g",genid,OS.area);
+  fprintf(LOG,"\n%s:\tarea below PDF = %g",genid,OS.area);
   _unur_print_if_default(os,UNUR_DISTR_SET_PDFAREA);
-  fprintf(log,"\n%s:\n",genid);
-  fprintf(log,"%s: Underlying distribution:\n",genid);
+  fprintf(LOG,"\n%s:\n",genid);
+  fprintf(LOG,"%s: Underlying distribution:\n",genid);
   _unur_distr_cont_debug(os->base, genid);
 } 
 #endif    

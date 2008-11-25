@@ -407,6 +407,17 @@ int unur_nrou_set_r( UNUR_PAR *parameters, double r );
 int unur_nrou_set_center( UNUR_PAR *parameters, double center );
 int unur_nrou_set_verify( UNUR_PAR *parameters, int verify );
 int unur_nrou_chg_verify( UNUR_GEN *generator, int verify );
+UNUR_PAR *unur_pinv_new( const UNUR_DISTR *distribution );
+int unur_pinv_set_order( UNUR_PAR *parameters, int order);
+int unur_pinv_set_u_resolution( UNUR_PAR *parameters, double u_resolution);
+int unur_pinv_set_usepdf( UNUR_PAR *parameters );
+int unur_pinv_set_usecdf( UNUR_PAR *parameters );
+int unur_pinv_set_boundary( UNUR_PAR *parameters, double left, double right );
+int unur_pinv_set_searchboundary( UNUR_PAR *parameters, int left, int right );
+int unur_pinv_set_max_intervals( UNUR_PAR *parameters, int max_ivs );
+int unur_pinv_get_n_intervals( const UNUR_GEN *generator ); 
+double unur_pinv_eval_approxinvcdf( const UNUR_GEN *generator, double u );
+int unur_pinv_estimate_error( const UNUR_GEN *generator, int samplesize, double *max_error, double *MAE );
 UNUR_PAR *unur_srou_new( const UNUR_DISTR *distribution );
 int unur_srou_set_r( UNUR_PAR *parameters, double r );
 int unur_srou_set_cdfatmode( UNUR_PAR *parameters, double Fmode );
@@ -649,6 +660,7 @@ int    unur_sample_discr(UNUR_GEN *generator);
 double unur_sample_cont(UNUR_GEN *generator);
 int    unur_sample_vec(UNUR_GEN *generator, double *vector);
 int    unur_sample_matr(UNUR_GEN *generator, double *matrix);
+double unur_quantile ( UNUR_GEN *generator, double U );
 void  unur_free( UNUR_GEN *generator );
 const char *unur_gen_info( UNUR_GEN *generator, int help );
 int unur_get_dimension( const UNUR_GEN *generator );
@@ -802,6 +814,7 @@ enum {
   UNUR_ERR_GEN_INVALID    = 0x34,     
   UNUR_ERR_GEN_SAMPLING   = 0x35,     
   UNUR_ERR_NO_REINIT      = 0x36,     
+  UNUR_ERR_NO_QUANTILE    = 0x37,     
   UNUR_ERR_URNG           = 0x41,     
   UNUR_ERR_URNG_MISS      = 0x42,     
   UNUR_ERR_STR            = 0x51,     

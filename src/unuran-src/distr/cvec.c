@@ -1101,93 +1101,93 @@ _unur_cvec_pdlogPDF(const double *x, int coord, struct unur_distr *distr)
 void
 _unur_distr_cvec_debug( const struct unur_distr *distr, const char *genid )
 {
-  FILE *log;
+  FILE *LOG;
   double *mat;
   CHECK_NULL(distr,RETURN_VOID);
   COOKIE_CHECK(distr,CK_DISTR_CVEC,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s: distribution:\n",genid);
-  fprintf(log,"%s:\ttype = continuous multivariate distribution\n",genid);
-  fprintf(log,"%s:\tname = %s\n",genid,distr->name);
-  fprintf(log,"%s:\tdimension = %d\n",genid,distr->dim);
-  fprintf(log,"%s:\tfunctions: ",genid);
-  if (DISTR.pdf) fprintf(log,"PDF ");
-  if (DISTR.logpdf) fprintf(log,"logPDF ");
-  if (DISTR.dpdf) fprintf(log,"dPDF ");
-  if (DISTR.dlogpdf) fprintf(log,"dlogPDF ");
-  if (DISTR.pdpdf) fprintf(log,"pdPDF ");
-  if (DISTR.pdlogpdf) fprintf(log,"pdlogPDF ");
-  fprintf(log,"\n%s:\n",genid);
-  fprintf(log,"%s:\tdomain = ",genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s: distribution:\n",genid);
+  fprintf(LOG,"%s:\ttype = continuous multivariate distribution\n",genid);
+  fprintf(LOG,"%s:\tname = %s\n",genid,distr->name);
+  fprintf(LOG,"%s:\tdimension = %d\n",genid,distr->dim);
+  fprintf(LOG,"%s:\tfunctions: ",genid);
+  if (DISTR.pdf) fprintf(LOG,"PDF ");
+  if (DISTR.logpdf) fprintf(LOG,"logPDF ");
+  if (DISTR.dpdf) fprintf(LOG,"dPDF ");
+  if (DISTR.dlogpdf) fprintf(LOG,"dlogPDF ");
+  if (DISTR.pdpdf) fprintf(LOG,"pdPDF ");
+  if (DISTR.pdlogpdf) fprintf(LOG,"pdlogPDF ");
+  fprintf(LOG,"\n%s:\n",genid);
+  fprintf(LOG,"%s:\tdomain = ",genid);
   if (!(distr->set & UNUR_DISTR_SET_DOMAINBOUNDED)) {
-    fprintf(log,"unbounded\n");
+    fprintf(LOG,"unbounded\n");
   }
   else {
     if (DISTR.domainrect) {
       double *domain = DISTR.domainrect;
       int i;
-      fprintf(log,"rectangular\n");
+      fprintf(LOG,"rectangular\n");
       for (i=0; i<distr->dim; i++)
-	fprintf(log,"%s:\t %c ( %g, %g)\n",genid, i?'x':' ', 
+	fprintf(LOG,"%s:\t %c ( %g, %g)\n",genid, i?'x':' ', 
 		domain[2*i], domain[2*i+1]);
     }
   }
-  fprintf(log,"%s:\n",genid);
+  fprintf(LOG,"%s:\n",genid);
   mat = ((distr->set & UNUR_DISTR_SET_MODE) && DISTR.mode) ? DISTR.mode : NULL;
-  _unur_matrix_print_vector( distr->dim, mat, "\tmode =", log, genid, "\t   ");
+  _unur_matrix_print_vector( distr->dim, mat, "\tmode =", LOG, genid, "\t   ");
   mat = ((distr->set & UNUR_DISTR_SET_MEAN) && DISTR.mean) ? DISTR.mean : NULL;
-  _unur_matrix_print_vector( distr->dim, mat, "\tmean vector =", log, genid, "\t   ");
+  _unur_matrix_print_vector( distr->dim, mat, "\tmean vector =", LOG, genid, "\t   ");
   if ((distr->set & UNUR_DISTR_SET_CENTER) && DISTR.center)
-    _unur_matrix_print_vector( distr->dim, DISTR.center, "\tcenter vector =", log, genid, "\t   ");
+    _unur_matrix_print_vector( distr->dim, DISTR.center, "\tcenter vector =", LOG, genid, "\t   ");
   else {
-    fprintf(log,"%s:\tcenter = mode [not given explicitly]\n",genid);
-    fprintf(log,"%s:\n",genid);
+    fprintf(LOG,"%s:\tcenter = mode [not given explicitly]\n",genid);
+    fprintf(LOG,"%s:\n",genid);
   }
   mat = ((distr->set & UNUR_DISTR_SET_COVAR) && DISTR.covar) ? DISTR.covar : NULL;
-  _unur_matrix_print_matrix( distr->dim, mat, "\tcovariance matrix =", log, genid, "\t   ");
+  _unur_matrix_print_matrix( distr->dim, mat, "\tcovariance matrix =", LOG, genid, "\t   ");
   mat = ((distr->set & UNUR_DISTR_SET_CHOLESKY) && DISTR.cholesky) ? DISTR.cholesky : NULL;
-  _unur_matrix_print_matrix( distr->dim, mat, "\tcholesky factor of covariance matrix =", log, genid, "\t   ");
+  _unur_matrix_print_matrix( distr->dim, mat, "\tcholesky factor of covariance matrix =", LOG, genid, "\t   ");
   mat = ((distr->set & UNUR_DISTR_SET_RANKCORR) && DISTR.rankcorr) ? DISTR.rankcorr : NULL;
-  _unur_matrix_print_matrix( distr->dim, mat, "\trank correlation matrix =", log, genid, "\t   ");
+  _unur_matrix_print_matrix( distr->dim, mat, "\trank correlation matrix =", LOG, genid, "\t   ");
   mat = ((distr->set & UNUR_DISTR_SET_RK_CHOLESKY) && DISTR.rk_cholesky) ? DISTR.rk_cholesky : NULL;
-  _unur_matrix_print_matrix( distr->dim, mat, "\tcholesky factor of rank correlation matrix =", log, genid, "\t   ");
-  fprintf(log,"%s:\tmarginal distributions:\n",genid);
+  _unur_matrix_print_matrix( distr->dim, mat, "\tcholesky factor of rank correlation matrix =", LOG, genid, "\t   ");
+  fprintf(LOG,"%s:\tmarginal distributions:\n",genid);
   if (distr->set & UNUR_DISTR_SET_MARGINAL) {
     if (_unur_distr_cvec_marginals_are_equal(DISTR.marginals, distr->dim)) {
-      fprintf(log,"%s: all mariginals [1-%d]:\n",genid,distr->dim);
+      fprintf(LOG,"%s: all mariginals [1-%d]:\n",genid,distr->dim);
       _unur_distr_cont_debug( DISTR.marginals[0], genid );
     }
     else {
       int i;
       for (i=0; i<distr->dim; i++) {
-	fprintf(log,"%s: mariginal [%d]:\n",genid,i+1);
+	fprintf(LOG,"%s: mariginal [%d]:\n",genid,i+1);
 	_unur_distr_cont_debug( DISTR.marginals[i], genid );
       }
     }
   }
   else {
-    fprintf(log,"%s:\t   [unknown]\n",genid);
+    fprintf(LOG,"%s:\t   [unknown]\n",genid);
   }
-  fprintf(log,"%s:\n",genid);
+  fprintf(LOG,"%s:\n",genid);
 #ifdef USE_DEPRECATED_CODE
-  fprintf(log,"%s:\tstandardized marginal distributions:   [see also marginal distributions]\n",genid);
+  fprintf(LOG,"%s:\tstandardized marginal distributions:   [see also marginal distributions]\n",genid);
   if (distr->set & UNUR_DISTR_SET_STDMARGINAL) {
     if (_unur_distr_cvec_marginals_are_equal(DISTR.stdmarginals, distr->dim)) {
-      fprintf(log,"%s: all standardized mariginals [1-%d]:\n",genid,distr->dim);
+      fprintf(LOG,"%s: all standardized mariginals [1-%d]:\n",genid,distr->dim);
       _unur_distr_cont_debug( DISTR.stdmarginals[0], genid );
     }
     else {
       int i;
       for (i=0; i<distr->dim; i++) {
-	fprintf(log,"%s: mariginal [%d]:\n",genid,i+1);
+	fprintf(LOG,"%s: mariginal [%d]:\n",genid,i+1);
 	_unur_distr_cont_debug( DISTR.stdmarginals[i], genid );
       }
     }
   }
   else {
-    fprintf(log,"%s:\t   [unknown]\n",genid);
+    fprintf(LOG,"%s:\t   [unknown]\n",genid);
   }
-  fprintf(log,"%s:\n",genid);
+  fprintf(LOG,"%s:\n",genid);
 #endif
 } 
 #endif    

@@ -284,54 +284,54 @@ _unur_dau_make_urntable( struct unur_gen *gen )
 void
 _unur_dau_debug_init( struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_DAU_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: type    = discrete univariate random variate\n",gen->genid);
-  fprintf(log,"%s: method  = alias and alias-urn method\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: type    = discrete univariate random variate\n",gen->genid);
+  fprintf(LOG,"%s: method  = alias and alias-urn method\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
   _unur_distr_discr_debug( gen->distr,gen->genid,(gen->debug & DAU_DEBUG_PRINTVECTOR));
-  fprintf(log,"%s: sampling routine = _unur_dau_sample()\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: length of probability vector = %d\n",gen->genid,GEN->len);
-  fprintf(log,"%s: size of urn table = %d   (rel. = %g%%",
+  fprintf(LOG,"%s: sampling routine = _unur_dau_sample()\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: length of probability vector = %d\n",gen->genid,GEN->len);
+  fprintf(LOG,"%s: size of urn table = %d   (rel. = %g%%",
 	  gen->genid,GEN->urn_size,100.*GEN->urn_factor);
   _unur_print_if_default(gen,DAU_SET_URNFACTOR);
   if (GEN->urn_size == GEN->len)
-    fprintf(log,")   (--> alias method)\n");
+    fprintf(LOG,")   (--> alias method)\n");
   else
-    fprintf(log,")   (--> alias-urn method)\n");
-  fprintf(log,"%s:\n",gen->genid);
+    fprintf(LOG,")   (--> alias-urn method)\n");
+  fprintf(LOG,"%s:\n",gen->genid);
   if (gen->debug & DAU_DEBUG_TABLE) {
     _unur_dau_debug_table(gen);
-    fprintf(log,"%s:\n",gen->genid);
+    fprintf(LOG,"%s:\n",gen->genid);
   }
 } 
 #define HIST_WIDTH   40  
 void
 _unur_dau_debug_table( struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   int i, j, m;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_DAU_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s: alias table:\n", gen->genid); 
-  fprintf(log,"%s:\n", gen->genid);
-  fprintf(log,"%s:         ratio donor/acceptor",gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s: alias table:\n", gen->genid); 
+  fprintf(LOG,"%s:\n", gen->genid);
+  fprintf(LOG,"%s:         ratio donor/acceptor",gen->genid);
   for (i=0; i<HIST_WIDTH-17; i++)
-    fprintf(log," ");
-  fprintf(log,"jx:     qx:\n");
+    fprintf(LOG," ");
+  fprintf(LOG,"jx:     qx:\n");
   for (i=0; i<GEN->urn_size; i++){
     m = HIST_WIDTH * GEN->qx[i] + 0.5;
-    fprintf(log,"%s:[%4d]: ", gen->genid,i); 
+    fprintf(LOG,"%s:[%4d]: ", gen->genid,i); 
     for (j=0; j<HIST_WIDTH; j++)
       if (j<m)
-	fprintf(log, "*"); 
+	fprintf(LOG, "*"); 
       else                
-	fprintf(log,"-");
-    fprintf(log," %5d  ", GEN->jx[i]);           
-    fprintf(log,"  %6.3f%%\n", GEN->qx[i]*100);  
+	fprintf(LOG,"-");
+    fprintf(LOG," %5d  ", GEN->jx[i]);           
+    fprintf(LOG,"  %6.3f%%\n", GEN->qx[i]*100);  
   }
 } 
 #endif   

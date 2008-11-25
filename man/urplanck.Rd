@@ -9,6 +9,8 @@
   UNU.RAN random variate generator for the Planck distribution with
   shape parameter \code{a}.
   It also allows sampling from the truncated distribution.
+  
+  [Distribution] -- Sampling Function: Planck.  %% Continuous
 }
 
 \usage{
@@ -22,16 +24,17 @@ urplanck(n, a, lb = 1.e-12, ub = Inf)
 }
 
 \details{
-  The Planck distribution with parameters \code{a}
+  The Planck distribution with parameter \code{a}
   has density proportional to 
   \deqn{
     f(x) \sim \frac{x^a}{\exp(x)-1}}{%
     f(x) ~ (x^a)/(exp(x)-1)}
   for \eqn{x \ge 0} and \eqn{a\ge 1}{a >= 1}.
 
-  The generation algorithm uses transformed density rejection "TDR". The
-  parameters \code{lb} and \code{ub} can be used to generate variates from 
-  the Planck distribution truncated to the interval (\code{lb},\code{ub}).
+  The generation algorithm uses transformed density rejection
+  \code{"TDR"}. The parameters \code{lb} and \code{ub} can be used to
+  generate variates from the Planck distribution truncated to the
+  interval (\code{lb},\code{ub}).
 }
 
 \seealso{

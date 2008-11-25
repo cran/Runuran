@@ -62,16 +62,16 @@ static double Q2[8] = {
   2.89247864745380683936E-6,
   6.79019408009981274425E-9,
 };
-double _unur_cephes_ndtri( double y0 )
+double _unur_cephes_ndtri( double yval )
 {
 double x, y, z, y2, x0, x1;
 int code;
-if( y0 <= 0.0 )
+if( yval <= 0.0 )
 	return( -MAXNUM );
-if( y0 >= 1.0 )
+if( yval >= 1.0 )
 	return( MAXNUM );
 code = 1;
-y = y0;
+y = yval;
 if( y > (1.0 - 0.13533528323661269189) ) 
 	{
 	y = 1.0 - y;

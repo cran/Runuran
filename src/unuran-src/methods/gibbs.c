@@ -515,89 +515,89 @@ _unur_gibbs_random_unitvector( struct unur_gen *gen, double *direction )
 void
 _unur_gibbs_debug_init_start( const struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_GIBBS_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: type    = continuous multivariate random variates\n",gen->genid);
-  fprintf(log,"%s: method  = GIBBS (Markov Chain - GIBBS sampler)\n",gen->genid);
-  fprintf(log,"%s: variant = ",gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: type    = continuous multivariate random variates\n",gen->genid);
+  fprintf(LOG,"%s: method  = GIBBS (Markov Chain - GIBBS sampler)\n",gen->genid);
+  fprintf(LOG,"%s: variant = ",gen->genid);
   switch (gen->variant & GIBBS_VARMASK_VARIANT) {
   case GIBBS_VARIANT_COORD:
-    fprintf(log,"coordinate sampling (original Gibbs sampler)  [default]\n"); break;
+    fprintf(LOG,"coordinate sampling (original Gibbs sampler)  [default]\n"); break;
   case GIBBS_VARIANT_RANDOMDIR:
-    fprintf(log,"random directions\n"); break;
+    fprintf(LOG,"random directions\n"); break;
   }
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: transformation T_c(x) for TDR method = ",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: transformation T_c(x) for TDR method = ",gen->genid);
   switch( gen->variant & GIBBS_VARMASK_T ) {
   case GIBBS_VAR_T_LOG:
-    fprintf(log,"log(x)  ... c = 0");                   break;
+    fprintf(LOG,"log(x)  ... c = 0");                   break;
   case GIBBS_VAR_T_SQRT:
-    fprintf(log,"-1/sqrt(x)  ... c = -1/2");            break;
+    fprintf(LOG,"-1/sqrt(x)  ... c = -1/2");            break;
   case GIBBS_VAR_T_POW:
-    fprintf(log,"-x^(%g)  ... c = %g",GEN->c_T,GEN->c_T); break;
+    fprintf(LOG,"-x^(%g)  ... c = %g",GEN->c_T,GEN->c_T); break;
   }
   _unur_print_if_default(gen,GIBBS_SET_C);
-  fprintf(log,"\n%s:\n",gen->genid);
+  fprintf(LOG,"\n%s:\n",gen->genid);
   _unur_distr_cvec_debug( gen->distr, gen->genid );
   switch (gen->variant & GIBBS_VARMASK_VARIANT) {
   case GIBBS_VARIANT_COORD:
-    fprintf(log,"%s: sampling routine = _unur_gibbs_coord_sample()\n",gen->genid);
+    fprintf(LOG,"%s: sampling routine = _unur_gibbs_coord_sample()\n",gen->genid);
     break;
   case GIBBS_VARIANT_RANDOMDIR:
-    fprintf(log,"%s: sampling routine = _unur_gibbs_randomdir_sample()\n",gen->genid);
+    fprintf(LOG,"%s: sampling routine = _unur_gibbs_randomdir_sample()\n",gen->genid);
     break;
   }
-  fprintf(log,"%s: thinning = %d",gen->genid,GEN->thinning);
+  fprintf(LOG,"%s: thinning = %d",gen->genid,GEN->thinning);
   _unur_print_if_default(gen,GIBBS_SET_THINNING);
-  fprintf(log,"\n%s: burn-in = %d",gen->genid,GEN->burnin);
+  fprintf(LOG,"\n%s: burn-in = %d",gen->genid,GEN->burnin);
   _unur_print_if_default(gen,GIBBS_SET_BURNIN);
-  fprintf(log,"\n%s:\n",gen->genid);
-  _unur_matrix_print_vector( GEN->dim, GEN->x0, "starting point = ", log, gen->genid, "\t   ");
-  fprintf(log,"%s:\n",gen->genid);
+  fprintf(LOG,"\n%s:\n",gen->genid);
+  _unur_matrix_print_vector( GEN->dim, GEN->x0, "starting point = ", LOG, gen->genid, "\t   ");
+  fprintf(LOG,"%s:\n",gen->genid);
 } 
 void
 _unur_gibbs_debug_init_finished( const struct unur_gen *gen, int success )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_GIBBS_GEN,RETURN_VOID);
-  log = unur_get_stream();
+  LOG = unur_get_stream();
   if (success) 
-    fprintf(log,"%s: INIT completed **********************\n",gen->genid);
+    fprintf(LOG,"%s: INIT completed **********************\n",gen->genid);
   else
-    fprintf(log,"%s: INIT failed **********************\n",gen->genid);
+    fprintf(LOG,"%s: INIT failed **********************\n",gen->genid);
 } 
 void
 _unur_gibbs_debug_burnin_failed( const struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_GIBBS_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s: Burn-in failed --> INIT failed **********************\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s: Burn-in failed --> INIT failed **********************\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
 } 
 void
 _unur_gibbs_debug_init_condi( const struct unur_gen *gen )
 {
   int i;
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_GIBBS_GEN,RETURN_VOID);
-  log = unur_get_stream();
+  LOG = unur_get_stream();
   switch (gen->variant & GIBBS_VARMASK_VARIANT) {
   case GIBBS_VARIANT_COORD:
-    fprintf(log,"%s: generators for full conditional distributions = \n",gen->genid);
-    fprintf(log,"%s:\t",gen->genid);
+    fprintf(LOG,"%s: generators for full conditional distributions = \n",gen->genid);
+    fprintf(LOG,"%s:\t",gen->genid);
     for (i=0; i<GEN->dim; i++)
-      fprintf(log,"[%s] ", GEN_CONDI[i]->genid);
-    fprintf(log,"\n%s:\n",gen->genid);
+      fprintf(LOG,"[%s] ", GEN_CONDI[i]->genid);
+    fprintf(LOG,"\n%s:\n",gen->genid);
     break;
   case GIBBS_VARIANT_RANDOMDIR:
-    fprintf(log,"%s: generators for full conditional distributions = [%s]\n",gen->genid,
+    fprintf(LOG,"%s: generators for full conditional distributions = [%s]\n",gen->genid,
 	    GEN_CONDI[0]->genid);
-    fprintf(log,"%s: generator for random directions = [%s]\n",gen->genid,
+    fprintf(LOG,"%s: generator for random directions = [%s]\n",gen->genid,
 	    GEN_NORMAL->genid);
-    fprintf(log,"%s:\n",gen->genid);
+    fprintf(LOG,"%s:\n",gen->genid);
     break;
   }
 } 

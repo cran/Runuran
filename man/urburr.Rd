@@ -9,6 +9,8 @@
   UNU.RAN random variate generator for the Burr distribution with
   \code{shape1} and \code{shape2}.
   It also allows sampling from the truncated distribution.
+  
+  [Distribution] -- Sampling Function: Burr.  %% Continuous
 }
 
 \usage{
@@ -50,7 +52,7 @@ urburr(n, a, b, lb=0, ub=Inf)
 }
 
 \note{
-  This function is wrapper for the UNU.RAN class in \R.
+  This function is a wrapper for the UNU.RAN class in \R.
 }
 
 \examples{

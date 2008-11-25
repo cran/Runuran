@@ -145,7 +145,7 @@ _unur_fstr_find_symbol (const char *symb, int start, int end)
   return ((i < end ) ? i : 0);
 } 
 int
-_unur_fstr_find_user_defined (struct parser_data *pdata, char *symb, char next_char)
+_unur_fstr_find_user_defined (struct parser_data *pdata, char *symb, int next_char)
 {
   CHECK_NULL(pdata,0);  COOKIE_CHECK(pdata,CK_FSTR_PDATA,0);
   if (next_char == '(') {

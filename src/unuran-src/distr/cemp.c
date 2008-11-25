@@ -186,51 +186,51 @@ unur_distr_cemp_set_hist_bins( struct unur_distr *distr, const double *bins, int
 void
 _unur_distr_cemp_debug( const struct unur_distr *distr, const char *genid, unsigned printvector )
 {
-  FILE *log;
+  FILE *LOG;
   int i;
   CHECK_NULL(distr,RETURN_VOID);
   COOKIE_CHECK(distr,CK_DISTR_CEMP,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s: distribution:\n",genid);
-  fprintf(log,"%s:\ttype = continuous univariate distribution (ie. a sample)\n",genid);
-  fprintf(log,"%s:\tname = %s\n",genid,distr->name);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s: distribution:\n",genid);
+  fprintf(LOG,"%s:\ttype = continuous univariate distribution (ie. a sample)\n",genid);
+  fprintf(LOG,"%s:\tname = %s\n",genid,distr->name);
   if (DISTR.n_sample>0) {
-    fprintf(log,"%s:\tsample size = %d",genid,DISTR.n_sample);
+    fprintf(LOG,"%s:\tsample size = %d",genid,DISTR.n_sample);
     if (printvector) {
       for (i=0; i<DISTR.n_sample; i++) {
 	if (i%10 == 0)
-	  fprintf(log,"\n%s:\t",genid);
-	fprintf(log,"  %.5f",DISTR.sample[i]);
+	  fprintf(LOG,"\n%s:\t",genid);
+	fprintf(LOG,"  %.5f",DISTR.sample[i]);
       }
     }
-    fprintf(log,"\n%s:\n",genid);
+    fprintf(LOG,"\n%s:\n",genid);
   }
   if (DISTR.n_hist>0) {
-    fprintf(log,"%s:\thistogram: #bins = %d, ",genid,DISTR.n_hist);
-    fprintf(log,"min = %g, max = %g", DISTR.hmin, DISTR.hmax);
+    fprintf(LOG,"%s:\thistogram: #bins = %d, ",genid,DISTR.n_hist);
+    fprintf(LOG,"min = %g, max = %g", DISTR.hmin, DISTR.hmax);
     if (DISTR.hist_bins) {
-      fprintf(log," (bins with different width)\n");
+      fprintf(LOG," (bins with different width)\n");
       if (printvector) {
-	fprintf(log,"%s:\t> bins (breaks) = ",genid);
+	fprintf(LOG,"%s:\t> bins (breaks) = ",genid);
 	for (i=0; i<=DISTR.n_hist; i++) {
 	  if (i%10 == 0)
-	    fprintf(log,"\n%s:\t",genid);
-	  fprintf(log,"  %.5f",DISTR.hist_bins[i]);
+	    fprintf(LOG,"\n%s:\t",genid);
+	  fprintf(LOG,"  %.5f",DISTR.hist_bins[i]);
 	}
-	fprintf(log,"\n%s:\n",genid);
+	fprintf(LOG,"\n%s:\n",genid);
       }
     }
     else {
-      fprintf(log,", width = %g (equally spaced)\n", (DISTR.hmax-DISTR.hmin)/DISTR.n_hist);
+      fprintf(LOG,", width = %g (equally spaced)\n", (DISTR.hmax-DISTR.hmin)/DISTR.n_hist);
     }
     if (printvector) {
-      fprintf(log,"%s:\t> bin probabilities = ",genid);
+      fprintf(LOG,"%s:\t> bin probabilities = ",genid);
       for (i=0; i<DISTR.n_hist; i++) {
 	if (i%10 == 0)
-	  fprintf(log,"\n%s:\t",genid);
-	fprintf(log,"  %.5f",DISTR.hist_prob[i]);
+	  fprintf(LOG,"\n%s:\t",genid);
+	fprintf(LOG,"  %.5f",DISTR.hist_prob[i]);
       }
-      fprintf(log,"\n%s:\n",genid);
+      fprintf(LOG,"\n%s:\n",genid);
     }
   }
 } 

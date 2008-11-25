@@ -366,40 +366,40 @@ _unur_vnrou_rectangle( struct unur_gen *gen )
 void
 _unur_vnrou_debug_init( const struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   int d, dim; 
   double vol;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_VNROU_GEN,RETURN_VOID);
-  log = unur_get_stream();
+  LOG = unur_get_stream();
   dim = GEN->dim;
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: type    = continuous multivariate random variates\n",gen->genid);
-  fprintf(log,"%s: method  = vnrou (naive ratio-of-uniforms)\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: type    = continuous multivariate random variates\n",gen->genid);
+  fprintf(LOG,"%s: method  = vnrou (naive ratio-of-uniforms)\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
   _unur_distr_cvec_debug( gen->distr, gen->genid );
-  fprintf(log,"%s: sampling routine = _unur_vnrou_sample",gen->genid);
-  if (gen->variant & VNROU_VARFLAG_VERIFY) fprintf(log,"_check");
-  fprintf(log,"()\n%s:\n",gen->genid);
-  fprintf(log,"%s: r-parameter = %g",gen->genid, GEN->r);
+  fprintf(LOG,"%s: sampling routine = _unur_vnrou_sample",gen->genid);
+  if (gen->variant & VNROU_VARFLAG_VERIFY) fprintf(LOG,"_check");
+  fprintf(LOG,"()\n%s:\n",gen->genid);
+  fprintf(LOG,"%s: r-parameter = %g",gen->genid, GEN->r);
   _unur_print_if_default(gen,VNROU_SET_R);
-  fprintf(log,"\n%s:\n",gen->genid);
-  _unur_matrix_print_vector( GEN->dim, GEN->center, "center =", log, gen->genid, "\t   ");
-  fprintf(log,"%s: Rectangle:",gen->genid);
+  fprintf(LOG,"\n%s:\n",gen->genid);
+  _unur_matrix_print_vector( GEN->dim, GEN->center, "center =", LOG, gen->genid, "\t   ");
+  fprintf(LOG,"%s: Rectangle:",gen->genid);
   if (!((gen->set & VNROU_SET_U) && (gen->set & VNROU_SET_V)))
-    fprintf(log,"\t[computed]");
+    fprintf(LOG,"\t[computed]");
   else 
-    fprintf(log,"\t[input]");
-  fprintf(log,"\n");
+    fprintf(LOG,"\t[input]");
+  fprintf(LOG,"\n");
   vol = GEN->vmax;
-  fprintf(log,"%s:\tvmax = %g\n",gen->genid, GEN->vmax);
+  fprintf(LOG,"%s:\tvmax = %g\n",gen->genid, GEN->vmax);
   for (d=0; d<dim; d++) {
     vol *= (GEN->umax[d]-GEN->umin[d]);
-    fprintf(log,"%s:\tumin[%d],umax[%d] = (%g,%g)\n",gen->genid, 
+    fprintf(LOG,"%s:\tumin[%d],umax[%d] = (%g,%g)\n",gen->genid, 
 	    d, d, GEN->umin[d], GEN->umax[d]);
   }
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s:\tvolume = %g\t(hat = %g)\n",gen->genid, vol, vol*(GEN->r*GEN->dim+1));
-  fprintf(log,"%s:\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s:\tvolume = %g\t(hat = %g)\n",gen->genid, vol, vol*(GEN->r*GEN->dim+1));
+  fprintf(LOG,"%s:\n",gen->genid);
 } 
 #endif   
 #ifdef UNUR_ENABLE_INFO
@@ -417,6 +417,11 @@ _unur_vnrou_info( struct unur_gen *gen, int help )
   _unur_string_append(info,"   dimension = %d\n",GEN->dim);
   _unur_string_append(info,"   functions = PDF\n");
   _unur_distr_cvec_info_domain(gen);
+  if ( distr->set & UNUR_DISTR_SET_MODE ) {
+    _unur_string_append(info,"   mode      = ");
+    _unur_distr_info_vector( gen, DISTR.mode, GEN->dim);
+  }
+  _unur_string_append(info,"\n");
   _unur_string_append(info,"   center    = ");
   _unur_distr_info_vector( gen, GEN->center, GEN->dim);
   if ( !(distr->set & UNUR_DISTR_SET_CENTER) ) {

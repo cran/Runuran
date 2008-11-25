@@ -494,6 +494,12 @@ _unur_str_par_new( const char *method, const UNUR_DISTR *distr )
 			 break;
 		 }
 		 break;
+	 case 'p':
+		 if ( !strcmp( method, "pinv") ) {
+			 par = unur_pinv_new(distr);
+			 break;
+		 }
+		 break;
 	 case 's':
 		 if ( !strcmp( method, "srou") ) {
 			 par = unur_srou_new(distr);
@@ -1054,6 +1060,47 @@ _unur_str_par_set( UNUR_PAR *par, const char *key, char *value, struct unur_slis
 			 }
 			 if ( !strcmp(key, "verify") ) {
 				 result = _unur_str_par_set_i(par,key,type_args,args,unur_nrou_set_verify);
+				 break;
+			 }
+		 }
+		 break;
+	 case UNUR_METH_PINV:
+		 switch (*key) {
+		 case 'b':
+			 if ( !strcmp(key, "boundary") ) {
+				 result = _unur_str_par_set_dd(par,key,type_args,args,unur_pinv_set_boundary);
+				 break;
+			 }
+			 break;
+		 case 'm':
+			 if ( !strcmp(key, "max_intervals") ) {
+				 result = _unur_str_par_set_i(par,key,type_args,args,unur_pinv_set_max_intervals);
+				 break;
+			 }
+			 break;
+		 case 'o':
+			 if ( !strcmp(key, "order") ) {
+				 result = _unur_str_par_set_i(par,key,type_args,args,unur_pinv_set_order);
+				 break;
+			 }
+			 break;
+		 case 's':
+			 if ( !strcmp(key, "searchboundary") ) {
+				 result = _unur_str_par_set_ii(par,key,type_args,args,unur_pinv_set_searchboundary);
+				 break;
+			 }
+			 break;
+		 case 'u':
+			 if ( !strcmp(key, "u_resolution") ) {
+				 result = _unur_str_par_set_d(par,key,type_args,args,unur_pinv_set_u_resolution);
+				 break;
+			 }
+			 if ( !strcmp(key, "usecdf") ) {
+				 result = _unur_str_par_set_void(par,key,type_args,args,unur_pinv_set_usecdf);
+				 break;
+			 }
+			 if ( !strcmp(key, "usepdf") ) {
+				 result = _unur_str_par_set_void(par,key,type_args,args,unur_pinv_set_usepdf);
 				 break;
 			 }
 		 }

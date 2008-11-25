@@ -5,13 +5,16 @@
 #include <distr/distr.h>
 #include <distr/distr_source.h>
 #include <urng/urng.h>
+#include <tests/unuran_tests.h>
 #include "unur_methods_source.h"
 #include "x_gen_source.h"
 #include "hinv.h"
 #include "hinv_struct.h"
 #define HINV_MAX_ITER      (300)
 #define HINV_MAX_U_LENGTH  (0.05)
-#define HINV_TAILCUTOFF    (1.e-10) 
+#define HINV_TAILCUTOFF_FACTOR  (0.1)
+#define HINV_TAILCUTOFF_MIN     (1.e-10) 
+#define HINV_UERROR_CORRECTION  (1.-HINV_TAILCUTOFF_FACTOR)
 #define HINV_XDEVIATION    (0.05)
 #define HINV_DEBUG_REINIT    0x00000002u   
 #define HINV_DEBUG_TABLE     0x00000010u   
@@ -339,6 +342,9 @@ _unur_hinv_create( struct unur_par *par )
 int
 _unur_hinv_check_par( struct unur_gen *gen )
 {
+  double tailcutoff;
+  tailcutoff = _unur_min(HINV_TAILCUTOFF_MIN, HINV_TAILCUTOFF_FACTOR * GEN->u_resolution);
+  tailcutoff = _unur_max(tailcutoff, 2*DBL_EPSILON);
   GEN->bleft = GEN->bleft_par;
   GEN->bright = GEN->bright_par;
   DISTR.trunc[0] = DISTR.domain[0];
@@ -351,14 +357,11 @@ _unur_hinv_check_par( struct unur_gen *gen )
   }
   if (DISTR.domain[0] <= -INFINITY || 
       (DISTR.pdf!=NULL && _unur_cont_PDF((DISTR.domain[0]),(gen->distr))<=0.) ) {
-    GEN->tailcutoff_left = _unur_min(HINV_TAILCUTOFF, 0.1*GEN->u_resolution);
-    GEN->tailcutoff_left = _unur_max(GEN->tailcutoff_left,2*DBL_EPSILON);
+    GEN->tailcutoff_left = tailcutoff;
   }
   if (DISTR.domain[1] >= INFINITY || 
       (DISTR.pdf!=NULL && _unur_cont_PDF((DISTR.domain[1]),(gen->distr))<=0.) ) {
-    GEN->tailcutoff_right = _unur_min(HINV_TAILCUTOFF, 0.1*GEN->u_resolution);
-    GEN->tailcutoff_right = _unur_max(GEN->tailcutoff_right,2*DBL_EPSILON);
-    GEN->tailcutoff_right = 1. - GEN->tailcutoff_right;
+    GEN->tailcutoff_right = 1.- tailcutoff;
   }
   return UNUR_SUCCESS;
 } 
@@ -432,36 +435,22 @@ unur_hinv_eval_approxinvcdf( const struct unur_gen *gen, double u )
   if ( u<0. || u>1.) {
     _unur_warning(gen->genid,UNUR_ERR_DOMAIN,"argument u not in [0,1]");
   }
-  if (u<=0.) return DISTR.domain[0];
-  if (u>=1.) return DISTR.domain[1];
+  if (u<=0.) return DISTR.trunc[0];
+  if (u>=1.) return DISTR.trunc[1];
   u = GEN->Umin + u * (GEN->Umax - GEN->Umin);
   x = _unur_hinv_eval_approxinvcdf(gen,u);
-  if (x<DISTR.domain[0]) x = DISTR.domain[0];
-  if (x>DISTR.domain[1]) x = DISTR.domain[1];
+  if (x<DISTR.trunc[0]) x = DISTR.trunc[0];
+  if (x>DISTR.trunc[1]) x = DISTR.trunc[1];
   return x;
 } 
 int
 unur_hinv_estimate_error( const UNUR_GEN *gen, int samplesize, double *max_error, double *MAE )
 { 
-  double U, ualt, X;
-  double max=0., average=0., uerror, errorat=0.;
-  int j, outside_interval=0;
-  CHECK_NULL(gen,UNUR_ERR_NULL);  COOKIE_CHECK(gen,CK_HINV_GEN,UNUR_ERR_COOKIE);
-  for(j=0;j<samplesize;j++) {  
-    U = GEN->Umin + _unur_call_urng(gen->urng) * (GEN->Umax - GEN->Umin);
-    ualt=U;
-    X = _unur_hinv_eval_approxinvcdf(gen,U);
-    if (X<DISTR.trunc[0]) { X = DISTR.trunc[0]; outside_interval++; }
-    if (X>DISTR.trunc[1]) { X = DISTR.trunc[1]; outside_interval++; }
-    uerror = fabs(ualt-CDF(X));
-    average += uerror;
-    if(uerror>max) {
-      max = uerror;
-      errorat = X;
-    }
-  }
-  *max_error = max;
-  *MAE = average/samplesize;
+  double score;
+  _unur_check_NULL(GENTYPE, gen, UNUR_ERR_NULL);  
+  COOKIE_CHECK(gen,CK_HINV_GEN,UNUR_ERR_COOKIE);
+  score = unur_test_inverror(gen, max_error, MAE, 1.e-20, samplesize, 
+			     FALSE, FALSE, FALSE, NULL);
   return UNUR_SUCCESS;
 } 
 int
@@ -651,7 +640,7 @@ _unur_hinv_interval_adapt( struct unur_gen *gen, struct unur_hinv_interval *iv,
  		"NaN occured; possibly due to numerical problems with a pole or very flat tail");
     return NULL;
    }
-  if (!(fabs(Fx - 0.5*(iv->next->u + iv->u)) < GEN->u_resolution)) {
+  if (!(fabs(Fx - 0.5*(iv->next->u + iv->u)) < (GEN->u_resolution * HINV_UERROR_CORRECTION))) {
     if(fabs(p_new-x)< HINV_XDEVIATION * (iv->next->p - iv->p))
       iv_new = _unur_hinv_interval_new(gen,x,Fx);
     else
@@ -763,7 +752,7 @@ _unur_hinv_make_guide_table( struct unur_gen *gen )
 {
   int i,j, imax;
   CHECK_NULL(gen,UNUR_ERR_NULL);  COOKIE_CHECK(gen,CK_HINV_GEN,UNUR_ERR_COOKIE);
-  GEN->guide_size = GEN->N * GEN->guide_factor;
+  GEN->guide_size = (int) (GEN->N * GEN->guide_factor);
   if (GEN->guide_size <= 0) GEN->guide_size = 1; 
   GEN->guide = _unur_xrealloc( GEN->guide, GEN->guide_size * sizeof(int) );
   imax = (GEN->N-2) * (GEN->order+2);
@@ -797,78 +786,78 @@ _unur_hinv_CDF( const struct unur_gen *gen, double x )
 void
 _unur_hinv_debug_init( const struct unur_gen *gen, int ok )
 {
-  FILE *log;
+  FILE *LOG;
   int i;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_HINV_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: type    = continuous univariate random variates\n",gen->genid);
-  fprintf(log,"%s: method  = HINV (Hermite approximation of INVerse CDF)\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: type    = continuous univariate random variates\n",gen->genid);
+  fprintf(LOG,"%s: method  = HINV (Hermite approximation of INVerse CDF)\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
   _unur_distr_cont_debug( gen->distr, gen->genid );
-  fprintf(log,"%s: sampling routine = _unur_hinv_sample\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: order of polynomial = %d",gen->genid,GEN->order);
+  fprintf(LOG,"%s: sampling routine = _unur_hinv_sample\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: order of polynomial = %d",gen->genid,GEN->order);
   _unur_print_if_default(gen,HINV_SET_ORDER);
-  fprintf(log,"\n%s: u-resolution = %g",gen->genid,GEN->u_resolution);
+  fprintf(LOG,"\n%s: u-resolution = %g",gen->genid,GEN->u_resolution);
   _unur_print_if_default(gen,HINV_SET_U_RESOLUTION);
-  fprintf(log,"\n%s: tail cut-off points = ",gen->genid);
-  if (GEN->tailcutoff_left < 0.)  fprintf(log,"none, ");
-  else                            fprintf(log,"%g, ",GEN->tailcutoff_left);
-  if (GEN->tailcutoff_right > 1.) fprintf(log,"none\n");
-  else                            fprintf(log,"1.-%g\n",1.-GEN->tailcutoff_right);
-  fprintf(log,"%s: domain of computation = [%g,%g]\n",gen->genid,GEN->bleft,GEN->bright);
-  fprintf(log,"%s:\tU in (%g,%g)\n",gen->genid,GEN->Umin,GEN->Umax);
-  fprintf(log,"%s:\n",gen->genid);
+  fprintf(LOG,"\n%s: tail cut-off points = ",gen->genid);
+  if (GEN->tailcutoff_left < 0.)  fprintf(LOG,"none, ");
+  else                            fprintf(LOG,"%g, ",GEN->tailcutoff_left);
+  if (GEN->tailcutoff_right > 1.) fprintf(LOG,"none\n");
+  else                            fprintf(LOG,"1.-%g\n",1.-GEN->tailcutoff_right);
+  fprintf(LOG,"%s: domain of computation = [%g,%g]\n",gen->genid,GEN->bleft,GEN->bright);
+  fprintf(LOG,"%s:\tU in (%g,%g)\n",gen->genid,GEN->Umin,GEN->Umax);
+  fprintf(LOG,"%s:\n",gen->genid);
   if (GEN->stp && gen->set & HINV_SET_STP) {
-    fprintf(log,"%s: starting points: (%d)",gen->genid,GEN->n_stp);
+    fprintf(LOG,"%s: starting points: (%d)",gen->genid,GEN->n_stp);
     for (i=0; i<GEN->n_stp; i++) {
-      if (i%5==0) fprintf(log,"\n%s:\t",gen->genid);
-      fprintf(log,"   %#g,",GEN->stp[i]);
+      if (i%5==0) fprintf(LOG,"\n%s:\t",gen->genid);
+      fprintf(LOG,"   %#g,",GEN->stp[i]);
     }
-  fprintf(log,"\n%s:\n",gen->genid);
+  fprintf(LOG,"\n%s:\n",gen->genid);
   }
-  fprintf(log,"%s: sampling from list of intervals: indexed search (guide table method)\n",gen->genid);
-  fprintf(log,"%s:    relative guide table size = %g%%",gen->genid,100.*GEN->guide_factor);
+  fprintf(LOG,"%s: sampling from list of intervals: indexed search (guide table method)\n",gen->genid);
+  fprintf(LOG,"%s:    relative guide table size = %g%%",gen->genid,100.*GEN->guide_factor);
   _unur_print_if_default(gen,HINV_SET_GUIDEFACTOR);
-  fprintf(log,"\n%s:\n",gen->genid);
+  fprintf(LOG,"\n%s:\n",gen->genid);
   _unur_hinv_debug_intervals(gen);
-  fprintf(log,"%s: initialization %s\n",gen->genid,((ok)?"successful":"failed")); 
-  fprintf(log,"%s:\n",gen->genid);
-  fflush(log);
+  fprintf(LOG,"%s: initialization %s\n",gen->genid,((ok)?"successful":"failed")); 
+  fprintf(LOG,"%s:\n",gen->genid);
+  fflush(LOG);
 } 
 void
 _unur_hinv_debug_intervals( const struct unur_gen *gen )
 {
   int i,n;
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_HINV_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s: Intervals: %d\n",gen->genid,GEN->N-1);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s: Intervals: %d\n",gen->genid,GEN->N-1);
   if (gen->debug & HINV_DEBUG_TABLE) {
-    fprintf(log,"%s:   Nr.      u=CDF(p)     p=spline[0]   spline[1]    ...\n",gen->genid);
+    fprintf(LOG,"%s:   Nr.      u=CDF(p)     p=spline[0]   spline[1]    ...\n",gen->genid);
     for (n=0; n<GEN->N-1; n++) {
       i = n*(GEN->order+2);
-      fprintf(log,"%s:[%4d]: %#12.6g  %#12.6g  %#12.6g", gen->genid, n,
+      fprintf(LOG,"%s:[%4d]: %#12.6g  %#12.6g  %#12.6g", gen->genid, n,
 	      GEN->intervals[i], GEN->intervals[i+1], GEN->intervals[i+2]);
       if (GEN->order>1)
-	fprintf(log,"  %#12.6g  %#12.6g", GEN->intervals[i+3], GEN->intervals[i+4]);
+	fprintf(LOG,"  %#12.6g  %#12.6g", GEN->intervals[i+3], GEN->intervals[i+4]);
       if (GEN->order>3)
-	fprintf(log,"  %#12.6g  %#12.6g", GEN->intervals[i+5], GEN->intervals[i+6]);
-      fprintf(log,"\n");
+	fprintf(LOG,"  %#12.6g  %#12.6g", GEN->intervals[i+5], GEN->intervals[i+6]);
+      fprintf(LOG,"\n");
     }
   }
-  fprintf(log,"%s:\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
 } 
 void 
 _unur_hinv_debug_chg_truncated( const struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_HINV_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s: domain of (truncated) distribution changed:\n",gen->genid);
-  fprintf(log,"%s:\tdomain = (%g, %g)\n",gen->genid, DISTR.trunc[0], DISTR.trunc[1]);
-  fprintf(log,"%s:\tU in (%g,%g)\n",gen->genid,GEN->Umin,GEN->Umax);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s: domain of (truncated) distribution changed:\n",gen->genid);
+  fprintf(LOG,"%s:\tdomain = (%g, %g)\n",gen->genid, DISTR.trunc[0], DISTR.trunc[1]);
+  fprintf(LOG,"%s:\tU in (%g,%g)\n",gen->genid,GEN->Umin,GEN->Umax);
 } 
 #endif   
 #ifdef UNUR_ENABLE_INFO

@@ -12,7 +12,7 @@
 #include <utils/mrou_rectangle_source.h>
 #define MROU_HOOKE_RHO     (0.5)
 #define MROU_HOOKE_EPSILON (1.e-7)
-#define MROU_HOOKE_MAXITER (1000)
+#define MROU_HOOKE_MAXITER (1000L)
 #define MROU_RECT_SCALING (1.e-4)
 static double _unur_mrou_rectangle_aux_vmax(double *x, void *p );
 static double _unur_mrou_rectangle_aux_umin(double *x, void *p );

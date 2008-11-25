@@ -239,33 +239,33 @@ _unur_hrb_sample_check( struct unur_gen *gen )
 void
 _unur_hrb_debug_init( const struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_HRB_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: type    = continuous univariate random variates\n",gen->genid);
-  fprintf(log,"%s: method  = HRB (Hazard Rate Bounded)\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: type    = continuous univariate random variates\n",gen->genid);
+  fprintf(LOG,"%s: method  = HRB (Hazard Rate Bounded)\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
   _unur_distr_cont_debug( gen->distr, gen->genid );
-  fprintf(log,"%s: sampling routine = _unur_hrb_sample",gen->genid);
+  fprintf(LOG,"%s: sampling routine = _unur_hrb_sample",gen->genid);
   if (gen->variant & HRB_VARFLAG_VERIFY)
-    fprintf(log,"_check()\n");
+    fprintf(LOG,"_check()\n");
   else
-    fprintf(log,"()\n");
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: upper bound for hazard rate = %g",gen->genid,GEN->upper_bound);
+    fprintf(LOG,"()\n");
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: upper bound for hazard rate = %g",gen->genid,GEN->upper_bound);
   _unur_print_if_default(gen,HRB_SET_UPPERBOUND);
-  fprintf(log,"\n");
-  fprintf(log,"%s:\n",gen->genid);
-  fflush(log);
+  fprintf(LOG,"\n");
+  fprintf(LOG,"%s:\n",gen->genid);
+  fflush(LOG);
 } 
 void
 _unur_hrb_debug_sample( const struct unur_gen *gen, double x, int i )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_HRB_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s: X = %g\t #iterations = %d\n",gen->genid,x,i);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s: X = %g\t #iterations = %d\n",gen->genid,x,i);
 } 
 #endif   
 #ifdef UNUR_ENABLE_INFO
@@ -283,7 +283,7 @@ _unur_hrb_info( struct unur_gen *gen, int help )
   _unur_string_append(info,"method: HRB (Hazard Rate Bounded)\n");
   _unur_string_append(info,"\n");
   _unur_string_append(info,"performance characteristics:\n");
-  _unur_string_append(info,"   E[#interations] = %.2f  [approx.]\n", 
+  _unur_string_append(info,"   E[#iterations] = %.2f  [approx.]\n", 
 		      unur_test_count_urn(gen,samplesize,0,NULL)/((double)samplesize));
   _unur_string_append(info,"\n");
   if (help) {

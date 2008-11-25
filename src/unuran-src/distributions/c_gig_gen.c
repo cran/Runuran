@@ -48,7 +48,7 @@ static const double pdrittel = 0.037037037037037;
 inline static int
 gig_gigru_init( struct unur_gen *gen )
 {
-  double r,s,t,p,q,xeta,fi,fak,y1,y2,max,invy1,invy2,vplus,hm1,xm,ym;
+  double r,s,t,p,q,xeta,fi,fak,yy1,yy2,max,invy1,invy2,vplus,hm1,xm,ym;
   CHECK_NULL(gen,UNUR_ERR_NULL);
   COOKIE_CHECK(gen,CK_CSTD_GEN,UNUR_ERR_COOKIE);
   if (GEN->gen_param == NULL) {
@@ -87,10 +87,10 @@ gig_gigru_init( struct unur_gen *gen )
     xeta = sqrt(-(p*p*p)*pdrittel);
     fi = acos(-q/(2.*xeta));
     fak = 2.*exp(log(xeta)*drittel);
-    y1 = fak * cos(fi*drittel) - r*drittel;
-    y2 = fak * cos(fi*drittel + 2.*drittel*M_PI) - r*drittel;
-    invy1 = 1./y1;
-    invy2 = 1./y2;
+    yy1 = fak * cos(fi*drittel) - r*drittel;
+    yy2 = fak * cos(fi*drittel + 2.*drittel*M_PI) - r*drittel;
+    invy1 = 1./yy1;
+    invy2 = 1./yy2;
     vplus = exp(linvmax + log(invy1) + hm12*log(invy1 + m)
 		- b2*(invy1 + m + 1./(invy1 + m)));
     vminus = -exp(linvmax + log(-invy2) + hm12 * log(invy2 + m)

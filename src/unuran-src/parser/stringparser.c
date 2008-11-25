@@ -4,10 +4,54 @@
 #include <stdarg.h>
 #include <ctype.h>
 #include <unur_source.h>
-#include <unuran.h.in>
-#include <distr/distr_source.h>
 #include <methods/unur_methods_source.h>
+#include <methods/x_gen.h>
 #include "parser_source.h"
+#include "parser.h"
+#include <urng/urng.h>
+#include <distr/distr_source.h>
+#include <distr/distr.h>
+#include <distr/cemp.h>
+#include <distr/cont.h>
+#include <distr/corder.h>
+#include <distr/cvemp.h>
+#include <distr/discr.h>
+#include <distributions/unur_distributions.h>
+#include <methods/arou.h>
+#include <methods/ars.h>
+#include <methods/auto.h>
+#include <methods/cstd.h>
+#include <methods/dari.h>
+#include <methods/dau.h>
+#include <methods/dgt.h>
+#include <methods/dsrou.h>
+#include <methods/dss.h>
+#include <methods/dstd.h>
+#include <methods/empk.h>
+#include <methods/empl.h>
+#include <methods/gibbs.h>
+#include <methods/hinv.h>
+#include <methods/hist.h>
+#include <methods/hitro.h>
+#include <methods/hrb.h>
+#include <methods/hrd.h>
+#include <methods/hri.h>
+#include <methods/itdr.h>
+#include <methods/mcorr.h>
+#include <methods/mvstd.h>
+#include <methods/mvtdr.h>
+#include <methods/ninv.h>
+#include <methods/norta.h>
+#include <methods/nrou.h>
+#include <methods/pinv.h>
+#include <methods/srou.h>
+#include <methods/ssr.h>
+#include <methods/tabl.h>
+#include <methods/tdr.h>
+#include <methods/unif.h>
+#include <methods/utdr.h>
+#include <methods/vempk.h>
+#include <methods/vnrou.h>
 #if defined(UNUR_URNG_UNURAN) && defined(UNURAN_HAS_PRNG)
 #include <uniform/urng_prng.h>
 #endif
@@ -43,6 +87,7 @@ static int _unur_str_par_set( UNUR_PAR *par, const char *key, char *value,
 			      struct unur_slist *mlist );
 typedef int par_set_void( UNUR_PAR *par );
 typedef int par_set_i( UNUR_PAR *par, int i );
+typedef int par_set_ii( UNUR_PAR *par, int i1, int i2 );
 typedef int par_set_u( UNUR_PAR *par, unsigned u );
 typedef int par_set_d( UNUR_PAR *par, double d );
 typedef int par_set_dd( UNUR_PAR *par, double d1, double d2 );
@@ -52,6 +97,8 @@ static int _unur_str_par_set_void( UNUR_PAR *par, const char *key, char *type_ar
 				   par_set_void set );
 static int _unur_str_par_set_i( UNUR_PAR *par, const char *key, char *type_args, char **args,
 				par_set_i set );
+static int _unur_str_par_set_ii( UNUR_PAR *par, const char *key, char *type_args, char **args,
+				   par_set_ii set );
 static int _unur_str_par_set_u( UNUR_PAR *par, const char *key, char *type_args, char **args,
 				par_set_u set );
 static int _unur_str_par_set_d( UNUR_PAR *par, const char *key, char *type_args, char **args,
@@ -115,10 +162,10 @@ unur_str2gen (const char *string)
   for ( token  = strtok(NULL, "&"); 
         token != NULL;     
         token  = strtok(NULL, "&") ) {
-    if (!strncmp(token,"method=",7)) {
+    if (!strncmp(token,"method=",(size_t)7)) {
       str_method = token;
     }
-    else if (!strncmp(token,"urng=",5)) {
+    else if (!strncmp(token,"urng=",(size_t)5)) {
       str_urng = token;
     }
     else {
@@ -618,6 +665,48 @@ _unur_str_par_set_i (UNUR_PAR *par, const char *key, char *type_args, char **arg
   return set(par,iarg);
 } 
 int
+_unur_str_par_set_ii (UNUR_PAR *par, const char *key, char *type_args, char **args, par_set_ii set)
+{
+  int *iarray = NULL;
+  int iarg[2];
+  int result;
+  if ( !strcmp(type_args, "tt") ) {
+    iarg[0] = _unur_atoi( args[0] );
+    iarg[1] = _unur_atoi( args[1] );
+#ifdef UNUR_ENABLE_LOGGING
+    if (_unur_default_debugflag & UNUR_DEBUG_SETUP)
+      _unur_str_debug_set(2,key,"ii",iarg[0],iarg[1]);
+#endif
+    return set( par,iarg[0],iarg[1] );
+  }
+  else if ( !strcmp(type_args, "L") ) {
+    if ( _unur_parse_ilist( args[0], &iarray ) < 2 ) {
+      _unur_error_args(key);
+      free (iarray);
+#ifdef UNUR_ENABLE_LOGGING
+      if (_unur_default_debugflag & UNUR_DEBUG_SETUP)
+	_unur_str_debug_set(2,key,"!");
+#endif
+      return UNUR_ERR_STR_INVALID;
+    }
+    result = set( par,iarray[0],iarray[1] );
+#ifdef UNUR_ENABLE_LOGGING
+    if (_unur_default_debugflag & UNUR_DEBUG_SETUP)
+      _unur_str_debug_set(2,key,"ii",iarray[0],iarray[1] );
+#endif
+    free (iarray);
+    return result;
+  }
+  else {
+    _unur_error_args(key);
+#ifdef UNUR_ENABLE_LOGGING
+    if (_unur_default_debugflag & UNUR_DEBUG_SETUP)
+      _unur_str_debug_set(2,key,"!");
+#endif
+    return UNUR_ERR_STR_INVALID;
+  }
+} 
+int
 _unur_str_par_set_u (UNUR_PAR *par, const char *key, char *type_args, char **args, par_set_u set)
 {
   unsigned uarg;
@@ -963,9 +1052,9 @@ _unur_atoi ( const char *str )
     return 1;
   else if ( !strcmp(str,"false") || !strcmp(str,"off") )
     return 0;
-  else if ( !strncmp(str,"inf",3) )
+  else if ( !strncmp(str,"inf",(size_t)3) )
     return INT_MAX;
-  else if ( !strncmp(str,"-inf",4) )
+  else if ( !strncmp(str,"-inf",(size_t)4) )
     return INT_MIN;
   else
     return atoi(str);
@@ -984,9 +1073,9 @@ _unur_atou ( const char *str )
 double
 _unur_atod ( const char *str )
 {
-  if ( !strncmp(str,"inf",3) )
+  if ( !strncmp(str,"inf",(size_t)3) )
     return INFINITY;
-  else if ( !strncmp(str,"-inf",4) )
+  else if ( !strncmp(str,"-inf",(size_t)4) )
     return -INFINITY;
   else
     return atof(str);
@@ -995,60 +1084,60 @@ _unur_atod ( const char *str )
 void 
 _unur_str_debug_string( int level, const char *key, const char *value  )
 {
-  FILE *log;
-  log = unur_get_stream();
-  fprintf(log,"%s: ",GENTYPE);
+  FILE *LOG;
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s: ",GENTYPE);
   for (; level>0; level--) 
-    fprintf(log,"\t");
-  fprintf(log,"%s",key);
+    fprintf(LOG,"\t");
+  fprintf(LOG,"%s",key);
   if (value)
-    fprintf(log,": %s",value);
-  fprintf(log,"\n");
+    fprintf(LOG,": %s",value);
+  fprintf(LOG,"\n");
 } 
 void 
 _unur_str_debug_distr( int level, const char *name, double *params, int n_params )
 {
-  FILE *log;
+  FILE *LOG;
   int i;
-  log = unur_get_stream();
-  fprintf(log,"%s: ",GENTYPE);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s: ",GENTYPE);
   for (; level>0; level--) 
-    fprintf(log,"\t");
-  fprintf(log,"distribution = %s (",name);
+    fprintf(LOG,"\t");
+  fprintf(LOG,"distribution = %s (",name);
   if (n_params >0) {
-    fprintf(log,"%g",params[0]);
+    fprintf(LOG,"%g",params[0]);
     for (i=1; i<n_params; i++)
-      fprintf(log,", %g",params[i]);
+      fprintf(LOG,", %g",params[i]);
   }
-  fprintf(log,")\n");
+  fprintf(LOG,")\n");
 } 
 void
 _unur_str_debug_set( int level, const char *key, const char *type, ... )
 {
   va_list ap;
-  FILE *log;
+  FILE *LOG;
   va_start(ap, type);
-  log = unur_get_stream();
-  fprintf(log,"%s: ",GENTYPE);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s: ",GENTYPE);
   for (; level>0; level--) 
-    fprintf(log,"\t");
-  fprintf(log,"%s: ",key);
+    fprintf(LOG,"\t");
+  fprintf(LOG,"%s: ",key);
   while (1) {
     switch (*type) {
     case 'v':
-      fprintf(log," -none-");
+      fprintf(LOG," -none-");
       break;
     case 'd':
-      fprintf(log," %g",va_arg(ap,double));
+      fprintf(LOG," %g",va_arg(ap,double));
       break;
     case 'i':
-      fprintf(log," %d",va_arg(ap,int));
+      fprintf(LOG," %d",va_arg(ap,int));
       break;
     case 'u':
-      fprintf(log," %x",va_arg(ap,unsigned int));
+      fprintf(LOG," %x",va_arg(ap,unsigned int));
       break;
     case 'C':
-      fprintf(log," %s",va_arg(ap,char *));
+      fprintf(LOG," %s",va_arg(ap,char *));
       break;
     case 'D': {
       int i,size;
@@ -1056,27 +1145,27 @@ _unur_str_debug_set( int level, const char *key, const char *type, ... )
       darray = va_arg(ap,double *);
       size = va_arg(ap,int);
       if (size > 0 && darray != NULL) {
-	fprintf(log," (%g",darray[0]);
+	fprintf(LOG," (%g",darray[0]);
 	for (i=1; i<size; i++)
-	  fprintf(log,",%g",darray[i]);
-	fprintf(log,")");
+	  fprintf(LOG,",%g",darray[i]);
+	fprintf(LOG,")");
       }
       else
-	fprintf(log," (empty)");
+	fprintf(LOG," (empty)");
       break;
     }
     case '!':
     default:
-      fprintf(log," syntax error");
+      fprintf(LOG," syntax error");
       break;
     }
     if ( *(++type) != '\0' )
-      fprintf(log,",");
+      fprintf(LOG,",");
     else
       break;
   }
-  fprintf(log,"\n");
-  fflush(log);   
+  fprintf(LOG,"\n");
+  fflush(LOG);   
   va_end(ap);
 } 
 #endif   

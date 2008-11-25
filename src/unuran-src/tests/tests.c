@@ -106,13 +106,17 @@ _unur_print_method( struct unur_par *par, FILE *out )
     COOKIE_CHECK(par,CK_NINV_PAR,UNUR_ERR_COOKIE);
     fprintf(out,"METHOD:\t\tnumerical inversion of CDF (NINV)\n");
     break;
-  case UNUR_METH_SROU:
-    COOKIE_CHECK(par,CK_SROU_PAR,UNUR_ERR_COOKIE);
-    fprintf(out,"METHOD:\t\tsimple universal ratio-of-uniforms method (SROU)\n");
-    break;
   case UNUR_METH_NROU:
     COOKIE_CHECK(par,CK_NROU_PAR,UNUR_ERR_COOKIE);
     fprintf(out,"METHOD:\t\tnaive universal ratio-of-uniforms method (NROU)\n");
+    break;
+  case UNUR_METH_PINV:
+    COOKIE_CHECK(par,CK_PINV_PAR,UNUR_ERR_COOKIE);
+    fprintf(out,"METHOD:\t\tpolynomial interpolation based inversion of CDF (PINV)\n");
+    break;
+  case UNUR_METH_SROU:
+    COOKIE_CHECK(par,CK_SROU_PAR,UNUR_ERR_COOKIE);
+    fprintf(out,"METHOD:\t\tsimple universal ratio-of-uniforms method (SROU)\n");
     break;
   case UNUR_METH_SSR:
     COOKIE_CHECK(par,CK_SSR_PAR,UNUR_ERR_COOKIE);

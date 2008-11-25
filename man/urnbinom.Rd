@@ -9,6 +9,8 @@
   UNU.RAN random variate generator for the Negative Binomial
   distribution with with parameters \code{size} and \code{prob}.
   It also allows sampling from the truncated distribution.
+  
+  [Distribution] -- Sampling Function: Negative Binomial.  %% Discrete
 }
 
 \usage{

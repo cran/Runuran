@@ -1,0 +1,37 @@
+% ---------------------------------------------------------------------------
+
+\subject{{\Huge\Runuran}}
+
+\title{%
+  An \R\ Interface to the UNU.RAN Library
+  for Universal Random Variate Generators}
+
+\author{Josef Leydold \and Wolfgang H\"ormann}
+
+\publishers{%
+  Department of Statistics and Mathematics, WU Wien, Austria\\
+  Department for Industrial Engineering,
+  Bo\u{g}azi\c{c}i University, Istanbul, Turkey
+}
+
+\SweaveInput{version.tex}
+
+\maketitle
+
+% ---------------------------------------------------------------------------
+
+\begin{abstract}
+  \noindent
+  \Runuran\ is a wrapper to UNU.RAN (\emph{Universal
+    Non-Uniform RANdom variate generators}), a library for generating
+  random variates for large classes of distributions. It also allows
+  to compute quantiles (inverse cumulative distribution 
+  functions) of these distributions efficiently. 
+  In order to use UNU.RAN one must supply some data like the denstiy 
+  about the target distribution which are then used to draw random samples.
+  \Runuran\ functions provide both a simplified interface to this
+  library for common distributions as well access to the full power of
+  this library.
+\end{abstract}
+
+% ---------------------------------------------------------------------------

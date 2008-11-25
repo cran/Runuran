@@ -376,21 +376,21 @@ _unur_mcorr_sample_matr_eigen( struct unur_gen *gen, double *mat )
 static void
 _unur_mcorr_debug_init( const struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_MCORR_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: type    = random matrix\n",gen->genid);
-  fprintf(log,"%s: method  = MCORR (Matrix - CORRELATION matrix)\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: type    = random matrix\n",gen->genid);
+  fprintf(LOG,"%s: method  = MCORR (Matrix - CORRELATION matrix)\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
   _unur_distr_matr_debug( gen->distr, gen->genid );
   if (gen->set && MCORR_SET_EIGENVALUES)
-    _unur_matrix_print_vector( GEN->dim, GEN->eigenvalues, "eigenvalues =", log, gen->genid, "\t   ");
+    _unur_matrix_print_vector( GEN->dim, GEN->eigenvalues, "eigenvalues =", LOG, gen->genid, "\t   ");
   if (gen->set && MCORR_SET_EIGENVALUES)
-    fprintf(log,"%s: sampling routine = _unur_mcorr_sample_matr_eigen()\n",gen->genid);
+    fprintf(LOG,"%s: sampling routine = _unur_mcorr_sample_matr_eigen()\n",gen->genid);
   else
-    fprintf(log,"%s: sampling routine = _unur_mcorr_sample_matr_HH()\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
+    fprintf(LOG,"%s: sampling routine = _unur_mcorr_sample_matr_HH()\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
 } 
 #endif   
 #ifdef UNUR_ENABLE_INFO

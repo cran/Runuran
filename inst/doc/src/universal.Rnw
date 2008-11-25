@@ -1,0 +1,278 @@
+% ---------------------------------------------------------------------------
+
+\section{{\Runuran} -- Universal}
+\label{sec:universal}
+
+The power of UNU.RAN does not lie in a collection of generators for some
+standard distributions but in a collection of universal generation
+methods that allow drawing samples of pseudo-random variates for
+particular purposes. For example, it is possible to generate samples that
+follow some non-standard distributions for which no special generation
+methods exist. These black-box methods are also well suited for
+standard distributions (e.g., some of our methods are much faster when
+applied to some distributions compared to the corresponding \R\ built-in
+functions).
+
+Thus we have compiled a set of functions that offer an interface
+to carefully selected UNU.RAN methods with their most important
+parameters. Their arguments allow setting all required
+data about the distribution as well as the parameters of the chosen
+method. Thus they combine Steps~(U1) and (U2) in a single function.
+These functions return UNU.RAN generator objects that can be used for
+sampling using \code{ur} (Step~U3).
+
+<<>>=
+## Use method TDR (Transformed Density Rejection) to 
+## draw a sample of size 10 from a hyperbolic distribution with PDF
+##   f(x) = const * exp(-sqrt(1+x^2)).
+
+## We first have to define a function that returns the density.
+pdf <- function (x) { exp(-sqrt(1+x^2)) }
+
+## Next create the UNU.RAN object.
+gen <- tdr.new(pdf=pdf)
+
+## Now we can use this object to draw the sample.
+## (Of course we can repeat this step as often as required.)
+x <- ur(gen,10)
+x
+@ 
+
+UNU.RAN objects provide information about themselves.
+(Note that the displayed data also give information for advanced uses
+of \Runuran, see \autoref{sec:advanced}.)
+
+<<>>=
+gen
+@ 
+
+As pointed out, it is possible to sample from quite arbitrary
+distributions (e.g., truncated distributions).
+Here is an example using method ARS (Adaptive Rejection Sampling),
+which is slightly slower but numerically more robust than TDR.
+
+<<>>=
+## Use method ARS (Adaptive Rejection Sampling) to 
+## draw a sample of size 10 from a truncated Gaussian on [100,Inf).
+
+## Define a function that returns the log-density.
+lpdf <- function (x) { -0.5*x^2 }
+
+## Create UNU.RAN object.
+gen <- ars.new(logpdf=lpdf, lb=100, ub=Inf)
+
+## Draw sample.
+ur(gen,10)
+@ 
+
+One also can directly use density functions provided by \R.
+
+<<>>=
+## Draw a sample from Gaussian distribution with 
+## mean 2 and standard deviation 5.
+
+## Create UNU.RAN object.
+gen <- ars.new(logpdf=dnorm, mean = 2, sd=5, log = TRUE)
+## Draw sample.
+ur(gen,10)
+@ 
+
+Furthermore, an object that implements an inversion method can be used as an
+argument for the quantile function \code{uq}. This is convenient for copula 
+methods or quasi-Monte Carlo methods.
+<<>>=
+## Compute quantiles for hyperbolic distribution with PDF
+##   f(x) = const * exp(-sqrt(1+x^2)).
+## Thus we need an inversion method. We choose PINV.
+
+## Create UNU.RAN object.
+pdf <- function (x) { exp(-sqrt(1+x^2)) }
+gen <- pinv.new(pdf=pdf, uresolution=1e-14)
+## Get some quantiles
+uq(gen, c(0.005, 0.01, 0.025, 0.05, 0.5, 0.95, 0.975, 0.99, 0.995))
+@ 
+
+\paragraph{Uniform random numbers.}
+All UNU.RAN methods use the \R\ built-in random number generator as
+the source of (pseudo-) random numbers. Thus the generated samples depend
+on the state \code{.Random.seed} and can be controlled by the
+\R\ functions \code{RNGkind} and \code{set.seed}.
+
+% ---------------------------------------------------------------------------
+
+\subsection{List of Universal Methods}
+
+In the following we give an overview of the available methods. Each of
+these functions creates a UNU.RAN object that can be used for
+sampling from the corresponding distribution by means of function
+\code{ur}. Note that methods that implement an \emph{inversion} method can be
+used for the quantile function \code{uq}.
+For the syntax of these functions see the corresponding help page.
+For details about the method we refer to our extensive monograph
+\citep{Hoermann;Leydold;Derflinger:2004a}.
+
+Most of these sampling methods can be controlled by some additional
+parameters which are available through the advanced interface
+\code{unuran.new} as described in \autoref{sec:advanced}.
+However, these may only be useful in special cases (e.g.,
+distributions with extremal properties).
+
+\paragraph{Warning.}
+It is not possible to save and restore a UNU.RAN object between \R\
+sessions, nor to copy such objects to different nodes
+in a computer cluster. 
+UNU.RAN objects must be created in each session (and in each node) from
+scratch. 
+
+\paragraph{Timing.}
+The \emph{setup time} and \emph{marginal sampling time} given below
+only give a rough estimate and vary for particular distributions.
+As a rule-of-thumb the setup time heavily depends on the target
+distribution. For methods with fast sampling methods the marginal
+generation times hardly (or even do not) depend on the target
+distribution. Whereas for slow methods the marginal sampling times
+depend on the target distribution.
+
+% ...........................................................................
+
+\subsubsection{Continuous Univariate Distributions}
+\label{sec:universal-cont}
+
+\begin{itemize}
+\item \textbf{\texttt{ars.new} -- Adaptive Rejection Sampling (ARS)}
+  
+  \begin{tabular}{ll}
+    type:     & rejection method \\
+    accuracy  & exact \\
+    required: & log-concave PDF \\
+    optional: & derivative of log-PDF \\
+    setup:    & \speed{7} \\
+    sampling: & \speed{8} \\
+  \end{tabular}
+  \pagebreak[3]
+
+\item \textbf{\texttt{itdr.new} -- Inverse Transformed Density Rejection (ITDR)}
+
+    \begin{tabular}{ll}
+    type:     & rejection method \\
+    accuracy  & exact \\
+    required: & monotone PDF, derivative of PDF, pole \\
+    setup:    & \speed{5} \\
+    sampling: & \speed{7} \\
+  \end{tabular}
+  \pagebreak[3]
+
+\item \textbf{\texttt{pinv.new} --  Polynomial interpolation of INVerse CDF (PINV)}
+  
+  \begin{tabular}{ll}
+    type:     & inversion method \\
+    accuracy  & numerical approximation \\
+    required: & bounded PDF \\
+    optional: & center, u-resolution \\
+    setup:    & \speed{1} \\
+    sampling: & \speed{9.5} \\
+  \end{tabular}
+  \pagebreak[3]
+
+\item \textbf{\texttt{srou.new} -- Simple Ratio-Of-Uniforms method (SROU)}
+
+    \begin{tabular}{ll}
+    type:     & rejection method \\
+    accuracy  & exact \\
+    required: & $T_{-r/(r+1)}$-concave PDF, mode, area \\
+    optional: & parameter \code{r} \\
+    setup:    & \speed{9} \\
+    sampling: & \speed{4} \\
+    remark:   & robust, works for heavy tailed distributions \\
+  \end{tabular}
+  \pagebreak[3]
+
+\item \textbf{\texttt{tdr.new} -- Transformed Density Rejection (TDR)}
+
+    \begin{tabular}{ll}
+    type:     & rejection method \\
+    accuracy  & exact \\
+    required: & $T_{-1/2}$-concave PDF \\
+    optional: & derivative of PDF \\
+    setup:    & \speed{5} \\
+    sampling: & \speed{9.5} \\
+  \end{tabular}
+
+\end{itemize}
+
+% ...........................................................................
+
+\subsubsection{Discrete Distributions}
+\label{sec:universal-discr}
+
+\begin{itemize}
+\item \textbf{\texttt{dari.new} -- Discrete Automatic Rejection Inversion (DARI)}
+
+  \begin{tabular}{ll}
+    type:     & rejection method \\
+    accuracy  & exact \\
+    required: & PMF \\
+    optional: & center, approximate sum over probabilities \\
+    setup:    & \speed{5} \\
+    sampling: & \speed{6} \\
+  \end{tabular}
+  \pagebreak[3]
+
+\item \textbf{\texttt{dau.new} -- Alias-Urn Method (DAU)}
+
+  \begin{tabular}{ll}
+    type:     & patchwork method \\
+    accuracy  & exact \\
+    required: & (finite) probability vector \\
+    setup:    & \speed{6} \\
+    sampling: & \speed{9.5} \\
+  \end{tabular}
+  \pagebreak[3]
+  
+\item \textbf{\texttt{dgt.new} -- Guide-Table Method for discrete inversion (DGT)}
+
+  \begin{tabular}{ll}
+    type:     & inversion method \\
+    accuracy  & exact \\
+    required: & (finite) probability vector \\
+    setup:    & \speed{6} \\
+    sampling: & \speed{9.5} \\
+  \end{tabular}
+
+\end{itemize}
+
+% ...........................................................................
+
+\subsubsection{Multivariate Distributions}
+\label{sec:universal-cvec}
+
+\begin{itemize}
+\item \textbf{\texttt{hitro.new} -- Hit-and-Run algorithm with
+    Ratio-of-Uniforms Method (HITRO)}
+
+  \begin{tabular}{ll}
+    type:     & Markov chain sampler (MCMC) \\
+    accuracy  & converging Markov chain \\
+    required: & PDF \\
+    optional: & center, mode, thinning factor, burnin \\
+    setup:    & \speed{3} \\
+    sampling: & \speed{7} \\
+    remark:   & approximate 
+  \end{tabular}
+  \pagebreak[3]
+
+\item \textbf{\texttt{vnrou.new} -- Multivariate Naive
+    Ratio-Of-Uniforms method (VNROU)}
+
+  \begin{tabular}{ll}
+    type:     & Rejection \\
+    accuracy  & exact \\
+    required: & unimodal PDF \\
+    optional: & center, mode \\
+    setup:    & \speed{2} \\
+    sampling: & \speed{4} \\
+  \end{tabular}
+
+\end{itemize}
+
+% ---------------------------------------------------------------------------

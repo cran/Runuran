@@ -274,61 +274,61 @@ _unur_dgt_make_guidetable( struct unur_gen *gen )
 void
 _unur_dgt_debug_init( struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_DGT_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: type    = discrete univariate random variates\n",gen->genid);
-  fprintf(log,"%s: method  = indexed search (guide table)\n",gen->genid);
-  fprintf(log,"%s: variant = %u ",gen->genid,gen->variant);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: type    = discrete univariate random variates\n",gen->genid);
+  fprintf(LOG,"%s: method  = indexed search (guide table)\n",gen->genid);
+  fprintf(LOG,"%s: variant = %u ",gen->genid,gen->variant);
   _unur_print_if_default(gen,DGT_SET_VARIANT);
-  fprintf(log,"\n%s:\n",gen->genid);
+  fprintf(LOG,"\n%s:\n",gen->genid);
   _unur_distr_discr_debug( gen->distr,gen->genid,(gen->debug & DGT_DEBUG_PRINTVECTOR));
-  fprintf(log,"%s: sampling routine = _unur_dgt_sample()\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: length of probability vector = %d\n",gen->genid,DISTR.n_pv);
-  fprintf(log,"%s: length of guide table = %d   (rel. = %g%%",
+  fprintf(LOG,"%s: sampling routine = _unur_dgt_sample()\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: length of probability vector = %d\n",gen->genid,DISTR.n_pv);
+  fprintf(LOG,"%s: length of guide table = %d   (rel. = %g%%",
 	  gen->genid,GEN->guide_size,100.*GEN->guide_factor);
   _unur_print_if_default(gen,DGT_SET_GUIDEFACTOR);
   if (GEN->guide_size == 1) 
-    fprintf(log,") \t (-->sequential search");
-  fprintf(log,")\n%s:\n",gen->genid);
-  fprintf(log,"%s: sum over PMF (as computed) = %#-20.16g\n",gen->genid,GEN->sum);
+    fprintf(LOG,") \t (-->sequential search");
+  fprintf(LOG,")\n%s:\n",gen->genid);
+  fprintf(LOG,"%s: sum over PMF (as computed) = %#-20.16g\n",gen->genid,GEN->sum);
   if (gen->debug & DGT_DEBUG_TABLE)
     _unur_dgt_debug_table(gen);
 } 
 void
 _unur_dgt_debug_table( struct unur_gen *gen )
 {   
-  FILE *log;
+  FILE *LOG;
   int i,j,m;
   int n_asts;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_DGT_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s: guide table:\n", gen->genid); 
-  fprintf(log,"%s:\n", gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s: guide table:\n", gen->genid); 
+  fprintf(LOG,"%s:\n", gen->genid);
   n_asts = 0;
   for (i=0; i<GEN->guide_size; i++){
-    fprintf(log,"%s: [%5d] -> %5d ", gen->genid, i, GEN->guide_table[i]);
+    fprintf(LOG,"%s: [%5d] -> %5d ", gen->genid, i, GEN->guide_table[i]);
     if (i == GEN->guide_size-1)
       j = GEN->guide_size - GEN->guide_table[i];
     else
       j = GEN->guide_table[i+1] - GEN->guide_table[i] + 1;
     for (m=0; m<j && m<10; m++ ) {
-      fprintf(log," *");
+      fprintf(LOG," *");
       ++n_asts;
     }
     if (m<j){
       n_asts += j-m;
-      fprintf(log," ... %d", j);
+      fprintf(LOG," ... %d", j);
     }
-    fprintf(log,"\n");
+    fprintf(LOG,"\n");
   }
-  fprintf(log,"%s:\n", gen->genid);
-  fprintf(log,"%s: expected number of comparisons = %g\n",gen->genid,
+  fprintf(LOG,"%s:\n", gen->genid);
+  fprintf(LOG,"%s: expected number of comparisons = %g\n",gen->genid,
           ((double)n_asts)/GEN->guide_size);
-  fprintf(log,"%s:\n", gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
+  fprintf(LOG,"%s:\n", gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
 } 
 #endif   
 #ifdef UNUR_ENABLE_INFO

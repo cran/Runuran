@@ -699,106 +699,106 @@ _unur_hitro_random_unitvector( struct unur_gen *gen, double *direction )
 void
 _unur_hitro_debug_init_start( const struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_HITRO_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: type    = continuous multivariate random variates\n",gen->genid);
-  fprintf(log,"%s: method  = HITRO (Markov Chain - HITRO sampler)\n",gen->genid);
-  fprintf(log,"%s: variant = ",gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: type    = continuous multivariate random variates\n",gen->genid);
+  fprintf(LOG,"%s: method  = HITRO (Markov Chain - HITRO sampler)\n",gen->genid);
+  fprintf(LOG,"%s: variant = ",gen->genid);
   switch (gen->variant & HITRO_VARMASK_VARIANT) {
   case HITRO_VARIANT_COORD:
-    fprintf(log,"coordinate sampling [default]\n"); break;
+    fprintf(LOG,"coordinate sampling [default]\n"); break;
   case HITRO_VARIANT_RANDOMDIR:
-    fprintf(log,"random direction sampling\n"); break;
+    fprintf(LOG,"random direction sampling\n"); break;
   }
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: r = %g",gen->genid, GEN->r);
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: r = %g",gen->genid, GEN->r);
   _unur_print_if_default(gen,HITRO_SET_R);
-  fprintf(log,"\n%s: adaptive line sampling: %s",gen->genid,
+  fprintf(LOG,"\n%s: adaptive line sampling: %s",gen->genid,
 	  (gen->variant&HITRO_VARFLAG_ADAPTLINE)?"on":"off");
   _unur_print_if_default(gen,HITRO_SET_ADAPTLINE);
-  fprintf(log,"\n%s: use entire bounding rectangle: %s",gen->genid,
+  fprintf(LOG,"\n%s: use entire bounding rectangle: %s",gen->genid,
 	  (gen->variant&HITRO_VARFLAG_BOUNDRECT)?"on":"off");
   _unur_print_if_default(gen,HITRO_SET_BOUNDRECT);
-  fprintf(log,"\n%s: adaptive bounding rectangle: %s",gen->genid,
+  fprintf(LOG,"\n%s: adaptive bounding rectangle: %s",gen->genid,
 	  (gen->variant&HITRO_VARFLAG_ADAPTRECT)?"on":"off");
   _unur_print_if_default(gen,HITRO_SET_ADAPTRECT);
   if (gen->variant&HITRO_VARFLAG_ADAPTRECT) {
-    fprintf(log,"\n%s:\tmultiplier = %g",gen->genid,GEN->adaptive_mult);
+    fprintf(LOG,"\n%s:\tmultiplier = %g",gen->genid,GEN->adaptive_mult);
     _unur_print_if_default(gen,HITRO_SET_ADAPTMULT);
   }
-  fprintf(log,"\n%s: use domain of distribution: %s\n",gen->genid,
+  fprintf(LOG,"\n%s: use domain of distribution: %s\n",gen->genid,
 	  (gen->variant&HITRO_VARFLAG_BOUNDDOMAIN)?"on":"off");
-  fprintf(log,"%s:\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
   _unur_distr_cvec_debug( gen->distr, gen->genid );
   switch (gen->variant & HITRO_VARMASK_VARIANT) {
   case HITRO_VARIANT_COORD:
-    fprintf(log,"%s: sampling routine = _unur_hitro_coord_sample_cvec()\n",gen->genid);
+    fprintf(LOG,"%s: sampling routine = _unur_hitro_coord_sample_cvec()\n",gen->genid);
     break;
   case HITRO_VARIANT_RANDOMDIR:
-    fprintf(log,"%s: sampling routine = _unur_hitro_randomdir_sample_cvec()\n",gen->genid);
+    fprintf(LOG,"%s: sampling routine = _unur_hitro_randomdir_sample_cvec()\n",gen->genid);
     break;
   }
-  fprintf(log,"%s: thinning = %d",gen->genid,GEN->thinning);
+  fprintf(LOG,"%s: thinning = %d",gen->genid,GEN->thinning);
   _unur_print_if_default(gen,HITRO_SET_THINNING);
-  fprintf(log,"\n%s: burn-in = %d",gen->genid,GEN->burnin);
+  fprintf(LOG,"\n%s: burn-in = %d",gen->genid,GEN->burnin);
   _unur_print_if_default(gen,HITRO_SET_BURNIN);
-  fprintf(log,"\n%s:\n",gen->genid);
-  _unur_matrix_print_vector( GEN->dim, GEN->x0, "starting point = ", log, gen->genid, "\t   ");
-  fprintf(log,"%s:\n",gen->genid);
-  fflush(log);
+  fprintf(LOG,"\n%s:\n",gen->genid);
+  _unur_matrix_print_vector( GEN->dim, GEN->x0, "starting point = ", LOG, gen->genid, "\t   ");
+  fprintf(LOG,"%s:\n",gen->genid);
+  fflush(LOG);
 } 
 void
 _unur_hitro_debug_init_finished( const struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_HITRO_GEN,RETURN_VOID);
-  log = unur_get_stream();
+  LOG = unur_get_stream();
   if (gen->variant & HITRO_VARFLAG_BOUNDRECT) {
-    fprintf(log,"%s: bounding rectangle%s:\n",gen->genid,
+    fprintf(LOG,"%s: bounding rectangle%s:\n",gen->genid,
 	    (gen->variant & HITRO_VARFLAG_ADAPTRECT) ? " [start for adaptive rectangle]" : "" );
-    fprintf(log,"%s: vmax = %g\n",gen->genid, GEN->vumax[0]);
-    _unur_matrix_print_vector( GEN->dim, GEN->vumin+1, "umin =", log, gen->genid, "\t   ");
-    _unur_matrix_print_vector( GEN->dim, GEN->vumax+1, "umax =", log, gen->genid, "\t   ");
+    fprintf(LOG,"%s: vmax = %g\n",gen->genid, GEN->vumax[0]);
+    _unur_matrix_print_vector( GEN->dim, GEN->vumin+1, "umin =", LOG, gen->genid, "\t   ");
+    _unur_matrix_print_vector( GEN->dim, GEN->vumax+1, "umax =", LOG, gen->genid, "\t   ");
   }
   else {
-    fprintf(log,"%s: upper bound vmax = %g %s\n",gen->genid, GEN->vumax[0],
+    fprintf(LOG,"%s: upper bound vmax = %g %s\n",gen->genid, GEN->vumax[0],
 	    (gen->variant & HITRO_VARFLAG_ADAPTRECT) ? "[start for adaptive bound]" : "" );
   }
-  _unur_matrix_print_vector( GEN->dim+1, GEN->state, "starting state = ", log, gen->genid, "\t   ");
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: INIT completed **********************\n",gen->genid);
-  fflush(log);
+  _unur_matrix_print_vector( GEN->dim+1, GEN->state, "starting state = ", LOG, gen->genid, "\t   ");
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: INIT completed **********************\n",gen->genid);
+  fflush(LOG);
 } 
 void
 _unur_hitro_debug_free( const struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_HITRO_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s:\n",gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s:\n",gen->genid);
   if (gen->status == UNUR_SUCCESS) {
-    fprintf(log,"%s: GENERATOR destroyed **********************\n",gen->genid);
-    fprintf(log,"%s:\n",gen->genid);
+    fprintf(LOG,"%s: GENERATOR destroyed **********************\n",gen->genid);
+    fprintf(LOG,"%s:\n",gen->genid);
   }
   else {
-    fprintf(log,"%s: initialization of GENERATOR failed **********************\n",gen->genid);
+    fprintf(LOG,"%s: initialization of GENERATOR failed **********************\n",gen->genid);
   }
-  fprintf(log,"%s:\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
   if (gen->variant & HITRO_VARFLAG_BOUNDRECT) {
-    fprintf(log,"%s: bounding rectangle%s:\n",gen->genid,
+    fprintf(LOG,"%s: bounding rectangle%s:\n",gen->genid,
 	    (gen->variant & HITRO_VARFLAG_ADAPTRECT) ? " [adaptive]" : "" );
-    fprintf(log,"%s: vmax = %g\n",gen->genid, GEN->vumax[0]);
-    _unur_matrix_print_vector( GEN->dim, GEN->vumin+1, "umin =", log, gen->genid, "\t   ");
-    _unur_matrix_print_vector( GEN->dim, GEN->vumax+1, "umax =", log, gen->genid, "\t   ");
+    fprintf(LOG,"%s: vmax = %g\n",gen->genid, GEN->vumax[0]);
+    _unur_matrix_print_vector( GEN->dim, GEN->vumin+1, "umin =", LOG, gen->genid, "\t   ");
+    _unur_matrix_print_vector( GEN->dim, GEN->vumax+1, "umax =", LOG, gen->genid, "\t   ");
   }
   else {
-    fprintf(log,"%s: upper bound vmax = %g %s\n",gen->genid, GEN->vumax[0],
+    fprintf(LOG,"%s: upper bound vmax = %g %s\n",gen->genid, GEN->vumax[0],
 	    (gen->variant & HITRO_VARFLAG_ADAPTRECT) ? "[adaptive]" : "" );
   }
-  fprintf(log,"%s:\n",gen->genid);
-  fflush(log);
+  fprintf(LOG,"%s:\n",gen->genid);
+  fflush(LOG);
 } 
 #endif   
 #ifdef UNUR_ENABLE_INFO
@@ -816,6 +816,11 @@ _unur_hitro_info( struct unur_gen *gen, int help )
   _unur_string_append(info,"   dimension = %d\n",GEN->dim);
   _unur_string_append(info,"   functions = PDF\n");
   _unur_distr_cvec_info_domain(gen);
+  if ( distr->set & UNUR_DISTR_SET_MODE ) {
+    _unur_string_append(info,"   mode      = ");
+    _unur_distr_info_vector( gen, DISTR.mode, GEN->dim);
+  }
+  _unur_string_append(info,"\n");
   _unur_string_append(info,"   center    = ");
   _unur_distr_info_vector( gen, GEN->center, GEN->dim);
   if ( !(distr->set & UNUR_DISTR_SET_CENTER) ) {

@@ -26,6 +26,11 @@ SEXP Runuran_sample (SEXP sexp_unur, SEXP sexp_n);
 /* Sample from UNU.RAN generator object.                                     */
 /*---------------------------------------------------------------------------*/
 
+SEXP Runuran_quantile (SEXP sexp_unur, SEXP sexp_U);
+/*---------------------------------------------------------------------------*/
+/* Quantile for distribution in UNU.RAN generator object.                    */
+/*---------------------------------------------------------------------------*/
+
 SEXP Runuran_print (SEXP sexp_gen, SEXP sexp_help);
 /*---------------------------------------------------------------------------*/
 /* Print information about UNU.RAN generator object.                         */
@@ -33,14 +38,16 @@ SEXP Runuran_print (SEXP sexp_gen, SEXP sexp_help);
 
 SEXP Runuran_discr_init (SEXP sexp_obj, SEXP sexp_env,
 			 SEXP sexp_pv, SEXP sexp_pmf,
-			 SEXP sexp_domain);
+			 SEXP sexp_mode, SEXP sexp_domain,
+			 SEXP sexp_sum, SEXP sexp_name);
 /*---------------------------------------------------------------------------*/
 /* Create and initialize UNU.RAN object for discrete distribution.           */
 /*---------------------------------------------------------------------------*/
 
 SEXP Runuran_cont_init (SEXP sexp_obj, SEXP sexp_env, 
 			SEXP sexp_cdf, SEXP sexp_pdf, SEXP sexp_dpdf, SEXP sexp_islog,
-			SEXP sexp_domain);
+			SEXP sexp_mode, SEXP sexp_center, SEXP sexp_domain, 
+			SEXP sexp_area, SEXP sexp_name);
 /*---------------------------------------------------------------------------*/
 /* Create and initialize UNU.RAN object for continuous distribution.         */
 /*---------------------------------------------------------------------------*/
@@ -48,7 +55,7 @@ SEXP Runuran_cont_init (SEXP sexp_obj, SEXP sexp_env,
 SEXP Runuran_cmv_init (SEXP sexp_obj, SEXP sexp_env, 
 		       SEXP sexp_dim, SEXP sexp_pdf, 
 		       SEXP sexp_mode, SEXP sexp_center, 
-		       SEXP sexp_ll, SEXP sexp_ur);
+		       SEXP sexp_ll, SEXP sexp_ur, SEXP sexp_name);
 /*---------------------------------------------------------------------------*/
 /* Create and initialize UNU.RAN object for cont. multivariate distribution. */
 /*---------------------------------------------------------------------------*/
@@ -62,6 +69,12 @@ SEXP Runuran_cmv_init (SEXP sexp_obj, SEXP sexp_env,
 SEXP Runuran_qhinv (SEXP sexp_unur, SEXP sexp_U);
 /*---------------------------------------------------------------------------*/
 /* Evaluate approximate quantile function when a UNU.RAN object of type HINV */
+/* is given.                                                                 */
+/*---------------------------------------------------------------------------*/
+
+SEXP Runuran_qpinv (SEXP sexp_unur, SEXP sexp_U);
+/*---------------------------------------------------------------------------*/
+/* Evaluate approximate quantile function when a UNU.RAN object of type PINV */
 /* is given.                                                                 */
 /*---------------------------------------------------------------------------*/
 

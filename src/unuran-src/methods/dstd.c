@@ -201,37 +201,37 @@ _unur_dstd_free( struct unur_gen *gen )
 void
 _unur_dstd_debug_init( const struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_DSTD_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: type    = discrete univariate random variates\n",gen->genid);
-  fprintf(log,"%s: method  = generator for standard distribution\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: type    = discrete univariate random variates\n",gen->genid);
+  fprintf(LOG,"%s: method  = generator for standard distribution\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
   _unur_distr_discr_debug( gen->distr, gen->genid, FALSE );
-  fprintf(log,"%s: sampling routine = ",gen->genid);
+  fprintf(LOG,"%s: sampling routine = ",gen->genid);
   if (GEN->sample_routine_name)
-    fprintf(log,"%s()",GEN->sample_routine_name);
+    fprintf(LOG,"%s()",GEN->sample_routine_name);
   else
-    fprintf(log,"(Unknown)");
+    fprintf(LOG,"(Unknown)");
   if (GEN->is_inversion)
-    fprintf(log,"   (Inversion)");
-  fprintf(log,"\n%s:\n",gen->genid);
+    fprintf(LOG,"   (Inversion)");
+  fprintf(LOG,"\n%s:\n",gen->genid);
   if (!(gen->distr->set & UNUR_DISTR_SET_STDDOMAIN)) {
-    fprintf(log,"%s: domain has been changed. U in (%g,%g)\n",gen->genid,GEN->umin,GEN->umax);
-    fprintf(log,"%s:\n",gen->genid);
+    fprintf(LOG,"%s: domain has been changed. U in (%g,%g)\n",gen->genid,GEN->umin,GEN->umax);
+    fprintf(LOG,"%s:\n",gen->genid);
   }
 } 
 void 
 _unur_dstd_debug_chg_pmfparams( const struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   int i;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_DSTD_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s: parameters of distribution changed:\n",gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s: parameters of distribution changed:\n",gen->genid);
   for( i=0; i<DISTR.n_params; i++ )
-      fprintf(log,"%s:\tparam[%d] = %g\n",gen->genid,i,DISTR.params[i]);
+      fprintf(LOG,"%s:\tparam[%d] = %g\n",gen->genid,i,DISTR.params[i]);
 } 
 #endif   
 #ifdef UNUR_ENABLE_INFO

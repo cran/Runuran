@@ -9,6 +9,8 @@
   UNU.RAN random variate generator for the Exponential distribution with
   rate \code{rate} (i.e., mean \code{1/rate}).
   It also allows sampling from the truncated distribution.
+  
+  [Distribution] -- Sampling Function: Exponential.  %% Continuous
 }
 
 \usage{
@@ -54,7 +56,7 @@ urexp(n, rate=1, lb=0, ub=Inf)
 }
 
 \note{
-  This function is wrapper for the UNU.RAN class in \R.
+  This function is a wrapper for the UNU.RAN class in \R.
   Compared to \code{rexp}, \code{urexp} is faster, especially for
   larger sample sizes.
   However, in opposition to \code{rexp} vector arguments are ignored,

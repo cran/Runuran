@@ -1,0 +1,291 @@
+% ---------------------------------------------------------------------------
+
+\section{{\Runuran} -- Advanced}
+\label{sec:advanced}
+
+Using the advanced interface of package \Runuran\ requires
+three steps:
+\begin{enumerate}[(U1)]
+\item 
+  Create a distribution object that contains all required information
+  about the \emph{target distribution}.
+\item 
+  Choose a \emph{generation method} and create a UNU.RAN object.
+\item
+  Use this object to \emph{draw samples} from the target distribution.
+\end{enumerate}
+
+In the following we shortly describe the main idea behind. For the syntax
+and the details of the \R\ function we refer to the corresponding help page.
+For the UNU.RAN method we refer to its manual
+\citep{Leydold;Hoermann:UNURAN}. 
+
+\paragraph{Warning.}
+Both the \emph{distribution object} and the UNU.RAN \emph{generator
+  object} contain pointers to external memory. Thus  
+it is not possible to save and restore a UNU.RAN object between \R\
+sessions, nor to copy such objects to different nodes
+in a computer cluster. 
+Distribution and UNU.RAN objects must be created in each session (and
+each node) from scratch. 
+
+% ---------------------------------------------------------------------------
+
+\subsection{U1 -- Create a distribution object}
+\label{sec:advanced-U1}
+
+\Runuran\ uses S4 classes to store information about
+distributions. Thus the following three functions create instances of
+the corresponding classes
+(for the syntax and details of these functions we refer to the
+corresponding help page):
+\begin{itemize}
+\item 
+  \code{unuran.cont.new}:
+  \emph{univariate continuous distributions}
+
+\item 
+  \code{unuran.discr.new}:
+  \emph{discrete distributions}
+
+\item 
+  \code{unuran.cmv.new}:
+  \emph{multivariate continuous distributions}
+\end{itemize}
+
+Each of these functions allow to set various data about the target
+distribution. The kind of data depends of course on the type of
+distribution object. It is the responsibility of the user to supply
+consistent data. It is not necessary to fill all the ``slots''
+of the objects. It depends on the chosen method which data are
+essential or used if provided (all other data are simply ignored).
+
+% ---------------------------------------------------------------------------
+
+\subsection{U2 -- Create a UNU.RAN generator object}
+\label{sec:advanced-U2}
+
+\Runuran\ uses an S4 class to store information about
+distributions. It can be created by the following function
+(for further details we refer to the corresponding help page):
+\begin{itemize}
+\item \code{gen <- unuran.new(distr,method)}
+\end{itemize}
+where
+\begin{itemize}
+\item 
+  \code{distr} is an instance of a distribution object created in
+  Step~(U1), and
+\item 
+  \code{method} is a \emph{string} for the UNU.RAN string API, see
+  Section~3.4 (Method String) in the UNU.RAN manual
+  \citep{Leydold;Hoermann:UNURAN}.
+\end{itemize}
+
+The given distribution must contain all data about the target
+information that are required for the chosen method.
+
+\paragraph{Remark.}
+UNU.RAN also has a string API for distributions, see
+Section~3.2 (Distribution String) in the UNU.RAN manual
+\citep{Leydold;Hoermann:UNURAN}. Thus \code{distr} can also be such a
+string. However, besides some special cases the approach described in
+\autoref{sec:advanced-U1} above is more flexible inside \R.
+
+% ---------------------------------------------------------------------------
+
+\subsection{U3 -- Draw samples}
+\label{sec:advanced-U3}
+
+The UNU.RAN object created in Step~(U2) can then be used to draw
+samples from the target distribution. Let \code{gen} such a generator
+object.
+
+\begin{itemize}
+\item 
+  \code{ur(gen,n)} draws a pseudo-random sample of size \code{n}.
+\item 
+  \code{uq(gen,u)} computes quantiles (inverse CDF's) for the $u$ values
+  given in vector \code{u}.
+  However, this requires that the method (\code{gen}) we are using implements 
+  an inversion method like PINV.
+\end{itemize}
+
+In addition it is possible to get some information about the generator
+object.
+
+\begin{itemize}
+\item 
+  \code{show(gen)} (or simply \code{gen}) prints some information
+  about the used data of the distribution as well as sampling method
+  and performance characteristics of the generator object on the screen.
+\item 
+  \code{unuran.details(gen)} is more verbose and additionally prints 
+  parameter settings for the chosen method (including default values)
+  and some hints for changing (improving) its performance.
+\end{itemize}
+
+\paragraph{Uniform random numbers.}
+All UNU.RAN methods use the \R\ built-in random number generator as
+the source of (pseudo-) random numbers. Thus the generated samples depend
+on the state \code{.Random.seed} and can be controlled by the
+\R\ functions \code{RNGkind} and \code{set.seed}.
+
+% ---------------------------------------------------------------------------
+
+\paragraph{Example 1: Continuous distribution} 
+\mbox{}\par
+
+<<>>=
+## Use method TDR (Transformed Density Rejection) to 
+## draw a sample of size 10 from a hyperbolic distribution with PDF
+##   f(x) = const * exp(-sqrt(1+x^2)) 
+## restricted to domain [-1,2].
+
+## We first have to define functions that return the log-density and
+## its derivative, respectively. (We also could use the density itself.)
+lf  <- function (x) { -sqrt(1+x^2) }
+dlf <- function (x) { -x/sqrt(1+x^2) }
+
+## Next create the continuous distribution object.
+d <- unuran.cont.new(pdf=lf, dpdf=dlf, islog=TRUE, lb=-1, ub=2,
+                     name="hyperbolic")
+
+## Create UNU.RAN object. We choose method TDR with 
+## immediate acceptance (IA) and parameter c=0.
+gen <- unuran.new(distr=d, method="tdr; variant_ia; c=0")
+
+## Now we can use this object to draw the sample.
+## (Of course we can repeat this step as often as required.)
+ur(gen,10)
+
+## Here is some information about our generator object.
+unuran.details(gen)
+@ 
+
+% ---------------------------------------------------------------------------
+
+\paragraph{Example 2: Discrete distribution with given probability vector (PV)}
+\mbox{}\par
+
+<<>>=
+## Use method DGT (Discrete Guide Table method) to 
+## draw a sample of size 10 from a Binomial distribution given
+## its probability vector.
+
+## Create instances of a discrete distribution object
+d <- unuran.discr.new(pv=dbinom(0:100,100,0.4), name="binomial(100,0.4)")
+
+## Create UNU.RAN object. We choose method DGT.
+gen <- unuran.new(distr=d, method="dgt")
+
+## Now we can use this object to draw the sample.
+ur(gen,10)
+
+## Here is some information about our generator object.
+unuran.details(gen)
+@ 
+
+% ---------------------------------------------------------------------------
+
+\paragraph{Example 3: Discrete distribution with given probability mass 
+function (PMF)}
+\mbox{}\par
+
+<<>>=
+## Use method DSROU (Discrete Simple Ratio-Of-Uniforms method) to 
+## draw a sample of size 10 from a discrete distribution with
+## given PMF, mode, and sum.
+
+## Define functions that return the PMF.
+f  <- function (x) { 0.4 * (1-0.4)^x }
+
+## Create the continuous distribution object.
+d <- unuran.discr.new(pmf=f,lb=0,mode=0,sum=1)
+
+## Create UNU.RAN object. We choose method DARI with squeezes.
+gen <- unuran.new(distr=d, method="dari; squeeze=on")
+
+## Now we can use this object to draw the sample.
+ur(gen,10)
+
+## Here is some information about our generator object.
+unuran.details(gen)
+@ 
+
+% ---------------------------------------------------------------------------
+
+\paragraph{Example 4: Multivariate distribution}
+\mbox{}\par
+
+<<>>=
+## Use method VNROU (Multivariate Naive Ratio-Of-Uniforms) to 
+## draw a sample of size 5 from a bivariate distribution
+## with given PDF, mode and domain.
+
+## Define functions that return the PDF.
+f  <- function (x) { exp(-sum(x^4)) }
+
+## Create the continuous distribution object.
+d <- unuran.cmv.new(dim=2, pdf=f, mode=c(0,0), ll=c(-1,-1), ur=c(1,1),
+                    name="bivariate power-exponential")
+
+## Create UNU.RAN object. We choose method VNROU with parameter r=0.5.
+gen <- unuran.new(distr=d, method="vnrou; r=0.5")
+
+## Now we can use this object to draw the sample.
+ur(gen,5)
+
+## Here is some information about our generator object.
+unuran.details(gen)
+@ 
+
+% ---------------------------------------------------------------------------
+
+\paragraph{Missing data.}
+
+If some data are missing then UNU.RAN cannot create a generator object
+and aborts with an error message.
+
+<<eval=FALSE,echo=FALSE>>=
+## Try to use method TDR with missing data.
+lf  <- function (x) { -sqrt(1+x^2) }
+d <- unuran.cont.new(pdf=lf,islog=TRUE)
+gen <- unuran.new(distr=d, method="tdr")
+@ 
+
+\begin{Schunk}
+\begin{Sinput}
+> ## Try to use method TDR with missing data.
+> lf  <- function (x) { -sqrt(1+x^2) }
+> d <- unuran.cont.new(pdf=lf,islog=TRUE)
+> gen <- unuran.new(distr=d, method="tdr")
+\end{Sinput}
+\begin{Soutput}
+[UNU.RAN - error] (distribution) incomplete distribution object, entry missing: derivative of PDF
+[UNU.RAN - error] (parser) invalid parameter: invalid data for method 'tdr'
+[UNU.RAN - error] (parser) invalid string: setting method failed
+Error: [UNU.RAN - error] cannot create UNU.RAN object
+\end{Soutput}
+\end{Schunk}
+
+% ---------------------------------------------------------------------------
+
+\paragraph{Invalid data.}
+
+UNU.RAN makes some validity checks. If such a check fails the setup aborts 
+with an error message. Such failures can be caused by erroneous data. 
+It also can happen due to serious round-off errors.
+
+\begin{Schunk}
+\begin{Sinput}
+> d <- unuran.discr.new(pv=c(1,-1,0))
+> gen <- unuran.new(distr=d, method="dgt")
+\end{Sinput}
+\begin{Soutput}
+[UNU.RAN - error] (generator) (possible) invalid data: probability < 0
+Error: [UNU.RAN - error] cannot create UNU.RAN object
+\end{Soutput}
+\end{Schunk}
+
+% ---------------------------------------------------------------------------

@@ -566,62 +566,62 @@ _unur_gsrou_envelope( struct unur_gen *gen )
 void
 _unur_srou_debug_init( const struct unur_gen *gen, int is_reinit )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_SROU_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s:\n",gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s:\n",gen->genid);
   if (!is_reinit) {
-    fprintf(log,"%s: type    = continuous univariate random variates\n",gen->genid);
-    fprintf(log,"%s: method  = srou (simple universal ratio-of-uniforms)\n",gen->genid);
+    fprintf(LOG,"%s: type    = continuous univariate random variates\n",gen->genid);
+    fprintf(LOG,"%s: method  = srou (simple universal ratio-of-uniforms)\n",gen->genid);
   }
   else
-    fprintf(log,"%s: reinit!\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
+    fprintf(LOG,"%s: reinit!\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
   _unur_distr_cont_debug( gen->distr, gen->genid );
   if (gen->set & SROU_SET_R) {
-    fprintf(log,"%s: Generalized version: r = %g\n",gen->genid,GEN->r);
-    fprintf(log,"%s:\n",gen->genid);
-    fprintf(log,"%s: sampling routine = _unur_gsrou_sample",gen->genid);
+    fprintf(LOG,"%s: Generalized version: r = %g\n",gen->genid,GEN->r);
+    fprintf(LOG,"%s:\n",gen->genid);
+    fprintf(LOG,"%s: sampling routine = _unur_gsrou_sample",gen->genid);
     if (gen->variant & SROU_VARFLAG_VERIFY)
-      fprintf(log,"_check");
-    fprintf(log,"()\n%s:\n",gen->genid);
+      fprintf(LOG,"_check");
+    fprintf(LOG,"()\n%s:\n",gen->genid);
   }
   else {
-    fprintf(log,"%s: Simple version (r = 1)  [default]\n",gen->genid);
-    fprintf(log,"%s:\n",gen->genid);
-    fprintf(log,"%s: sampling routine = _unur_srou_sample",gen->genid);
+    fprintf(LOG,"%s: Simple version (r = 1)  [default]\n",gen->genid);
+    fprintf(LOG,"%s:\n",gen->genid);
+    fprintf(LOG,"%s: sampling routine = _unur_srou_sample",gen->genid);
     if (gen->variant & SROU_VARFLAG_VERIFY)
-      fprintf(log,"_check");
+      fprintf(LOG,"_check");
     else if (gen->variant & SROU_VARFLAG_MIRROR)
-      fprintf(log,"_mirror");
-    fprintf(log,"()\n%s:\n",gen->genid);
+      fprintf(LOG,"_mirror");
+    fprintf(LOG,"()\n%s:\n",gen->genid);
   }
   if (gen->set & SROU_SET_CDFMODE)
-    fprintf(log,"%s: F(mode) = %g\n",gen->genid,GEN->Fmode);
+    fprintf(LOG,"%s: F(mode) = %g\n",gen->genid,GEN->Fmode);
   else
-    fprintf(log,"%s: F(mode) unknown\n",gen->genid);
+    fprintf(LOG,"%s: F(mode) unknown\n",gen->genid);
   if (gen->variant & SROU_VARFLAG_SQUEEZE)
-    fprintf(log,"%s: use universal squeeze\n",gen->genid);
+    fprintf(LOG,"%s: use universal squeeze\n",gen->genid);
   else
-    fprintf(log,"%s: no (universal) squeeze\n",gen->genid);
+    fprintf(LOG,"%s: no (universal) squeeze\n",gen->genid);
   if (gen->variant & SROU_VARFLAG_MIRROR)
-    fprintf(log,"%s: use mirror principle\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
+    fprintf(LOG,"%s: use mirror principle\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
   if (gen->set & SROU_SET_R) {
-    fprintf(log,"%s: Enveloping region:\n",gen->genid);
-    fprintf(log,"%s:    um = %g\n",gen->genid,GEN->um);
-    fprintf(log,"%s:    vl = %g\n",gen->genid,GEN->vl);
-    fprintf(log,"%s:    vr = %g\n",gen->genid,GEN->vr);
-    fprintf(log,"%s:    p  = %g\n",gen->genid,GEN->p);
-    fprintf(log,"%s:    a  = %g\n",gen->genid,GEN->a);
-    fprintf(log,"%s:    b  = %g\n",gen->genid,GEN->b);
+    fprintf(LOG,"%s: Enveloping region:\n",gen->genid);
+    fprintf(LOG,"%s:    um = %g\n",gen->genid,GEN->um);
+    fprintf(LOG,"%s:    vl = %g\n",gen->genid,GEN->vl);
+    fprintf(LOG,"%s:    vr = %g\n",gen->genid,GEN->vr);
+    fprintf(LOG,"%s:    p  = %g\n",gen->genid,GEN->p);
+    fprintf(LOG,"%s:    a  = %g\n",gen->genid,GEN->a);
+    fprintf(LOG,"%s:    b  = %g\n",gen->genid,GEN->b);
   }
   else {
-    fprintf(log,"%s: Rectangle:\n",gen->genid);
-    fprintf(log,"%s:    left upper point  = (%g,%g)\n",gen->genid,GEN->vl,GEN->um);
-    fprintf(log,"%s:    right upper point = (%g,%g)\n",gen->genid,GEN->vr,GEN->um);
+    fprintf(LOG,"%s: Rectangle:\n",gen->genid);
+    fprintf(LOG,"%s:    left upper point  = (%g,%g)\n",gen->genid,GEN->vl,GEN->um);
+    fprintf(LOG,"%s:    right upper point = (%g,%g)\n",gen->genid,GEN->vr,GEN->um);
   }
-  fprintf(log,"%s:\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
 } 
 #endif   
 #ifdef UNUR_ENABLE_INFO

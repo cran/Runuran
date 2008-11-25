@@ -21,6 +21,19 @@ alpha <- 1.e-3
 
 library(Runuran)
 
+
+#############################################################################
+##                                                                          #
+##  Auxiliary routines                                                      #
+##                                                                          #
+#############################################################################
+
+## -- Auxiliary routines ------------------------------------------------------
+
+## Test whether there is an error -------------------------------------------
+is.error <- function (expr) { is(try(expr), "try-error") }
+
+
 ## --- Continuous distributions ---------------------------------------------
 
 ## Create an object
@@ -35,6 +48,8 @@ unuran.details(unr)
 unuran.sample(unr)
 unuran.sample(unr,10)
 x <- unuran.sample(unr, samplesize)
+ur(unr)
+ur(unr,10)
 
 ## Run a chi-square GoF test
 chisq.test( hist(pnorm(x),plot=FALSE,breaks=breaks)$density )
@@ -57,12 +72,23 @@ unr
 print(unr)
 unuran.details(unr)
 
+
 ## --- Continuous distributions - S4 distribution object --------------------
 
 ## use PDF
 gausspdf <- function (x) { exp(-0.5*x^2) }
 gaussdpdf <- function (x) { -x*exp(-0.5*x^2) }
-gauss <- new("unuran.cont", pdf=gausspdf, dpdf=gaussdpdf, islog=FALSE)
+gauss <- new("unuran.cont", pdf=gausspdf, dpdf=gaussdpdf, islog=FALSE, center=0.1)
+unr <- 0; unr <- unuran.new(gauss, "tdr")
+unr
+x <- unuran.sample(unr, samplesize)
+pval <- chisq.test( hist(pnorm(x),plot=FALSE,breaks=breaks)$density )$p.value
+if (pval < alpha) stop("chisq test FAILED!  p-value=",signif(pval))
+
+## use PDF
+gausspdf <- function (x) { exp(-0.5*x^2) }
+gaussdpdf <- function (x) { -x*exp(-0.5*x^2) }
+gauss <- unuran.cont.new(pdf=gausspdf, dpdf=gaussdpdf, islog=FALSE, center=0.1)
 unr <- 0; unr <- unuran.new(gauss, "tdr")
 unr
 x <- unuran.sample(unr, samplesize)
@@ -72,7 +98,7 @@ if (pval < alpha) stop("chisq test FAILED!  p-value=",signif(pval))
 ## use logPDF
 gausspdf <- function (x) { -0.5*x^2 }
 gaussdpdf <- function (x) { -x }
-gauss <- new("unuran.cont", pdf=gausspdf, dpdf=gaussdpdf, islog=TRUE)
+gauss <- new("unuran.cont", pdf=gausspdf, dpdf=gaussdpdf, islog=TRUE, mode=0)
 unr <- 0; unr <- unuran.new(gauss, "tdr")
 unr
 x <- unuran.sample(unr, samplesize)
@@ -89,6 +115,7 @@ x <- unuran.sample(unr, samplesize)
 pval <- chisq.test( hist(pnorm(x),plot=FALSE,breaks=breaks)$density )$p.value
 if (pval < alpha) stop("chisq test FAILED!  p-value=",signif(pval))
 
+
 ## --- Discrete distributions -----------------------------------------------
 
 ## Create an object
@@ -99,6 +126,7 @@ unr <- new("unuran", "binomial(20,0.5)", "dgt")
 unuran.sample(unr)
 unuran.sample(unr,10)
 x <- unuran.sample(unr, samplesize)
+
 
 ## --- Discrete distributions - S4 distribution object ----------------------
 
@@ -126,6 +154,7 @@ x <- unuran.sample(unr, samplesize)
 pval <- chisq.test( hist(pbinom(x,100,0.3),plot=FALSE)$density )$p.value
 if (pval < alpha) stop("chisq test FAILED!  p-value=",signif(pval))
 
+
 ## --- Continuous Multivariate distributions --------------------------------
 
 mvpdf <- function (x) { exp(-sum(x^2)) }
@@ -137,5 +166,54 @@ x
 unr <- 0; unr <- unuran.new(mvd, "vnrou")
 x <- unuran.sample(unr, 10)
 x
+
+
+## --- quantile function ----------------------------------------------------
+
+## test U-error
+unr <- unuran.new("normal()","hinv; u_resolution=1.e-13")
+
+## single double as argument
+Tmax <- 0
+for (U in (0:20)/20) {
+        T <- pnorm( uq(unr,U) ) - U
+        print (T)
+        Tmax <- max(abs(T),Tmax)
+}
+cat("Max. error =",Tmax,"\n")
+if (Tmax > 1.e-13) stop ("Max. error exceeds limit")
+
+## vector argument
+U <- (0:20)/20
+T <- pnorm( uq(unr,U) ) - U
+print (T)
+Tmax <- max(abs(T))
+cat("Max. error =",Tmax,"\n")
+if (Tmax > 1.e-13) stop ("Max. error exceeds limit")
+
+## special arguments
+for (U in c(-1,-0.001,0,0.5,1.,1.001,NA,NaN) ) {
+        cat ("U =",U,"\tX =",uq(unr,U),"\n")
+}
+
+U <- c(-1,-0.001,0,0.5,1.,1.001,NA,NaN)
+T <- uq(unr,U)
+rbind(U,T)
+
+uq(unr,numeric())
+
+## test whether 'uq' throws an error when UNU.RAN object does not implement
+## an inversion method
+unr <- unuran.new("normal()","tdr")
+if( ! is.error( uq(unr,0.5) ) )
+   stop("'uq' does not detect UNU.RAN object with non-inversion method")
+
+## test whether 'uq' detects invalid arguments
+if( ! is.error( uq(1,0.5) ) )
+   stop("'uq' does not detect invalid argument 'unr'")
+        
+if( ! is.error( uq(unr,"a") ) )
+   stop("'uq' does not detect invalid argument 'U'")
+        
 
 ## --- End ------------------------------------------------------------------

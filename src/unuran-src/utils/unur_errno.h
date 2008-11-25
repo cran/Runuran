@@ -25,6 +25,7 @@ enum {
   UNUR_ERR_GEN_INVALID    = 0x34,     
   UNUR_ERR_GEN_SAMPLING   = 0x35,     
   UNUR_ERR_NO_REINIT      = 0x36,     
+  UNUR_ERR_NO_QUANTILE    = 0x37,     
   UNUR_ERR_URNG           = 0x41,     
   UNUR_ERR_URNG_MISS      = 0x42,     
   UNUR_ERR_STR            = 0x51,     

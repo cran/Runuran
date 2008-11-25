@@ -46,7 +46,7 @@ static void _unur_fstr_parser_free (struct parser_data *pdata);
 static int _unur_fstr_tokenize (struct parser_data *pdata);
 static int _unur_fstr_next_symbol (struct parser_data *pdata, char *symb);
 static int _unur_fstr_find_symbol (const char *symb, int start, int end);
-static int _unur_fstr_find_user_defined (struct parser_data *pdata, char *symb, char next_char);
+static int _unur_fstr_find_user_defined (struct parser_data *pdata, char *symb, int next_char);
 static int _unur_fstr_UnsignedConstant (struct parser_data *pdata, char *uc);
 static int _unur_fstr_DigitalSequence (struct parser_data *pdata, char *ds);
 static int _unur_fstr_ScaleFactor (struct parser_data *pdata, char *sf);

@@ -253,39 +253,39 @@ compute_mean_covar( double *data, int n_data, int dim,
 static void
 _unur_vempk_debug_init( const struct unur_par *par, const struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   int i;
   CHECK_NULL(par,RETURN_VOID);  COOKIE_CHECK(par,CK_VEMPK_PAR,RETURN_VOID);
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_VEMPK_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: type    = continuous univariate random variates\n",gen->genid);
-  fprintf(log,"%s: method  = VEMPK ((Vector) EMPirical distribution with Kernel smoothing)\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: type    = continuous univariate random variates\n",gen->genid);
+  fprintf(LOG,"%s: method  = VEMPK ((Vector) EMPirical distribution with Kernel smoothing)\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
   _unur_distr_cvemp_debug( gen->distr, gen->genid, (gen->debug & VEMPK_DEBUG_PRINTDATA));
-  fprintf(log,"%s:\tmean vector =\n",gen->genid);
-  fprintf(log,"%s:\t   ( %g",gen->genid,GEN->xbar[0]);
+  fprintf(LOG,"%s:\tmean vector =\n",gen->genid);
+  fprintf(LOG,"%s:\t   ( %g",gen->genid,GEN->xbar[0]);
   for (i=1; i<GEN->dim; i++) 
-    fprintf(log,", %g",GEN->xbar[i]);
-  fprintf(log,")\n%s:\n",gen->genid);
-  fprintf(log,"%s:\tcovariance matrix = [see %s]\n",gen->genid, GEN->kerngen->genid);
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: sampling routine = _unur_vempk_sample_cvec()\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: smoothing factor = %g",gen->genid, PAR->smoothing);
-  _unur_print_if_default(par,VEMPK_SET_SMOOTHING); fprintf(log,"\n");
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: bandwith hopt = %g\n",gen->genid, GEN->hopt);
-  fprintf(log,"%s: (used)   hact = %g\n",gen->genid, GEN->hact);
-  fprintf(log,"%s:\n",gen->genid);
+    fprintf(LOG,", %g",GEN->xbar[i]);
+  fprintf(LOG,")\n%s:\n",gen->genid);
+  fprintf(LOG,"%s:\tcovariance matrix = [see %s]\n",gen->genid, GEN->kerngen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: sampling routine = _unur_vempk_sample_cvec()\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: smoothing factor = %g",gen->genid, PAR->smoothing);
+  _unur_print_if_default(par,VEMPK_SET_SMOOTHING); fprintf(LOG,"\n");
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: bandwith hopt = %g\n",gen->genid, GEN->hopt);
+  fprintf(LOG,"%s: (used)   hact = %g\n",gen->genid, GEN->hact);
+  fprintf(LOG,"%s:\n",gen->genid);
   if (gen->variant & VEMPK_VARFLAG_VARCOR) {
-    fprintf(log,"%s: use variance correction\n",gen->genid);
-    fprintf(log,"%s:\tcorrection factor = %g\n",gen->genid, GEN->corfac);
+    fprintf(LOG,"%s: use variance correction\n",gen->genid);
+    fprintf(LOG,"%s:\tcorrection factor = %g\n",gen->genid, GEN->corfac);
   }
   else
-    fprintf(log,"%s: no variance correction\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
+    fprintf(LOG,"%s: no variance correction\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
 } 
 #endif   
 #ifdef UNUR_ENABLE_INFO

@@ -29,5 +29,9 @@ double unur_test_correlation( UNUR_GEN *generator1, UNUR_GEN *generator2,
 int unur_test_quartiles( UNUR_GEN *generator,
 			 double *q0, double *q1, double *q2, double *q3, double *q4, 
 			 int samplesize, int verbosity, FILE *out );
+double unur_test_inverror( const UNUR_GEN *generator, 
+			   double *max_error, double *MAE, double threshold,
+			   int samplesize, int randomized, int testtails,
+			   int verbosity, FILE *out );
 int unur_test_cvec_rankcorr( double *rc, UNUR_GEN *gen, int samplesize, int verbose, FILE *out );
 #endif  

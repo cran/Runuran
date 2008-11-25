@@ -39,14 +39,19 @@ setClass( "unuran.cont",
 ## Initialize ---------------------------------------------------------------
 
 setMethod( "initialize", "unuran.cont",
-          function(.Object, cdf=NULL, pdf=NULL, dpdf=NULL, islog=TRUE, lb=-Inf, ub=Inf) {
+          function(.Object, cdf=NULL, pdf=NULL, dpdf=NULL, islog=FALSE,
+                   mode=NA, center=NA, lb=-Inf, ub=Inf, area=NA, name=NA) {
                   ## cdf .... cumulative distribution function (CDF)
                   ## pdf .... probability density function (PDF)
                   ## dpdf ... derivative of PDF
                   ## islog .. whether CDF and PDF are given as logarithms
                   ##          (the dpdf is then the derative of log(pdf)!)
+                  ## mode ... mode of distribution
+                  ## center . "center" (typical point) of distribution
                   ## lb ..... lower bound of domain
                   ## ub ..... upper bound of domain
+                  ## area ... area below PDF
+                  ## name ... name of distribution
 
                   ## Check entries
                   if(! (is.numeric(lb) && is.numeric(ub) && lb < ub) )
@@ -66,7 +71,8 @@ setMethod( "initialize", "unuran.cont",
                   if (is.function(cdf))  .Object@cdf  <- cdf
                   if (is.function(pdf))  .Object@pdf  <- pdf
                   if (is.function(dpdf)) .Object@dpdf <- dpdf
-
+                  if (!is.na(name))      .Object@name <- name
+                  
                   ## We need an evironment for evaluating R expressions
                   .Object@env <- new.env()
                   
@@ -74,7 +80,7 @@ setMethod( "initialize", "unuran.cont",
                   .Object@distr <-.Call("Runuran_cont_init",
                                         .Object, .Object@env,
                                         .Object@cdf, .Object@pdf, .Object@dpdf, islog,
-                                        c(lb,ub),
+                                        mode, center, c(lb,ub), area, name,
                                         PACKAGE="Runuran")
 
                   ## Check UNU.RAN object
@@ -85,5 +91,12 @@ setMethod( "initialize", "unuran.cont",
                   ## return new UNU.RAN object
                   .Object
           } )
+
+## Shortcut
+unuran.cont.new <- function(cdf=NULL, pdf=NULL, dpdf=NULL, islog=FALSE,
+                            mode=NA, center=NA, lb=-Inf, ub=Inf, area=NA, name=NA) {
+        new("unuran.cont", cdf=cdf, pdf=pdf, dpdf=dpdf, islog=islog,
+            mode=mode, center=center, lb=lb, ub=ub, area=area, name=name)
+}
 
 ## End ----------------------------------------------------------------------

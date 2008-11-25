@@ -1,0 +1,205 @@
+
+\documentclass[%
+a4paper,         %% A4 paper
+11pt,            %% Font size
+DIV14,           %% Scale for page layout
+BCOR10mm,        %% add 10 mm margin for binding
+%%smallheadings,   %% do not use huge font size for headings
+%%pointednumbers,  %% section numbers have a point
+%%openbib,         %% use multiple lines for each bibitem
+%%appendixprefix,  %% prefix appendix by "Appendix"
+abstracton       %% print header "Abstract"
+]{scrartcl}
+
+%% -- Load packages ---------------------------------------------------------
+
+\usepackage{enumerate}
+\usepackage[numbers,sort&compress,longnamesfirst]{natbib}
+\usepackage{graphicx}
+\usepackage{tikz}
+
+%% -- PDF information -------------------------------------------------------
+
+\usepackage[pdftex]{hyperref}
+
+\hypersetup{
+  pdftitle={Runuran - An R Interface to UNU.RAN Library},
+  pdfsubject={non-uniform random variate generator},
+  pdfauthor={Josef Leydold and Wolfgang H\"ormann},
+  pdfkeywords={non-uniform random variate generator,
+    Monte Carlo method, stochastic simulation},
+}
+
+\hypersetup{
+  colorlinks={true},
+  pdfborder={0 0 0},
+  citecolor={blue},
+  linkcolor={red!70!black}
+}
+
+% Some changes to default values
+\renewcommand{\sectionautorefname}{Section}
+\renewcommand{\subsectionautorefname}{Section}
+\renewcommand{\subsubsectionautorefname}{Section}
+
+%% -- Colors ----------------------------------------------------------------
+
+\usepackage{color,xcolor,colortbl}
+
+%% -- R and Sweave ----------------------------------------------------------
+
+%% Sweave
+\SweaveOpts{eval=TRUE,echo=TRUE,eps=FALSE,results=verbatim,keep.source=TRUE,prefix.string=figure}
+
+%% When R Sweave is used then you must not modify, move or delete
+%% the following line:
+%% need no \usepackage{Sweave}
+
+%% We define our own environments
+\usepackage{fancyvrb}
+
+\setkeys{Gin}{width=0.9\textwidth}  %% default width for included graphics
+
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{formatcom={\color{red!80!black}},fontshape=sl,baselinestretch=0.9}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{baselinestretch=0.9}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{fontshape=sl}
+\renewcommand{\FancyVerbFormatLine}[1]{~#1}
+
+\newenvironment{Schunk}{%
+  \pagebreak[3]%
+  \par\smallskip\noindent%
+  \color{black!50!white}%
+  \mbox{}\hrulefill~~Example~~\hrulefill\mbox{}
+  \color{black!80!white}%
+  \pagebreak[0]%
+}{%
+  \pagebreak[0]%
+  \color{black!50!white}%
+  \noindent\rule[2ex]{\textwidth}{1.5pt}%
+  \par\smallskip
+  \pagebreak[3]%
+}
+
+%% -- R vignette ------------------------------------------------------------
+
+%% entry for R vignette list
+%% \VignetteIndexEntry{Using Runuran}
+%% \VignettePackage{Runuran}
+
+%% -- Layout ----------------------------------------------------------------
+
+\pagestyle{headings}
+
+\setlength{\parskip}{0pt}
+
+%% -- Title page ------------------------------------------------------------
+
+\makeatletter
+\renewcommand*{\@maketitle}{%
+  \clearpage
+  \let\footnote\thanks
+  \ifx\@extratitle\@empty \else
+    \noindent\@extratitle \next@tpage \if@twoside \null\next@tpage \fi
+  \fi
+  \ifx\@titlehead\@empty \else
+    \noindent\begin{minipage}[t]{\textwidth}
+      \@titlehead
+    \end{minipage}\par
+  \fi
+  \null
+  \vskip 2em%
+  \begin{center}%
+    \ifx\@subject\@empty \else
+      {\subject@font \@subject \par}
+      \vskip 1.5em
+    \fi
+    {\titlefont\huge \@title \par}%
+    \vskip 1.5em%
+    {\Large
+      \lineskip .5em%
+      \begin{tabular}[t]{c}
+        \@author
+      \end{tabular}\par
+    }%
+    \vskip 1em%
+    {\large \@publishers \par}
+    \ifx\@dedication\@empty \else
+      \vskip 2em
+      {\Large \@dedication \par}
+    \fi
+    \vskip 1em%
+    {\large \textbf{\@date} \par}%
+    \vskip \z@ \@plus 1em
+  \end{center}%
+  \par
+  \vskip 2em
+}
+\makeatother
+
+%% -- Macros ----------------------------------------------------------------
+
+\newcommand{\R}{\textsf{R}}
+\newcommand{\Runuran}{\textsf{Runuran}}
+\newcommand{\code}[1]{\texttt{#1}}
+
+\newcommand{\speed}[1]{%
+  \begin{tikzpicture}[xscale=0.3,yscale=0.2,very thin]
+    \draw [use as bounding box] (-3,0) (13,1);
+    \shade [top color=red!70!white,bottom color=green!70!white,middle color=white!90!black,shading angle=90] (0,0) rectangle (10,1);
+    \draw [ultra thin] (0,0) rectangle (10,1);
+    \draw (0,0.5) node [left] {slow};
+    \draw (10,0.5) node [right] {fast};
+    \draw [line width=1.5pt,blue!80!black,fill=yellow!40!white] (#1,0.5) ellipse (14pt and 21pt);
+  \end{tikzpicture}
+}
+
+%% -- Load Library ----------------------------------------------------------
+
+<<results=hide,echo=FALSE>>=
+library("Runuran")
+@ 
+
+%% --------------------------------------------------------------------------
+
+\begin{document}
+
+%% --------------------------------------------------------------------------
+
+\SweaveInput{src/title.tex}
+
+\renewcommand{\contentsname}{Table of Contents}
+\setcounter{tocdepth}{1}
+\setcounter{section}{-1}
+\tableofcontents
+
+% ---------------------------------------------------------------------------
+
+\clearpage
+\SweaveInput{src/intro.Rnw}
+
+\clearpage
+\SweaveInput{src/distributions.Rnw}
+\clearpage
+\SweaveInput{src/universal.Rnw}
+\clearpage
+\SweaveInput{src/advanced.Rnw}
+
+% ---------------------------------------------------------------------------
+\appendix
+
+\clearpage
+\SweaveInput{src/arvag.Rnw}
+\clearpage
+\SweaveInput{src/glossary.tex}
+
+% ---------------------------------------------------------------------------
+
+\clearpage
+\bibliographystyle{abbrvnat}
+\bibliography{src/arvag.bib}
+
+% ---------------------------------------------------------------------------
+
+\end{document}
+
+% ---------------------------------------------------------------------------

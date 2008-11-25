@@ -312,39 +312,39 @@ _unur_hri_sample_check( struct unur_gen *gen )
 void
 _unur_hri_debug_init( const struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_HRI_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: type    = continuous univariate random variates\n",gen->genid);
-  fprintf(log,"%s: method  = HRI (Hazard Rate Increasing)\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: type    = continuous univariate random variates\n",gen->genid);
+  fprintf(LOG,"%s: method  = HRI (Hazard Rate Increasing)\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
   _unur_distr_cont_debug( gen->distr, gen->genid );
-  fprintf(log,"%s: sampling routine = _unur_hri_sample",gen->genid);
+  fprintf(LOG,"%s: sampling routine = _unur_hri_sample",gen->genid);
   if (gen->variant & HRI_VARFLAG_VERIFY)
-    fprintf(log,"_check()\n");
+    fprintf(LOG,"_check()\n");
   else
-    fprintf(log,"()\n");
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: design point p0 = %g  (HR(p0)=%g)",gen->genid,GEN->p0,GEN->hrp0);
+    fprintf(LOG,"()\n");
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: design point p0 = %g  (HR(p0)=%g)",gen->genid,GEN->p0,GEN->hrp0);
   _unur_print_if_default(gen,HRI_SET_P0);
-  fprintf(log,"\n%s: left boundary = %g\n",gen->genid,GEN->left_border);
-  fprintf(log,"%s:\n",gen->genid);
-  fflush(log);
+  fprintf(LOG,"\n%s: left boundary = %g\n",gen->genid,GEN->left_border);
+  fprintf(LOG,"%s:\n",gen->genid);
+  fflush(LOG);
 } 
 void
 _unur_hri_debug_sample( const struct unur_gen *gen, 
 			double x, double p1, int i0, int i1 )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_HRI_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s: X = %g\t(p1=%g)\t#iterations = %d + %d = %d",gen->genid,
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s: X = %g\t(p1=%g)\t#iterations = %d + %d = %d",gen->genid,
 	  x, p1, i0, i1, i0+i1);
   if (i1) 
-    fprintf(log,"   2nd loop\n");
+    fprintf(LOG,"   2nd loop\n");
   else
-    fprintf(log,"\n");
+    fprintf(LOG,"\n");
 } 
 #endif   
 #ifdef UNUR_ENABLE_INFO
@@ -362,7 +362,7 @@ _unur_hri_info( struct unur_gen *gen, int help )
   _unur_string_append(info,"method: HRI (Hazard Rate Increasing)\n");
   _unur_string_append(info,"\n");
   _unur_string_append(info,"performance characteristics:\n");
-  _unur_string_append(info,"   E[#interations] = %.2f  [approx.]\n",
+  _unur_string_append(info,"   E[#iterations] = %.2f  [approx.]\n",
 		      unur_test_count_urn(gen,samplesize,0,NULL)/((double)samplesize));
   _unur_string_append(info,"\n");
   if (help) {

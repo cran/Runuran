@@ -217,7 +217,7 @@ _unur_dsrou_free( struct unur_gen *gen )
 int
 _unur_dsrou_sample( struct unur_gen *gen )
 { 
-  double U,V;
+  double U,V,X;
   int I;
   CHECK_NULL(gen,INT_MAX);  COOKIE_CHECK(gen,CK_DSROU_GEN,INT_MAX);
   while (1) {
@@ -225,9 +225,10 @@ _unur_dsrou_sample( struct unur_gen *gen )
     V /= (V<0.) ? GEN->ul : GEN->ur;    
     while ( _unur_iszero(U = _unur_call_urng(gen->urng)));
     U *= (V<0.) ? GEN->ul : GEN->ur;
-    I = floor(V/U) + DISTR.mode;
-    if ( (I < DISTR.BD_LEFT) || (I > DISTR.BD_RIGHT) )
+    X = floor(V/U) + DISTR.mode;
+    if ( (X < DISTR.BD_LEFT) || (X > DISTR.BD_RIGHT) )
       continue;
+    I = (int) X;
     if (U*U <= PMF(I))
       return I;
   }
@@ -235,7 +236,7 @@ _unur_dsrou_sample( struct unur_gen *gen )
 int
 _unur_dsrou_sample_check( struct unur_gen *gen )
 { 
-  double U,V,pI,VI;
+  double U,V,pI,VI,X;
   double um2, vl, vr;
   int I;
   CHECK_NULL(gen,INT_MAX);  COOKIE_CHECK(gen,CK_DSROU_GEN,INT_MAX);
@@ -244,9 +245,10 @@ _unur_dsrou_sample_check( struct unur_gen *gen )
     V /= (V<0.) ? GEN->ul : GEN->ur;
     while ( _unur_iszero(U = _unur_call_urng(gen->urng)));
     U *= (V<0.) ? GEN->ul : GEN->ur;
-    I = floor(V/U) + DISTR.mode;
-    if ( (I < DISTR.BD_LEFT) || (I > DISTR.BD_RIGHT) )
+    X = floor(V/U) + DISTR.mode;
+    if ( (X < DISTR.BD_LEFT) || (X > DISTR.BD_RIGHT) )
       continue;
+    I = (int) X;
     pI = PMF(I);
     VI = V/U * sqrt(pI);
     um2 = (2.+4.*DBL_EPSILON) * ((V<0) ? GEN->ul*GEN->ul : GEN->ur*GEN->ur);
@@ -291,39 +293,39 @@ _unur_dsrou_rectangle( struct unur_gen *gen )
 static void
 _unur_dsrou_debug_init( const struct unur_gen *gen, int is_reinit )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_DSROU_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s:\n",gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s:\n",gen->genid);
   if (!is_reinit) {
-    fprintf(log,"%s: type    = discrete univariate random variates\n",gen->genid);
-    fprintf(log,"%s: method  = dsrou (discrete simple universal ratio-of-uniforms)\n",gen->genid);
+    fprintf(LOG,"%s: type    = discrete univariate random variates\n",gen->genid);
+    fprintf(LOG,"%s: method  = dsrou (discrete simple universal ratio-of-uniforms)\n",gen->genid);
   }
   else
-    fprintf(log,"%s: reinit!\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
+    fprintf(LOG,"%s: reinit!\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
   _unur_distr_discr_debug( gen->distr, gen->genid, FALSE );
-  fprintf(log,"%s: sampling routine = _unur_dsrou_sample",gen->genid);
+  fprintf(LOG,"%s: sampling routine = _unur_dsrou_sample",gen->genid);
   if (gen->variant & DSROU_VARFLAG_VERIFY)
-    fprintf(log,"_check");
-  fprintf(log,"()\n%s:\n",gen->genid);
+    fprintf(LOG,"_check");
+  fprintf(LOG,"()\n%s:\n",gen->genid);
   if (gen->set & DSROU_SET_CDFMODE)
-    fprintf(log,"%s: CDF(mode) = %g\n",gen->genid,GEN->Fmode);
+    fprintf(LOG,"%s: CDF(mode) = %g\n",gen->genid,GEN->Fmode);
   else
-    fprintf(log,"%s: CDF(mode) unknown\n",gen->genid);
-  fprintf(log,"%s: no (universal) squeeze\n",gen->genid);
-  fprintf(log,"%s: no mirror principle\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: Rectangles:\n",gen->genid);
+    fprintf(LOG,"%s: CDF(mode) unknown\n",gen->genid);
+  fprintf(LOG,"%s: no (universal) squeeze\n",gen->genid);
+  fprintf(LOG,"%s: no mirror principle\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: Rectangles:\n",gen->genid);
   if (GEN->ul > 0.)
-    fprintf(log,"%s:    left upper point  = (%g,%g) \tarea = %g   (%5.2f%%)\n",
+    fprintf(LOG,"%s:    left upper point  = (%g,%g) \tarea = %g   (%5.2f%%)\n",
 	    gen->genid,GEN->al/GEN->ul,GEN->ul,fabs(GEN->al),100.*fabs(GEN->al)/(-GEN->al+GEN->ar));
   else
-    fprintf(log,"%s:    left upper point  = (0,0) \tarea = 0   (0.00%%)\n",gen->genid);
-  fprintf(log,"%s:    right upper point = (%g,%g) \tarea = %g   (%5.2f%%)\n",
+    fprintf(LOG,"%s:    left upper point  = (0,0) \tarea = 0   (0.00%%)\n",gen->genid);
+  fprintf(LOG,"%s:    right upper point = (%g,%g) \tarea = %g   (%5.2f%%)\n",
 	  gen->genid,GEN->ar/GEN->ur,GEN->ur,GEN->ar,100.*GEN->ar/(-GEN->al+GEN->ar));
-  fprintf(log,"%s:\n",gen->genid);
-  fflush(log);
+  fprintf(LOG,"%s:\n",gen->genid);
+  fflush(LOG);
 } 
 #endif   
 #ifdef UNUR_ENABLE_INFO

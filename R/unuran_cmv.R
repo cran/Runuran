@@ -37,11 +37,12 @@ setClass( "unuran.cmv",
 ## Initialize ---------------------------------------------------------------
 
 setMethod( "initialize", "unuran.cmv",
-          function(.Object, dim=1, pdf=NULL, mode=NULL, center=NULL, ll=NULL, ur=NULL) {
+          function(.Object, dim=1, pdf=NULL, mode=NULL, center=NULL, ll=NULL, ur=NULL, name=NA) {
                   ## dim ..... dimension of distribution
                   ## pdf ..... probability density function (PDF)
                   ## mode .... mode of distribution
                   ## ll, ur .. lower left and upper right vertex of rectangular domain
+                  ## name .... name of distribution
 
                   ## Check entries
                   ndim <- as.integer(dim)
@@ -63,6 +64,7 @@ setMethod( "initialize", "unuran.cmv",
                   ## Store informations (if provided)
                   .Object@ndim <- ndim
                   if (is.function(pdf))  .Object@pdf <- pdf
+                  if (!is.na(name))      .Object@name <- name
 
                   ## We need an evironment for evaluating R expressions
                   .Object@env <- new.env()
@@ -70,7 +72,7 @@ setMethod( "initialize", "unuran.cmv",
                   ## Create UNUR_DISTR object
                   .Object@distr <-.Call("Runuran_cmv_init",
                                         .Object, .Object@env,
-                                        .Object@ndim, .Object@pdf, mode, center, ll, ur,
+                                        .Object@ndim, .Object@pdf, mode, center, ll, ur, name,
                                         PACKAGE="Runuran")
 
                   ## Check UNU.RAN object
@@ -81,5 +83,11 @@ setMethod( "initialize", "unuran.cmv",
                   ## return new UNU.RAN object
                   .Object
           } )
+
+
+## Shortcut
+unuran.cmv.new <- function(dim=1, pdf=NULL, mode=NULL, center=NULL, ll=NULL, ur=NULL, name=NA) {
+        new("unuran.cmv", dim=dim, pdf=pdf, mode=mode, center=center, ll=ll, ur=ur, name=name)
+}
 
 ## End ----------------------------------------------------------------------

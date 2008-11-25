@@ -1,0 +1,11 @@
+#! /bin/sh
+
+rm -f config.* 
+rm -rf autom4te.cache
+
+(cd src;
+    rm -f Makevars config.h 
+    find . -type f -name '*.o' -exec rm {} + )
+
+exit 0
+

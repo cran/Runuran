@@ -21,13 +21,13 @@ void
 _unur_error_handler_default( const char *objid, const char *file, int line, 
 			     const char *errortype, int errorcode, const char *reason )
 {
-  FILE *log = unur_get_stream();
+  FILE *LOG = unur_get_stream();
   if (!objid) objid = "UNURAN";
-  fprintf(log,"%s: [%s] %s:%d - %s:\n", objid, errortype, file, line,
+  fprintf(LOG,"%s: [%s] %s:%d - %s:\n", objid, errortype, file, line,
 	  unur_get_strerror(errorcode));
   if (reason && strlen(reason))
-    fprintf(log,"%s: ..>  %s\n", objid, reason);
-  fflush(log);   
+    fprintf(LOG,"%s: ..>  %s\n", objid, reason);
+  fflush(LOG);   
 } 
 void
 _unur_error_handler_off( const char *objid ATTRIBUTE__UNUSED, 
@@ -50,9 +50,9 @@ _unur_error_cookies( const char *file, int line, unsigned observed, unsigned exp
 } 
 #endif
 const char *
-unur_get_strerror ( const int unur_errno )
+unur_get_strerror ( const int errorcode )
 {
-  switch (unur_errno) {
+  switch (errorcode) {
   case UNUR_SUCCESS:
     return "(no error)";
   case UNUR_ERR_DISTR_NPARAMS:
@@ -90,7 +90,9 @@ unur_get_strerror ( const int unur_errno )
   case UNUR_ERR_GEN_SAMPLING:
     return "(generator) sampling error";
   case UNUR_ERR_NO_REINIT:
-    return "(generator) reinit missing";
+    return "(generator) reinit not implemented";
+  case UNUR_ERR_NO_QUANTILE:
+    return "(generator) quantile not implemented";
   case UNUR_ERR_GEN:
     return "(generator)";
   case UNUR_ERR_URNG:

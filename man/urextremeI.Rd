@@ -10,6 +10,8 @@
   (Gumbel-type) distribution with
   location parameter \code{location} and scale parameter \code{scale}.
   It also allows sampling from the truncated distribution.
+  
+  [Distribution] -- Sampling Function: Gumbel (extreme value type I).  %% Continuous
 }
 
 \usage{

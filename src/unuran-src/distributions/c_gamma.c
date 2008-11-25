@@ -87,6 +87,8 @@ _unur_cdf_gamma( double x, const UNUR_DISTR *distr )
     x = (x-gamma) / beta;
   if (x <= 0.)
     return 0.;
+  if (_unur_isinf(x)==1)
+    return 1.;
   return _unur_sf_incomplete_gamma(x,alpha);
 } 
 int

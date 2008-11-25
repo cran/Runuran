@@ -9,6 +9,8 @@
   UNU.RAN random variate generator for the Poisson distribution
   with parameter \code{lambda}.
   It also allows sampling from the truncated distribution.
+  
+  [Distribution] -- Sampling Function: Poisson.  %% Discrete
 }
 
 \usage{
@@ -23,7 +25,7 @@ urpois(n, lambda, lb = 0, ub = Inf)
 
 \details{
   The Poisson distribution has density
-%-- please leave the linebreaking for the next two ! --
+  %-- please leave the linebreaking for the next two lines ! --
   \deqn{p(x) = \frac{\lambda^x e^{-\lambda}}{x!}}{%
         p(x) = lambda^x exp(-lambda)/x!}
   for \eqn{x = 0, 1, 2, \ldots}.
@@ -61,7 +63,7 @@ urpois(n, lambda, lb = 0, ub = Inf)
 }
 
 \examples{
-## Create a sample of size 1000
+## Create a sample of size 1000 from Poisson distribution with lamda=2.3
 x <- urpois(n=1000,lambda=2.3)
 }
 

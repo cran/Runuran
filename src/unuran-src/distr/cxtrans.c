@@ -484,40 +484,40 @@ _unur_dpdf_at_pole( const struct unur_distr *cxt )
 void
 _unur_distr_cxtrans_debug( const struct unur_distr *cxt, const char *genid )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(cxt,RETURN_VOID);
   COOKIE_CHECK(cxt,CK_DISTR_CONT,RETURN_VOID);
   CHECK_NULL(cxt->base,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s: distribution:\n",genid);
-  fprintf(log,"%s:\ttype = continuous univariate distribution of transformed random variable\n",genid);
-  fprintf(log,"%s:\tname = %s\n",genid,cxt->name);
-  fprintf(log,"%s:\talpha = %g\t",genid,CXT.ALPHA);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s: distribution:\n",genid);
+  fprintf(LOG,"%s:\ttype = continuous univariate distribution of transformed random variable\n",genid);
+  fprintf(LOG,"%s:\tname = %s\n",genid,cxt->name);
+  fprintf(LOG,"%s:\talpha = %g\t",genid,CXT.ALPHA);
   if (_unur_isinf(CXT.ALPHA)==1)
-    fprintf(log,"[ exponential transformation: Y = exp(Z) ]\n"); 
+    fprintf(LOG,"[ exponential transformation: Y = exp(Z) ]\n"); 
   else if (_unur_iszero(CXT.ALPHA))
-    fprintf(log,"[ logarithmic transformation: Y = log(Z) ]\n"); 
+    fprintf(LOG,"[ logarithmic transformation: Y = log(Z) ]\n"); 
   else
-    fprintf(log,"[ power transformation: Y = Z^alpha ]\n"); 
-  fprintf(log,"%s:\tmu = %g, sigma = %g\t[Z = (X-%g)/%g]\n",genid, CXT.MU, CXT.SIGMA, CXT.MU, CXT.SIGMA);
-  fprintf(log,"%s:\n",genid);
-  fprintf(log,"%s:\tvalues used at pole of underlying distribution\n",genid);
-  fprintf(log,"%s:\t\tlogPDF  = %g\t(PDF  = %g)",genid, CXT.logPDFPOLE, _unur_pdf_at_pole(cxt));
+    fprintf(LOG,"[ power transformation: Y = Z^alpha ]\n"); 
+  fprintf(LOG,"%s:\tmu = %g, sigma = %g\t[Z = (X-%g)/%g]\n",genid, CXT.MU, CXT.SIGMA, CXT.MU, CXT.SIGMA);
+  fprintf(LOG,"%s:\n",genid);
+  fprintf(LOG,"%s:\tvalues used at pole of underlying distribution\n",genid);
+  fprintf(LOG,"%s:\t\tlogPDF  = %g\t(PDF  = %g)",genid, CXT.logPDFPOLE, _unur_pdf_at_pole(cxt));
   _unur_print_if_default(cxt,UNUR_DISTR_SET_GENERIC);
-  fprintf(log,"\n");
-  fprintf(log,"%s:\t\tdlogPDF = %g\t(dPDF = %g)",genid, CXT.dlogPDFPOLE, _unur_dpdf_at_pole(cxt));
+  fprintf(LOG,"\n");
+  fprintf(LOG,"%s:\t\tdlogPDF = %g\t(dPDF = %g)",genid, CXT.dlogPDFPOLE, _unur_dpdf_at_pole(cxt));
   _unur_print_if_default(cxt,UNUR_DISTR_SET_GENERIC);
-  fprintf(log,"\n");
+  fprintf(LOG,"\n");
   if (cxt->set & UNUR_DISTR_SET_MODE)
-    fprintf(log,"%s:\tmode = %g\n",genid,CXT.mode);
+    fprintf(LOG,"%s:\tmode = %g\n",genid,CXT.mode);
   else
-    fprintf(log,"%s:\tmode unknown\n",genid);
-  fprintf(log,"%s:\tdomain = (%g, %g)",genid,CXT.BD_LEFT,CXT.BD_RIGHT);
+    fprintf(LOG,"%s:\tmode unknown\n",genid);
+  fprintf(LOG,"%s:\tdomain = (%g, %g)",genid,CXT.BD_LEFT,CXT.BD_RIGHT);
   _unur_print_if_default(cxt,UNUR_DISTR_SET_DOMAIN);
-  fprintf(log,"\n%s:\tarea below PDF = %g",genid,CXT.area);
+  fprintf(LOG,"\n%s:\tarea below PDF = %g",genid,CXT.area);
   _unur_print_if_default(cxt,UNUR_DISTR_SET_PDFAREA);
-  fprintf(log,"\n%s:\n",genid);
-  fprintf(log,"%s: Underlying distribution:\n",genid);
+  fprintf(LOG,"\n%s:\n",genid);
+  fprintf(LOG,"%s: Underlying distribution:\n",genid);
   _unur_distr_cont_debug(cxt->base, genid);
 } 
 #endif    

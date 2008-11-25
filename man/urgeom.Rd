@@ -9,6 +9,8 @@
   UNU.RAN random variate generator for the Geometric distribution
   with parameter \code{prob}.
   It also allows sampling from the truncated distribution.
+  
+  [Distribution] -- Sampling Function: Geometric.  %% Discrete
 }
 
 \usage{
@@ -51,7 +53,7 @@ urgeom(n, prob, lb = 0, ub = Inf)
 }
 
 \note{
-  This function is wrapper for the UNU.RAN class in \R.
+  This function is a wrapper for the UNU.RAN class in \R.
   Compared to \code{rgeom}, \code{urgeom} is faster, especially for
   larger sample sizes.
   However, in opposition to \code{rgeom} vector arguments are ignored,

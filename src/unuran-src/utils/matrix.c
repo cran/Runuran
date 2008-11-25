@@ -291,39 +291,39 @@ _unur_matrix_cholesky_decomposition (int dim, const double *S, double *L )
 } 
 void
 _unur_matrix_print_vector ( int dim, const double *vec, const char *info,
-			    FILE *log, const char *genid, const char *indent )
+			    FILE *LOG, const char *genid, const char *indent )
 {
   int i;
   if (vec) {
-    fprintf(log,"%s: %s\n", genid, info );
-    fprintf(log,"%s: %s( %g", genid, indent, vec[0]);
+    fprintf(LOG,"%s: %s\n", genid, info );
+    fprintf(LOG,"%s: %s( %g", genid, indent, vec[0]);
     for (i=1; i<dim; i++) 
-      fprintf(log,", %g", vec[i]);
-    fprintf(log," )\n");
+      fprintf(LOG,", %g", vec[i]);
+    fprintf(LOG," )\n");
   }
   else {
-    fprintf(log,"%s: %s [unknown]\n", genid, info );
+    fprintf(LOG,"%s: %s [unknown]\n", genid, info );
   }
-  fprintf(log,"%s:\n",genid);
+  fprintf(LOG,"%s:\n",genid);
 } 
 void
 _unur_matrix_print_matrix ( int dim, const double *mat, const char *info,
-			   FILE *log, const char *genid, const char *indent )
+			   FILE *LOG, const char *genid, const char *indent )
 {
 #define idx(a,b) ((a)*dim+(b))
   int i,j;
   if (mat) {
-    fprintf(log,"%s: %s\n", genid, info); 
+    fprintf(LOG,"%s: %s\n", genid, info); 
     for (i=0; i<dim; i++) {
-      fprintf(log,"%s: %s(% e", genid, indent, mat[idx(i,0)]);
+      fprintf(LOG,"%s: %s(% e", genid, indent, mat[idx(i,0)]);
       for (j=1; j<dim; j++)
-	fprintf(log,",% e",mat[idx(i,j)]);
-      fprintf(log," )\n");
+	fprintf(LOG,",% e",mat[idx(i,j)]);
+      fprintf(LOG," )\n");
     }
   }
   else {
-    fprintf(log,"%s: %s [unknown]\n", genid, info );
+    fprintf(LOG,"%s: %s [unknown]\n", genid, info );
   }
-  fprintf(log,"%s:\n",genid);
+  fprintf(LOG,"%s:\n",genid);
 #undef idx
 } 

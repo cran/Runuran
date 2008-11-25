@@ -10,6 +10,8 @@
   (Frechet-type) distribution with shape parameter \code{shape},
   location parameter \code{location} and scale parameter \code{scale}.
   It also allows sampling from the truncated distribution.
+  
+  [Distribution] -- Sampling Function: Frechet (extreme value type II).  %% Continuous
 }
 
 \usage{
@@ -62,7 +64,7 @@ urextremeII(n, shape, location=0, scale=1, lb=location, ub=Inf)
 }
 
 \note{
-  This function is wrapper for the UNU.RAN class in \R.
+  This function is a wrapper for the UNU.RAN class in \R.
 }
 
 \examples{

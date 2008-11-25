@@ -408,12 +408,12 @@ _unur_fstr_reorganize (struct ftreenode *node)
   return 0;
 } 
 int
-_unur_fstr_next_token (struct parser_data *pdata, int *token, char **symbol)
+_unur_fstr_next_token (struct parser_data *pdata, int *token, char **symb)
 {
   CHECK_NULL(pdata,UNUR_ERR_NULL);  COOKIE_CHECK(pdata,CK_FSTR_PDATA,UNUR_ERR_COOKIE);
   if (pdata->tno < pdata->n_tokens) {
     *token = pdata->token[pdata->tno];
-    *symbol = pdata->tpos[pdata->tno];
+    *symb = pdata->tpos[pdata->tno];
     ++(pdata->tno);
     return UNUR_SUCCESS;
   }

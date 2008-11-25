@@ -105,8 +105,8 @@ int _unur_eigensystem_newqr(int dim, double *a, double *b, double *b2, double *g
 #define ONE  1.
 #define TWO  2.
 #define MAXIT 15
-  double shift, crit, crit2, gamma, oldgam;
-  double xnull, aa, p, s, d, tan, sec, cosec, u, w, w1, oldw;
+  double shift, crit, crit2, gamm, oldgam;
+  double xnull, aa, p, s, d, tanx, sec, cosec, u, w, w1, oldw;
   int i, it, k, l, ll;
   b[dim-1]=ZERO;
   b2[dim-1]=ZERO;
@@ -141,39 +141,39 @@ label_9:
     g[ll-1]=xnull+shift;
     if (ll<dim) { 
       for (it=1; it<=MAXIT; it++) {
-        gamma = a[0]-shift;
-	p = gamma*gamma;
+        gamm = a[0]-shift;
+	p = gamm*gamm;
 	k=1;
 	for (i=1; i<l; i++) {
-	  oldgam = gamma;
+	  oldgam = gamm;
 	  if ( ! _unur_iszero(p) ) {
             aa = a[i] - shift;
-	    tan = b2[i-1] / p;
-	    sec = tan + ONE;
-	    if (tan > EPS2) {
+	    tanx = b2[i-1] / p;
+	    sec = tanx + ONE;
+	    if (tanx > EPS2) {
 	      cosec = p / b2[i-1] + ONE;
-	      if (sec > TWO) gamma = (aa+oldgam)/sec - oldgam;
-	      else gamma = aa - (aa+oldgam)/cosec;
-	      p = gamma*gamma*sec;
+	      if (sec > TWO) gamm = (aa+oldgam)/sec - oldgam;
+	      else gamm = aa - (aa+oldgam)/cosec;
+	      p = gamm*gamm*sec;
 	      b2[i-1] = (p + b2[i]) / cosec;
 	    }
 	    else {
-	      gamma = aa;
-	      p = gamma * gamma;
+	      gamm = aa;
+	      p = gamm * gamm;
 	      b2[i-1] = ZERO;
 	    }
 	  }
 	  else {
-            gamma = -oldgam;
+            gamm = -oldgam;
 	    if (i==1) sec = ONE;
 	    if ( ! _unur_iszero(sec) ) p = b2[i-1] / sec;
 	    sec = ZERO;
 	    b2[i-1] = p + b2[i];
 	  }
-          a[i-1] = a[i] - gamma + oldgam;
+          a[i-1] = a[i] - gamm + oldgam;
 	  if (a[i-1] <= a[k-1]) k=i;
 	}
-	a[l-1] = gamma + shift;
+	a[l-1] = gamm + shift;
 	if (a[l-1] <= a[k-1]) k=l;
 	if (k>1) {
           if (b2[k-2]>crit2) continue;

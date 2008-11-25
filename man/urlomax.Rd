@@ -10,6 +10,8 @@
   distribution of second kind) with
   shape parameter \code{shape} and scale parameter code{scale}.
   It also allows sampling from the truncated distribution.
+  
+  [Distribution] -- Sampling Function: Lomax.  %% Continuous
 }
 
 \usage{
@@ -61,7 +63,7 @@ urlomax(n, shape, scale=1, lb=0, ub=Inf)
 }
 
 \note{
-  This function is wrapper for the UNU.RAN class in \R.
+  This function is a wrapper for the UNU.RAN class in \R.
 }
 
 \examples{

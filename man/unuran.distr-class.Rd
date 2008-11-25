@@ -6,27 +6,29 @@
 \alias{show,unuran.distr-method}
 \alias{initialize,unuran.distr-method}
 
-\title{Experimental virtual class "unuran.distr"}
+\title{Virtual class "unuran.distr"}
 
 \description{%
-  The virtual class "unuran.distr" provides am interface to UNU.RAN
+  The virtual class \code{unuran.distr} provides an interface to UNU.RAN
   objects for distributions.
 
   The following classes extend this class:
   \describe{
-    \item{class "unuran.cont"}{
+    \item{class \code{unuran.cont}}{
       for univariate continuous distributions,
       see \code{\linkS4class{unuran.cont}}.
     }
-    \item{class "unuran.discr"}{
+    \item{class \code{unuran.discr}}{
       for discrete distributions,
       see \code{\linkS4class{unuran.discr}}.
     }
-    \item{class "unuran.cmv"}{
+    \item{class \code{unuran.cmv}}{
       for multivariate continuous distributions,
       see \code{\linkS4class{unuran.cmv}}.
     }
   }
+  
+  [Advanced] -- Distribution Object.
 }
 
 \author{

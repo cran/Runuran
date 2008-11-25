@@ -1074,149 +1074,149 @@ _unur_ars_make_area_table( struct unur_gen *gen )
 void
 _unur_ars_debug_init_start( const struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   int i;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_ARS_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: type    = continuous univariate random variates\n",gen->genid);
-  fprintf(log,"%s: method  = ARS (Adaptive Rejection Sampling)\n",gen->genid);
-  fprintf(log,"%s: transformation T_c(x) = log(x)\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: type    = continuous univariate random variates\n",gen->genid);
+  fprintf(LOG,"%s: method  = ARS (Adaptive Rejection Sampling)\n",gen->genid);
+  fprintf(LOG,"%s: transformation T_c(x) = log(x)\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
   if (gen->distr_is_privatecopy)
-    fprintf(log,"%s: use private copy of distribution object\n",gen->genid);
+    fprintf(LOG,"%s: use private copy of distribution object\n",gen->genid);
   else
-    fprintf(log,"%s: use pointer to external distribution object (dangerous!)\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
+    fprintf(LOG,"%s: use pointer to external distribution object (dangerous!)\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
   _unur_distr_cont_debug( gen->distr, gen->genid );
-  fprintf(log,"%s: sampling routine = _unur_ars_sample",gen->genid);
+  fprintf(LOG,"%s: sampling routine = _unur_ars_sample",gen->genid);
   if (gen->variant & ARS_VARFLAG_VERIFY)
-    fprintf(log,"_check()\n");
+    fprintf(LOG,"_check()\n");
   else
-    fprintf(log,"()\n");
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: maximum number of intervals        = %d",gen->genid,GEN->max_ivs);
+    fprintf(LOG,"()\n");
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: maximum number of intervals        = %d",gen->genid,GEN->max_ivs);
   _unur_print_if_default(gen,ARS_SET_MAX_IVS);
-  fprintf(log,"\n");
-  fprintf(log,"%s: maximum number of iterations       = %d",gen->genid,GEN->max_iter);
+  fprintf(LOG,"\n");
+  fprintf(LOG,"%s: maximum number of iterations       = %d",gen->genid,GEN->max_iter);
   _unur_print_if_default(gen,ARS_SET_MAX_ITER);
-  fprintf(log,"\n%s:\n",gen->genid);
-  fprintf(log,"%s: number of starting points = %d",gen->genid,GEN->n_starting_cpoints);
+  fprintf(LOG,"\n%s:\n",gen->genid);
+  fprintf(LOG,"%s: number of starting points = %d",gen->genid,GEN->n_starting_cpoints);
   _unur_print_if_default(gen,ARS_SET_N_CPOINTS);
-  fprintf(log,"\n%s: starting points:",gen->genid);
+  fprintf(LOG,"\n%s: starting points:",gen->genid);
   if (gen->set & ARS_SET_CPOINTS)
     for (i=0; i<GEN->n_starting_cpoints; i++) {
-      if (i%5==0) fprintf(log,"\n%s:\t",gen->genid);
-      fprintf(log,"   %#g,",GEN->starting_cpoints[i]);
+      if (i%5==0) fprintf(LOG,"\n%s:\t",gen->genid);
+      fprintf(LOG,"   %#g,",GEN->starting_cpoints[i]);
     }
   else
-    fprintf(log," use \"equidistribution\" rule [default]");
-  fprintf(log,"\n%s:\n",gen->genid);
-  fflush(log);
+    fprintf(LOG," use \"equidistribution\" rule [default]");
+  fprintf(LOG,"\n%s:\n",gen->genid);
+  fflush(LOG);
 } 
 void
 _unur_ars_debug_init_finished( const struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_ARS_GEN,RETURN_VOID);
-  log = unur_get_stream();
+  LOG = unur_get_stream();
   _unur_ars_debug_intervals(gen,"INIT completed",TRUE);
-  fprintf(log,"%s: INIT completed **********************\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
-  fflush(log);
+  fprintf(LOG,"%s: INIT completed **********************\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
+  fflush(LOG);
 } 
 void
 _unur_ars_debug_reinit_start( const struct unur_gen *gen )
 {
   int i;
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_ARS_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s: *** Re-Initialize generator object ***\n",gen->genid);
-  fprintf(log,"%s:\n",gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s: *** Re-Initialize generator object ***\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
   if (gen->set & ARS_SET_N_PERCENTILES) {
-    fprintf(log,"%s: use percentiles of old hat as starting points for new hat:",gen->genid);
+    fprintf(LOG,"%s: use percentiles of old hat as starting points for new hat:",gen->genid);
     for (i=0; i<GEN->n_percentiles; i++) {
-      if (i%5==0) fprintf(log,"\n%s:\t",gen->genid);
-      fprintf(log,"   %#g,",GEN->percentiles[i]);
+      if (i%5==0) fprintf(LOG,"\n%s:\t",gen->genid);
+      fprintf(LOG,"   %#g,",GEN->percentiles[i]);
     }
-    fprintf(log,"\n%s: starting points:",gen->genid);
+    fprintf(LOG,"\n%s: starting points:",gen->genid);
     for (i=0; i<GEN->n_starting_cpoints; i++) {
-      if (i%5==0) fprintf(log,"\n%s:\t",gen->genid);
-      fprintf(log,"   %#g,",GEN->starting_cpoints[i]);
+      if (i%5==0) fprintf(LOG,"\n%s:\t",gen->genid);
+      fprintf(LOG,"   %#g,",GEN->starting_cpoints[i]);
     }
-    fprintf(log,"\n");
+    fprintf(LOG,"\n");
   }
   else {
-    fprintf(log,"%s: use starting points given at init\n",gen->genid);
+    fprintf(LOG,"%s: use starting points given at init\n",gen->genid);
   }
-  fprintf(log,"%s:\n",gen->genid);
-  fflush(log);
+  fprintf(LOG,"%s:\n",gen->genid);
+  fflush(LOG);
 } 
 void
 _unur_ars_debug_reinit_retry( const struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_ARS_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s: *** Re-Initialize failed  -->  second trial ***\n",gen->genid);
-  fprintf(log,"%s: use equal-area-rule with %d points\n",gen->genid,GEN->retry_ncpoints);
-  fprintf(log,"%s:\n",gen->genid);
-  fflush(log);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s: *** Re-Initialize failed  -->  second trial ***\n",gen->genid);
+  fprintf(LOG,"%s: use equal-area-rule with %d points\n",gen->genid,GEN->retry_ncpoints);
+  fprintf(LOG,"%s:\n",gen->genid);
+  fflush(LOG);
 } 
 void
 _unur_ars_debug_reinit_finished( const struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_ARS_GEN,RETURN_VOID);
-  log = unur_get_stream();
+  LOG = unur_get_stream();
   _unur_ars_debug_intervals(gen," *** Generator reinitialized ***",TRUE);
-  fprintf(log,"%s:\n",gen->genid);
-  fflush(log);
+  fprintf(LOG,"%s:\n",gen->genid);
+  fflush(LOG);
 } 
 void 
 _unur_ars_debug_intervals( const struct unur_gen *gen, const char *header, int print_areas )
 {
-  FILE *log;
+  FILE *LOG;
   struct unur_ars_interval *iv;
   double Ahat, Ahatl, Ahatr;
   double sAhatl, sAhatr, Atotal, logAmax;
   int i;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_ARS_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  if (header) fprintf(log,"%s:%s\n",gen->genid,header);
-  fprintf(log,"%s:Intervals: %d\n",gen->genid,GEN->n_ivs);
+  LOG = unur_get_stream();
+  if (header) fprintf(LOG,"%s:%s\n",gen->genid,header);
+  fprintf(LOG,"%s:Intervals: %d\n",gen->genid,GEN->n_ivs);
   if (GEN->iv) {
     if (gen->debug & ARS_DEBUG_IV) {
 #ifdef DEBUG_STORE_IP 
-      fprintf(log,"%s: Nr.            tp            ip       logf(tp)     dlogf(tp)       squeeze\n",gen->genid);
+      fprintf(LOG,"%s: Nr.            tp            ip       logf(tp)     dlogf(tp)       squeeze\n",gen->genid);
       for (iv = GEN->iv, i=0; iv->next!=NULL; iv=iv->next, i++) {
 	COOKIE_CHECK(iv,CK_ARS_IV,RETURN_VOID); 
-	fprintf(log,"%s:[%3d]: %#12.6g  %#12.6g  %#12.6g  %#12.6g  %#12.6g\n", gen->genid, i,
+	fprintf(LOG,"%s:[%3d]: %#12.6g  %#12.6g  %#12.6g  %#12.6g  %#12.6g\n", gen->genid, i,
 		iv->x, iv->ip, iv->logfx, iv->dlogfx, iv->sq);
       }
 #else
-      fprintf(log,"%s: Nr.            tp       logf(tp)     dlogf(tp)       squeeze\n",gen->genid);
+      fprintf(LOG,"%s: Nr.            tp       logf(tp)     dlogf(tp)       squeeze\n",gen->genid);
       for (iv = GEN->iv, i=0; iv->next!=NULL; iv=iv->next, i++) {
 	COOKIE_CHECK(iv,CK_ARS_IV,RETURN_VOID); 
-	fprintf(log,"%s:[%3d]: %#12.6g  %#12.6g  %#12.6g  %#12.6g\n", gen->genid, i,
+	fprintf(LOG,"%s:[%3d]: %#12.6g  %#12.6g  %#12.6g  %#12.6g\n", gen->genid, i,
 		iv->x, iv->logfx, iv->dlogfx, iv->sq);
       }
 #endif
       COOKIE_CHECK(iv,CK_ARS_IV,RETURN_VOID); 
-      fprintf(log,"%s:[...]: %#12.6g                %#12.6g  %#12.6g\n", gen->genid,
+      fprintf(LOG,"%s:[...]: %#12.6g                %#12.6g  %#12.6g\n", gen->genid,
 	      iv->x, iv->logfx, iv->dlogfx);
     }
-    fprintf(log,"%s:\n",gen->genid);
+    fprintf(LOG,"%s:\n",gen->genid);
   }
   else
-    fprintf(log,"%s: No intervals !\n",gen->genid);
+    fprintf(LOG,"%s: No intervals !\n",gen->genid);
   if (!print_areas || GEN->Atotal <= 0.) return;
   Atotal = GEN->Atotal;
   logAmax = GEN->logAmax;
   if (gen->debug & ARS_DEBUG_IV) {
-    fprintf(log,"%s:Areas in intervals relative to maximum:\t[ log(A_max) = %g ]\n",gen->genid, logAmax);
-    fprintf(log,"%s: Nr.\tbelow hat (left and right)\t\t   cumulated\n",gen->genid);
+    fprintf(LOG,"%s:Areas in intervals relative to maximum:\t[ log(A_max) = %g ]\n",gen->genid, logAmax);
+    fprintf(LOG,"%s: Nr.\tbelow hat (left and right)\t\t   cumulated\n",gen->genid);
     sAhatl = sAhatr = 0.;
     if (GEN->iv) {
       for (iv = GEN->iv, i=0; iv->next!=NULL; iv=iv->next, i++) {
@@ -1224,95 +1224,95 @@ _unur_ars_debug_intervals( const struct unur_gen *gen, const char *header, int p
 	Ahat = scaled_area(iv);
 	sAhatr += Ahatr = Ahat * iv->Ahatr_fract;
 	sAhatl += Ahatl = Ahat - Ahatr;
-	fprintf(log,"%s:[%3d]: %-12.6g+ %-12.6g(%6.3f%%)  |  %-12.6g(%6.3f%%)\n",
+	fprintf(LOG,"%s:[%3d]: %-12.6g+ %-12.6g(%6.3f%%)  |  %-12.6g(%6.3f%%)\n",
 		gen->genid,i,
 		Ahatl, Ahatr, Ahat * 100. / Atotal,
 		iv->Acum, iv->Acum * 100. / Atotal);
       }
-      fprintf(log,"%s:       ------------------------  ---------  +\n",gen->genid);
-      fprintf(log,"%s: Sum :        %-12.6g      (%6.3f%%)\n",gen->genid,
+      fprintf(LOG,"%s:       ------------------------  ---------  +\n",gen->genid);
+      fprintf(LOG,"%s: Sum :        %-12.6g      (%6.3f%%)\n",gen->genid,
 	      sAhatl+sAhatr, (sAhatl+sAhatr) * 100. / Atotal);
-      fprintf(log,"%s:\n",gen->genid);
+      fprintf(LOG,"%s:\n",gen->genid);
     }
   }
-  fprintf(log,"%s: A(total) = %-12.6g\n",gen->genid, GEN->Atotal);
-  fprintf(log,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: A(total) = %-12.6g\n",gen->genid, GEN->Atotal);
+  fprintf(LOG,"%s:\n",gen->genid);
 } 
 void
 _unur_ars_debug_free( const struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_ARS_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s:\n",gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s:\n",gen->genid);
   if (gen->status == UNUR_SUCCESS) {
-    fprintf(log,"%s: GENERATOR destroyed **********************\n",gen->genid);
-    fprintf(log,"%s:\n",gen->genid);
+    fprintf(LOG,"%s: GENERATOR destroyed **********************\n",gen->genid);
+    fprintf(LOG,"%s:\n",gen->genid);
     _unur_ars_debug_intervals(gen,NULL,TRUE);
   }
   else {
-    fprintf(log,"%s: initialization of GENERATOR failed **********************\n",gen->genid);
+    fprintf(LOG,"%s: initialization of GENERATOR failed **********************\n",gen->genid);
     _unur_ars_debug_intervals(gen,"Intervals after failure:",FALSE);
   }
-  fprintf(log,"%s:\n",gen->genid);
-  fflush(log);
+  fprintf(LOG,"%s:\n",gen->genid);
+  fflush(LOG);
 } 
 void
 _unur_ars_debug_split_start( const struct unur_gen *gen, 
 			     const struct unur_ars_interval *iv,
 			     double x, double logfx )
 {
-  FILE *log;
+  FILE *LOG;
   double Ahat;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_ARS_GEN,RETURN_VOID);
   CHECK_NULL(iv,RETURN_VOID);   COOKIE_CHECK(iv,CK_ARS_IV,RETURN_VOID);
-  log = unur_get_stream();
+  LOG = unur_get_stream();
   Ahat = scaled_area(iv);
-  fprintf(log,"%s: split interval at x = %g \t\tlogf(x) = %g\n",gen->genid,x,logfx);
-  fprintf(log,"%s: old interval:\n",gen->genid);
-  fprintf(log,"%s:   left  construction point = %-12.6g\tlogf(x) = %-12.6g\n",gen->genid,iv->x,iv->logfx);
-  fprintf(log,"%s:   right construction point = %-12.6g\tlogf(x) = %-12.6g\n",gen->genid,iv->next->x,iv->next->logfx);
-  fprintf(log,"%s:   A(hat)         = %-12.6g +  %-12.6g(%6.3f%%)\t[ relative to A_max ]\n",gen->genid,
+  fprintf(LOG,"%s: split interval at x = %g \t\tlogf(x) = %g\n",gen->genid,x,logfx);
+  fprintf(LOG,"%s: old interval:\n",gen->genid);
+  fprintf(LOG,"%s:   left  construction point = %-12.6g\tlogf(x) = %-12.6g\n",gen->genid,iv->x,iv->logfx);
+  fprintf(LOG,"%s:   right construction point = %-12.6g\tlogf(x) = %-12.6g\n",gen->genid,iv->next->x,iv->next->logfx);
+  fprintf(LOG,"%s:   A(hat)         = %-12.6g +  %-12.6g(%6.3f%%)\t[ relative to A_max ]\n",gen->genid,
 	  Ahat * (1.-iv->Ahatr_fract), Ahat * iv->Ahatr_fract, Ahat*100./GEN->Atotal);
-  fflush(log);
+  fflush(LOG);
 } 
 void
 _unur_ars_debug_split_stop( const struct unur_gen *gen, 
 			    const struct unur_ars_interval *iv_left, 
 			    const struct unur_ars_interval *iv_right )
 {
-  FILE *log;
+  FILE *LOG;
   double Ahat;
   CHECK_NULL(gen,RETURN_VOID);       COOKIE_CHECK(gen,CK_ARS_GEN,RETURN_VOID);
   CHECK_NULL(iv_left,RETURN_VOID);   COOKIE_CHECK(iv_left,CK_ARS_IV,RETURN_VOID);
   if (iv_right == NULL) iv_right = iv_left;
-  log = unur_get_stream();
-  fprintf(log,"%s: inserted point:\n",gen->genid);
-  fprintf(log,"%s: x = %g, logf(x) = %g, dlogf(x) = %g, squeeze = %g:\n",
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s: inserted point:\n",gen->genid);
+  fprintf(LOG,"%s: x = %g, logf(x) = %g, dlogf(x) = %g, squeeze = %g:\n",
 	  gen->genid, iv_right->x, iv_right->logfx, iv_right->dlogfx, iv_right->sq);
-  fprintf(log,"%s: new intervals:\n",gen->genid);
-  fprintf(log,"%s:   left   construction point = %g\n",gen->genid, iv_left->x);
+  fprintf(LOG,"%s: new intervals:\n",gen->genid);
+  fprintf(LOG,"%s:   left   construction point = %g\n",gen->genid, iv_left->x);
   if (iv_left != iv_right)
-    fprintf(log,"%s:   middle construction point = %g\n",gen->genid, iv_right->x);
-  fprintf(log,"%s:   right  construction point = %g\n",gen->genid, iv_right->next->x);
-  fprintf(log,"%s: left interval:\n",gen->genid);
+    fprintf(LOG,"%s:   middle construction point = %g\n",gen->genid, iv_right->x);
+  fprintf(LOG,"%s:   right  construction point = %g\n",gen->genid, iv_right->next->x);
+  fprintf(LOG,"%s: left interval:\n",gen->genid);
   Ahat = scaled_area(iv_left);
-  fprintf(log,"%s:   A(hat)         = %-12.6g +  %-12.6g(%6.3f%%)\t[ relative to A_max ]\n",gen->genid,
+  fprintf(LOG,"%s:   A(hat)         = %-12.6g +  %-12.6g(%6.3f%%)\t[ relative to A_max ]\n",gen->genid,
 	  Ahat * (1.-iv_left->Ahatr_fract), Ahat * iv_left->Ahatr_fract,
 	  Ahat * 100./GEN->Atotal);
   if (iv_left == iv_right)
-    fprintf(log,"%s: interval chopped.\n",gen->genid);
+    fprintf(LOG,"%s: interval chopped.\n",gen->genid);
   else {
-    fprintf(log,"%s: right interval:\n",gen->genid);
+    fprintf(LOG,"%s: right interval:\n",gen->genid);
     Ahat = scaled_area(iv_right);
-    fprintf(log,"%s:   A(hat)         = %-12.6g +  %-12.6g(%6.3f%%)\t[ relative to A_max ]\n",gen->genid,
+    fprintf(LOG,"%s:   A(hat)         = %-12.6g +  %-12.6g(%6.3f%%)\t[ relative to A_max ]\n",gen->genid,
 	    Ahat * (1.-iv_right->Ahatr_fract), Ahat * iv_right->Ahatr_fract,
 	    Ahat * 100./GEN->Atotal);
   }
-  fprintf(log,"%s: total areas:\n",gen->genid);
-  fprintf(log,"%s:   A(total)       = %-12.6g\n",gen->genid, GEN->Atotal);
-  fprintf(log,"%s:\n",gen->genid);
-  fflush(log);
+  fprintf(LOG,"%s: total areas:\n",gen->genid);
+  fprintf(LOG,"%s:   A(total)       = %-12.6g\n",gen->genid, GEN->Atotal);
+  fprintf(LOG,"%s:\n",gen->genid);
+  fflush(LOG);
 } 
 #endif    
 #ifdef UNUR_ENABLE_INFO

@@ -9,6 +9,8 @@
   UNU.RAN random variate generator for the Triangular distribution with
   shape parameters \code{a}, \code{m} and \code{b}.
   It also allows sampling from the truncated distribution.
+  
+  [Distribution] -- Sampling Function: Triangular.  %% Continuous
 }
 
 \usage{
@@ -24,7 +26,7 @@ urtriang(n, a, m, b, lb=a, ub=b)
 
 \details{
   The Triangular distribution with domain \eqn{(a,b)} and mode \eqn{m}
-  has density proportional to 
+  has a density proportional to 
   \deqn{
     f(x) \sim (x-a)/(m-a)}{%
     f(x) ~ (x-a)/(m-a)}
@@ -56,7 +58,7 @@ urtriang(n, a, m, b, lb=a, ub=b)
 }
 
 \note{
-  This function is wrapper for the UNU.RAN class in \R.
+  This function is a wrapper for the UNU.RAN class in \R.
 }
 
 \examples{

@@ -9,10 +9,13 @@
   UNU.RAN random variate generator for continuous distributions with
   given probability density function (PDF).
   It is based on the Transformed Density Rejection method (TDR).
+
+  [ \strong{Deprecated}.
+  Use \code{\link{tdr.new}} instead. ]
 }
 
 \usage{
-urtdr(n, pdf, dpdf, lb=-Inf, ub=Inf, islog=TRUE, ...)
+urtdr(n, pdf, dpdf=NULL, lb=-Inf, ub=Inf, islog=TRUE, ...)
 }
 \arguments{
   \item{n}{size of required sample.}
@@ -25,28 +28,14 @@ urtdr(n, pdf, dpdf, lb=-Inf, ub=Inf, islog=TRUE, ...)
 }
 
 \details{
-  This routine generates a sample of continuous random variates with
-  given probability density function. This function must be provided by
-  \code{pdf}, a function which must return non-negative numbers and
-  which need not be normalized (i.e., it can be any multiple of a
-  density function).
-  Moreover, the given function must be \eqn{T_{-0.5}}{T_(-0.5)}-concave
-  distributions (i.e., unimodal densities with tails not higher than
-  \eqn{(1/x^2)}; this includes all log-concave distributions).
-  The \code{dpdf} is optional. If omitted numerical derivation is used.
-  Notice, however, that this might cause some round-off errors such that
-  generation does not work. This is in particular the case when the
-  density function is provided instead of its logarithm.
+  This method is \strong{deprecated}. Please use \code{\link{tdr.new}}
+  together with \code{\link{ur}} instead.
   
-  It uses method \dQuote{TDR} (Transformed Density Rejection).
-  The setup time of this method depends on the given PDF, whereas its
-  marginal generation times are almost independent of the target
-  distribution.
+  For further details see \code{\link{tdr.new}}.
 }
 
 \seealso{
-  \code{\link{runif}} and \code{\link{.Random.seed}} about random number
-  generation, \code{\linkS4class{unuran}} for the UNU.RAN class.
+  \code{\link{tdr.new}} and \code{\link{ur}} for replacement.
 }
 
 \references{
@@ -60,23 +49,7 @@ urtdr(n, pdf, dpdf, lb=-Inf, ub=Inf, islog=TRUE, ...)
   \email{unuran@statmath.wu-wien.ac.at}.
 }
 
-\examples{
-## Create a sample of size 10000 for a 
-## Gaussian distribution (use logPDF)
-logpdf <- function (x) { -0.5*x^2 }
-dlogpdf <- function (x) { -x }
-x <- urtdr(1000, pdf=logpdf, dpdf=dlogpdf)
-
-## Create a sample of size 10000 for a 
-## Gaussian distribution (use logPDF)
-logpdf <- function (x) { -0.5*x^2 }
-x <- urtdr(1000, pdf=logpdf, islog=TRUE)
-
-## Create a sample of size 10000 for a 
-## Gaussian(0,1) distribution (use dnorm)
-x <- urtdr(1000, pdf=dnorm, mean=0, sd=1, islog=FALSE)
-
-}
+%% \examples{}
 
 \keyword{distribution}
 \keyword{datagen}

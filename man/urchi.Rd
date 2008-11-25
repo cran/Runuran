@@ -11,6 +11,8 @@
   It also allows sampling from the truncated distribution.
   (Do not confuse with the Chi-Squared (\eqn{\chi^2}{chi^2})
   distribution!)
+  
+  [Distribution] -- Sampling Function: Chi.  %% Continuous
 }
 
 \usage{

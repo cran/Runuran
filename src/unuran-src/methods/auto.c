@@ -2,10 +2,22 @@
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
-#include <unuran.h.in>
+#include <distr/distr.h>
+#include <urng/urng.h>
 #include "unur_methods_source.h"
 #include "x_gen_source.h"
+#include "x_gen.h"
+#include "auto.h"
 #include "auto_struct.h"
+#include "cstd.h"
+#include "dari.h"
+#include "dgt.h"
+#include "dstd.h"
+#include "empk.h"
+#include "hist.h"
+#include "mvstd.h"
+#include "tdr.h"
+#include "vempk.h"
 #define AUTO_SET_LOGSS          0x001u
 #define GENTYPE "AUTO"         
 static struct unur_gen *_unur_auto_init( struct unur_par *par );

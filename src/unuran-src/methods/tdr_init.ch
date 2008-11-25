@@ -690,10 +690,12 @@ _unur_tdr_make_guide_table( struct unur_gen *gen )
 {
   struct unur_tdr_interval *iv;
   double Acum, Asqueezecum, Astep;
+  int max_guide_size;
   int j;
   CHECK_NULL(gen,UNUR_ERR_NULL);  COOKIE_CHECK(gen,CK_TDR_GEN,UNUR_ERR_COOKIE);
   if (!GEN->guide) {
-    int max_guide_size = (GEN->guide_factor > 0.) ? (GEN->max_ivs * GEN->guide_factor) : 1;
+    max_guide_size = (GEN->guide_factor > 0.) ? ((int)(GEN->max_ivs * GEN->guide_factor)) : 1;
+    if (max_guide_size <= 0) max_guide_size = 1;   
     GEN->guide = _unur_xmalloc( max_guide_size * sizeof(struct unur_tdr_interval*) );
   }
   Acum = 0.;            

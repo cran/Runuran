@@ -6,19 +6,22 @@
 \alias{show,unuran.cmv-method}
 \alias{initialize,unuran.cmv-method}
 
-\title{Experimental class "unuran.cmv"}
+\title{Class "unuran.cmv" for Continuous Multivariate Distribution}
 
 \description{%
-  The class "unuran.cmv" provides am interface to UNU.RAN objects for
-  continuous multivariate distributions.
+  Class \code{unuran.cmv} provides an interface to UNU.RAN objects
+  for continuous multivariate distributions.
   The interface might be changed in future releases.
   \strong{Do not use unnamed arguments!}
+  
+  [Advanced] -- Continuous Multivariate Distribution Object.
 }
 
 \details{
-  Create a new instance of an "unuran.cmv" object using
+  Create a new instance of a \code{unuran.cmv} object using
 
-  \code{new ("unuran.cmv", dim=1, pdf=NULL, mode=NULL, center=NULL, ll=NULL, ur=NULL)}.
+  \code{new ("unuran.cmv", dim=1, pdf=NULL, mode=NULL, center=NULL,
+             ll=NULL, ur=NULL, name=NA)}.
 
   \describe{
     \item{dim}{number of dimensions of the distribution. (integer)}
@@ -34,6 +37,7 @@
       domain of the \code{pdf}. The domain is only set if both vertices
       are not \code{NULL}. Otherwise, the domain is unbounded by default.
       (numeric vectors)}
+    \item{name}{name of distribution. (string)}
   }
 
   The user is responsible that the given informations are consistent.
@@ -41,42 +45,6 @@
   used. It is important, that the mode is contained in the (closure of
   the) domain.
 } 
-
-\examples{
-## Create discrete distribution with given probability density function
-mvpdf <- function (x) { exp(-sum(x^2)) }
-mvdist <- new("unuran.cmv", dim=2, pdf=mvpdf)
-## Make generator (using method HITRO)
-mvunr <- unuran.new(mvdist, "hitro")
-## Draw sample of size 100
-x <- unuran.sample(mvunr, 100)
-## make scatter plot of random sample
-plot(x)
-
-## now we draw a sample from the same density but restricted to
-## the rectangle [0,1]x[0,1]
-mvdist <- new("unuran.cmv", dim=2, pdf=mvpdf, mode=c(0,0), ll=c(0,0), ur=c(1,1))
-mvunr <- unuran.new(mvdist, "hitro")
-x <- unuran.sample(mvunr, 100)
-plot(x)
-
-## draw a sample from the same density but restricted to
-## the the first quadrant
-mvdist <- new("unuran.cmv", dim=2, pdf=mvpdf, mode=c(0,0), ll=c(0,0), ur=c(Inf,Inf))
-mvunr <- unuran.new(mvdist, "hitro")
-x <- unuran.sample(mvunr, 100)
-plot(x)
-
-## draw a sample from the same density but restricted to
-## the rectangle [1,2]x[1,2]
-## (Don't forget to provide a starting point for the HITRO method by
-## setting 'center'
-mvdist <- new("unuran.cmv", dim=2, pdf=mvpdf, center=c(1.1,1.1), ll=c(1,1), ur=c(2,2))
-mvunr <- unuran.new(mvdist, "hitro")
-x <- unuran.sample(mvunr, 100)
-plot(x)
-
-}
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
@@ -90,7 +58,20 @@ plot(x)
 }
 
 \seealso{
-  \code{\linkS4class{unuran}}, \code{\link{unuran.new}}.
+  \code{\link{unuran.cmv.new}}, \code{\link{unuran.new}},
+  \code{\linkS4class{unuran}}.
+}
+
+\examples{
+## Create distribution with given PDF
+mvpdf <- function (x) { exp(-sum(x^2)) }
+mvdist <- new("unuran.cmv", dim=2, pdf=mvpdf)
+
+## Restrict domain to rectangle [0,1]x[0,1] and set
+## mode to (0,0)
+mvpdf <- function (x) { exp(-sum(x^2)) }
+mvdist <- new("unuran.cmv", dim=2, pdf=mvpdf, mode=c(0,0), ll=c(0,0), ur=c(1,1))
+
 }
 
 \keyword{classes}

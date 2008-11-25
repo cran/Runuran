@@ -9,6 +9,8 @@
   UNU.RAN random variate generator for the F distribution with
   with \code{df1} and \code{df2} degrees of freedom.
   It also allows sampling from the truncated distribution.
+  
+  [Distribution] -- Sampling Function: F.  %% Continuous
 }
 
 \usage{

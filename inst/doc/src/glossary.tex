@@ -1,0 +1,78 @@
+% ---------------------------------------------------------------------------
+
+\section{Glossary}
+\label{sec:glossary}
+
+\begin{labeling}[~--~]{\hspace{5em}}
+\item[CDF] 
+  cumulative distribution function.
+
+\item[center]
+  ``typical point'' of distribution (``near the mode'').
+
+\item[HR]
+  hazard rate (or failure rate).
+
+\item[inverse local concavity]
+  local concavity of inverse PDF $f^{-1}(y)$ expressed in term of \\
+  $x = f^{-1}(y)$. Is is given by 
+  \[
+  \mathrm{ilc}_f(x) = 1 + x\,f''(x) / f'(x)\;.
+  \]
+
+\item[mode]
+  maximum of PDF.
+
+\item[local concavity]
+  maximum value of $c$ such that PDF $f(x)$ is $T_c$-concave.
+  Is is given by
+  \[
+  \mathrm{lc}_f(x) = 1 - f''(x)\,f(x) / f'(x)^2\;.
+  \]
+
+\item[log-concave]
+  a PDF $f(x)$ (and hence the corresponding distribution) is called 
+  \emph{log-concave} if $\log(f(x))$ is concave, i.e., if
+  $(\log(f(x))''\leq 0$. See also \emph{$T_0$-concave}.
+
+  For discrete distributions, a PMF $p$ is log-concave if and only if
+  \[
+  p_i \geq\sqrt{p_{i-1}\,p_{i+1}}
+  \quad\mbox{for all $i$.}
+  \]
+
+\item[PDF]
+  probability density function.
+
+\item[PMF]
+  probability mass function.
+
+\item[PV]
+  (finite) probability vector.
+
+\item[URNG]
+  uniform random number generator.
+
+\item[$U(a,b)$]
+  continuous uniform distribution on the interval $(a,b)$.
+
+\item[$T_c$-concave]
+  a PDF $f(x)$ is called \emph{$T$-concave} if the transformed function
+  $T(f(x))$ is concave. 
+  We only deal with transformations $T_c$, where
+  \begin{center}
+    \begin{tabular}{l|l}
+      c         & transformation \\
+      \hline
+      $c=0$     & $T_0(x) = \log(x)$ \\
+      $c=-1/2$  & $T_{-1/2}(x) = -1/\sqrt{x}$ \\
+      $c\not=0$ & $T_c(x) = \mathrm{sgn}(c) \cdot x^c$ \\
+    \end{tabular}
+  \end{center}
+  In particular, a PDF $f(x)$ is $T_c$-concave when its local
+  concavity is less than $c$, i.e.,
+  $\mathrm{lc}_f(x) \leq c$.
+
+\end{labeling}
+
+% ---------------------------------------------------------------------------

@@ -10,6 +10,8 @@
   whose logarithm has mean equal to \code{meanlog} and standard
   deviation equal to \code{sdlog}.
   It also allows sampling from the truncated distribution.
+  
+  [Distribution] -- Sampling Function: Log-Normal.  %% Continuous
 }
 
 \usage{

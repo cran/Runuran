@@ -9,6 +9,8 @@
   UNU.RAN random variate generator for the Generalized Inverse Gaussian
   Distribution with parameters \code{lambda} and \code{omega}.
   It also allows sampling from the truncated distribution.
+  
+  [Distribution] -- Sampling Function: GIG (generalized inverse Gaussian).  %% Continuous
 }
 
 \usage{

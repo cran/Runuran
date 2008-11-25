@@ -9,6 +9,8 @@
   UNU.RAN random variate generator for the Chi-Squared
   (\eqn{\chi^2}{chi^2}) distribution with \code{df} degrees of freedom.
   It also allows sampling from the truncated distribution.
+  
+  [Distribution] -- Sampling Function: Chi-square.  %% Continuous
 }
 
 \usage{

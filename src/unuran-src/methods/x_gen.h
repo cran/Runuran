@@ -7,6 +7,7 @@ int    unur_sample_discr(UNUR_GEN *generator);
 double unur_sample_cont(UNUR_GEN *generator);
 int    unur_sample_vec(UNUR_GEN *generator, double *vector);
 int    unur_sample_matr(UNUR_GEN *generator, double *matrix);
+double unur_quantile ( UNUR_GEN *generator, double U );
 void  unur_free( UNUR_GEN *generator );
 const char *unur_gen_info( UNUR_GEN *generator, int help );
 int unur_get_dimension( const UNUR_GEN *generator );

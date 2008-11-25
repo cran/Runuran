@@ -203,26 +203,26 @@ _unur_dss_sample( struct unur_gen *gen )
 void
 _unur_dss_debug_init( struct unur_gen *gen )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_DSS_GEN,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s:\n",gen->genid);
-  fprintf(log,"%s: type    = discrete univariate random variates\n",gen->genid);
-  fprintf(log,"%s: method  = sequential search\n",gen->genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s:\n",gen->genid);
+  fprintf(LOG,"%s: type    = discrete univariate random variates\n",gen->genid);
+  fprintf(LOG,"%s: method  = sequential search\n",gen->genid);
   _unur_distr_discr_debug( gen->distr,gen->genid,(gen->debug & DSS_DEBUG_PRINTVECTOR));
-  fprintf(log,"%s: sampling routine = _unur_dss_sample()\n",gen->genid);
-  fprintf(log,"%s: variant = ",gen->genid);
+  fprintf(LOG,"%s: sampling routine = _unur_dss_sample()\n",gen->genid);
+  fprintf(LOG,"%s: variant = ",gen->genid);
   switch(gen->variant) {
   case DSS_VARIANT_PV:
-    fprintf(log,"use PV\n");  break;
+    fprintf(LOG,"use PV\n");  break;
   case DSS_VARIANT_PMF:
-    fprintf(log,"use PMF\n"); break;
+    fprintf(LOG,"use PMF\n"); break;
   case DSS_VARIANT_CDF:
-    fprintf(log,"use CDF\n"); break;
+    fprintf(LOG,"use CDF\n"); break;
   default:
     _unur_error(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
   }
-  fprintf(log,"%s:\n",gen->genid);
+  fprintf(LOG,"%s:\n",gen->genid);
 } 
 #endif   
 #ifdef UNUR_ENABLE_INFO

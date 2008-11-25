@@ -15,6 +15,11 @@ _unur_mvtdr_info( struct unur_gen *gen, int help )
   _unur_string_append(info,"   dimension = %d\n",GEN->dim);
   _unur_string_append(info,"   functions = PDF dPDF\n");
   _unur_distr_cvec_info_domain(gen);
+  if ( distr->set & UNUR_DISTR_SET_MODE ) {
+    _unur_string_append(info,"   mode      = ");
+    _unur_distr_info_vector( gen, DISTR.mode, GEN->dim);
+  }
+  _unur_string_append(info,"\n");
   _unur_string_append(info,"   center    = ");
   _unur_distr_info_vector( gen, GEN->center, GEN->dim);
   if ( !(distr->set & UNUR_DISTR_SET_CENTER) ) {

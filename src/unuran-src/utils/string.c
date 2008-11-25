@@ -28,7 +28,7 @@ _unur_string_append ( struct unur_string *string, const char *format, ... )
     string->text = _unur_xrealloc( string->text, (size_t)string->allocated );
   }
 #if HAVE_DECL_VSNPRINTF
-  len = vsnprintf (string->text+string->length, MAXSTRINGSIZE, format, ap);
+  len = vsnprintf (string->text+string->length, (size_t)MAXSTRINGSIZE, format, ap);
 #else
   len = vsprintf (string->text+string->length, format, ap);
   if (len >= MAXSTRINGSIZE) {

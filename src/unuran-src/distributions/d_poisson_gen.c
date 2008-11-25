@@ -16,8 +16,8 @@ inline static int poisson_pprsc_init( struct unur_gen *gen );
 #define GEN       ((struct unur_dstd_gen*)gen->datap) 
 #define DISTR     gen->distr->data.discr 
 #define uniform()  _unur_call_urng(gen->urng) 
-#define MAX_gen_params   39    
-#define MAX_gen_iparams   5    
+#define MAX_gen_params  (39)   
+#define MAX_gen_iparams  (5)   
 #define theta  (DISTR.params[0])    
 int 
 _unur_stdgen_poisson_init( struct unur_par *par, struct unur_gen *gen )
@@ -65,7 +65,7 @@ poisson_pdtabl_init( struct unur_gen *gen )
     GEN->n_gen_param = MAX_gen_params;
     GEN->gen_param = _unur_xmalloc(GEN->n_gen_param * sizeof(double));
     GEN->n_gen_iparam = MAX_gen_iparams;
-    GEN->gen_iparam = _unur_xmalloc(GEN->n_gen_param * sizeof(int));
+    GEN->gen_iparam = _unur_xmalloc(GEN->n_gen_iparam * sizeof(int));
   }
   m = (theta > 1.) ? ((int) theta) : 1;
   ll = 0;
@@ -130,7 +130,7 @@ poisson_pdac_init( struct unur_gen *gen )
     GEN->n_gen_param = MAX_gen_params;
     GEN->gen_param = _unur_xmalloc(GEN->n_gen_param * sizeof(double));
     GEN->n_gen_iparam = MAX_gen_iparams;
-    GEN->gen_iparam = _unur_xmalloc(GEN->n_gen_param * sizeof(int));
+    GEN->gen_iparam = _unur_xmalloc(GEN->n_gen_iparam * sizeof(int));
   }
   if (NORMAL==NULL) {
     struct unur_distr *distr = unur_distr_normal(NULL,0);
@@ -307,12 +307,12 @@ poisson_pprsc_init( struct unur_gen *gen )
     GEN->n_gen_param = MAX_gen_params;
     GEN->gen_param = _unur_xmalloc(GEN->n_gen_param * sizeof(double));
     GEN->n_gen_iparam = MAX_gen_iparams;
-    GEN->gen_iparam = _unur_xmalloc(GEN->n_gen_param * sizeof(int));
+    GEN->gen_iparam = _unur_xmalloc(GEN->n_gen_iparam * sizeof(int));
   }
   Ds = sqrt(theta + 0.25);
   m  = (int) theta;
-  k2 =  ceil(theta - 0.5 - Ds);
-  k4 = (int)     (theta - 0.5 + Ds);
+  k2 = (int) (theta + 0.5 - Ds);
+  k4 = (int) (theta - 0.5 + Ds);
   k1 = k2 + k2 - m + 1;
   k5 = k4 + k4 - m;
   dl = (double) (k2 - k1);

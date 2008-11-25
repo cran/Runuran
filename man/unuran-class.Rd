@@ -9,9 +9,11 @@
 \title{Class "unuran" -- Universal Non-Uniform RANdom variate generators}
 
 \description{%
-  The class "unuran" provides am interface to the UNU.RAN
+  The class "unuran" provides an interface to the UNU.RAN
   library for universal non-uniform random number generators.
   It uses the \R built-in uniform random number generator.
+  
+  [Advanced] -- UNU.RAN generator object.
 }
 
 \section{Objects from the Class}{
@@ -21,26 +23,27 @@
   \itemize{
     \item{distribution:}{A character string that describes the target
       distribution (see UNU.RAN User Manual) or one of the S4 classes
-      "unuran.discr", "unuran.cont" or "unuran.cmv" that holds
-      information about the distribution.}
+      \code{\linkS4class{unuran.cont}},
+      \code{\linkS4class{unuran.discr}}, or 
+      \code{\linkS4class{unuran.cmv}}
+      that holds information about the distribution.}
     \item{method:}{A character string that describes the chosen
       generation method, see UNU.RAN User Manual. If omitted method
       \code{"auto"} (automatic) is used.}
   }
-
   See \code{\link{unuran.new}} for short introduction and examples for
   this interface.
 }
 
 \section{Methods}{
-  The class "unuran" provides the following methods for
-  handling objects:
+  The class \code{\linkS4class{unuran}} provides the following methods
+  for handling objects:
   
   \describe{
-    \item{unuran.sample}{\code{signature(object = "unuran")}: 
+    \item{ur}{\code{signature(object = "unuran")}: 
       Get a random sample from the stream object.}
     \item{r}{\code{signature(object = "unuran")}:
-      Same as \code{unuran.sample}.}
+      Same as \code{ur}.}
     \item{initialize}{\code{signature(.Object = "unuran")}:
       Initialize unuran object. (For Internal usage only).}
     \item{print}{\code{signature(x = "unuran")}:
@@ -59,8 +62,8 @@
   The interface has been changed compared to the DSC 2003 paper.
 } 
 
-\section{Warning }{
-  "unuran" objects cannot be saved and restored in later \R sessions.
+\section{Warning}{
+  \code{unuran} objects cannot be saved and restored in later \R sessions.
   They must be newly created!
 }
 
@@ -82,30 +85,15 @@
 }
 
 \seealso{
-  \code{\link{unuran.new}} and 
-  \code{\link{unuran.sample}} for faster creation and sampling routines,
-  \code{\linkS4class{unuran.cont}} and \code{\linkS4class{unuran.discr}}
-  for classes that contain information about continuous univariate and
-  discrete distributions, resp.
+  \code{\link{unuran.new}} and \code{\link{ur}} for faster creation and
+  sampling routines, \code{\link{unuran.details}} for a more verbose
+  version of \code{show}.
+
+  For distribution objects see \code{\linkS4class{unuran.cont}},
+  \code{\linkS4class{unuran.discr}}, and \code{\linkS4class{unuran.cmv}}.
 }
 
-\examples{
-## create a new unuran object
-unr <- new("unuran","normal","auto")
-
-## alternatively one can use
-unr <- unuran.new("normal","auto")
-
-## get random number
-unuran.sample(unr)
-
-## get a random sample of size 10
-unuran.sample(unr,10)
-
-## use command r
-r(unr)
-
-}
+%% \examples{}
 
 \keyword{classes}
 \keyword{distribution}

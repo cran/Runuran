@@ -10,6 +10,8 @@
   distribution with location parameter \code{location} and scale
   parameter \code{scale}.
   It also allows sampling from the truncated distribution.
+  
+  [Distribution] -- Sampling Function: Laplace.  %% Continuous
 }
 
 \usage{
@@ -61,7 +63,7 @@ urlaplace(n, location=0, scale=1, lb = -Inf, ub = Inf)
 }
 
 \note{
-  This function is wrapper for the UNU.RAN class in \R.
+  This function is a wrapper for the UNU.RAN class in \R.
 }
 
 \examples{

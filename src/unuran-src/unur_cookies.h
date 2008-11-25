@@ -35,8 +35,9 @@
 #define CK_NINV_GEN      0x00100061u
 #define CK_NROU_PAR      0x00100070u
 #define CK_NROU_GEN      0x00100071u
-#define CK_PINV_PAR     0x00100130u
-#define CK_PINV_GEN     0x00100131u
+#define CK_PINV_PAR      0x00100130u
+#define CK_PINV_GEN      0x00100131u
+#define CK_PINV_IV       0x00100132u
 #define CK_SROU_PAR      0x00100090u
 #define CK_SROU_GEN      0x00100091u
 #define CK_SSR_PAR       0x001000a0u

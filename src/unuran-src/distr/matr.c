@@ -73,15 +73,15 @@ unur_distr_matr_get_dim( const struct unur_distr *distr, int *n_rows, int *n_col
 void
 _unur_distr_matr_debug( const struct unur_distr *distr, const char *genid )
 {
-  FILE *log;
+  FILE *LOG;
   CHECK_NULL(distr,RETURN_VOID);
   COOKIE_CHECK(distr,CK_DISTR_MATR,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s: distribution:\n",genid);
-  fprintf(log,"%s:\ttype = matrix distribution\n",genid);
-  fprintf(log,"%s:\tname = %s\n",genid,distr->name);
-  fprintf(log,"%s:\tdimension = %d x %d   (= %d)\n",genid,DISTR.n_rows,DISTR.n_cols,distr->dim);
-  fprintf(log,"%s:\n",genid);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s: distribution:\n",genid);
+  fprintf(LOG,"%s:\ttype = matrix distribution\n",genid);
+  fprintf(LOG,"%s:\tname = %s\n",genid,distr->name);
+  fprintf(LOG,"%s:\tdimension = %d x %d   (= %d)\n",genid,DISTR.n_rows,DISTR.n_cols,distr->dim);
+  fprintf(LOG,"%s:\n",genid);
 } 
 #endif    
 #undef DISTR

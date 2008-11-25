@@ -10,6 +10,9 @@
   distributions with given probability density function (PDF).
   It is based on the Hit-and-Run algorithm in combinaton with the
   Ratio-of-Uniforms method (HITRO).
+  
+  [ \strong{Deprecated}.
+  Use \code{\link{hitro.new}} instead. ]
 }
 
 \usage{
@@ -34,35 +37,14 @@ urhitro(n, dim=1, pdf, mode=NULL, center=NULL, ll=NULL, ur=NULL, thinning=1, bur
 }
 
 \details{
-  This is a Markov chain sampler that generates a sequence of continuous
-  random vectors with given probability density function. This function
-  must be provided by \code{pdf}, a function which must return
-  non-negative numbers and which need not be normalized (i.e., it can be
-  any multiple of a density function).
-
-  The \code{center} is used as starting point of the Hit-and-Run
-  algorithm. It is thus important, that the center is contained in the
-  (closure of the) domain. 
-  Alternatively, one could the \code{mode}. However, this requires its
-  exact position whereas \code{center} allows any point in the
-  \dQuote{typical} region of the distribution.
+  This method is \strong{deprecated}. Please use \code{\link{hitro.new}}
+  together with \code{\link{ur}} instead.
   
-  The \code{mode} is used a starting point of the Hit-and-Run
-  algorithm. It is thus important, that the mode is contained in the
-  (closure of the) domain.
-  
-  Notice that MCMC samplers do not produce a sequence of independent
-  variates. The drawn sample follows the target distribution only
-  appropriately.
-  \strong{Beware: MCMC sampling can be dangerous!}
-      
-  The algorithm works best with log-concave distributions. Other
-  distributions work as well but convergence can be slower.
+  For further details see \code{\link{hitro.new}}.
 }
 
 \seealso{
-  \code{\link{runif}} and \code{\link{.Random.seed}} about random number
-  generation, \code{\linkS4class{unuran}} for the UNU.RAN class.
+  \code{\link{hitro.new}} and \code{\link{ur}} for replacement.
 }
 
 \references{
@@ -80,37 +62,7 @@ urhitro(n, dim=1, pdf, mode=NULL, center=NULL, ll=NULL, ur=NULL, thinning=1, bur
   \email{unuran@statmath.wu-wien.ac.at}.
 }
 
-\examples{
-## Create a sample of size 100 for a 
-## Gaussian distribution
-mvpdf <- function (x) { exp(-sum(x^2)) }
-x <- urhitro(20, dim=2, pdf=mvpdf)
-x
-
-## use:
-##  mode at (0,0)
-##  thinning factor 3
-##    (only every 3rd vector in the sequence is returned)
-##  burn-in of length 100
-##    (the first 1000 vectors in the sequence are discarded)
-x <- urhitro(20, dim=2, pdf=mvpdf, mode=c(0,0), thinning=3, burnin=100)
-x
-
-## Create a sample of size 100 for a 
-## Gaussian distribution restricted to first quadrant
-mvpdf <- function (x) { exp(-sum(x^2)) }
-x <- urhitro(20, dim=2, pdf=mvpdf, ll=c(0,0), ur=c(Inf,Inf))
-x
-
-## Create a sample of size 100 for a 
-## Gaussian distribution restricted to the rectangle [1,2]x[1,2]
-## (don't forget to provide a starting point using 'center')
-
-mvpdf <- function (x) { exp(-sum(x^2)) }
-x <- urhitro(20, dim=2, pdf=mvpdf, center=c(1.1,1.1), ll=c(1,1), ur=c(2,2))
-x
-
-}
+%% \examples{}
 
 \keyword{distribution}
 \keyword{datagen}

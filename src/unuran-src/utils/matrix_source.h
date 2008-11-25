@@ -9,6 +9,6 @@ int _unur_matrix_multiplication(int dim, const double *A, const double *B, doubl
 double _unur_matrix_qf (int dim, double *x, double *A );
 int _unur_matrix_eigensystem (int dim, const double *M, double *values, double *vectors );
 void _unur_matrix_print_vector ( int dim, const double *vec, const char *info,
-				 FILE *log, const char *genid, const char *indent );
+				 FILE *LOG, const char *genid, const char *indent );
 void _unur_matrix_print_matrix ( int dim, const double *mat, const char *info,
-				 FILE *log, const char *genid, const char *indent );
+				 FILE *LOG, const char *genid, const char *indent );

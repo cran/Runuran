@@ -100,27 +100,27 @@ void
 _unur_distr_cvemp_debug( const struct unur_distr *distr, const char *genid, unsigned printvector )
 {
 #define idx(k,l)  (k * distr->dim + l)
-  FILE *log;
+  FILE *LOG;
   int i,j;
   CHECK_NULL(distr,RETURN_VOID);
   COOKIE_CHECK(distr,CK_DISTR_CVEMP,RETURN_VOID);
-  log = unur_get_stream();
-  fprintf(log,"%s: distribution:\n",genid);
-  fprintf(log,"%s:\ttype = continuous multivariate distribution (ie. a sample)\n",genid);
-  fprintf(log,"%s:\tname = %s\n",genid,distr->name);
-  fprintf(log,"%s:\tdimension = %d\n",genid,distr->dim);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s: distribution:\n",genid);
+  fprintf(LOG,"%s:\ttype = continuous multivariate distribution (ie. a sample)\n",genid);
+  fprintf(LOG,"%s:\tname = %s\n",genid,distr->name);
+  fprintf(LOG,"%s:\tdimension = %d\n",genid,distr->dim);
   if (DISTR.n_sample>0) {
-    fprintf(log,"%s:\tsample size = %d\n",genid,DISTR.n_sample);
+    fprintf(LOG,"%s:\tsample size = %d\n",genid,DISTR.n_sample);
     if (printvector) {
       for (i=0; i<DISTR.n_sample; i++) {
-	fprintf(log,"%s:\t( %.5f",genid,DISTR.sample[idx(i,0)]);
+	fprintf(LOG,"%s:\t( %.5f",genid,DISTR.sample[idx(i,0)]);
 	for (j=1; j<distr->dim; j++) 
-	  fprintf(log,", %.5f",DISTR.sample[idx(i,j)]);
-	fprintf(log,")\n");
+	  fprintf(LOG,", %.5f",DISTR.sample[idx(i,j)]);
+	fprintf(LOG,")\n");
       }
     }
   }
-  fprintf(log,"%s:\n",genid);
+  fprintf(LOG,"%s:\n",genid);
 #undef idx
 } 
 #endif    
