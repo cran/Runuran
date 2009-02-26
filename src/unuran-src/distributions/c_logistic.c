@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -16,9 +16,11 @@ static const char distr_name[] = "logistic";
 static double _unur_pdf_logistic( double x, const UNUR_DISTR *distr );
 static double _unur_dpdf_logistic( double x, const UNUR_DISTR *distr );
 static double _unur_cdf_logistic( double x, const UNUR_DISTR *distr );
+static double _unur_invcdf_logistic( double u, const UNUR_DISTR *distr );
 static int _unur_upd_mode_logistic( UNUR_DISTR *distr );
 static int _unur_upd_area_logistic( UNUR_DISTR *distr );
 static int _unur_set_params_logistic( UNUR_DISTR *distr, const double *params, int n_params );
+int _unur_cstd_generic_init( struct unur_par *par, struct unur_gen *gen );
 double
 _unur_pdf_logistic( double x, const UNUR_DISTR *distr )
 { 
@@ -51,6 +53,14 @@ _unur_cdf_logistic( double x, const UNUR_DISTR *distr )
   if (DISTR.n_params > 0)
     x = (x - alpha) / beta;
   return ( 1. / (1. + exp(-x)) );
+} 
+double
+_unur_invcdf_logistic( double U, const UNUR_DISTR *distr )
+{ 
+  register const double *params = DISTR.params;
+  double X;
+  X = -log(1./U - 1.);
+  return ((DISTR.n_params==0) ? X : alpha + beta * X );
 } 
 int
 _unur_upd_mode_logistic( UNUR_DISTR *distr )
@@ -112,10 +122,10 @@ unur_distr_logistic( const double *params, int n_params )
   distr = unur_distr_cont_new();
   distr->id = UNUR_DISTR_LOGISTIC;
   distr->name = distr_name;
-  DISTR.init = _unur_stdgen_logistic_init;
-  DISTR.pdf  = _unur_pdf_logistic;  
-  DISTR.dpdf = _unur_dpdf_logistic; 
-  DISTR.cdf  = _unur_cdf_logistic;  
+  DISTR.pdf    = _unur_pdf_logistic;    
+  DISTR.dpdf   = _unur_dpdf_logistic;   
+  DISTR.cdf    = _unur_cdf_logistic;    
+  DISTR.invcdf = _unur_invcdf_logistic; 
   distr->set = ( UNUR_DISTR_SET_DOMAIN |
 		 UNUR_DISTR_SET_STDDOMAIN |
  		 UNUR_DISTR_SET_MODE   |

@@ -40,22 +40,22 @@ setClass( "unuran.cont",
 
 setMethod( "initialize", "unuran.cont",
           function(.Object, cdf=NULL, pdf=NULL, dpdf=NULL, islog=FALSE,
-                   mode=NA, center=NA, lb=-Inf, ub=Inf, area=NA, name=NA) {
+                   lb=NA, ub=NA, mode=NA, center=NA, area=NA, name=NA) {
                   ## cdf .... cumulative distribution function (CDF)
                   ## pdf .... probability density function (PDF)
                   ## dpdf ... derivative of PDF
                   ## islog .. whether CDF and PDF are given as logarithms
                   ##          (the dpdf is then the derative of log(pdf)!)
-                  ## mode ... mode of distribution
-                  ## center . "center" (typical point) of distribution
                   ## lb ..... lower bound of domain
                   ## ub ..... upper bound of domain
+                  ## mode ... mode of distribution
+                  ## center . "center" (typical point) of distribution
                   ## area ... area below PDF
                   ## name ... name of distribution
 
                   ## Check entries
                   if(! (is.numeric(lb) && is.numeric(ub) && lb < ub) )
-                          stop("invalid domain ('lb','ub')", call.=FALSE)
+                          stop("domain ('lb','ub') missing or invalid", call.=FALSE)
 
                   if(! (is.function(cdf) || is.null(cdf)) )
                           stop("invalid argument 'cdf'", call.=FALSE)
@@ -94,9 +94,9 @@ setMethod( "initialize", "unuran.cont",
 
 ## Shortcut
 unuran.cont.new <- function(cdf=NULL, pdf=NULL, dpdf=NULL, islog=FALSE,
-                            mode=NA, center=NA, lb=-Inf, ub=Inf, area=NA, name=NA) {
-        new("unuran.cont", cdf=cdf, pdf=pdf, dpdf=dpdf, islog=islog,
-            mode=mode, center=center, lb=lb, ub=ub, area=area, name=name)
+                            lb=NA, ub=NA, mode=NA, center=NA, area=NA, name=NA) {
+         new("unuran.cont", cdf=cdf, pdf=pdf, dpdf=dpdf, islog=islog,
+             lb=lb, ub=ub, mode=mode, center=center, area=area, name=name)
 }
 
 ## End ----------------------------------------------------------------------

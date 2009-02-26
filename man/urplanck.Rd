@@ -32,7 +32,7 @@ urplanck(n, a, lb = 1.e-12, ub = Inf)
   for \eqn{x \ge 0} and \eqn{a\ge 1}{a >= 1}.
 
   The generation algorithm uses transformed density rejection
-  \code{"TDR"}. The parameters \code{lb} and \code{ub} can be used to
+  \sQuote{TDR}. The parameters \code{lb} and \code{ub} can be used to
   generate variates from the Planck distribution truncated to the
   interval (\code{lb},\code{ub}).
 }

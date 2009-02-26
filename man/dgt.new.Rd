@@ -8,7 +8,7 @@
 \description{
   UNU.RAN random variate generator for discrete distributions with given
   probability vector. 
-  It applies the Guide-Table Method for discrete inversion (DGT).
+  It applies the Guide-Table Method for discrete inversion (\sQuote{DGT}).
 
   [Universal] -- Inversion Method.
 }
@@ -22,7 +22,7 @@ dgt.new(pv, from=1)
 }
 
 \details{
-  This function creates an \code{unuran} object based on \dQuote{DGT}
+  This function creates an \code{unuran} object based on \sQuote{DGT}
   (Discrete Guide-Table method). It can be used to draw samples of a
   discrete random variate with given probability vector
   using \code{\link{ur}}.

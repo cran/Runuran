@@ -14,14 +14,19 @@
 }
 
 \usage{
-unuran.discr.new(pv=NULL, pmf=NULL, mode=NA, lb=0, ub=Inf,
-                 sum=NA, name=NA)
+unuran.discr.new(pv=NULL, pmf=NULL, lb=NA, ub=NA,
+                 mode=NA, sum=NA, name=NA)
 }
 \arguments{
     \item{pv}{probability vector. (numeric vector)}
     \item{pmf}{probability mass function. (\R function)}
     \item{mode}{mode of distribution. (numeric, integer)}
-    \item{lb, ub}{lower and upper bound of domain. (numeric, integers)}
+    \item{lb}{lower bound of domain;
+      use \code{-Inf} if unbounded from left. (numeric, integer)}
+    \item{ub}{upper bound of domain;
+      use \code{Inf} if unbounded from right;
+      when \code{pmf} is not given, the default \code{ub=Inf} is
+      used. (numeric, integer)}
     \item{sum}{sum over \code{pv} / \code{pmf}; used for computing
       normalization constants if required. (numeric)}
     \item{name}{name of distribution. (string)}
@@ -60,12 +65,12 @@ unuran.discr.new(pv=NULL, pmf=NULL, mode=NA, lb=0, ub=Inf,
 \examples{
 ## Create a distribution object with given PV and mode
 mypv <- dbinom(0:100,100,0.3)
-distr <- new("unuran.discr", pv=mypv, mode=30)
+distr <- new("unuran.discr", pv=mypv, lb=0, mode=30)
 
 ## Create discrete distribution with given probability vector
 ## (the PV need not be normalized)
 pv <- c(1.,2.,1.5,0.,3.,1.2)     
-dpv <- new("unuran.discr", pv=pv)
+dpv <- new("unuran.discr", pv=pv, lb=1)
 
 ## Create discrete distribution with given PMF
 pmf <- function(x) dbinom(x,100,0.3)

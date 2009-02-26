@@ -78,7 +78,7 @@ unuran.details(unr)
 ## use PDF
 gausspdf <- function (x) { exp(-0.5*x^2) }
 gaussdpdf <- function (x) { -x*exp(-0.5*x^2) }
-gauss <- new("unuran.cont", pdf=gausspdf, dpdf=gaussdpdf, islog=FALSE, center=0.1)
+gauss <- new("unuran.cont", pdf=gausspdf, dpdf=gaussdpdf, lb=-Inf, ub=Inf, center=0.1)
 unr <- 0; unr <- unuran.new(gauss, "tdr")
 unr
 x <- unuran.sample(unr, samplesize)
@@ -88,7 +88,7 @@ if (pval < alpha) stop("chisq test FAILED!  p-value=",signif(pval))
 ## use PDF
 gausspdf <- function (x) { exp(-0.5*x^2) }
 gaussdpdf <- function (x) { -x*exp(-0.5*x^2) }
-gauss <- unuran.cont.new(pdf=gausspdf, dpdf=gaussdpdf, islog=FALSE, center=0.1)
+gauss <- unuran.cont.new(pdf=gausspdf, dpdf=gaussdpdf, lb=-Inf, ub=Inf, center=0.1)
 unr <- 0; unr <- unuran.new(gauss, "tdr")
 unr
 x <- unuran.sample(unr, samplesize)
@@ -98,7 +98,7 @@ if (pval < alpha) stop("chisq test FAILED!  p-value=",signif(pval))
 ## use logPDF
 gausspdf <- function (x) { -0.5*x^2 }
 gaussdpdf <- function (x) { -x }
-gauss <- new("unuran.cont", pdf=gausspdf, dpdf=gaussdpdf, islog=TRUE, mode=0)
+gauss <- new("unuran.cont", pdf=gausspdf, dpdf=gaussdpdf, islog=TRUE, lb=-Inf, ub=Inf, mode=0)
 unr <- 0; unr <- unuran.new(gauss, "tdr")
 unr
 x <- unuran.sample(unr, samplesize)
@@ -108,7 +108,7 @@ if (pval < alpha) stop("chisq test FAILED!  p-value=",signif(pval))
 ## use logPDF (use ARS to test 'print' function)
 gausspdf <- function (x) { -0.5*x^2 }
 gaussdpdf <- function (x) { -x }
-gauss <- new("unuran.cont", pdf=gausspdf, dpdf=gaussdpdf, islog=TRUE)
+gauss <- new("unuran.cont", pdf=gausspdf, dpdf=gaussdpdf, islog=TRUE, lb=-Inf, ub=Inf)
 unr <- 0; unr <- unuran.new(gauss, "ars")
 unr
 x <- unuran.sample(unr, samplesize)
@@ -132,7 +132,7 @@ x <- unuran.sample(unr, samplesize)
 
 ## use PV
 pv <- dbinom(0:100,100,0.3)
-binom <- new("unuran.discr",pv=pv)
+binom <- new("unuran.discr",pv=pv,lb=0)
 unr <- 0; unr <- unuran.new(binom, "dgt")
 x <- unuran.sample(unr, samplesize)
 pval <- chisq.test( hist(pbinom(x,100,0.3),plot=FALSE)$density )$p.value

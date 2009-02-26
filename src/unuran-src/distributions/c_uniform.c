@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -17,6 +17,7 @@ static double _unur_dpdf_uniform( double x, const UNUR_DISTR *distr );
 static double _unur_logpdf_uniform( double x, const UNUR_DISTR *distr );
 static double _unur_dlogpdf_uniform( double x, const UNUR_DISTR *distr );
 static double _unur_cdf_uniform( double x, const UNUR_DISTR *distr );
+static double _unur_invcdf_uniform( double u, const UNUR_DISTR *distr );
 static int _unur_upd_mode_uniform( UNUR_DISTR *distr );
 static int _unur_upd_area_uniform( UNUR_DISTR *distr );
 static int _unur_set_params_uniform( UNUR_DISTR *distr, const double *params, int n_params );
@@ -56,6 +57,14 @@ _unur_cdf_uniform( double x, const UNUR_DISTR *distr )
   if (x>=1.)
     return 1.;
   return x;
+} 
+double
+_unur_invcdf_uniform( double U, const UNUR_DISTR *distr )
+{ 
+  register const double *params = DISTR.params;
+  double X;
+  X = (DISTR.n_params==0) ? U : a + U * (b - a);
+  return X;
 } 
 int
 _unur_upd_mode_uniform( UNUR_DISTR *distr )
@@ -116,12 +125,12 @@ unur_distr_uniform( const double *params, int n_params )
   distr = unur_distr_cont_new();
   distr->id = UNUR_DISTR_UNIFORM;
   distr->name = distr_name;
-  DISTR.init = _unur_stdgen_uniform_init;
   DISTR.pdf     = _unur_pdf_uniform;     
   DISTR.logpdf  = _unur_logpdf_uniform;  
   DISTR.dpdf    = _unur_dpdf_uniform;    
   DISTR.dlogpdf = _unur_dlogpdf_uniform; 
   DISTR.cdf     = _unur_cdf_uniform;     
+  DISTR.invcdf  = _unur_invcdf_uniform;  
   distr->set = ( UNUR_DISTR_SET_DOMAIN |
 		 UNUR_DISTR_SET_MODE   |
 		 UNUR_DISTR_SET_STDDOMAIN |

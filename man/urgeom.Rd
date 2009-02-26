@@ -29,7 +29,7 @@ urgeom(n, prob, lb = 0, ub = Inf)
   for \eqn{x = 0, 1, 2, \ldots}{x = 0, 1, 2, ...}, \eqn{0 < p \le 1}.
 
   The generation algorithm uses guide table based inversion for
-  \eqn{p > 0.02} and method @code{"DARI"} otherwise.
+  \eqn{p > 0.02} and method \sQuote{DARI} otherwise.
   The parameters \code{lb} and \code{ub} can be used to generate
   variates from the Geometric distribution truncated to the interval
   (\code{lb},\code{ub}).

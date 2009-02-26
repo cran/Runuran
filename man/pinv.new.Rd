@@ -9,19 +9,22 @@
   UNU.RAN random variate generator for continuous distributions with
   given probability density function (PDF) or cumulative distribution
   function (CDF).
-  It is based on the Polynomial interpolation of INVerse CDF (PINV).
+  It is based on the Polynomial interpolation of INVerse CDF (\sQuote{PINV}).
 
   [Universal] -- Inversion Method.
 }
 
 \usage{
-pinv.new(pdf, cdf, lb=-Inf, ub=Inf, islog=FALSE, center=0, uresolution=1.e-10, ...)
+pinv.new(pdf, cdf, lb, ub, islog=FALSE, center=0, uresolution=1.e-10, ...)
 }
 \arguments{
   \item{pdf}{probability density function. (\R function)}
   \item{cdf}{cumulative distribution function. (\R function)}
-  \item{lb, ub}{lower and upper bound of domain. (numeric)}
-  \item{islog}{whether \code{pdf} adn \code{cdf} are given by their
+  \item{lb}{lower bound of domain;
+    use \code{-Inf} if unbounded from left. (numeric)}
+  \item{ub}{upper bound of domain;
+    use \code{Inf} if unbounded from right. (numeric)}
+  \item{islog}{whether \code{pdf} and \code{cdf} are given by their
     corresponding logarithms. (boolean)}
   \item{center}{\dQuote{typical} point of distribution. (numeric)}
   \item{uresolution}{maximal acceptable u-error. (numeric)}
@@ -29,7 +32,7 @@ pinv.new(pdf, cdf, lb=-Inf, ub=Inf, islog=FALSE, center=0, uresolution=1.e-10, .
 }
 
 \details{
-  This function creates an \code{unuran} object based on \dQuote{PINV}
+  This function creates an \code{unuran} object based on \sQuote{PINV}
   (Polynomial interpolation of INVerse CDF). It can be used to draw
   samples of a continuous random variate with given probability density
   function \code{pdf} or cumulative distribution function \code{cdf}
@@ -85,18 +88,18 @@ pinv.new(pdf, cdf, lb=-Inf, ub=Inf, islog=FALSE, center=0, uresolution=1.e-10, .
 \examples{
 ## Create a sample of size 100 for a Gaussian distribution
 pdf <- function (x) { exp(-0.5*x^2) }
-gen <- pinv.new(pdf=pdf)
+gen <- pinv.new(pdf=pdf, lb=-Inf, ub=Inf)
 x <- ur(gen,100)
 
 ## Create a sample of size 100 for a 
 ## Gaussian distribution (use logPDF)
 logpdf <- function (x) { -0.5*x^2 }
-gen <- pinv.new(pdf=logpdf, islog=TRUE)
+gen <- pinv.new(pdf=logpdf, islog=TRUE, lb=-Inf, ub=Inf)
 x <- ur(gen,100)
 
 ## Draw sample from Gaussian distribution with mean 1 and
 ## standard deviation 2. Use 'dnorm'.
-gen <- pinv.new(pdf=dnorm, mean=1, sd=2)
+gen <- pinv.new(pdf=dnorm, lb=-Inf, ub=Inf, mean=1, sd=2)
 x <- ur(gen,100)
 
 ## Draw a sample from a truncated Gaussian distribution
@@ -105,11 +108,11 @@ gen <- pinv.new(pdf=dnorm, lb=2, ub=Inf)
 x <- ur(gen,100)
 
 ## Improve the accuracy of the approximation
-gen <- pinv.new(pdf=dnorm, uresolution=1e-15)
+gen <- pinv.new(pdf=dnorm, lb=-Inf, ub=Inf, uresolution=1e-15)
 x <- ur(gen,100)
 
 ## We have to provide a 'center' when PDF (almost) vanishes at 0.
-gen <- pinv.new(pdf=dgamma, center=4, lb=0, shape=5)
+gen <- pinv.new(pdf=dgamma, lb=0, ub=Inf, center=4, shape=5)
 x <- ur(gen,100)
 }
 

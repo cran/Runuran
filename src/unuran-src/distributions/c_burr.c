@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -14,6 +14,7 @@ static const char distr_name[] = "burr";
 #define c          params[2]
 #define DISTR distr->data.cont
 static double _unur_cdf_burr(double x, const UNUR_DISTR *distr);
+static double _unur_invcdf_burr(double u, const UNUR_DISTR *distr);
 static int _unur_set_params_burr( UNUR_DISTR *distr, const double *params, int n_params );
 double
 _unur_cdf_burr( double x, const UNUR_DISTR *distr )
@@ -60,7 +61,7 @@ _unur_cdf_burr( double x, const UNUR_DISTR *distr )
       return 0.;
     if (x>=1.)
       return 1.;
-    return pow( x - M_PI/2. * sin( 2. * M_PI * x), k );
+    return pow( x - 1./(2.*M_PI) * sin( 2. * M_PI * x), k );
   case 12: 
     if (x<=0.)
       return 0.;
@@ -70,16 +71,77 @@ _unur_cdf_burr( double x, const UNUR_DISTR *distr )
     return INFINITY;
   }
 } 
+double
+_unur_invcdf_burr( double U, const UNUR_DISTR *distr )
+{
+  register const double *params = DISTR.params;
+  double Y;
+  switch (distr->id) {
+  case UNUR_DISTR_BURR_I:
+    return U;
+  case UNUR_DISTR_BURR_II:
+    Y = exp( -log(U)/k );  
+    return ( -log( Y - 1. ) );
+  case UNUR_DISTR_BURR_III:
+    Y = exp( -log(U)/k );  
+    return ( exp( -log( Y - 1. )/c ) );
+  case UNUR_DISTR_BURR_IV:
+    Y = exp( -log(U)/k );   
+    Y = exp( c * log( Y - 1. )) + 1.;
+    return (c/Y);
+  case UNUR_DISTR_BURR_V:
+    Y = exp( -log(U)/k );   
+    return atan( -log( (Y - 1.) / c ) );
+  case UNUR_DISTR_BURR_VI:
+    Y = exp( -log(U)/k );   
+    Y = -log( (Y - 1.) / c)/k;
+    return log( Y + sqrt(Y * Y +1.));
+  case UNUR_DISTR_BURR_VII:
+    Y = exp( log(U)/k );    
+    return ( log(2. * Y / (2. - 2.*Y)) / 2. );
+  case UNUR_DISTR_BURR_VIII:
+    Y = exp( log(U)/k );    
+    return ( log( tan( Y * M_PI/2. ) ) );
+  case UNUR_DISTR_BURR_IX:
+    Y = 1. + 2. * U / (c * (1.-U));
+    return log( exp( log(Y) / k) - 1. );
+  case UNUR_DISTR_BURR_X:
+    Y = exp( log(U)/k );   
+    return ( sqrt( -log( 1. - Y ) ) );
+  case UNUR_DISTR_BURR_XII:
+    Y = exp( -log(U)/k );   
+    return ( exp( log( Y - 1.) / c) );
+  case UNUR_DISTR_BURR_XI:
+  default:
+    _unur_error(distr_name,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
+    return INFINITY;
+  }
+} 
 int
 _unur_set_params_burr( UNUR_DISTR *distr, const double *params, int n_params )
 {
-  if (n_params < 2) {
-    _unur_error(distr_name,UNUR_ERR_DISTR_NPARAMS,"too few"); return UNUR_ERR_DISTR_NPARAMS; }
-  if (n_params > 3) {
-    _unur_warning(distr_name,UNUR_ERR_DISTR_NPARAMS,"too many");
-    n_params = 3; }
   CHECK_NULL(params,UNUR_ERR_NULL);
   switch (distr->id) {
+  case UNUR_DISTR_BURR_I:
+    if (n_params > 1) {
+      _unur_warning(distr_name,UNUR_ERR_DISTR_NPARAMS,"too many");
+      n_params = 1;
+    }
+    break;
+  case UNUR_DISTR_BURR_II:
+  case UNUR_DISTR_BURR_VII:
+  case UNUR_DISTR_BURR_VIII:
+  case UNUR_DISTR_BURR_X:
+  case UNUR_DISTR_BURR_XI:
+    if (n_params < 2) {
+      _unur_error(distr_name,UNUR_ERR_DISTR_NPARAMS,"too few");
+      return UNUR_ERR_DISTR_NPARAMS;
+    }
+    if (n_params > 2) {
+      _unur_warning(distr_name,UNUR_ERR_DISTR_NPARAMS,"too many");
+      n_params = 2;
+    }
+    break;
   case UNUR_DISTR_BURR_III:
   case UNUR_DISTR_BURR_IV:
   case UNUR_DISTR_BURR_V:
@@ -88,13 +150,16 @@ _unur_set_params_burr( UNUR_DISTR *distr, const double *params, int n_params )
   case UNUR_DISTR_BURR_XII:
     if (n_params < 3) {
       _unur_error(distr_name,UNUR_ERR_DISTR_NPARAMS,"too few");
-      free( distr ); return UNUR_ERR_DISTR_NPARAMS;
+      return UNUR_ERR_DISTR_NPARAMS;
     }
-  default: 
-    if (n_params == 3) {
+    if (n_params > 3) {
       _unur_warning(distr_name,UNUR_ERR_DISTR_NPARAMS,"too many");
-      n_params = 2;
+      n_params = 3;
     }
+    break;
+  default:
+    _unur_error(distr_name,UNUR_ERR_DISTR_DOMAIN,"unkown type");
+    return UNUR_ERR_DISTR_NPARAMS;
   }
   if (k <= 0. || (c <= 0. && n_params == 3) ) {
     _unur_error(distr_name,UNUR_ERR_DISTR_DOMAIN,"k <= 0 || c <= 0");
@@ -141,12 +206,18 @@ _unur_set_params_burr( UNUR_DISTR *distr, const double *params, int n_params )
       break;
     }
   }
+  DISTR.invcdf = ( (distr->id != UNUR_DISTR_BURR_XI) 
+		   ? _unur_invcdf_burr : NULL );
   return UNUR_SUCCESS;
 } 
 struct unur_distr *
 unur_distr_burr( const double *params, int n_params )
 {
   register struct unur_distr *distr;
+  if (n_params < 1) {
+    _unur_error(distr_name,UNUR_ERR_DISTR_NPARAMS,"too few"); 
+    return NULL;
+  }
   distr = unur_distr_cont_new();
   switch ((int) (burr_type + 0.5)) {
   case  1:  distr->id = UNUR_DISTR_BURR_I;    break;
@@ -166,8 +237,8 @@ unur_distr_burr( const double *params, int n_params )
     free( distr ); return NULL;
   }
   distr->name = distr_name;
-  DISTR.init = _unur_stdgen_burr_init;
-  DISTR.cdf  = _unur_cdf_burr;  
+  DISTR.cdf     = _unur_cdf_burr;     
+  DISTR.invcdf  = _unur_invcdf_burr;  
   distr->set = ( UNUR_DISTR_SET_DOMAIN |
 		 UNUR_DISTR_SET_STDDOMAIN );
   if (_unur_set_params_burr(distr,params,n_params)!=UNUR_SUCCESS) {

@@ -32,7 +32,7 @@ urlogarithmic(n, shape, lb = 1, ub = Inf)
   for \eqn{x = 1, 2, \ldots} and \eqn{0 < \theta < 1}{0 < t < 1}.
 
   The generation algorithm uses guide table based inversion when the
-  tails are not too heavy and method @code{"DARI"} otherwise.
+  tails are not too heavy and method \sQuote{DARI} otherwise.
   The parameters \code{lb} and \code{ub} can be used to generate
   variates from the Logarithmic distribution truncated to the interval
   (\code{lb},\code{ub}).

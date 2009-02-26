@@ -5,9 +5,9 @@
 \alias{r,unuran-method}
 \alias{r,unuran,numeric-method}
 
-\title{Sample from a distribution specified by a UNU.RAN object}
+\title{Sample from a distribution specified by a "unuran" object}
 \description{
-  Get random sample from a UNU.RAN object in package
+  Get random sample from a \code{unuran} object in package
   \pkg{Runuran}.
   
   [Universal] -- Sampling Function.
@@ -17,7 +17,7 @@
 \S4method{r}{unuran,numeric}(unur,n=1)
 }
 \arguments{
-  \item{unur}{a \dQuote{unuran} object.}
+  \item{unur}{a \code{unuran} object.}
   \item{n}{sample size.}
 }
 

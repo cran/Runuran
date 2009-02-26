@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -18,7 +18,6 @@
 #include "mvstd.h"
 #include "norta.h"
 #include "norta_struct.h"
-#ifdef UNUR_URNG_UNURAN
 #define UNUR_NORTA_MIN_EIGENVALUE  (1.e-10)
 #define NORTA_DEBUG_SIGMA_Y     0x00000010u   
 #define GENTYPE "NORTA"          
@@ -31,8 +30,6 @@ static int _unur_norta_nortu_setup( struct unur_gen *gen );
 static int _unur_norta_make_correlationmatrix( int dim, double *M);
 static struct unur_gen *_unur_norta_make_marginalgen( const struct unur_gen *gen,
 						      const struct unur_distr *marginal );
-static double _unur_norta_urng_wrapper (void *state) { 
-  return ((double*)state)[0]; }
 #ifdef UNUR_ENABLE_LOGGING
 static void _unur_norta_debug_init( const struct unur_gen *gen );
 static void _unur_norta_debug_sigma_y( const struct unur_gen *gen, 
@@ -112,7 +109,6 @@ _unur_norta_init( struct unur_par *par )
     _unur_norta_free(gen); return NULL;
   }
   GEN->normaldistr = unur_distr_normal(NULL,0);
-  GEN->marginal_urng = unur_urng_new (_unur_norta_urng_wrapper, GEN->urng_U) ;
   if (gen->distr->id != UNUR_DISTR_COPULA) {
     if (_unur_distr_cvec_marginals_are_equal(DISTR.marginals, GEN->dim)) {
       struct unur_gen *marginalgen = _unur_norta_make_marginalgen( gen, DISTR.marginals[0] );
@@ -169,8 +165,6 @@ _unur_norta_create( struct unur_par *par )
   MNORMAL = NULL;
   GEN->normaldistr = NULL;
   GEN->marginalgen_list = NULL;
-  GEN->marginal_urng = NULL;
-  GEN->urng_U[0] = 0.;
 #ifdef UNUR_ENABLE_INFO
   gen->info = _unur_norta_info;
 #endif
@@ -180,19 +174,13 @@ struct unur_gen *
 _unur_norta_clone( const struct unur_gen *gen )
 { 
 #define CLONE  ((struct unur_norta_gen*)clone->datap)
-  int i;
   struct unur_gen *clone;
   CHECK_NULL(gen,NULL);  COOKIE_CHECK(gen,CK_NORTA_GEN,NULL);
   clone = _unur_generic_clone( gen, GENTYPE );
   CLONE->copula = _unur_xmalloc(sizeof(double)*GEN->dim);
   CLONE->normaldistr = _unur_distr_clone(GEN->normaldistr);
-  if (GEN->marginal_urng) 
-    CLONE->marginal_urng = unur_urng_new (_unur_norta_urng_wrapper, CLONE->urng_U) ;
-  if (GEN->marginalgen_list) {
+  if (GEN->marginalgen_list)
     CLONE->marginalgen_list = _unur_gen_list_clone( GEN->marginalgen_list, GEN->dim );
-    for (i=0; i<GEN->dim; i++) 
-      CLONE->marginalgen_list[i]->urng = CLONE->marginal_urng;
-  }
   return clone;
 #undef CLONE
 } 
@@ -207,7 +195,6 @@ _unur_norta_free( struct unur_gen *gen )
   COOKIE_CHECK(gen,CK_NORTA_GEN,RETURN_VOID);
   if (GEN->copula) free (GEN->copula);
   if (GEN->normaldistr) _unur_distr_free (GEN->normaldistr);
-  if (GEN->marginal_urng) unur_urng_free(GEN->marginal_urng);
   if (GEN->marginalgen_list)
     _unur_gen_list_free( GEN->marginalgen_list, GEN->dim);
   SAMPLE = NULL;   
@@ -224,14 +211,11 @@ _unur_norta_sample_cvec( struct unur_gen *gen, double *vec )
   u = GEN->copula;
   _unur_sample_vec(MNORMAL,u);
   for (j=0; j<GEN->dim; j++)
-    u[j] = unur_distr_cont_eval_cdf( u[j], GEN->normaldistr );
-  if (gen->distr->id == UNUR_DISTR_COPULA) {
-    for (j=0; j<GEN->dim; j++) vec[j] = u[j];
+    vec[j] = unur_distr_cont_eval_cdf( u[j], GEN->normaldistr );
+  if (gen->distr->id == UNUR_DISTR_COPULA)
     return UNUR_SUCCESS;
-  }
   for (j=0; j<GEN->dim; j++) {
-    GEN->urng_U[0] = u[j];
-    vec[j] = unur_sample_cont(GEN->marginalgen_list[j]);
+    vec[j] = unur_quantile(GEN->marginalgen_list[j], vec[j]);
   }
   return UNUR_SUCCESS;
 #undef idx
@@ -360,7 +344,6 @@ _unur_norta_make_marginalgen( const struct unur_gen *gen,
     return NULL;
   } while (1);
   marginalgen->debug = gen->debug;
-  marginalgen->urng = GEN->marginal_urng;
   return marginalgen;
 } 
 #ifdef UNUR_ENABLE_LOGGING
@@ -438,5 +421,4 @@ _unur_norta_info( struct unur_gen *gen, int help )
     _unur_string_append(info,"\n");
   }
 } 
-#endif   
 #endif   

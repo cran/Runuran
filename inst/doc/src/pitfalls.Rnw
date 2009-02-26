@@ -1,0 +1,56 @@
+% ---------------------------------------------------------------------------
+
+\section{Pitfalls}
+\label{sec:pitfalls}
+
+Libraries like \Runuran\ that provide a flexible interface also have
+the risk of possible traps and pitfalls. Besides the obvious case
+where the chosen method cannot be used for sampling from the target
+distribution we observed that users sometimes forget to change the
+default values of the function arguments, e.g., they do not set
+the \code{center} (a ``typical point'' of the distribution)
+when the domain does not contain 0.
+Then it may happen that the chosen generation method does not work or
+(the worst case!) does not work as expected.
+
+\smallskip\noindent
+\textbf{Check argument defaults whenever you use an \Runuran\ function!}
+
+\bigskip\noindent
+Here is an examples\footnote{Please sent us examples where you had
+  problems with the concept of \Runuran.} of possible problems and how
+to fix these.
+
+% ...........................................................................
+
+\paragraph{Shifted center.}
+
+Some methods require a ``typical'' point of the distribution, called
+\code{center}. By default this is set to \code{center=0}. The PDF at
+the center must not be too small. Thus if \code{pdf(center)} returns
+\code{0} the chosen method does not work.
+
+\begin{Schunk}
+\begin{Sinput}
+> pdf <- function (x) { x^2 / (1+x^2)^2 }
+> gen <- pinv.new(pdf=pdf,lb=0,ub=Inf)
+\end{Sinput}
+\begin{Soutput}
+[UNU.RAN - error] (generator) condition for method violated: PDF(center) <= 0.
+Error: [UNU.RAN - error] cannot create UNU.RAN object
+\end{Soutput}
+\end{Schunk}
+
+\noindent
+\textsl{Solution:}
+Set \code{center} to (a point near) the mode of the distribution.
+<<>>=
+pdf <- function (x) { x^2 / (1+x^2)^2 }
+gen <- pinv.new(pdf=pdf,lb=0,ub=Inf,  center=1 )    ## Add 'center'
+x <- ur(gen,10)
+x
+@ 
+
+
+
+% ---------------------------------------------------------------------------

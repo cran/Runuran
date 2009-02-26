@@ -1,16 +1,19 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 UNUR_DISTR *unur_distr_cont_new( void );
 int unur_distr_cont_set_pdf( UNUR_DISTR *distribution, UNUR_FUNCT_CONT *pdf );
 int unur_distr_cont_set_dpdf( UNUR_DISTR *distribution, UNUR_FUNCT_CONT *dpdf );
 int unur_distr_cont_set_cdf( UNUR_DISTR *distribution, UNUR_FUNCT_CONT *cdf );
+int unur_distr_cont_set_invcdf( UNUR_DISTR *distribution, UNUR_FUNCT_CONT *invcdf );
 UNUR_FUNCT_CONT *unur_distr_cont_get_pdf( const UNUR_DISTR *distribution );
 UNUR_FUNCT_CONT *unur_distr_cont_get_dpdf( const UNUR_DISTR *distribution );
 UNUR_FUNCT_CONT *unur_distr_cont_get_cdf( const UNUR_DISTR *distribution );
+UNUR_FUNCT_CONT *unur_distr_cont_get_invcdf( const UNUR_DISTR *distribution );
 double unur_distr_cont_eval_pdf( double x, const UNUR_DISTR *distribution );
 double unur_distr_cont_eval_dpdf( double x, const UNUR_DISTR *distribution );
 double unur_distr_cont_eval_cdf( double x, const UNUR_DISTR *distribution );
+double unur_distr_cont_eval_invcdf( double u, const UNUR_DISTR *distribution );
 int unur_distr_cont_set_logpdf( UNUR_DISTR *distribution, UNUR_FUNCT_CONT *logpdf );
 int unur_distr_cont_set_dlogpdf( UNUR_DISTR *distribution, UNUR_FUNCT_CONT *dlogpdf );
 int unur_distr_cont_set_logcdf( UNUR_DISTR *distribution, UNUR_FUNCT_CONT *logcdf );

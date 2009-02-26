@@ -35,22 +35,33 @@ setClass( "unuran.discr",
 ## Initialize ---------------------------------------------------------------
 
 setMethod( "initialize", "unuran.discr",
-          function(.Object, pv=NULL, pmf=NULL, mode=NA, lb=0, ub=Inf, sum=NA, name=NA) {
+          function(.Object, pv=NULL, pmf=NULL, lb=NA, ub=NA, mode=NA, sum=NA, name=NA) {
                   ## pv ..... probability vector (PV)
                   ## pmf .... probability mass function (PMF)
-                  ## mode ... mode of distribution
                   ## lb ..... lower bound of domain
                   ## ub ..... upper bound of domain
+                  ## mode ... mode of distribution
                   ## sum .... sum over PV / PMF
                   ## name ... name of distribution
                   
                   ## Check entries
-                  if(! (is.numeric(lb) && is.numeric(ub) && lb < ub) )
-                          stop("invalid domain ('lb','ub')", call.=FALSE)
-                  if (!(is.numeric(pv) || is.null(pv) ))
+                  if (! (is.numeric(pv) || is.null(pv) ))
                           stop("invalid argument 'pv'", call.=FALSE)
-                  if(! (is.function(pmf) || is.null(pmf)) )
+                  if (! (is.function(pmf) || is.null(pmf)) )
                           stop("invalid argument 'pmf'", call.=FALSE)
+
+                  if (! is.null(pmf)) {
+                    ## we need both 'lb' and 'up' when a PMF is given
+                    if (! (is.numeric(lb) && is.numeric(ub) && lb < ub) )
+                      stop("domain ('lb','ub') missing or invalid", call.=FALSE)
+                  }
+                  else {
+                    ## we can use the default 'ub=Inf' if only the PV is given
+                    if (! is.numeric(lb) )
+                      stop("lower bound 'lb' missing or invalid", call.=FALSE)
+                    if (! is.numeric(ub) )
+                      ub <- Inf
+                  }
 
                   ## Store informations (if provided)
                   if (!is.na(name))     .Object@name <- name
@@ -77,8 +88,8 @@ setMethod( "initialize", "unuran.discr",
           } )
 
 ## Shortcut
-unuran.discr.new <- function(pv=NULL, pmf=NULL, mode=NA, lb=0, ub=Inf, sum=NA, name=NA) {
-        new("unuran.discr", pv=pv, pmf=pmf, mode=mode, lb=lb, ub=ub, sum=sum,name=name)
+unuran.discr.new <- function(pv=NULL, pmf=NULL, lb=NA, ub=NA, mode=NA, sum=NA, name=NA) {
+        new("unuran.discr", pv=pv, pmf=pmf, lb=lb, ub=ub, mode=mode, sum=sum,name=name)
 }
 
 ## End ----------------------------------------------------------------------

@@ -31,7 +31,7 @@ urpois(n, lambda, lb = 0, ub = Inf)
   for \eqn{x = 0, 1, 2, \ldots}.
 
   The generation algorithm uses guide table based inversion when the
-  tails are not too heavy and method @code{"DARI"} otherwise.
+  tails are not too heavy and method \sQuote{DARI} otherwise.
   The parameters \code{lb} and \code{ub} can be used to generate
   variates from the Poisson distribution truncated to the interval
   (\code{lb},\code{ub}).

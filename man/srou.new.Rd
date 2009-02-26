@@ -8,19 +8,22 @@
 \description{
   UNU.RAN random variate generator for continuous distributions with
   given probability density function (PDF).
-  It is based on the Simple Ratio-Of-Uniforms Method (SROU).
+  It is based on the Simple Ratio-Of-Uniforms Method (\sQuote{SROU}).
 
   [Universal] -- Rejection Method.
 }
 
 \usage{
-srou.new(pdf, mode, area, lb=-Inf, ub=Inf, islog=FALSE, r=1, ...)
+srou.new(pdf, lb, ub, mode, area, islog=FALSE, r=1, ...)
 }
 \arguments{
   \item{pdf}{probability density function. (\R function)}
+  \item{lb}{lower bound of domain;
+    use \code{-Inf} if unbounded from left. (numeric)}
+  \item{ub}{upper bound of domain;
+    use \code{Inf} if unbounded from right. (numeric)}
   \item{mode}{location of the mode. (numeric)}
   \item{area}{area below \code{pdf}. (numeric)}
-  \item{lb, ub}{lower and upper bound of domain. (numeric)}
   \item{islog}{whether \code{pdf} is given as log-density (the
     \code{dpdf} must then be the derivative of the log-density). (boolean)}
   \item{r}{adjust algorithm to heavy-tailed distribution. (numeric)}
@@ -28,7 +31,7 @@ srou.new(pdf, mode, area, lb=-Inf, ub=Inf, islog=FALSE, r=1, ...)
 }
 
 \details{
-  This function creates a \code{unuran} object based on \dQuote{SROU}
+  This function creates a \code{unuran} object based on \sQuote{SROU}
   (Simple Ratio-Of-Uniforms Method). It can be used to draw samples of a
   continuous random variate with given probability density function
   using \code{\link{ur}}.
@@ -72,12 +75,12 @@ srou.new(pdf, mode, area, lb=-Inf, ub=Inf, islog=FALSE, r=1, ...)
 \examples{
 ## Create a sample of size 100 for a Gaussian distribution.
 pdf <- function (x) { exp(-0.5*x^2) }
-gen <- srou.new(pdf=pdf, mode=0, area=2.506628275)
+gen <- srou.new(pdf=pdf, lb=-Inf, ub=Inf, mode=0, area=2.506628275)
 x <- ur(gen,100)
 
 ## Create a sample of size 100 for a Gaussian distribution.
 ## Use 'dnorm'.
-gen <- srou.new(pdf=dnorm, mode=0, area=1)
+gen <- srou.new(pdf=dnorm, lb=-Inf, ub=Inf, mode=0, area=1)
 x <- ur(gen,100)
 
 }

@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #ifndef UNUR_DISTRIBUTIONS_SOURCE_H_SEEN
@@ -10,17 +10,13 @@ double _unur_stdgen_sample_beta_b00( UNUR_GEN *generator );
 double _unur_stdgen_sample_beta_b01( UNUR_GEN *generator );
 double _unur_stdgen_sample_beta_b1prs( UNUR_GEN *generator );
 int _unur_stdgen_burr_init( UNUR_PAR *parameters, UNUR_GEN *generator );
-double _unur_stdgen_sample_burr_inv( UNUR_GEN *generator );
 int _unur_stdgen_cauchy_init( UNUR_PAR *parameters, UNUR_GEN *generator );
-double _unur_stdgen_sample_cauchy_inv( UNUR_GEN *generator );
 int _unur_stdgen_chi_init( UNUR_PAR *parameters, UNUR_GEN *generator );
 double _unur_stdgen_sample_chi_chru( UNUR_GEN *generator );
 int _unur_stdgen_exponential_init( UNUR_PAR *parameters, UNUR_GEN *generator );
 double _unur_stdgen_sample_exponential_inv( UNUR_GEN *generator );
 int _unur_stdgen_extremeI_init( UNUR_PAR *parameters, UNUR_GEN *generator );
-double _unur_stdgen_sample_extremeI_inv( UNUR_GEN *generator );
 int _unur_stdgen_extremeII_init( UNUR_PAR *parameters, UNUR_GEN *generator );
-double _unur_stdgen_sample_extremeII_inv( UNUR_GEN *generator );
 int _unur_stdgen_gamma_init( UNUR_PAR *parameters, UNUR_GEN *generator );
 double _unur_stdgen_sample_gamma_gll( UNUR_GEN *generator );
 double _unur_stdgen_sample_gamma_gs( UNUR_GEN *generator );
@@ -28,13 +24,9 @@ double _unur_stdgen_sample_gamma_gd( UNUR_GEN *generator );
 int _unur_stdgen_gig_init( UNUR_PAR *parameters, UNUR_GEN *generator );
 double _unur_stdgen_sample_gig_gigru( UNUR_GEN *generator );
 int _unur_stdgen_laplace_init( UNUR_PAR *parameters, UNUR_GEN *generator );
-double _unur_stdgen_sample_laplace_inv( UNUR_GEN *generator );
 int _unur_stdgen_logistic_init( UNUR_PAR *parameters, UNUR_GEN *generator );
-double _unur_stdgen_sample_logistic_inv( UNUR_GEN *generator );
 int _unur_stdgen_lomax_init( UNUR_PAR *parameters, UNUR_GEN *generator );
-double _unur_stdgen_sample_lomax_inv( UNUR_GEN *generator );
 int _unur_stdgen_normal_init( UNUR_PAR *parameters, UNUR_GEN *generator );
-double _unur_stdgen_sample_normal_inv( UNUR_GEN *generator );
 double _unur_stdgen_sample_normal_bm( UNUR_GEN *generator );
 double _unur_stdgen_sample_normal_pol( UNUR_GEN *generator );
 double _unur_stdgen_sample_normal_quo( UNUR_GEN *generator );
@@ -44,7 +36,6 @@ double _unur_stdgen_sample_normal_kr( UNUR_GEN *generator );
 double _unur_stdgen_sample_normal_acr( UNUR_GEN *generator );
 double _unur_stdgen_sample_normal_sum( UNUR_GEN *generator );
 int _unur_stdgen_pareto_init( UNUR_PAR *parameters, UNUR_GEN *generator );
-double _unur_stdgen_sample_pareto_inv( UNUR_GEN *generator );
 int _unur_stdgen_powerexponential_init( UNUR_PAR *parameters, UNUR_GEN *generator );
 double _unur_stdgen_sample_powerexponential_epd( UNUR_GEN *generator );
 int _unur_stdgen_student_init( UNUR_PAR *parameters, UNUR_GEN *generator );
@@ -53,11 +44,8 @@ double _unur_stdgen_sample_student_trouo( UNUR_GEN *generator );
 int _unur_stdgen_slash_init( UNUR_PAR *parameters, UNUR_GEN *generator );
 double _unur_stdgen_sample_slash_slash( UNUR_GEN *generator );
 int _unur_stdgen_triangular_init( UNUR_PAR *parameters, UNUR_GEN *generator );
-double _unur_stdgen_sample_triangular_inv( UNUR_GEN *generator );
 int _unur_stdgen_uniform_init( UNUR_PAR *parameters, UNUR_GEN *generator );
-double _unur_stdgen_sample_uniform_inv( UNUR_GEN *generator );
 int _unur_stdgen_weibull_init( UNUR_PAR *parameters, UNUR_GEN *generator );
-double _unur_stdgen_sample_weibull_inv( UNUR_GEN *generator );
 int _unur_stdgen_multinormal_init( UNUR_GEN *generator );
 int _unur_stdgen_sample_multinormal_cholesky( UNUR_GEN *generator, double *X );
 int _unur_stdgen_binomial_init( UNUR_PAR *parameters, UNUR_GEN *generator );

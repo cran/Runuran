@@ -34,7 +34,7 @@ urhyperbolic(n, shape, scale=1, lb = -Inf, ub = Inf)
     f(x) ~ exp(-a * sqrt(1+(x/s)^2))}
   for all \eqn{x}, \eqn{\alpha > 0}{a > 0} and \eqn{\sigma > 0}{s > 0}.
 
-  The generation algorithm uses transformed density rejection "TDR". The
+  The generation algorithm uses transformed density rejection \sQuote{TDR}. The
   parameters \code{lb} and \code{ub} can be used to generate variates from 
   the Hyperbolic distribution truncated to the interval (\code{lb},\code{ub}).
 }

@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -18,6 +18,7 @@ static double _unur_logpdf_exponential( double x, const UNUR_DISTR *distr );
 static double _unur_dpdf_exponential( double x, const UNUR_DISTR *distr );
 static double _unur_dlogpdf_exponential( double x, const UNUR_DISTR *distr );
 static double _unur_cdf_exponential( double x, const UNUR_DISTR *distr );
+static double _unur_invcdf_exponential( double u, const UNUR_DISTR *distr );
 static int _unur_upd_mode_exponential( UNUR_DISTR *distr );
 static int _unur_upd_area_exponential( UNUR_DISTR *distr );
 static int _unur_set_params_exponential( UNUR_DISTR *distr, const double *params, int n_params );
@@ -60,6 +61,14 @@ _unur_cdf_exponential( double x, const UNUR_DISTR *distr )
   if (DISTR.n_params > 0)
     x = (x - theta) / sigma;
   return ( (x<0.) ? 0. : 1.-exp(-x) );
+} 
+double
+_unur_invcdf_exponential( double U, const UNUR_DISTR *distr )
+{
+  register const double *params = DISTR.params;
+  double X;
+  X = - log( 1. - U );
+  return ((DISTR.n_params==0) ? X : theta + sigma * X);
 } 
 int
 _unur_upd_mode_exponential( UNUR_DISTR *distr )
@@ -127,6 +136,7 @@ unur_distr_exponential( const double *params, int n_params )
   DISTR.dpdf    = _unur_dpdf_exponential;    
   DISTR.dlogpdf = _unur_dlogpdf_exponential; 
   DISTR.cdf     = _unur_cdf_exponential;     
+  DISTR.invcdf  = _unur_invcdf_exponential;  
   distr->set = ( UNUR_DISTR_SET_DOMAIN |
 		 UNUR_DISTR_SET_STDDOMAIN |
 		 UNUR_DISTR_SET_MODE   |

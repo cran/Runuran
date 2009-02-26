@@ -15,7 +15,7 @@ source("test_routines.R")
 adv.tdr.norm <- function (n) {
         pdf <- function (x) { exp(-0.5*x^2) }
         dpdf <- function (x) { -x*exp(-0.5*x^2) }
-        dist <- new("unuran.cont", pdf=pdf, dpdf=dpdf, islog=FALSE)
+        dist <- new("unuran.cont", pdf=pdf, dpdf=dpdf, lb=-Inf, ub=Inf)
         gen <- unuran.new(dist, "tdr")
         ur(gen,n)
 }
@@ -25,7 +25,7 @@ rm(adv.tdr.norm)
 adv.tdr.norm.wl <- function (n) {
         logpdf <- function (x) { -0.5*x^2 }
         dlogpdf <- function (x) { -x }
-        dist <- new("unuran.cont", pdf=logpdf, dpdf=dlogpdf, islog=TRUE)
+        dist <- new("unuran.cont", pdf=logpdf, dpdf=dlogpdf, islog=TRUE, lb=-Inf, ub=Inf)
         gen <- unuran.new(dist, "tdr")
         ur(gen,n)
 }
@@ -40,7 +40,7 @@ prob <- 0.3
 binom.pmf <- function (x) { dbinom(x, size, prob) }
 binom.probs <- dbinom(0:size, size, prob)
 adv.dgt.binom <- function (n,lb=0,ub=size) {
-        dist <- new("unuran.discr", pv=binom.probs)
+        dist <- new("unuran.discr", pv=binom.probs, lb=lb)
         gen <- unuran.new(dist, "dgt")
         ur(gen,n)
 }
@@ -55,7 +55,7 @@ prob <- 0.3
 binom.pmf <- function (x) { dbinom(x, size, prob) }
 binom.probs <- dbinom(0:size, size, prob)
 adv.dau.binom <- function (n,lb=0,ub=size) {
-        dist <- new("unuran.discr", pv=binom.probs)
+        dist <- new("unuran.discr", pv=binom.probs, lb=lb)
         gen <- unuran.new(dist, "dau")
         ur(gen,n)
 }

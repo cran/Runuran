@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #undef __BEGIN_DECLS
@@ -94,7 +94,7 @@ UNUR_URNG *unur_urng_builtin_aux( void );
 #endif  
 #ifndef URNG_FVOID_H_SEEN
 #define URNG_FVOID_H_SEEN
-UNUR_URNG *unur_urng_fvoid_new( double (*random)(void *state), void (*reset)(void *state) );
+UNUR_URNG *unur_urng_fvoid_new( double (*urand)(void *state), void (*reset)(void *state) );
 #endif  
 #ifndef URNG_RANDOMSHIFT_H_SEEN
 #define URNG_RANDOMSHIFT_H_SEEN
@@ -135,12 +135,15 @@ UNUR_DISTR *unur_distr_cont_new( void );
 int unur_distr_cont_set_pdf( UNUR_DISTR *distribution, UNUR_FUNCT_CONT *pdf );
 int unur_distr_cont_set_dpdf( UNUR_DISTR *distribution, UNUR_FUNCT_CONT *dpdf );
 int unur_distr_cont_set_cdf( UNUR_DISTR *distribution, UNUR_FUNCT_CONT *cdf );
+int unur_distr_cont_set_invcdf( UNUR_DISTR *distribution, UNUR_FUNCT_CONT *invcdf );
 UNUR_FUNCT_CONT *unur_distr_cont_get_pdf( const UNUR_DISTR *distribution );
 UNUR_FUNCT_CONT *unur_distr_cont_get_dpdf( const UNUR_DISTR *distribution );
 UNUR_FUNCT_CONT *unur_distr_cont_get_cdf( const UNUR_DISTR *distribution );
+UNUR_FUNCT_CONT *unur_distr_cont_get_invcdf( const UNUR_DISTR *distribution );
 double unur_distr_cont_eval_pdf( double x, const UNUR_DISTR *distribution );
 double unur_distr_cont_eval_dpdf( double x, const UNUR_DISTR *distribution );
 double unur_distr_cont_eval_cdf( double x, const UNUR_DISTR *distribution );
+double unur_distr_cont_eval_invcdf( double u, const UNUR_DISTR *distribution );
 int unur_distr_cont_set_logpdf( UNUR_DISTR *distribution, UNUR_FUNCT_CONT *logpdf );
 int unur_distr_cont_set_dlogpdf( UNUR_DISTR *distribution, UNUR_FUNCT_CONT *dlogpdf );
 int unur_distr_cont_set_logcdf( UNUR_DISTR *distribution, UNUR_FUNCT_CONT *logcdf );
@@ -558,6 +561,8 @@ int unur_hitro_reset_state( UNUR_GEN *generator );
 UNUR_PAR *unur_cstd_new( const UNUR_DISTR *distribution );
 int unur_cstd_set_variant( UNUR_PAR *parameters, unsigned variant );
 int unur_cstd_chg_truncated( UNUR_GEN *generator, double left, double right );
+double unur_cstd_eval_invcdf( const UNUR_GEN *generator, double u );
+double _unur_cstd_sample_inv( struct unur_gen *gen ); 
 UNUR_PAR *unur_dstd_new( const UNUR_DISTR *distribution );
 int unur_dstd_set_variant( UNUR_PAR *parameters, unsigned variant );
 UNUR_PAR *unur_mvstd_new( const UNUR_DISTR *distribution );
@@ -787,7 +792,7 @@ int unur_set_default_debug( unsigned debug );
 extern int unur_errno;
 int unur_get_errno ( void );
 void unur_reset_errno ( void );
-const char *unur_get_strerror ( const int unur_errno );
+const char *unur_get_strerror ( const int errnocode );
 UNUR_ERROR_HANDLER *unur_set_error_handler( UNUR_ERROR_HANDLER *new_handler );
 UNUR_ERROR_HANDLER *unur_set_error_handler_off( void );
 #ifndef UNUR_ERRNO_H_SEEN

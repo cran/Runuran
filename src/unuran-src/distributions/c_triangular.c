@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -14,6 +14,7 @@ static const char distr_name[] = "triangular";
 static double _unur_pdf_triangular( double x, const UNUR_DISTR *distr );
 static double _unur_dpdf_triangular( double x, const UNUR_DISTR *distr );
 static double _unur_cdf_triangular( double x, const UNUR_DISTR *distr );
+static double _unur_invcdf_triangular( double u, const UNUR_DISTR *distr );
 static int _unur_upd_mode_triangular( UNUR_DISTR *distr );
 static int _unur_upd_area_triangular( UNUR_DISTR *distr );
 static int _unur_set_params_triangular( UNUR_DISTR *distr, const double *params, int n_params );
@@ -55,6 +56,20 @@ _unur_cdf_triangular( double x, const UNUR_DISTR *distr )
       return Fx;
   }
   return 1.;
+} 
+double
+_unur_invcdf_triangular( double U, const UNUR_DISTR *distr )
+{ 
+  const double *params = DISTR.params;
+  double tmp,X;
+  if (U<=H) {
+    X = sqrt(H*U);
+  }
+  else {
+    tmp = (1.-H)*(1.-U);
+    X = (tmp>0.) ? (1.-sqrt(tmp)) : 1.;
+  }
+  return X;
 } 
 int
 _unur_upd_mode_triangular( UNUR_DISTR *distr )
@@ -111,10 +126,10 @@ unur_distr_triangular( const double *params, int n_params )
   distr = unur_distr_cont_new();
   distr->id = UNUR_DISTR_TRIANGULAR;
   distr->name = distr_name;
-  DISTR.init = _unur_stdgen_triangular_init;
-  DISTR.pdf  = _unur_pdf_triangular;  
-  DISTR.dpdf = _unur_dpdf_triangular; 
-  DISTR.cdf  = _unur_cdf_triangular;  
+  DISTR.pdf    = _unur_pdf_triangular;    
+  DISTR.dpdf   = _unur_dpdf_triangular;   
+  DISTR.cdf    = _unur_cdf_triangular;    
+  DISTR.invcdf = _unur_invcdf_triangular; 
   distr->set = ( UNUR_DISTR_SET_DOMAIN |
 		 UNUR_DISTR_SET_STDDOMAIN |
  		 UNUR_DISTR_SET_MODE   |

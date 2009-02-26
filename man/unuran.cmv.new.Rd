@@ -14,12 +14,16 @@
 }
 
 \usage{
-unuran.cmv.new(dim=1, pdf=NULL, mode=NULL, center=NULL,
-               ll=NULL, ur=NULL, name=NA)
+unuran.cmv.new(dim=1, pdf=NULL, ll=NULL, ur=NULL,
+               mode=NULL, center=NULL, name=NA)
 }
 \arguments{
   \item{dim}{number of dimensions of the distribution. (integer)}
   \item{pdf}{probability density function. (\R function)}
+  \item{ll,ur}{lower left and upper right vertex of a rectangular
+    domain of the \code{pdf}. The domain is only set if both vertices
+    are not \code{NULL}. Otherwise, the domain is unbounded by default.
+    (numeric vectors)}
   \item{mode}{location of the mode. (numeric vector -- optional)}
   \item{center}{point in \dQuote{typical} region of distribution,
     e.g. the approximate location of the mode. It is used by several
@@ -27,10 +31,6 @@ unuran.cmv.new(dim=1, pdf=NULL, mode=NULL, center=NULL,
     If omitted the \code{mode} is implicitly used. If the \code{mode}
     is not given either, the origin is used. (numeric vector --
     optional)}
-  \item{ll,ur}{lower left and upper right vertex of a rectangular
-    domain of the \code{pdf}. The domain is only set if both vertices
-    are not \code{NULL}. Otherwise, the domain is unbounded by default.
-    (numeric vectors)}
   \item{name}{name of distribution. (string)}
 }
 
@@ -71,7 +71,7 @@ mvd <- unuran.cmv.new(dim=2, pdf=mvpdf, mode=c(0,0))
 ## Restrict domain to rectangle [0,1]x[0,1] and set
 ## mode to (0,0)
 mvpdf <- function (x) { exp(-sum(x^2)) }
-mvd <- unuran.cmv.new(dim=2, pdf=mvpdf, mode=c(0,0), ll=c(0,0), ur=c(1,1))
+mvd <- unuran.cmv.new(dim=2, pdf=mvpdf, ll=c(0,0), ur=c(1,1), mode=c(0,0))
 
 }
 

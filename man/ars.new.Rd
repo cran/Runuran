@@ -8,23 +8,26 @@
 \description{
   UNU.RAN random variate generator for continuous distributions with
   given probability density function (PDF).
-  It is based on Adaptive Rejection Sampling (ARS).
+  It is based on Adaptive Rejection Sampling (\sQuote{ARS}).
 
   [Universal] -- Rejection Method.
 }
 
 \usage{
-ars.new(logpdf, dlogpdf=NULL, lb=-Inf, ub=Inf, ...)
+ars.new(logpdf, dlogpdf=NULL, lb, ub, ...)
 }
 \arguments{
   \item{logpdf}{log-density function. (\R function)}
   \item{dlogpdf}{derivative of \code{logpdf}. (\R function)}
-  \item{lb, ub}{lower and upper bound of domain. (numeric)}
+  \item{lb}{lower bound of domain;
+    use \code{-Inf} if unbounded from left. (numeric)}
+  \item{ub}{upper bound of domain;
+    use \code{Inf} if unbounded from right. (numeric)}
   \item{...}{(optional) arguments for \code{logpdf}}
 }
 
 \details{
-  This function creates a \code{unuran} object based on \dQuote{ARS}
+  This function creates a \code{unuran} object based on \sQuote{ARS}
   (Adaptive Rejection Sampling). It can be used to draw samples from
   continuous distributions with given probability density function
   using \code{\link{ur}}.
@@ -43,7 +46,7 @@ ars.new(logpdf, dlogpdf=NULL, lb=-Inf, ub=Inf, ...)
   marginal generation times are almost independent of the target
   distribution.
   
-  \dQuote{ARS} is a special case of method \dQuote{TDR}
+  \sQuote{ARS} is a special case of method \sQuote{TDR}
   (see \code{\link{tdr.new}}). It is a bit slower and less
   flexible but numerically more stable. In particular, it is useful if
   one wants to sample from truncated distributions with extreme
@@ -78,14 +81,14 @@ ars.new(logpdf, dlogpdf=NULL, lb=-Inf, ub=Inf, ...)
 ## Create a sample of size 100 for a 
 ## Gaussian distribution (use logPDF)
 lpdf <- function (x) { -0.5*x^2 }
-gen <- ars.new(logpdf=lpdf)
+gen <- ars.new(logpdf=lpdf, lb=-Inf, ub=Inf)
 x <- ur(gen,100)
 
 ## Same example but additionally provide derivative of log-density
 ## to prevent possible round-off errors
 lpdf <- function (x) { -0.5*x^2 }
 dlpdf <- function (x) { -x }
-gen <- ars.new(logpdf=lpdf, dlogpdf=dlpdf)
+gen <- ars.new(logpdf=lpdf, dlogpdf=dlpdf, lb=-Inf, ub=Inf)
 x <- ur(gen,100)
 
 ## Draw a sample from a truncated Gaussian distribution

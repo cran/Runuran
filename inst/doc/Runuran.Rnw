@@ -8,6 +8,7 @@ BCOR10mm,        %% add 10 mm margin for binding
 %%pointednumbers,  %% section numbers have a point
 %%openbib,         %% use multiple lines for each bibitem
 %%appendixprefix,  %% prefix appendix by "Appendix"
+bibtotoc,        %% include bibliography in table of contents
 abstracton       %% print header "Abstract"
 ]{scrartcl}
 
@@ -190,13 +191,15 @@ library("Runuran")
 \clearpage
 \SweaveInput{src/arvag.Rnw}
 \clearpage
+\SweaveInput{src/pitfalls.Rnw}
+\clearpage
 \SweaveInput{src/glossary.tex}
 
 % ---------------------------------------------------------------------------
 
 \clearpage
 \bibliographystyle{abbrvnat}
-\bibliography{src/arvag.bib}
+\bibliography{arvag}
 
 % ---------------------------------------------------------------------------
 

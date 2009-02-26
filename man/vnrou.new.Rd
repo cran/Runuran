@@ -9,7 +9,7 @@
   UNU.RAN random variate generator for continuous multivariate
   distributions with given probability density function (PDF).
   It is based on the Multivariate Naive Ratio-Of-Uniforms method
-  (VNROU).
+  (\sQuote{VNROU}).
   
   [Universal] -- Rejection Method.
 }
@@ -34,7 +34,7 @@ vnrou.new(dim=1, pdf, ll=NULL, ur=NULL, mode=NULL, center=NULL, ...)
 
 \details{
   This function creates a \code{unuran} object based on the naive
-  ratio-of-uniforms method (\dQuote{VNROU}), i.e., a bounding rectangle
+  ratio-of-uniforms method (\sQuote{VNROU}), i.e., a bounding rectangle
   for the acceptance region is estimated and use for sampling proposal
   points.
   It can be used to draw samples of a continuous random vector with

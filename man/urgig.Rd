@@ -33,7 +33,7 @@ urgig(n, lambda, omega, lb=1.e-12, ub=Inf)
     f(x) ~ x^(a-1) exp(-(b/2)(x+1/x))}
   for \eqn{x \ge 0}, \eqn{\lambda > 0}{a > 0} and \eqn{\omega > 0}{b > 0}.
 
-  The generation algorithm uses transformed density rejection "TDR". The
+  The generation algorithm uses transformed density rejection \sQuote{TDR}. The
   parameters \code{lb} and \code{ub} can be used to generate variates from 
   the distribution truncated to the interval (\code{lb},\code{ub}).
 

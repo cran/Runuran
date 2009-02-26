@@ -8,25 +8,28 @@
 \description{
   UNU.RAN random variate generator for continuous distributions with
   given probability density function (PDF).
-  It is based on the Transformed Density Rejection method (TDR).
+  It is based on the Transformed Density Rejection method (\sQuote{TDR}).
 
   [Universal] -- Rejection Method.
 }
 
 \usage{
-tdr.new(pdf, dpdf=NULL, lb=-Inf, ub=Inf, islog=FALSE, ...)
+tdr.new(pdf, dpdf=NULL, lb, ub, islog=FALSE, ...)
 }
 \arguments{
   \item{pdf}{probability density function. (\R function)}
   \item{dpdf}{derivative of \code{pdf}. (\R function)}
-  \item{lb, ub}{lower and upper bound of domain. (numeric)}
+  \item{lb}{lower bound of domain;
+    use \code{-Inf} if unbounded from left. (numeric)}
+  \item{ub}{upper bound of domain;
+    use \code{Inf} if unbounded from right. (numeric)}
   \item{islog}{whether \code{pdf} is given as log-density (the
     \code{dpdf} must then be the derivative of the log-density). (boolean)}
   \item{...}{(optional) arguments for \code{pdf}}
 }
 
 \details{
-  This function creates an \code{unuran} object based on \dQuote{TDR}
+  This function creates an \code{unuran} object based on \sQuote{TDR}
   (Transformed Density Rejection). It can be used to draw samples of a
   continuous random variate with given probability density function
   using \code{\link{ur}}.
@@ -51,7 +54,7 @@ tdr.new(pdf, dpdf=NULL, lb=-Inf, ub=Inf, islog=FALSE, ...)
   marginal generation times are almost independent of the target
   distribution.
 
-  There exists a variant of \dQuote{TDR} which is numerically more
+  There exists a variant of \sQuote{TDR} which is numerically more
   stable (albeit a bit slower and less flexible) which is avaible
   via the \code{\link{ars.new}} function.
 }
@@ -76,25 +79,25 @@ tdr.new(pdf, dpdf=NULL, lb=-Inf, ub=Inf, islog=FALSE, ...)
 \examples{
 ## Create a sample of size 100 for a Gaussian distribution
 pdf <- function (x) { exp(-0.5*x^2) }
-gen <- tdr.new(pdf=pdf)
+gen <- tdr.new(pdf=pdf, lb=-Inf, ub=Inf)
 x <- ur(gen,100)
 
 ## Create a sample of size 100 for a 
 ## Gaussian distribution (use logPDF)
 logpdf <- function (x) { -0.5*x^2 }
-gen <- tdr.new(pdf=logpdf, islog=TRUE)
+gen <- tdr.new(pdf=logpdf, islog=TRUE, lb=-Inf, ub=Inf)
 x <- ur(gen,100)
 
 ## Same example but additionally provide derivative of log-density
 ## to prevent possible round-off errors
 logpdf <- function (x) { -0.5*x^2 }
 dlogpdf <- function (x) { -x }
-gen <- tdr.new(pdf=logpdf, dpdf=dlogpdf, islog=TRUE)
+gen <- tdr.new(pdf=logpdf, dpdf=dlogpdf, islog=TRUE, lb=-Inf, ub=Inf)
 x <- ur(gen,100)
 
 ## Draw sample from Gaussian distribution with mean 1 and
 ## standard deviation 2. Use 'dnorm'.
-gen <- tdr.new(pdf=dnorm, mean=1, sd=2)
+gen <- tdr.new(pdf=dnorm, lb=-Inf, ub=Inf, mean=1, sd=2)
 x <- ur(gen,100)
 
 ## Draw a sample from a truncated Gaussian distribution

@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -15,6 +15,7 @@ static const char distr_name[] = "laplace";
 static double _unur_pdf_laplace( double x, const UNUR_DISTR *distr );
 static double _unur_dpdf_laplace( double x, const UNUR_DISTR *distr );
 static double _unur_cdf_laplace( double x, const UNUR_DISTR *distr );
+static double _unur_invcdf_laplace( double u, const UNUR_DISTR *distr );
 static double _unur_logpdf_laplace( double x, const UNUR_DISTR *distr );
 static double _unur_dlogpdf_laplace( double x, const UNUR_DISTR *distr );
 static int _unur_upd_mode_laplace( UNUR_DISTR *distr );
@@ -59,6 +60,15 @@ _unur_cdf_laplace( double x, const UNUR_DISTR *distr )
   register double z;
   z = (x-theta)/phi;
   return ( (x>theta) ? 1.-0.5 * exp(-z) : 0.5*exp(z) );
+} 
+double
+_unur_invcdf_laplace( double U, const UNUR_DISTR *distr )
+{ 
+  register const double *params = DISTR.params;
+  double X;
+  U *= 2.;
+  X = (U>1.) ? -log(2.-U) : log(U);
+  return ((DISTR.n_params==0) ? X : theta + phi * X );
 } 
 int
 _unur_upd_mode_laplace( UNUR_DISTR *distr )
@@ -118,12 +128,12 @@ unur_distr_laplace( const double *params, int n_params )
   distr = unur_distr_cont_new();
   distr->id = UNUR_DISTR_LAPLACE;
   distr->name = distr_name;
-  DISTR.init = _unur_stdgen_laplace_init;
   DISTR.pdf     = _unur_pdf_laplace;     
   DISTR.logpdf  = _unur_logpdf_laplace;  
   DISTR.dpdf    = _unur_dpdf_laplace;    
   DISTR.dlogpdf = _unur_dlogpdf_laplace; 
   DISTR.cdf     = _unur_cdf_laplace;     
+  DISTR.invcdf  = _unur_invcdf_laplace;  
   distr->set = ( UNUR_DISTR_SET_DOMAIN |
 		 UNUR_DISTR_SET_STDDOMAIN |
 		 UNUR_DISTR_SET_PDFAREA |

@@ -174,7 +174,7 @@ unuran.details(gen)
 ## its probability vector.
 
 ## Create instances of a discrete distribution object
-d <- unuran.discr.new(pv=dbinom(0:100,100,0.4), name="binomial(100,0.4)")
+d <- unuran.discr.new(pv=dbinom(0:100,100,0.4), lb=0, name="binomial(100,0.4)")
 
 ## Create UNU.RAN object. We choose method DGT.
 gen <- unuran.new(distr=d, method="dgt")
@@ -201,7 +201,7 @@ function (PMF)}
 f  <- function (x) { 0.4 * (1-0.4)^x }
 
 ## Create the continuous distribution object.
-d <- unuran.discr.new(pmf=f,lb=0,mode=0,sum=1)
+d <- unuran.discr.new(pmf=f, lb=0, ub=Inf, mode=0, sum=1)
 
 ## Create UNU.RAN object. We choose method DARI with squeezes.
 gen <- unuran.new(distr=d, method="dari; squeeze=on")
@@ -250,7 +250,7 @@ and aborts with an error message.
 <<eval=FALSE,echo=FALSE>>=
 ## Try to use method TDR with missing data.
 lf  <- function (x) { -sqrt(1+x^2) }
-d <- unuran.cont.new(pdf=lf,islog=TRUE)
+d <- unuran.cont.new(pdf=lf, lb=-Inf, ub=Inf, islog=TRUE)
 gen <- unuran.new(distr=d, method="tdr")
 @ 
 
@@ -258,7 +258,7 @@ gen <- unuran.new(distr=d, method="tdr")
 \begin{Sinput}
 > ## Try to use method TDR with missing data.
 > lf  <- function (x) { -sqrt(1+x^2) }
-> d <- unuran.cont.new(pdf=lf,islog=TRUE)
+> d <- unuran.cont.new(pdf=lf, lb=-Inf, ub=Inf, islog=TRUE)
 > gen <- unuran.new(distr=d, method="tdr")
 \end{Sinput}
 \begin{Soutput}
@@ -279,7 +279,7 @@ It also can happen due to serious round-off errors.
 
 \begin{Schunk}
 \begin{Sinput}
-> d <- unuran.discr.new(pv=c(1,-1,0))
+> d <- unuran.discr.new(pv=c(1,-1,0), lb=1)
 > gen <- unuran.new(distr=d, method="dgt")
 \end{Sinput}
 \begin{Soutput}

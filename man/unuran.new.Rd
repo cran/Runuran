@@ -6,7 +6,7 @@
 \title{Create a UNU.RAN object}
 
 \description{
-  Create a new UNU.RAN object in package \pkg{Runuran} that can be used
+  Create a new \code{unuran} object in package \pkg{Runuran} that can be used
   for sampling from the specified distribution.
   The function \code{ur} can then be used to draw a random
   sample.
@@ -47,7 +47,7 @@ unuran.new(distr,method="auto")
   appropriate method for the given distribution. However, this method is
   experimental and is yet not very powerfull.
   
-  Once a UNU.RAN object has been created it can be used to draw random
+  Once a \code{unuran} object has been created it can be used to draw random
   samples from the target distribution using \code{\link{ur}}.
 }
 
@@ -76,7 +76,7 @@ unuran.new(distr,method="auto")
 }
 
 \examples{
-## Use method TDR (Transformed Density Rejection) to 
+## Use method 'TDR' (Transformed Density Rejection) to 
 ## draw a sample of size 10 from a hyperbolic distribution with PDF
 ##   f(x) = const * exp(-sqrt(1+x^2)) 
 ## restricted to domain [-1,2].
@@ -89,7 +89,7 @@ dlf <- function (x) { -x/sqrt(1+x^2) }
 ## Next create the continuous distribution object.
 d <- unuran.cont.new(pdf=lf,dpdf=dlf,islog=TRUE,lb=-1,ub=2)
 
-## Create UNU.RAN object. We choose method TDR with 
+## Create 'unuran' object. We choose method 'TDR' with 
 ## immediate acceptance (IA) and parameter c=0.
 gen <- unuran.new(distr=d, method="tdr; variant_ia; c=0")
 

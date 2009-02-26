@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <float.h>
@@ -17,6 +17,6 @@ double _unur_cephes_incbet( double aa, double bb, double xx );
 double _unur_cephes_ndtr( double a );
 double _unur_cephes_erfc( double a );
 double _unur_cephes_erf( double x );
-double _unur_cephes_ndtri( double y0 );
+double _unur_cephes_ndtri( double yval );
 double _unur_cephes_polevl( double x, double coef[], int N );
 double _unur_cephes_p1evl( double x, double coef[], int N );

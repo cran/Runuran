@@ -34,9 +34,9 @@ urdau(n, probvector, from = 0, by = 1)
   \code{probvector}, a vector of non-negative numbers which need not
   necessarily sum up to 1.
 
-  Method \dQuote{DGT} uses a guide-table based inversion method.
+  Method \sQuote{DGT} uses a guide-table based inversion method.
 
-  Method \dQuote{DAU} implements the \emph{Alias-Urn} method.
+  Method \sQuote{DAU} implements the \emph{Alias-Urn} method.
 
   Both methods run in constant time, i.e., the marginal sampling times
   do not depend on the length of the given probability vector.

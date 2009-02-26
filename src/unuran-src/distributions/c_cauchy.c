@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -18,6 +18,7 @@ static double _unur_logpdf_cauchy( double x, const UNUR_DISTR *distr );
 static double _unur_dpdf_cauchy( double x, const UNUR_DISTR *distr );
 static double _unur_dlogpdf_cauchy( double x, const UNUR_DISTR *distr );
 static double _unur_cdf_cauchy( double x, const UNUR_DISTR *distr );
+static double _unur_invcdf_cauchy( double u, const UNUR_DISTR *distr );
 static int _unur_upd_mode_cauchy( UNUR_DISTR *distr );
 static int _unur_upd_area_cauchy( UNUR_DISTR *distr );
 static int _unur_set_params_cauchy( UNUR_DISTR *distr, const double *params, int n_params );
@@ -64,6 +65,14 @@ _unur_cdf_cauchy(double x, const UNUR_DISTR *distr)
   if (Fx<0.)  Fx = 0.;
   if (Fx>1.)  Fx = 1.;
   return Fx;
+} 
+double
+_unur_invcdf_cauchy(double u, const UNUR_DISTR *distr)
+{
+  register const double *params = DISTR.params;
+  double X;
+  X = tan( M_PI * (u - 0.5) );
+  return ((DISTR.n_params==0) ? X : theta + lambda * X );
 } 
 int
 _unur_upd_mode_cauchy( UNUR_DISTR *distr )
@@ -125,12 +134,12 @@ unur_distr_cauchy( const double *params, int n_params )
   distr = unur_distr_cont_new();
   distr->id = UNUR_DISTR_CAUCHY;
   distr->name = distr_name;
-  DISTR.init = _unur_stdgen_cauchy_init;
   DISTR.pdf     = _unur_pdf_cauchy;     
   DISTR.logpdf  = _unur_logpdf_cauchy;  
   DISTR.dpdf    = _unur_dpdf_cauchy;    
   DISTR.dlogpdf = _unur_dlogpdf_cauchy; 
   DISTR.cdf     = _unur_cdf_cauchy;     
+  DISTR.invcdf  = _unur_invcdf_cauchy;  
   distr->set = ( UNUR_DISTR_SET_DOMAIN |
 		 UNUR_DISTR_SET_STDDOMAIN |
 		 UNUR_DISTR_SET_MODE   |

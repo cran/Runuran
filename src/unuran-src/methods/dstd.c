@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -148,8 +148,8 @@ _unur_dstd_create( struct unur_par *par )
   GEN->n_gen_iparam = 0;
   GEN->is_inversion = FALSE;    
   GEN->sample_routine_name = NULL ;  
-  GEN->umin        = 0;    
-  GEN->umax        = 1;    
+  GEN->Umin        = 0;    
+  GEN->Umax        = 1;    
 #ifdef UNUR_ENABLE_INFO
   gen->info = _unur_dstd_info;
 #endif
@@ -218,7 +218,7 @@ _unur_dstd_debug_init( const struct unur_gen *gen )
     fprintf(LOG,"   (Inversion)");
   fprintf(LOG,"\n%s:\n",gen->genid);
   if (!(gen->distr->set & UNUR_DISTR_SET_STDDOMAIN)) {
-    fprintf(LOG,"%s: domain has been changed. U in (%g,%g)\n",gen->genid,GEN->umin,GEN->umax);
+    fprintf(LOG,"%s: domain has been changed. U in (%g,%g)\n",gen->genid,GEN->Umin,GEN->Umax);
     fprintf(LOG,"%s:\n",gen->genid);
   }
 } 

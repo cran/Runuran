@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #define UNUR_STDGEN_DEFAULT   0        
@@ -7,3 +7,5 @@
 UNUR_PAR *unur_cstd_new( const UNUR_DISTR *distribution );
 int unur_cstd_set_variant( UNUR_PAR *parameters, unsigned variant );
 int unur_cstd_chg_truncated( UNUR_GEN *generator, double left, double right );
+double unur_cstd_eval_invcdf( const UNUR_GEN *generator, double u );
+double _unur_cstd_sample_inv( struct unur_gen *gen ); 

@@ -8,7 +8,7 @@
 \description{
   UNU.RAN random variate generator for the Lomax distribution (Pareto
   distribution of second kind) with
-  shape parameter \code{shape} and scale parameter code{scale}.
+  shape parameter \code{shape} and scale parameter \code{scale}.
   It also allows sampling from the truncated distribution.
   
   [Distribution] -- Sampling Function: Lomax.  %% Continuous

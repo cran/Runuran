@@ -9,7 +9,7 @@
   UNU.RAN random variate generator for continuous multivariate
   distributions with given probability density function (PDF).
   It is based on the Hit-and-Run algorithm in combinaton with the
-  Ratio-of-Uniforms method (HITRO).
+  Ratio-of-Uniforms method (\sQuote{HITRO}).
 
   [Universal] -- MCMC (Markov chain sampler).
 }
@@ -40,7 +40,7 @@ hitro.new(dim=1, pdf, ll=NULL, ur=NULL, mode=NULL, center=NULL,
   
   This function creates a \code{unuran} object based on the
   Hit-and-Run algorithm in combinaton with the Ratio-of-Uniforms method
-  (\dQuote{HITRO}).
+  (\sQuote{HITRO}).
   It can be used to draw samples of a continuous random vector with
   given probability density function using \code{\link{ur}}.
 
@@ -63,7 +63,7 @@ hitro.new(dim=1, pdf, ll=NULL, ur=NULL, mode=NULL, center=NULL,
   on the \code{pdf} and thus its location should be given sufficiently
   accurate.
   
-  The HITRO algorithm is a MCMC samplers and thus it does not produce a
+  The \sQuote{HITRO} algorithm is a MCMC samplers and thus it does not produce a
   sequence of independent variates. The drawn sample follows the target
   distribution only approximately.
   The dependence between consecutive vectors can be decreased when

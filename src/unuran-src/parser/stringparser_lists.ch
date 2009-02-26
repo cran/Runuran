@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 struct unur_distr *
@@ -473,6 +473,10 @@ _unur_str_par_new( const char *method, const UNUR_DISTR *distr )
 	 case 'm':
 		 if ( !strcmp( method, "mcorr") ) {
 			 par = unur_mcorr_new(distr);
+			 break;
+		 }
+		 if ( !strcmp( method, "mvstd") ) {
+			 par = unur_mvstd_new(distr);
 			 break;
 		 }
 		 if ( !strcmp( method, "mvtdr") ) {

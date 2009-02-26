@@ -21,7 +21,7 @@
   Create a new instance of a \code{unuran.cont} object using
 
   \code{new ("unuran.cont", cdf=NULL, pdf=NULL, dpdf=NULL, islog=FALSE,
-    mode=NA, center=NA, lb=-Inf, ub=Inf, area=NA, name=NA)}.
+             lb=NA, ub=NA, mode=NA, center=NA, area=NA, name=NA)}.
 
   \describe{
     \item{cdf}{cumulative distribution function. (\R function)}
@@ -30,10 +30,13 @@
     \item{islog}{whether the given \code{cdf} and \code{pdf} are given
       by their logarithms (the \code{dpdf} is then the derivative of the
       logarithm). (boolean)}
+    \item{lb}{lower bound of domain;
+      use \code{-Inf} if unbounded from left. (numeric)}
+    \item{ub}{upper bound of domain;
+      use \code{Inf} if unbounded from right. (numeric)}
     \item{mode}{mode of distribution. (numeric)}
     \item{center}{typical point (\dQuote{center}) of distribution. If
       not given the \code{mode} is used. (numeric)}
-    \item{lb, ub}{lower and upper bound of domain. (numeric)}
     \item{area}{area below \code{pdf}; used for computing normalization
       constants if required. (numeric)}
     \item{name}{name of distribution. (string)}
@@ -45,10 +48,10 @@
 } 
 
 \examples{
-## Create discrete distribution with given PDF and its derivative
+## Create continuous distribution with given logPDF and its derivative
 pdf <- function (x) { -0.5*x^2 }
 dpdf <- function (x) { -x }
-distpdf <- new("unuran.cont", pdf=pdf, dpdf=dpdf)
+distr <- new("unuran.cont", pdf=pdf, dpdf=dpdf, islog=TRUE, lb=-Inf, ub=Inf)
 
 }
 

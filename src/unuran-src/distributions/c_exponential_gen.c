@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -19,7 +19,7 @@ _unur_stdgen_exponential_init( struct unur_par *par, struct unur_gen *gen )
   case 0:  
   case UNUR_STDGEN_INVERSION:   
     if (gen) GEN->is_inversion = TRUE;
-    _unur_cstd_set_sampling_routine(par,gen,_unur_stdgen_sample_exponential_inv); 
+    _unur_cstd_set_sampling_routine(par,gen,_unur_stdgen_sample_exponential_inv);
     return UNUR_SUCCESS;
   default: 
     if (gen) _unur_warning(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
@@ -31,7 +31,7 @@ double _unur_stdgen_sample_exponential_inv( struct unur_gen *gen )
   double U,X;
   CHECK_NULL(gen,INFINITY);
   COOKIE_CHECK(gen,CK_CSTD_GEN,INFINITY);
-  U = GEN->umin + uniform() * (GEN->umax-GEN->umin);
+  U = GEN->Umin + uniform() * (GEN->Umax-GEN->Umin);
   X = - log( 1. - U );
   return ((DISTR.n_params==0) ? X : theta + sigma * X);
 } 

@@ -1,4 +1,46 @@
 
+Version 0.9: 2009-02-26
+
+	- IMPORTANT:
+
+	  Paramters 'lb' and 'ub' (lower and upper bound of domain)
+	  do not have default values any more and are obligatory in
+	  all functions with these arguments. Thus thee following
+	  functions have been changed:
+
+	   o Continuous distributions:
+                unuran.cont.new
+	        ars.new
+	        itdr.new
+	        pinv.new
+	        srou.new
+	        tdr.new
+	     If R stops when calling these functions with the error
+             message "domain ('lb','ub') missing", then one has to add
+             the formerly defaults "lb=-Inf" and/or "ub=Inf" for the
+             missing arguments.
+
+	   o Discrete distributions:
+	        unuran.discr.new
+	        dari.new
+	     If R stops when calling these functions with the error
+             message "domain ('lb','ub') missing", then one has to add
+	     the formerly defaults "lb=0" and "ub=Inf" for the missing
+             arguments.
+
+	  We observed a possible pitfall with the former interface.
+	  When a user wanted to draw a sample from a distribution with
+	  positive domain but forgot to set "lb=0" then it was
+	  possible that the generator (silently!) did not work as
+	  expected and caused invalid simulation results.
+	  Forcing to set the domain reduces this risk.
+	  Thus we decided to stay on the safe side.
+
+	  We appologize for this inconvenience.
+
+	- fixed syntax errors and inconsistent formating in Rd files.
+
+
 Version 0.8: 2008-11-26
 
         - reorganized functions into three groups:
@@ -17,7 +59,7 @@ Version 0.8: 2008-11-26
         - improved documentation,
           added vignette
 
-	- new function uq() for computing quantiles apprimately.
+	- new function uq() for computing quantiles approximately.
 
         - new functions for directly creating generator objects 
           for selected UNU.RAN methods:

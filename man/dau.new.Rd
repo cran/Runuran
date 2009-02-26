@@ -8,7 +8,7 @@
 \description{
   UNU.RAN random variate generator for discrete distributions with given
   probability vector.
-  It applies the Alias-Urn method (DAU).
+  It applies the Alias-Urn method (\sQuote{DAU}).
 
   [Universal] -- Patchwork Method.
 }
@@ -22,7 +22,7 @@ dau.new(pv, from=1)
 }
 
 \details{
-  This function creates a \code{unuran} object based on \dQuote{DAU}
+  This function creates a \code{unuran} object based on \sQuote{DAU}
   (Discrete Alias-Urn method). It can be used to draw samples of a
   discrete random variate with given probability vector
   using \code{\link{ur}}.

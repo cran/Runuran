@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 int
@@ -12,10 +12,8 @@ _unur_pinv_preprocessing (struct unur_gen *gen)
       return UNUR_FAILURE;
     if (_unur_pinv_computational_domain(gen) != UNUR_SUCCESS)
       return UNUR_FAILURE;
-#ifdef PINV_USE_CDFTABLE
     if (_unur_pinv_pdfarea(gen) != UNUR_SUCCESS) 
       return UNUR_FAILURE;
-#endif
     break;
   case PINV_VARIANT_CDF:
     if (_unur_pinv_computational_domain_CDF(gen) != UNUR_SUCCESS)
@@ -79,6 +77,10 @@ _unur_pinv_searchborder (struct unur_gen *gen, double x0, double bound,
   double fulim;     
   fllim = PDF(x0) * PINV_PDFLLIM;
   fulim = 1.e4 * fllim;
+  if (fllim <= 0.) {
+    _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"PDF(center) too small");
+    return INFINITY;
+  }
   xl = x0; 
   fl = INFINITY;
   x = _unur_arcmean(x0,bound);
@@ -89,12 +91,20 @@ _unur_pinv_searchborder (struct unur_gen *gen, double x0, double bound,
     x = _unur_arcmean(x,bound);
   }
   xs = x; fs = fx;
+  if (fx < 0.) {
+    _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"PDF(x) < 0");
+    return INFINITY;
+  }
   while (!_unur_FP_same(xs,xl)) {
     if (_unur_iszero(fs)) {
       *dom = xs;
     }
     x = xs/2. + xl/2.;
     fx = PDF(x);
+    if (fx < 0.) {
+      _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"PDF(x) < 0");
+      return INFINITY;
+    }
     if (fx < fllim) {
       xs = x; fs = fx;
     }
@@ -118,12 +128,13 @@ _unur_pinv_approx_pdfarea (struct unur_gen *gen )
   int res = UNUR_SUCCESS; 
   for (i=1; i<=2; i++) {
     tol = PINV_UERROR_AREA_APPROX * GEN->area;
-    DISTR.center = _unur_max(DISTR.center, GEN->dleft);
-    DISTR.center = _unur_min(DISTR.center, GEN->dright);
-    GEN->area  = _unur_pinv_adaptivelobatto5( gen, GEN->bleft,   DISTR.center - GEN->bleft,
-					      tol, NULL );
-    GEN->area += _unur_pinv_adaptivelobatto5( gen, DISTR.center, GEN->bright - DISTR.center,
-					      tol, NULL );
+    DISTR.center = _unur_max(DISTR.center, GEN->bleft);
+    DISTR.center = _unur_min(DISTR.center, GEN->bright);
+    GEN->area  = 
+      _unur_lobatto_adaptive(_unur_pinv_eval_PDF, gen,
+			     GEN->bleft, DISTR.center - GEN->bleft, tol, NULL)
+      + _unur_lobatto_adaptive(_unur_pinv_eval_PDF, gen,
+			       DISTR.center, GEN->bright - DISTR.center, tol, NULL);
     if ( !_unur_isfinite(GEN->area) || _unur_iszero(GEN->area) ) {
       _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"cannot estimate area below PDF");
       res = UNUR_FAILURE;
@@ -139,32 +150,27 @@ _unur_pinv_approx_pdfarea (struct unur_gen *gen )
 #endif
   return res;
 } 
-#ifdef PINV_USE_CDFTABLE
 int
 _unur_pinv_pdfarea (struct unur_gen *gen)
 {
   double tol;   
   tol = GEN->u_resolution * GEN->area * PINV_UERROR_CORRECTION * PINV_UTOL_CORRECTION;
-  DISTR.center = _unur_max(DISTR.center, GEN->dleft);
-  DISTR.center = _unur_min(DISTR.center, GEN->dright);
-  if (GEN->CDFtable)
-    _unur_pinv_CDFtable_append(GEN->CDFtable,GEN->bleft,0.);
-  GEN->area  = _unur_pinv_adaptivelobatto5( gen, GEN->bleft,   DISTR.center - GEN->bleft,
-					    tol, GEN->CDFtable );
-  GEN->area += _unur_pinv_adaptivelobatto5( gen, DISTR.center, GEN->bright - DISTR.center,
-					    tol, GEN->CDFtable );
+  DISTR.center = _unur_max(DISTR.center, GEN->bleft);
+  DISTR.center = _unur_min(DISTR.center, GEN->bright);
+  GEN->aCDF = _unur_lobatto_init(_unur_pinv_eval_PDF, gen,
+				 GEN->bleft, DISTR.center, GEN->bright,
+				 tol, NULL, PINV_MAX_LOBATTO_IVS);
+  GEN->area = _unur_lobatto_integral(GEN->aCDF);
   if ( !_unur_isfinite(GEN->area) || _unur_iszero(GEN->area) ) {
     _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"cannot estimate area below PDF");
     return UNUR_FAILURE;
   }
-  _unur_pinv_CDFtable_resize(&(GEN->CDFtable));
 #ifdef UNUR_ENABLE_LOGGING
   if (gen->debug & PINV_DEBUG_SEARCHBD)
     _unur_pinv_debug_pdfarea(gen,FALSE);
 #endif
   return UNUR_SUCCESS;
 } 
-#endif 
 int
 _unur_pinv_computational_domain (struct unur_gen *gen)
 {
@@ -237,7 +243,12 @@ _unur_pinv_cut( struct unur_gen *gen, double dom, double w, double dw, double cr
     }
     if (fabs(area/crit-1.) < 1.e-4)
       return x;
-    xnew = x + fx/(lc*df) * ( pow(crit*fabs(df)*(lc+1.)/(fx*fx),lc/(lc+1.)) - 1.);
+    if (_unur_iszero(lc)) {
+      xnew = x + fx/df * log(crit*fabs(df)/(fx*fx));
+    }
+    else {
+      xnew = x + fx/(lc*df) * ( pow(crit*fabs(df)*(lc+1.)/(fx*fx),lc/(lc+1.)) - 1.);
+    }
     if (! _unur_isfinite(xnew)) {
       _unur_warning(gen->genid,UNUR_ERR_NAN,"numerical problems with cut-off point");
       return x;
@@ -355,11 +366,11 @@ _unur_pinv_cut_CDF( struct unur_gen *gen, double dom, double x0, double ul, doub
   return x;
 } 
 double
-_unur_pinv_Udiff (struct unur_gen *gen, double x, double h, double utol)
+_unur_pinv_Udiff (struct unur_gen *gen, double x, double h)
 {
   switch (gen->variant) {
   case PINV_VARIANT_PDF:
-    return _unur_pinv_Udiff_lobatto(gen,x,h,utol);
+    return _unur_lobatto_eval_diff(GEN->aCDF, x, h );
   case PINV_VARIANT_CDF:
     return CDF(x+h) - CDF(x);
   default:

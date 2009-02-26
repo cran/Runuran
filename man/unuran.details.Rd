@@ -3,9 +3,9 @@
 
 \alias{unuran.details}
 
-\title{Information on a given UNU.RAN generator object}
+\title{Information on a given "unuran" generator object}
 \description{
-  Prints type of UNU.RAN generator, data used from distribution, 
+  Prints type of \code{unuran} generator, data used from distribution, 
   parameter for algorithm, performance characteristic, and hints to
   adjust the performance of the generator.
   

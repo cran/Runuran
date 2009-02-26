@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #ifndef UNUR_DISTR_SOURCE_H_SEEN
@@ -31,6 +31,7 @@
 #define _unur_cont_dlogPDF(x,distr) ((*((distr)->data.cont.dlogpdf))((x),(distr)))
 #define _unur_cont_CDF(x,distr)     ((*((distr)->data.cont.cdf)) ((x),(distr)))
 #define _unur_cont_logCDF(x,distr)  ((*((distr)->data.cont.logcdf)) ((x),(distr)))
+#define _unur_cont_invCDF(u,distr)  ((*((distr)->data.cont.invcdf)) ((u),(distr)))
 #define _unur_cont_HR(x,distr)      ((*((distr)->data.cont.hr))  ((x),(distr)))
 #define _unur_discr_PMF(x,distr)    ((*((distr)->data.discr.pmf))((x),(distr)))
 #define _unur_discr_CDF(x,distr)    ((*((distr)->data.discr.cdf))((x),(distr)))

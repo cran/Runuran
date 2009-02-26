@@ -8,7 +8,7 @@
 \description{
   UNU.RAN random variate generator for continuous distributions with
   given probability density function (PDF).
-  It is based on the Transformed Density Rejection method (TDR).
+  It is based on the Transformed Density Rejection method (\sQuote{TDR}).
 
   [ \strong{Deprecated}.
   Use \code{\link{tdr.new}} instead. ]

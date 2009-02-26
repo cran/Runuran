@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 struct unur_cstd_par { 
@@ -8,8 +8,8 @@ struct unur_cstd_gen {
   double *gen_param;      
   int     n_gen_param;    
   int    flag;            
-  double  umin;           
-  double  umax;           
+  double  Umin;           
+  double  Umax;           
   int  is_inversion;           
   const char *sample_routine_name; 
 };

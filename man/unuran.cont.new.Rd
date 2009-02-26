@@ -14,8 +14,8 @@
 }
 
 \usage{
-unuran.cont.new( cdf=NULL, pdf=NULL, dpdf=NULL, islog=FALSE, mode=NA,
-                 center=NA, lb=-Inf, ub=Inf, area=NA, name=NA)
+unuran.cont.new( cdf=NULL, pdf=NULL, dpdf=NULL, islog=FALSE,
+                 lb=NA, ub=NA, mode=NA, center=NA, area=NA, name=NA)
 }
 \arguments{
   \item{cdf}{cumulative distribution function. (\R function)}
@@ -24,10 +24,13 @@ unuran.cont.new( cdf=NULL, pdf=NULL, dpdf=NULL, islog=FALSE, mode=NA,
   \item{islog}{whether the given \code{cdf} and \code{pdf} are given
     by their logarithms (the \code{dpdf} is then the derivative of the
     logarithm). (boolean)}
+  \item{lb}{lower bound of domain;
+    use \code{-Inf} if unbounded from left. (numeric)}
+  \item{ub}{upper bound of domain;
+    use \code{Inf} if unbounded from right. (numeric)}
   \item{mode}{mode of distribution. (numeric)}
   \item{center}{typical point (\dQuote{center}) of distribution. If
     not given the \code{mode} is used. (numeric)}
-  \item{lb, ub}{lower and upper bound of domain. (numeric)}
   \item{area}{area below \code{pdf}; used for computing normalization
     constants if required. (numeric)}
   \item{name}{name of distribution. (string)}
@@ -65,7 +68,7 @@ unuran.cont.new( cdf=NULL, pdf=NULL, dpdf=NULL, islog=FALSE, mode=NA,
 \examples{
 ## Get a distribution object with given pdf, domain and mode
 mypdf <- function (x) { exp(-x) }
-distr <- unuran.cont.new(pdf=mypdf, islog=FALSE, mode=0, lb=0, ub=Inf)
+distr <- unuran.cont.new(pdf=mypdf, islog=FALSE, lb=0, ub=Inf, mode=0)
 
 }
 

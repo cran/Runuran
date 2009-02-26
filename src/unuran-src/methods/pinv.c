@@ -1,15 +1,13 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
-#define PINV_USE_CDFTABLE
-#ifndef PINV_USE_CDFTABLE
-#endif
 #include <unur_source.h>
 #include <distr/distr.h>
 #include <distr/distr_source.h>
 #include <distr/cont.h>
 #include <urng/urng.h>
 #include <tests/unuran_tests.h>
+#include <utils/lobatto_source.h>
 #include "unur_methods_source.h"
 #include "x_gen_source.h"
 #include "pinv.h"
@@ -30,6 +28,7 @@
 #define PINV_DEBUG_REINIT    0x00000002u   
 #define PINV_DEBUG_TABLE     0x00000010u   
 #define PINV_DEBUG_SEARCHBD  0x00010000u   
+#define PINV_DEBUG_ITABLE    0x00020000u   
 #define PINV_SET_ORDER          0x001u  
 #define PINV_SET_U_RESOLUTION   0x002u  
 #define PINV_SET_BOUNDARY       0x008u  
@@ -51,38 +50,22 @@ static int _unur_pinv_relevant_support (struct unur_gen *gen);
 static double _unur_pinv_searchborder (struct unur_gen *gen, double x0, double bound,
 				       double *dom, int *search);
 static int _unur_pinv_approx_pdfarea (struct unur_gen *gen);
-#ifdef PINV_USE_CDFTABLE
 static int _unur_pinv_pdfarea (struct unur_gen *gen);
-#endif
 static int _unur_pinv_computational_domain (struct unur_gen *gen);
 static double _unur_pinv_cut (struct unur_gen *gen, double dom, double w, double dw, double crit);
 static int _unur_pinv_computational_domain_CDF (struct unur_gen *gen);
 static double _unur_pinv_cut_CDF( struct unur_gen *gen, double dom, double x0, double ul, double uu );
-static double _unur_pinv_Udiff (struct unur_gen *gen, double x, double h, double utol);
-static double _unur_pinv_lobatto5 (struct unur_gen *gen, double x, double h);
-static double _unur_pinv_adaptivelobatto5 (struct unur_gen *gen, double x, double h, double tol,
-					   struct unur_pinv_CDFtable *CDFtable);
-static double _unur_pinv_adaptivelobatto5_rec (struct unur_gen *gen, double x, double h, double tol,
-					       double int1, double fl, double fr, double fc,
-					       int *W_accuracy,
-					       struct unur_pinv_CDFtable *CDFtable);
-static double _unur_pinv_Udiff_lobatto (struct unur_gen *gen, double x, double h, double utol);
-#ifdef PINV_USE_CDFTABLE
-static struct unur_pinv_CDFtable *_unur_pinv_CDFtable_create (int size);
-static int _unur_pinv_CDFtable_append (struct unur_pinv_CDFtable *table, double x, double u);
-static void _unur_pinv_CDFtable_resize (struct unur_pinv_CDFtable **table);
-static void _unur_pinv_CDFtable_free (struct unur_pinv_CDFtable **table);
-#endif 
+static double _unur_pinv_Udiff (struct unur_gen *gen, double x, double h);
 static int _unur_pinv_create_table( struct unur_gen *gen );
 static int _unur_pinv_interval( struct unur_gen *gen, int i, double x, double cdfx );
 static int _unur_pinv_newton_create (struct unur_gen *gen, struct unur_pinv_interval *iv, 
-				     double *xval, double utol);
+				     double *xval);
 static int _unur_pinv_linear_create (struct unur_gen *gen, struct unur_pinv_interval *iv, 
-				     double *xval, double utol);
+				     double *xval);
 static int _unur_pinv_chebyshev_points (int order, double *pt);
 static double _unur_pinv_newton_eval (double q, double ui[], double zi[], int order);
 static double _unur_pinv_newton_maxerror (struct unur_gen *gen, struct unur_pinv_interval *iv, 
-					  double xval[], double utol);
+					  double xval[]);
 static int _unur_pinv_newton_testpoints (int g, double ui[], double utest[]);
 static int _unur_pinv_linear_testpoints (int g, double ui[], double utest[]);
 #ifdef UNUR_ENABLE_LOGGING
@@ -111,7 +94,6 @@ static void _unur_pinv_info( struct unur_gen *gen, int help );
 #include "pinv_init.ch"
 #include "pinv_sample.ch"
 #include "pinv_prep.ch"
-#include "pinv_lobatto.ch"
 #include "pinv_newton.ch"
 #include "pinv_debug.ch"
 #include "pinv_info.ch"

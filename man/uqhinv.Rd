@@ -7,7 +7,7 @@
 
 \description{
   Evaluates quantile of distribution approximately using
-  UNU.RAN method HINV.
+  UNU.RAN method \sQuote{HINV}.
   
   [ \strong{Deprecated}.
   Use \code{\link{uq}} instead. ]
@@ -17,14 +17,14 @@
 uqhinv(unr, U)
 }
 \arguments{
-  \item{unr}{a "unuran" object using method \dQuote{HINV}.}
+  \item{unr}{a \code{unuran} object using method \sQuote{HINV}.}
   \item{U}{vector of probabilities.}
 }
 
 \details{
   This routine evaluates the quantiles (inverser CDF) for a given
   (vector of) probabilities approximately.
-  It requires a "unuran" object that uses method \dQuote{HINV} and thus
+  It requires a \code{unuran} object that uses method \sQuote{HINV} and thus
   contains the information about the target distribution.
 
   This method is \strong{deprecated}. Please use 

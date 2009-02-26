@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -16,6 +16,7 @@ static const char distr_name[] = "lomax";
 static double _unur_pdf_lomax( double x, const UNUR_DISTR *distr );
 static double _unur_dpdf_lomax( double x, const UNUR_DISTR *distr );
 static double _unur_cdf_lomax( double x, const UNUR_DISTR *distr );
+static double _unur_invcdf_lomax( double u, const UNUR_DISTR *distr );
 static int _unur_upd_mode_lomax( UNUR_DISTR *distr );
 static int _unur_upd_area_lomax( UNUR_DISTR *distr );
 static int _unur_set_params_lomax( UNUR_DISTR *distr, const double *params, int n_params );
@@ -38,6 +39,14 @@ _unur_cdf_lomax( double x, const UNUR_DISTR *distr )
 { 
   register const double *params = DISTR.params;
   return ( (x<0.) ? 0. : 1. - pow((C/(x+C)),a) );
+} 
+double
+_unur_invcdf_lomax( double U, const UNUR_DISTR *distr )
+{ 
+  register const double *params = DISTR.params;
+  double X;
+  X = C * ( pow(1-U, -1/a) - 1. );
+  return X;
 } 
 int
 _unur_upd_mode_lomax( UNUR_DISTR *distr )
@@ -100,10 +109,10 @@ unur_distr_lomax( const double *params, int n_params )
   distr = unur_distr_cont_new();
   distr->id = UNUR_DISTR_LOMAX;
   distr->name = distr_name;
-  DISTR.init = _unur_stdgen_lomax_init;
-  DISTR.pdf  = _unur_pdf_lomax;  
-  DISTR.dpdf = _unur_dpdf_lomax; 
-  DISTR.cdf  = _unur_cdf_lomax;  
+  DISTR.pdf    = _unur_pdf_lomax;    
+  DISTR.dpdf   = _unur_dpdf_lomax;   
+  DISTR.cdf    = _unur_cdf_lomax;    
+  DISTR.invcdf = _unur_invcdf_lomax; 
   distr->set = ( UNUR_DISTR_SET_DOMAIN |
 		 UNUR_DISTR_SET_STDDOMAIN |
   		 UNUR_DISTR_SET_MODE   | 

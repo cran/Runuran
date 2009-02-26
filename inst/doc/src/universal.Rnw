@@ -24,13 +24,13 @@ sampling using \code{ur} (Step~U3).
 <<>>=
 ## Use method TDR (Transformed Density Rejection) to 
 ## draw a sample of size 10 from a hyperbolic distribution with PDF
-##   f(x) = const * exp(-sqrt(1+x^2)).
+##   f(x) = const * exp(-sqrt(1+x^2))  on domain (-Inf,Inf).
 
 ## We first have to define a function that returns the density.
 pdf <- function (x) { exp(-sqrt(1+x^2)) }
 
 ## Next create the UNU.RAN object.
-gen <- tdr.new(pdf=pdf)
+gen <- tdr.new(pdf=pdf, lb=-Inf, ub=Inf)
 
 ## Now we can use this object to draw the sample.
 ## (Of course we can repeat this step as often as required.)
@@ -72,7 +72,8 @@ One also can directly use density functions provided by \R.
 ## mean 2 and standard deviation 5.
 
 ## Create UNU.RAN object.
-gen <- ars.new(logpdf=dnorm, mean = 2, sd=5, log = TRUE)
+## Use R function 'dnorm(x, mean=2, sd=5, log=TRUE)' as density.
+gen <- ars.new(logpdf=dnorm, lb=-Inf, ub=Inf,  mean=2, sd=5, log=TRUE)
 ## Draw sample.
 ur(gen,10)
 @ 
@@ -82,12 +83,12 @@ argument for the quantile function \code{uq}. This is convenient for copula
 methods or quasi-Monte Carlo methods.
 <<>>=
 ## Compute quantiles for hyperbolic distribution with PDF
-##   f(x) = const * exp(-sqrt(1+x^2)).
+##   f(x) = const * exp(-sqrt(1+x^2))  on domain (-Inf,Inf).
 ## Thus we need an inversion method. We choose PINV.
 
 ## Create UNU.RAN object.
 pdf <- function (x) { exp(-sqrt(1+x^2)) }
-gen <- pinv.new(pdf=pdf, uresolution=1e-14)
+gen <- pinv.new(pdf=pdf, lb=0, ub=Inf, uresolution=1e-14)
 ## Get some quantiles
 uq(gen, c(0.005, 0.01, 0.025, 0.05, 0.5, 0.95, 0.975, 0.99, 0.995))
 @ 

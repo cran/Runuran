@@ -9,7 +9,7 @@
 \title{Class "unuran" -- Universal Non-Uniform RANdom variate generators}
 
 \description{%
-  The class "unuran" provides an interface to the UNU.RAN
+  The class \code{unuran} provides an interface to the UNU.RAN
   library for universal non-uniform random number generators.
   It uses the \R built-in uniform random number generator.
   
@@ -45,9 +45,9 @@
     \item{r}{\code{signature(object = "unuran")}:
       Same as \code{ur}.}
     \item{initialize}{\code{signature(.Object = "unuran")}:
-      Initialize unuran object. (For Internal usage only).}
+      Initialize \code{unuran} object. (For Internal usage only).}
     \item{print}{\code{signature(x = "unuran")}:
-      Print info about unuran object.}
+      Print info about \code{unuran} object.}
     \item{show}{\code{signature(x = "unuran")}:
       Same as \code{print}.}
   }

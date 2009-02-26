@@ -8,24 +8,27 @@
 \description{
   UNU.RAN random variate generator for continuous distributions with
   given probability mass function (PMF).
-  It is based on Discrete Automatic Rejection Inversion (DARI).
+  It is based on Discrete Automatic Rejection Inversion (\sQuote{DARI}).
 
   [Universal] -- Rejection Method.
 }
 
 \usage{
-dari.new(pmf, lb=0, ub=Inf, mode=NA, sum=1, ...)
+dari.new(pmf, lb, ub, mode=NA, sum=1, ...)
 }
 \arguments{
   \item{pmf}{probability mass function. (\R function)}
-  \item{lb, ub}{lower and upper bound of domain. (integer)}
+  \item{lb}{lower bound of domain;
+    use \code{-Inf} if unbounded from left. (numeric, integer)}
+  \item{ub}{upper bound of domain;
+    use \code{Inf} if unbounded from right. (numeric, integer)}
   \item{mode}{mode of distribution. (integer)}
   \item{sum}{sum over all \dQuote{probabilities}. (numeric)}
   \item{...}{(optional) arguments for \code{pmf}}
 }
 
 \details{
-  This function creates an \code{unuran} object based on \dQuote{DARI}
+  This function creates an \code{unuran} object based on \sQuote{DARI}
   (Discrete Automatic Rejection Inversion). It can be used to draw
   samples of a discrete random variate with given probability mass function
   using \code{\link{ur}}.
@@ -63,13 +66,13 @@ dari.new(pmf, lb=0, ub=Inf, mode=NA, sum=1, ...)
 \examples{
 ## Create a sample of size 100 for a Binomial distribution
 ## with 1000 number if observations and probability 0.2
-gen <- dari.new(pmf=dbinom,lb=0,ub=1000,size=1000,prob=0.2)
+gen <- dari.new(pmf=dbinom, lb=0, ub=1000, size=1000, prob=0.2)
 x <- ur(gen,100)
 
 ## Create a sample from a distribution with PMF
 ##  p(x) = 1/x^3, x >= 1  (Zipf distribution)
 zipf <- function (x) { 1/x^3 }
-gen <- dari.new(pmf=zipf,lb=1)
+gen <- dari.new(pmf=zipf, lb=1, ub=Inf)
 x <- ur(gen,100)
 
 }

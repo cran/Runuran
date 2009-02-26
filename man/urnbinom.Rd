@@ -37,7 +37,7 @@ urnbinom(n, size, prob, lb = 0, ub = Inf)
   Bernoulli trials before a target number of successes is reached.
 
   The generation algorithm uses guide table based inversion when the
-  tails are not too heavy and method @code{"DARI"} otherwise.
+  tails are not too heavy and method \sQuote{DARI} otherwise.
   The parameters \code{lb} and \code{ub} can be used to generate
   variates from the Negative Binomial distribution truncated to the
   interval (\code{lb},\code{ub}).

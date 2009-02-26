@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -740,26 +740,34 @@ int
 _unur_arou_segment_parameter( struct unur_gen *gen, struct unur_arou_segment *seg )
 {
   double coeff_det, cramer_det[2];
-  double norm_vertex;
-  double det_bound;
+  double norm_vertex;      
+  double diff_tangents;    
+  double det_bound;        
   double tmp_a, tmp_b;
   CHECK_NULL(gen,UNUR_ERR_NULL);  COOKIE_CHECK(gen,CK_AROU_GEN,UNUR_ERR_COOKIE);
   CHECK_NULL(seg,UNUR_ERR_NULL);  COOKIE_CHECK(seg,CK_AROU_SEG,UNUR_ERR_COOKIE);
+  norm_vertex = fabs(seg->ltp[0]) + fabs(seg->ltp[1]) + fabs(seg->rtp[0]) + fabs(seg->rtp[1]);
   seg->Ain = (seg->ltp[1] * seg->rtp[0] - seg->ltp[0] * seg->rtp[1]) / 2.;
   if( seg->Ain < 0. ) {
-    _unur_error(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
+    if (fabs(seg->Ain) < 1.e-8 * norm_vertex) {
+      seg->Ain = seg->Aout = 0.;
+    }
+    else {
+      _unur_error(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
+    }
     return UNUR_ERR_SILENT;
   }
   coeff_det     = seg->dltp[0] * seg->drtp[1] - seg->dltp[1] * seg->drtp[0];
   cramer_det[0] = seg->dltp[2] * seg->drtp[1] - seg->dltp[1] * seg->drtp[2];
   cramer_det[1] = seg->dltp[0] * seg->drtp[2] - seg->dltp[2] * seg->drtp[0];
-  norm_vertex = fabs(seg->ltp[0]) + seg->ltp[1] + fabs(seg->rtp[0]) + seg->rtp[1];
   det_bound = fabs(coeff_det) * norm_vertex * MAX_NORM_OF_INTERSECTION_POINT;
-  if ( fabs(cramer_det[0]) > det_bound || fabs(cramer_det[1]) > det_bound ) {
-    seg->Aout = INFINITY;
-    return UNUR_ERR_INF;
-  }
-  if (!_unur_iszero(coeff_det)) {
+  diff_tangents = ( fabs(seg->dltp[0] - seg->drtp[0]) + fabs(seg->dltp[1] - seg->drtp[1])
+		    + fabs(seg->dltp[2] - seg->drtp[2]) );
+  if (!_unur_iszero(coeff_det) && !_unur_iszero(diff_tangents)) {
+    if ( fabs(cramer_det[0]) > det_bound || fabs(cramer_det[1]) > det_bound ) {
+      seg->Aout = INFINITY;
+      return UNUR_ERR_INF;
+    }
     seg->mid[0] = cramer_det[0] / coeff_det;
     seg->mid[1] = cramer_det[1] / coeff_det;
     seg->Aout = ( (seg->ltp[0] - seg->mid[0]) * (seg->rtp[1] - seg->mid[1])

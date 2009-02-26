@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -17,6 +17,7 @@ static const char distr_name[] = "weibull";
 static double _unur_pdf_weibull( double x, const UNUR_DISTR *distr );
 static double _unur_dpdf_weibull( double x, const UNUR_DISTR *distr );
 static double _unur_cdf_weibull( double x, const UNUR_DISTR *distr );
+static double _unur_invcdf_weibull( double u, const UNUR_DISTR *distr );
 static int _unur_upd_mode_weibull( UNUR_DISTR *distr );
 static int _unur_upd_area_weibull( UNUR_DISTR *distr );
 static int _unur_set_params_weibull( UNUR_DISTR *distr, const double *params, int n_params );
@@ -60,6 +61,14 @@ _unur_cdf_weibull( double x, const UNUR_DISTR *distr )
   if (x <= 0.)
     return 0.;
   return (1. - exp(-pow (x, c)));
+} 
+double
+_unur_invcdf_weibull( double U, const UNUR_DISTR *distr )
+{ 
+  register const double *params = DISTR.params;
+  double X;
+  X = pow( -log(1.-U), 1./c );
+  return ((DISTR.n_params==1) ? X : zeta + alpha * X );
 } 
 int
 _unur_upd_mode_weibull( UNUR_DISTR *distr )
@@ -126,10 +135,10 @@ unur_distr_weibull( const double *params, int n_params )
   distr = unur_distr_cont_new();
   distr->id = UNUR_DISTR_WEIBULL;
   distr->name = distr_name;
-  DISTR.init = _unur_stdgen_weibull_init;
-  DISTR.pdf  = _unur_pdf_weibull;  
-  DISTR.dpdf = _unur_dpdf_weibull; 
-  DISTR.cdf  = _unur_cdf_weibull;  
+  DISTR.pdf    = _unur_pdf_weibull;    
+  DISTR.dpdf   = _unur_dpdf_weibull;   
+  DISTR.cdf    = _unur_cdf_weibull;    
+  DISTR.invcdf = _unur_invcdf_weibull; 
   distr->set = ( UNUR_DISTR_SET_DOMAIN |
 		 UNUR_DISTR_SET_STDDOMAIN |
  		 UNUR_DISTR_SET_MODE   |

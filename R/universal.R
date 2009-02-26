@@ -46,12 +46,15 @@ numerical.derivative <- function (x, func, lb=-Inf, ub=Inf, xmin=1, delta=1.e-7)
 ## Generate continuous random variates from a given PDF
 ##
 
-ars.new <- function (logpdf, dlogpdf=NULL, lb=-Inf, ub=Inf, ...) {
+ars.new <- function (logpdf, dlogpdf=NULL, lb, ub, ...) {
 
         ## check arguments
         if (missing(logpdf) || !is.function(logpdf))
                 stop ("argument 'logpdf' missing or invalid")
 
+        if (missing(lb) || missing(ub))
+                stop ("domain ('lb','ub') missing")
+        
         ## internal version of logPDF
         f <- function(x) logpdf(x, ...) 
         
@@ -83,7 +86,7 @@ ars.new <- function (logpdf, dlogpdf=NULL, lb=-Inf, ub=Inf, ...) {
 ## Generate continuous random variates from a given PDF
 ##
 
-itdr.new <- function (pdf, dpdf, pole, lb=0, ub=Inf, islog=FALSE, ...) {
+itdr.new <- function (pdf, dpdf, lb, ub, pole, islog=FALSE, ...) {
 
         ## check arguments 
         if (missing(pdf) || !is.function(pdf))
@@ -92,6 +95,9 @@ itdr.new <- function (pdf, dpdf, pole, lb=0, ub=Inf, islog=FALSE, ...) {
                 stop ("argument 'dpdf' missing or invalid")
         if (missing(pole) || !is.numeric(pole)) 
                 stop ("argument 'pole' missing or invalid")
+
+        if (missing(lb) || missing(ub))
+                stop ("domain ('lb','ub') missing")
 
         ## internal versions of PDF and its derivative
         f <- function(x) pdf(x, ...) 
@@ -112,7 +118,7 @@ itdr.new <- function (pdf, dpdf, pole, lb=0, ub=Inf, islog=FALSE, ...) {
 ## Generate continuous random variates from a given PDF or CDF
 ##
 
-pinv.new <- function (pdf, cdf, lb=-Inf, ub=Inf, islog=FALSE, center=0, uresolution=1.e-10, ...) {
+pinv.new <- function (pdf, cdf, lb, ub, islog=FALSE, center=0, uresolution=1.e-10, ...) {
 
         ## check arguments
         if (missing(pdf) && missing(cdf))
@@ -121,6 +127,9 @@ pinv.new <- function (pdf, cdf, lb=-Inf, ub=Inf, islog=FALSE, center=0, uresolut
                 stop ("argument 'center' invalid")
         if (!is.numeric(uresolution))
                 stop ("argument 'uresolution' invalid")
+
+        if (missing(lb) || missing(ub))
+                stop ("domain ('lb','ub') missing")
 
         ## use PDF or CDF ?
         usefunc <- if (missing(pdf)) "usecdf;" else "usepdf;"
@@ -162,7 +171,7 @@ pinv.new <- function (pdf, cdf, lb=-Inf, ub=Inf, islog=FALSE, center=0, uresolut
 ## Generate continuous random variates from a given PDF
 ##
 
-srou.new <- function (pdf, mode, area, lb=-Inf, ub=Inf, islog=FALSE, r=1, ...) {
+srou.new <- function (pdf, lb, ub, mode, area, islog=FALSE, r=1, ...) {
 
         ## check arguments
         if (missing(pdf) || !is.function(pdf))
@@ -171,6 +180,9 @@ srou.new <- function (pdf, mode, area, lb=-Inf, ub=Inf, islog=FALSE, r=1, ...) {
                 stop ("argument 'mode' missing or invalid")
         if (missing(area) || !is.numeric(area))
                 stop ("argument 'area' missing or invalid")
+
+        if (missing(lb) || missing(ub))
+                stop ("domain ('lb','ub') missing")
 
         ## internal version of PDF
         f <- function(x) pdf(x, ...) 
@@ -191,11 +203,14 @@ srou.new <- function (pdf, mode, area, lb=-Inf, ub=Inf, islog=FALSE, r=1, ...) {
 ## Generate continuous random variates from a given PDF
 ##
 
-tdr.new <- function (pdf, dpdf=NULL, lb=-Inf, ub=Inf, islog=FALSE, ...) {
+tdr.new <- function (pdf, dpdf=NULL, lb, ub, islog=FALSE, ...) {
 
         ## check arguments
         if (missing(pdf) || !is.function(pdf))
                 stop ("argument 'pdf' missing or invalid")
+
+        if (missing(lb) || missing(ub))
+                stop ("domain ('lb','ub') missing")
 
         ## internal version of PDF
         f <- function(x) pdf(x, ...) 
@@ -235,11 +250,14 @@ tdr.new <- function (pdf, dpdf=NULL, lb=-Inf, ub=Inf, islog=FALSE, ...) {
 ## using Discrete Automatic Rejection Inversion.
 ##
 
-dari.new <- function (pmf, lb=0, ub=Inf, mode=NA, sum=1, ...) {
+dari.new <- function (pmf, lb, ub, mode=NA, sum=1, ...) {
 
         ## check arguemngts
         if (missing(pmf) || !is.function(pmf))
                 stop ("argument 'pmf' missing or invalid")
+
+        if (missing(lb) || missing(ub))
+                stop ("domain ('lb','ub') missing")
 
         ## internal version of PMF
         f <- function(x) pmf(x, ...)
@@ -269,7 +287,7 @@ dau.new <- function (pv, from=1) {
                 stop ("argument 'pv' missing or invalid")
 
         ## S4 class for discrete distribution
-        distr <- new("unuran.discr",pv=pv,lb=from)
+        distr <- new("unuran.discr",pv=pv,lb=from,ub=Inf)
 
         ## create and return UNU.RAN object
         new("unuran", distr, "DAU")
@@ -292,7 +310,7 @@ dgt.new <- function (pv, from=1) {
                 stop ("argument 'pv' missing or invalid")
 
         ## S4 class for discrete distribution
-        distr <- new("unuran.discr",pv=pv,lb=from)
+        distr <- new("unuran.discr",pv=pv,lb=from,ub=Inf)
 
         ## create and return UNU.RAN object
         new("unuran", distr, "DGT")

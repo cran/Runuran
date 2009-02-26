@@ -19,7 +19,7 @@ source("test_routines.R")
 ur.ars.norm.wl <- function (n) {
         logpdf <- function (x) { -0.5*x^2 }
         dlogpdf <- function (x) { -x }
-        gen <- ars.new(logpdf=logpdf, dlogpdf=dlogpdf)
+        gen <- ars.new(logpdf=logpdf, dlogpdf=dlogpdf, lb=-Inf, ub=Inf)
         ur(gen,n)
 }
 unur.test.cont("ur.ars.norm.wl", rfunc=ur.ars.norm.wl, pfunc=pnorm)
@@ -27,7 +27,7 @@ rm(ur.ars.norm.wl)
 
 ur.ars.norm.wlwod <- function (n) {
         logpdf <- function (x) { -0.5*x^2 }
-        gen <- ars.new(logpdf=logpdf)
+        gen <- ars.new(logpdf=logpdf, lb=-Inf, ub=Inf)
         ur(gen,n)
 }
 unur.test.cont("ur.ars.norm.wlwod", rfunc=ur.ars.norm.wlwod, pfunc=pnorm)
@@ -36,7 +36,7 @@ rm(ur.ars.norm.wlwod)
 ## test arguments passed to PDF
 ur.ars.norm.param <- function (n) {
         logpdf <- function (x,a) { a*x^2 }
-        gen <- ars.new(logpdf=logpdf, a=-1/2)
+        gen <- ars.new(logpdf=logpdf, lb=-Inf, ub=Inf, a=-1/2)
         ur(gen,n)
 }
 unur.test.cont("ur.ars.norm.param", rfunc=ur.ars.norm.param, pfunc=pnorm)
@@ -48,7 +48,7 @@ rm(ur.ars.norm.param)
 ur.itdr.exp <- function (n) {
         pdf <- function (x) { exp(-x) }
         dpdf <- function (x) { -exp(-x) }
-        gen <- itdr.new(pdf=pdf, dpdf=dpdf,lb=0,pole=0)
+        gen <- itdr.new(pdf=pdf, dpdf=dpdf, lb=0, ub=Inf, pole=0)
         ur(gen,n)
 }
 unur.test.cont("ur.itdr.exp", rfunc=ur.itdr.exp, pfunc=pexp)
@@ -58,7 +58,7 @@ cdf.gamma <- function(x) { pgamma(x,0.5) }
 ur.itdr.gamma <- function (n) {
         pdf <- function (x) { x^(-0.5)*exp(-x) }
         dpdf <- function (x) { (-x^(-0.5) - 0.5*x^(-1.5))*exp(-x) }
-        gen <- itdr.new(pdf=pdf, dpdf=dpdf,lb=0,pole=0)
+        gen <- itdr.new(pdf=pdf, dpdf=dpdf, lb=0, ub=Inf, pole=0)
         ur(gen,n)
 }
 unur.test.cont("ur.itdr.gamma", rfunc=ur.itdr.gamma, pfunc=cdf.gamma)
@@ -69,21 +69,21 @@ rm(cdf.gamma)
 ## --- PINV (Polynomial interpolation based INVersion) ----------------------
 
 ur.pinv.norm.pdf <- function (n) {
-        gen <- pinv.new(pdf=dnorm)
+        gen <- pinv.new(pdf=dnorm, lb=-Inf, ub=Inf)
         ur(gen,n)
 }
 unur.test.cont("ur.pinv.norm.pdf", rfunc=ur.pinv.norm.pdf, pfunc=pnorm)
 rm(ur.pinv.norm.pdf)
 
 ur.pinv.norm.cdf <- function (n) {
-        gen <- pinv.new(cdf=pnorm)
+        gen <- pinv.new(cdf=pnorm, lb=-Inf, ub=Inf)
         ur(gen,n)
 }
 unur.test.cont("ur.pinv.norm.cdf", rfunc=ur.pinv.norm.cdf, pfunc=pnorm)
 rm(ur.pinv.norm.cdf)
 
 ur.pinv.norm.pdfcdf <- function (n) {
-        gen <- pinv.new(pdf=dnorm,cdf=pnorm)
+        gen <- pinv.new(pdf=dnorm,cdf=pnorm, lb=-Inf, ub=Inf)
         ur(gen,n)
 }
 unur.test.cont("ur.pinv.norm.pdfcdf", rfunc=ur.pinv.norm.pdfcdf, pfunc=pnorm)
@@ -93,14 +93,14 @@ rm(ur.pinv.norm.pdfcdf)
 ## --- SROU (Simple Ratio-Of-Uniforms Method) -------------------------------
 
 ur.srou.norm <- function (n) {
-        gen <- srou.new(pdf=dnorm, mode=0, area=1)
+        gen <- srou.new(pdf=dnorm, lb=-Inf, ub=Inf, mode=0, area=1)
         ur(gen,n)
 }
 unur.test.cont("ur.srou.norm", rfunc=ur.srou.norm, pfunc=pnorm)
 rm(ur.srou.norm)
 
 ur.srou.2.norm <- function (n) {
-        gen <- srou.new(pdf=dnorm, mode=0, area=1, r=2)
+        gen <- srou.new(pdf=dnorm, lb=-Inf, ub=Inf, mode=0, area=1, r=2)
         ur(gen,n)
 }
 unur.test.cont("ur.srou.2.norm", rfunc=ur.srou.2.norm, pfunc=pnorm)
@@ -112,7 +112,7 @@ rm(ur.srou.2.norm)
 ur.tdr.norm <- function (n) {
         pdf <- function (x) { exp(-0.5*x^2) }
         dpdf <- function (x) { -x*exp(-0.5*x^2) }
-        gen <- tdr.new(pdf=pdf, dpdf=dpdf)
+        gen <- tdr.new(pdf=pdf, dpdf=dpdf, lb=-Inf, ub=Inf)
         ur(gen,n)
 }
 unur.test.cont("ur.tdr.norm", rfunc=ur.tdr.norm, pfunc=pnorm)
@@ -120,7 +120,7 @@ rm(ur.tdr.norm)
 
 ur.tdr.norm.wod <- function (n) {
         pdf <- function (x) { exp(-0.5*x^2) }
-        gen <- tdr.new(pdf=pdf)
+        gen <- tdr.new(pdf=pdf, lb=-Inf, ub=Inf)
         ur(gen,n)
 }
 unur.test.cont("ur.tdr.norm.wod", rfunc=ur.tdr.norm.wod, pfunc=pnorm)
@@ -129,7 +129,7 @@ rm(ur.tdr.norm.wod)
 ur.tdr.norm.wl <- function (n) {
         logpdf <- function (x) { -0.5*x^2 }
         dlogpdf <- function (x) { -x }
-        gen <- tdr.new(pdf=logpdf, dpdf=dlogpdf, islog=TRUE)
+        gen <- tdr.new(pdf=logpdf, dpdf=dlogpdf, islog=TRUE, lb=-Inf, ub=Inf)
         ur(gen,n)
 }
 unur.test.cont("ur.tdr.norm.wl", rfunc=ur.tdr.norm.wl, pfunc=pnorm)
@@ -137,7 +137,7 @@ rm(ur.tdr.norm.wl)
 
 ur.tdr.norm.wlwod <- function (n) {
         logpdf <- function (x) { -0.5*x^2 }
-        gen <- tdr.new(pdf=logpdf, islog=TRUE)
+        gen <- tdr.new(pdf=logpdf, islog=TRUE, lb=-Inf, ub=Inf)
         ur(gen,n)
 }
 unur.test.cont("ur.tdr.norm.wlwod", rfunc=ur.tdr.norm.wlwod, pfunc=pnorm)
@@ -146,21 +146,21 @@ rm(ur.tdr.norm.wlwod)
 ## test arguments passed to PDF
 ur.tdr.norm.param <- function (n) {
         pdf <- function (x,a) { exp(a*x^2) }
-        gen <- tdr.new(pdf=pdf, a=-1/2)
+        gen <- tdr.new(pdf=pdf, lb=-Inf, ub=Inf, a=-1/2)
         ur(gen,n)
 }
 unur.test.cont("ur.tdr.norm.param", rfunc=ur.tdr.norm.param, pfunc=pnorm)
 rm(ur.tdr.norm.param)
 
 ur.tdr.norm.R <- function (n) {
-        gen <- tdr.new(pdf=dnorm)
+        gen <- tdr.new(pdf=dnorm, lb=-Inf, ub=Inf)
         ur(gen,n)
 }
 unur.test.cont("ur.tdr.norm.R", rfunc=ur.tdr.norm.R, pfunc=pnorm)
 rm(ur.tdr.norm.R)
 
 ur.tdr.t.R <- function (n,df) {
-        gen <- tdr.new(pdf=dt, df=df)
+        gen <- tdr.new(pdf=dt, lb=-Inf, ub=Inf, df=df)
         ur(gen,n)
 }
 unur.test.cont("ur.tdr.t.R", rfunc=ur.tdr.t.R, pfunc=pt, df=8)

@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 int
@@ -44,12 +44,12 @@ _unur_pinv_create_table( struct unur_gen *gen )
     for(k=0; k<=GEN->order; k++)
       xval[k] = GEN->iv[i].xi + h * chebyshev[k];
     if (!use_linear) {
-      if (_unur_pinv_newton_create(gen,&(GEN->iv[i]),xval,utol) != UNUR_SUCCESS)
+      if (_unur_pinv_newton_create(gen,&(GEN->iv[i]),xval) != UNUR_SUCCESS)
 	use_linear = TRUE;
     }
     if (use_linear) {
       ++n_use_linear;
-      if (_unur_pinv_linear_create(gen,&(GEN->iv[i]),xval,utol) != UNUR_SUCCESS) {
+      if (_unur_pinv_linear_create(gen,&(GEN->iv[i]),xval) != UNUR_SUCCESS) {
 	if (i==0) { 
 	  GEN->bleft = GEN->iv[i].xi + h;
 	  GEN->iv[i].xi = GEN->bleft;
@@ -67,7 +67,7 @@ _unur_pinv_create_table( struct unur_gen *gen )
 	}
       }
     }
-    maxerror = _unur_pinv_newton_maxerror(gen,&(GEN->iv[i]),xval,utol);
+    maxerror = _unur_pinv_newton_maxerror(gen,&(GEN->iv[i]),xval);
     if (!(maxerror <= utol)) {
       h *= (maxerror > 4.*utol) ? 0.81 : 0.9;
       cont = TRUE;  
@@ -98,9 +98,6 @@ int
 _unur_pinv_interval( struct unur_gen *gen, int i, double x, double cdfx )
 {
   struct unur_pinv_interval *iv;
-#ifdef PINV_USE_CDFTABLE
-  struct unur_pinv_CDFtable *CDFtable = GEN->CDFtable;
-#endif
   COOKIE_CHECK(gen,CK_PINV_GEN,UNUR_FAILURE);
   if (i >= GEN->max_ivs) {
     _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,
@@ -114,18 +111,12 @@ _unur_pinv_interval( struct unur_gen *gen, int i, double x, double cdfx )
   iv->ui = _unur_xmalloc( GEN->order * sizeof(double) );
   iv->zi = _unur_xmalloc( GEN->order * sizeof(double) );
   GEN->n_ivs = i;
-#ifdef PINV_USE_CDFTABLE
-  if (CDFtable != NULL) {
-    while (CDFtable->cur_iv < CDFtable->n_values &&
-	   CDFtable->values[CDFtable->cur_iv].x < x) 
-      ++(CDFtable->cur_iv);
-  }
-#endif
+  _unur_lobatto_find_linear(GEN->aCDF,x);
   return UNUR_SUCCESS;
 } 
 int
 _unur_pinv_newton_create (struct unur_gen *gen, struct unur_pinv_interval *iv, 
-			  double *xval, double utol)
+			  double *xval)
 {
   double *ui = iv->ui;   
   double *zi = iv->zi;   
@@ -134,11 +125,10 @@ _unur_pinv_newton_create (struct unur_gen *gen, struct unur_pinv_interval *iv,
   int i,k;               
   COOKIE_CHECK(gen,CK_PINV_GEN,UNUR_FAILURE);
   COOKIE_CHECK(iv,CK_PINV_IV,UNUR_FAILURE);
-  utol *= PINV_UTOL_CORRECTION;
   for(i=0; i<GEN->order; i++) {
     xi = xval[i];
     dxi = xval[i+1]-xval[i];
-    area = _unur_pinv_Udiff(gen, xi, dxi, utol);
+    area = _unur_pinv_Udiff(gen, xi, dxi);
     if (_unur_iszero(area)) return UNUR_ERR_SILENT;
     ui[i] = (i>0) ? (ui[i-1]+area) : area;
     zi[i] = dxi/area;
@@ -157,20 +147,19 @@ _unur_pinv_newton_create (struct unur_gen *gen, struct unur_pinv_interval *iv,
 } 
 int
 _unur_pinv_linear_create (struct unur_gen *gen, struct unur_pinv_interval *iv, 
-			  double *xval, double utol)
+			  double *xval)
 {
   double *ui = iv->ui;   
   double *zi = iv->zi;   
   double x0, x1;         
   double area;           
   int i;                 
-  utol *= PINV_UTOL_CORRECTION;
   x0 = xval[0];
   x1 = xval[GEN->order];
   for (i=1; i<GEN->order; i++) {
     ui[i] = zi[i] = 0.;
   }
-  area = _unur_pinv_Udiff(gen, x0, x1-x0, utol);
+  area = _unur_pinv_Udiff(gen, x0, x1-x0);
   ui[0] = area;
   zi[0] = (x1 - x0) / area;
   ui[GEN->order-1] = area;
@@ -201,7 +190,7 @@ _unur_pinv_newton_eval ( double q, double ui[], double zi[], int order )
 } 
 double
 _unur_pinv_newton_maxerror (struct unur_gen *gen, struct unur_pinv_interval *iv,
-			    double xval[], double utol)
+			    double xval[])
 {
   double x0 = iv->xi;    
   double *ui = iv->ui;   
@@ -215,7 +204,6 @@ _unur_pinv_newton_maxerror (struct unur_gen *gen, struct unur_pinv_interval *iv,
   int i;                 
   COOKIE_CHECK(gen,CK_PINV_GEN,UNUR_FAILURE);
   COOKIE_CHECK(iv,CK_PINV_IV,UNUR_FAILURE);
-  utol *= PINV_UTOL_CORRECTION;
   is_linear = _unur_iszero(zi[1]) ? TRUE : FALSE;
   if (is_linear && zi[0] < 0.)
     return 1000.;
@@ -229,9 +217,9 @@ _unur_pinv_newton_maxerror (struct unur_gen *gen, struct unur_pinv_interval *iv,
       if (! (xval[i] <= x0+x && x0+x <=xval[i+1]) )
 	return 1000.;
     if (i==0 || xval==NULL)
-      u = _unur_pinv_Udiff(gen, x0, x, utol);
+      u = _unur_pinv_Udiff(gen, x0, x);
     else
-      u = ui[i-1] + _unur_pinv_Udiff(gen, xval[i], x+x0-xval[i], utol);
+      u = ui[i-1] + _unur_pinv_Udiff(gen, xval[i], x+x0-xval[i]);
     if (!_unur_isfinite(u))
       return INFINITY;
     uerror = fabs(u - testu[i]);

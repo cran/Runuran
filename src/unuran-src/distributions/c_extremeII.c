@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -17,6 +17,7 @@ static const char distr_name[] = "extremeII";
 static double _unur_pdf_extremeII( double x, const UNUR_DISTR *distr );
 static double _unur_dpdf_extremeII( double x, const UNUR_DISTR *distr );
 static double _unur_cdf_extremeII( double x, const UNUR_DISTR *distr );
+static double _unur_invcdf_extremeII( double u, const UNUR_DISTR *distr );
 static int _unur_upd_mode_extremeII( UNUR_DISTR *distr );
 static int _unur_upd_area_extremeII( UNUR_DISTR *distr );
 static int _unur_set_params_extremeII( UNUR_DISTR *distr, const double *params, int n_params );
@@ -56,6 +57,14 @@ _unur_cdf_extremeII( double x, const UNUR_DISTR *distr )
   if (x<=0.)
     return 0.;
   return ( exp( -pow( x, -k ) ) );
+} 
+double
+_unur_invcdf_extremeII( double U, const UNUR_DISTR *distr )
+{ 
+  register const double *params = DISTR.params;
+  double X;
+  X = exp( -log( -log(U) )/k );
+  return ((DISTR.n_params==1) ? X : zeta + theta * X );
 } 
 int
 _unur_upd_mode_extremeII( UNUR_DISTR *distr )
@@ -122,10 +131,10 @@ unur_distr_extremeII( const double *params, int n_params )
   distr = unur_distr_cont_new();
   distr->id = UNUR_DISTR_EXTREME_II;
   distr->name = distr_name;
-  DISTR.init = _unur_stdgen_extremeII_init;
-  DISTR.pdf  = _unur_pdf_extremeII;  
-  DISTR.dpdf = _unur_dpdf_extremeII; 
-  DISTR.cdf  = _unur_cdf_extremeII;  
+  DISTR.pdf    = _unur_pdf_extremeII;    
+  DISTR.dpdf   = _unur_dpdf_extremeII;   
+  DISTR.cdf    = _unur_cdf_extremeII;    
+  DISTR.invcdf = _unur_invcdf_extremeII; 
   distr->set = ( UNUR_DISTR_SET_DOMAIN |
 		 UNUR_DISTR_SET_STDDOMAIN |
  		 UNUR_DISTR_SET_MODE   |

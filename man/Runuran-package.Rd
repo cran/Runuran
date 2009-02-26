@@ -17,8 +17,8 @@
   \tabular{ll}{
     Package: \tab Runuran       \cr
     Type:    \tab Package       \cr
-    Version: \tab 0.8.0         \cr
-    Date:    \tab 2008-11-25    \cr
+    Version: \tab 0.9.0         \cr
+    Date:    \tab 2009-02-26    \cr
     License: \tab GPL 2 or later\cr
   }
   \pkg{Runuran} provides an interface to the UNU.RAN library for
@@ -26,7 +26,7 @@
   It compiles three sets of functions of increasing power (and thus
   complexity):
   
-  \description{
+  \describe{
     \item{}{\bold{[Distribution]} --
       Generators for paricular distributions. Their syntax is similar to
       the corresponding \R built-in functions.}
@@ -126,7 +126,7 @@
   These functions allow access to a selected collection of UNU.RAN
   methods. They require some data about the target distribution as
   arguments and return an instance of a UNU.RAN generator object that is
-  implementd as an S4 class \code{\linkS4class{unuran}}. These can then
+  implemented as an S4 class \code{\linkS4class{unuran}}. These can then
   be used to draw samples from the desired distribution by means of 
   function \code{\link{ur}}.
   Methods that implement an \emph{inversion} method can also be
@@ -197,7 +197,7 @@
     \emph{Function}              \tab        \tab \cr
     \code{\link{ur}}             \tab \ldots \tab draw sample \cr
     \code{\link{uq}}             \tab \ldots \tab compute quantile (inverse CDF) \cr
-    \code{\link{unuran.details}} \tab \ldots \tab show UNU.RAN object \cr
+    \code{\link{unuran.details}} \tab \ldots \tab show \code{unuran} object \cr
   }
 }
 

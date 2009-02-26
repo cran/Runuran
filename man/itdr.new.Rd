@@ -8,20 +8,23 @@
 \description{
   UNU.RAN random variate generator for continuous distributions with
   given probability density function (PDF).
-  It is based on the Inverse Transformed Density Rejection method (ITDR).
+  It is based on the Inverse Transformed Density Rejection method (\sQuote{ITDR}).
 
   [Universal] -- Rejection Method.
 }
 
 \usage{
-itdr.new(pdf, dpdf, pole, lb=0, ub=Inf, islog=FALSE, ...)
+itdr.new(pdf, dpdf, lb, ub, pole, islog=FALSE, ...)
 }
 
 \arguments{
   \item{pdf}{probability density function. (\R function)}
   \item{dpdf}{derivative of \code{pdf}. (\R function)}
   \item{pole}{pole of distribution. (numeric)}
-  \item{lb, ub}{lower and upper bound of domain. (numeric)}
+  \item{lb}{lower bound of domain;
+    use \code{-Inf} if unbounded from left. (numeric)}
+  \item{ub}{upper bound of domain;
+    use \code{Inf} if unbounded from right. (numeric)}
   \item{islog}{whether \code{pdf} is given as log-density (the
     \code{dpdf} must then be the derivative of the
     log-density). (boolean)}
@@ -70,7 +73,7 @@ itdr.new(pdf, dpdf, pole, lb=0, ub=Inf, islog=FALSE, ...)
 ## Create a sample of size 100 for a Gamma(-0.5) distribution
 pdf <- function (x) { x^(-0.5)*exp(-x) }
 dpdf <- function (x) { (-x^(-0.5) - 0.5*x^(-1.5))*exp(-x) }
-gen <- itdr.new(pdf=pdf, dpdf=dpdf, lb=0, pole=0)
+gen <- itdr.new(pdf=pdf, dpdf=dpdf, lb=0, ub=Inf, pole=0)
 x <- ur(gen,100)
 
 }

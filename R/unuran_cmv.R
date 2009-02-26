@@ -37,12 +37,13 @@ setClass( "unuran.cmv",
 ## Initialize ---------------------------------------------------------------
 
 setMethod( "initialize", "unuran.cmv",
-          function(.Object, dim=1, pdf=NULL, mode=NULL, center=NULL, ll=NULL, ur=NULL, name=NA) {
-                  ## dim ..... dimension of distribution
-                  ## pdf ..... probability density function (PDF)
-                  ## mode .... mode of distribution
-                  ## ll, ur .. lower left and upper right vertex of rectangular domain
-                  ## name .... name of distribution
+          function(.Object, dim=1, pdf=NULL, ll=NULL, ur=NULL, mode=NULL, center=NULL, name=NA) {
+                  ## dim  ... dimension of distribution
+                  ## pdf  ... probability density function (PDF)
+                  ## ll   ... lower left vertex of rectangular domain
+                  ## ur   ... upper right vertex of rectangular domain
+                  ## mode ... mode of distribution
+                  ## name ... name of distribution
 
                   ## Check entries
                   ndim <- as.integer(dim)
@@ -86,8 +87,8 @@ setMethod( "initialize", "unuran.cmv",
 
 
 ## Shortcut
-unuran.cmv.new <- function(dim=1, pdf=NULL, mode=NULL, center=NULL, ll=NULL, ur=NULL, name=NA) {
-        new("unuran.cmv", dim=dim, pdf=pdf, mode=mode, center=center, ll=ll, ur=ur, name=name)
+unuran.cmv.new <- function(dim=1, pdf=NULL, ll=NULL, ur=NULL, mode=NULL, center=NULL, name=NA) {
+        new("unuran.cmv", dim=dim, pdf=pdf, ll=ll, ur=ur, mode=mode, center=center, name=name)
 }
 
 ## End ----------------------------------------------------------------------

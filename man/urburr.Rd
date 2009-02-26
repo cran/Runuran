@@ -30,7 +30,7 @@ urburr(n, a, b, lb=0, ub=Inf)
     f(x) = a * (b-1) * x^(a-1)/(1+x^a)^b}
   for \eqn{x \ge 0}{x >= 0}, \eqn{a \ge 1}{a >= 1} and \eqn{b \ge 2}{b >= 2}.
 
-  The generation algorithm uses transformed density rejection "TDR". The
+  The generation algorithm uses transformed density rejection \sQuote{TDR}. The
   parameters \code{lb} and \code{ub} can be used to generate variates from 
   the Burr distribution truncated to the interval (\code{lb},\code{ub}).
 }

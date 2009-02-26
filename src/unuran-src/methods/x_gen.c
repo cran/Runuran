@@ -1,9 +1,11 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
 #include <distr/distr_source.h>
 #include <distr/matr.h>
+#include <methods/cstd.h>
+#include <methods/cstd_struct.h>
 #include <methods/hinv.h>
 #include <methods/ninv.h>
 #include <methods/pinv.h>
@@ -81,6 +83,11 @@ unur_quantile ( struct unur_gen *gen, double U )
     return unur_ninv_eval_approxinvcdf(gen,U);
   case UNUR_METH_PINV:
     return unur_pinv_eval_approxinvcdf(gen,U);
+  case UNUR_METH_CSTD:
+#define GEN ((struct unur_cstd_gen*)gen->datap) 
+    if (GEN->is_inversion)
+      return unur_cstd_eval_invcdf(gen,U);
+#undef GEN
   default:
     _unur_error(gen->genid,UNUR_ERR_NO_QUANTILE,"");
     return UNUR_INFINITY;

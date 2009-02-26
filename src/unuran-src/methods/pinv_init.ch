@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 struct unur_gen *
@@ -41,9 +41,7 @@ _unur_pinv_init( struct unur_par *par )
 #endif
     _unur_pinv_free(gen); return NULL;
   }
-#ifdef PINV_USE_CDFTABLE
-  _unur_pinv_CDFtable_free(&(GEN->CDFtable));
-#endif
+  _unur_lobatto_free(&(GEN->aCDF));
   _unur_pinv_make_guide_table(gen);
 #ifdef UNUR_ENABLE_LOGGING
   if (gen->debug) _unur_pinv_debug_init(gen,TRUE);
@@ -79,10 +77,8 @@ _unur_pinv_create( struct unur_par *par )
   GEN->guide = NULL;
   GEN->area = DISTR.area; 
   GEN->logPDFconstant = 0.;   
+  GEN->aCDF = NULL;           
   GEN->iv = _unur_xmalloc(GEN->max_ivs * sizeof(struct unur_pinv_interval) );
-#ifdef PINV_USE_CDFTABLE
-  GEN->CDFtable = _unur_pinv_CDFtable_create(PINV_MAX_LOBATTO_IVS);
-#endif
 #ifdef UNUR_ENABLE_INFO
   gen->info = _unur_pinv_info;
 #endif
@@ -121,9 +117,7 @@ _unur_pinv_clone( const struct unur_gen *gen )
   int i;
   CHECK_NULL(gen,NULL);  COOKIE_CHECK(gen,CK_PINV_GEN,NULL);
   clone = _unur_generic_clone( gen, GENTYPE );
-#ifdef PINV_USE_CDFTABLE
-  CLONE->CDFtable = NULL;
-#endif
+  CLONE->aCDF = NULL;
   CLONE->iv =  _unur_xmalloc((GEN->n_ivs+1) * sizeof(struct unur_pinv_interval) );
   memcpy( CLONE->iv, GEN->iv, (GEN->n_ivs+1) * sizeof(struct unur_pinv_interval) );
   for(i=0; i<=GEN->n_ivs; i++) {
@@ -149,9 +143,7 @@ _unur_pinv_free( struct unur_gen *gen )
   COOKIE_CHECK(gen,CK_PINV_GEN,RETURN_VOID);
   SAMPLE = NULL;   
   if (GEN->guide) free (GEN->guide);
-#ifdef PINV_USE_CDFTABLE
-  _unur_pinv_CDFtable_free(&(GEN->CDFtable));
-#endif
+  _unur_lobatto_free(&(GEN->aCDF));
   if (GEN->iv) {
     for(i=0; i<=GEN->n_ivs; i++){
       free(GEN->iv[i].ui);

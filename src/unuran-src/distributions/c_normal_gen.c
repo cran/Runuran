@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2008 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2009 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -46,22 +46,12 @@ _unur_stdgen_normal_init( struct unur_par *par, struct unur_gen *gen )
     return UNUR_SUCCESS;
   case UNUR_STDGEN_INVERSION:   
     if (gen) GEN->is_inversion = TRUE;
-    _unur_cstd_set_sampling_routine(par,gen,_unur_stdgen_sample_normal_inv); 
+    _unur_cstd_set_sampling_routine(par,gen,_unur_cstd_sample_inv);
     return UNUR_SUCCESS;
   default: 
     if (gen) _unur_warning(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
     return UNUR_FAILURE;
   }
-} 
-double 
-_unur_stdgen_sample_normal_inv( struct unur_gen *gen )
-{
-  double U,X;
-  CHECK_NULL(gen,INFINITY);
-  COOKIE_CHECK(gen,CK_CSTD_GEN,INFINITY);
-  while (_unur_iszero(U = GEN->umin + uniform() * (GEN->umax-GEN->umin)));
-  X = _unur_sf_inv_cdfnormal(U);
-  return ((DISTR.n_params==0) ? X : mu + sigma * X );
 } 
 #define Xstore  GEN->gen_param[0]
 #define flag    GEN->flag
