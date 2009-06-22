@@ -1,5 +1,5 @@
-PKG_CPPFLAGS=-I. -Iunuran-src -DHAVE_CONFIG_H  ## -Wall -pedantic
-SOURCES=@UNURAN_SRC@ Runuran.c Runuran_distr.c
+PKG_CPPFLAGS=-I. -Iunuran-src -DHAVE_CONFIG_H  ## -Wall -Wextra -pedantic
+SOURCES=@UNURAN_SRC@ Runuran.c Runuran_distr.c Runuran_pinv.c
 OBJECTS=$(SOURCES:.c=.o)
 ## for Windows prior to 2.6.0
 OBJS=$(OBJECTS)

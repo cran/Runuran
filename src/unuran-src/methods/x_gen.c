@@ -6,6 +6,7 @@
 #include <distr/matr.h>
 #include <methods/cstd.h>
 #include <methods/cstd_struct.h>
+#include <methods/dgt.h>
 #include <methods/hinv.h>
 #include <methods/ninv.h>
 #include <methods/pinv.h>
@@ -88,6 +89,8 @@ unur_quantile ( struct unur_gen *gen, double U )
     if (GEN->is_inversion)
       return unur_cstd_eval_invcdf(gen,U);
 #undef GEN
+  case UNUR_METH_DGT:
+    return ((double) unur_dgt_eval_invcdf(gen,U));
   default:
     _unur_error(gen->genid,UNUR_ERR_NO_QUANTILE,"");
     return UNUR_INFINITY;

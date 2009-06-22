@@ -721,32 +721,30 @@ unur_distr_cont_get_pdfparams_vec( const struct unur_distr *distr, int par, cons
 int
 unur_distr_cont_set_domain( struct unur_distr *distr, double left, double right )
 {
+  int unsigned is_set = 0u;
   _unur_check_NULL( NULL, distr, UNUR_ERR_NULL );
   _unur_check_distr_object( distr, CONT, UNUR_ERR_DISTR_INVALID );
   if (left >= right) {
     _unur_error(NULL,UNUR_ERR_DISTR_SET,"domain, left >= right");
     return UNUR_ERR_DISTR_SET;
   }
-  if ( (distr->set & UNUR_DISTR_SET_MODE) &&
-       (left  >= DISTR.domain[0]) &&
-       (right <= DISTR.domain[1]) ) {
+  if ( distr->set & UNUR_DISTR_SET_MODE ) {
+    is_set |= UNUR_DISTR_SET_MODE;
     if ( DISTR.mode < left)       DISTR.mode = left;
     else if ( DISTR.mode > right) DISTR.mode = right;
+  }
+  if ( distr->set & UNUR_DISTR_SET_CENTER ) {
+    is_set |= UNUR_DISTR_SET_CENTER;
+    if ( DISTR.center < left)       DISTR.center = left;
+    else if ( DISTR.center > right) DISTR.center = right;
   }
   DISTR.trunc[0] = DISTR.domain[0] = left;
   DISTR.trunc[1] = DISTR.domain[1] = right;
   distr->set |= UNUR_DISTR_SET_DOMAIN;
-  if (distr->set & UNUR_DISTR_SET_MODE) {
-    distr->set &= ~(UNUR_DISTR_SET_STDDOMAIN |
-		    UNUR_DISTR_SET_TRUNCATED | 
-		    UNUR_DISTR_SET_MASK_DERIVED );
-    distr->set |= UNUR_DISTR_SET_MODE;
-  }
-  else {
-    distr->set &= ~(UNUR_DISTR_SET_STDDOMAIN |
-		    UNUR_DISTR_SET_TRUNCATED | 
-		    UNUR_DISTR_SET_MASK_DERIVED );
-  }
+  distr->set &= ~(UNUR_DISTR_SET_STDDOMAIN |
+		  UNUR_DISTR_SET_TRUNCATED | 
+		  UNUR_DISTR_SET_MASK_DERIVED );
+  distr->set |= is_set;
   if (distr->base) {
     BASE.trunc[0] = BASE.domain[0] = left;
     BASE.trunc[1] = BASE.domain[1] = right;

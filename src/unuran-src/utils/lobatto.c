@@ -6,7 +6,7 @@
 #include "lobatto_struct.h"
 static double 
 _unur_lobatto5_simple (UNUR_LOBATTO_FUNCT funct, struct unur_gen *gen,
-		       double x, double h);
+		       double x, double h, double *fx);
 static double
 _unur_lobatto5_adaptive (UNUR_LOBATTO_FUNCT funct, struct unur_gen *gen,
 			 double x, double h, double tol, UNUR_LOBATTO_ERROR uerror,
@@ -25,9 +25,18 @@ _unur_lobatto_table_resize (struct unur_lobatto_table *Itable);
 #define W2 (1.-W1)
 double
 _unur_lobatto5_simple (UNUR_LOBATTO_FUNCT funct, struct unur_gen *gen,
-		       double x, double h)
+		       double x, double h, double *fx)
 { 
-  return (9*(FKT(x)+FKT(x+h))+49.*(FKT(x+h*W1)+FKT(x+h*W2))+64*FKT(x+h/2.))*h/180.;
+  double fl, fr;
+  if (fx==NULL) {
+    fl = FKT(x);
+    fr = FKT(x+h);
+  }
+  else {
+    fl = (*fx>=0.) ? *fx : FKT(x);
+    fr = *fx = FKT(x+h);
+  }
+  return (9*(fl+fr)+49.*(FKT(x+h*W1)+FKT(x+h*W2))+64*FKT(x+h/2.))*h/180.;
 } 
 double
 _unur_lobatto_adaptive (UNUR_LOBATTO_FUNCT funct, struct unur_gen *gen,
@@ -96,20 +105,23 @@ _unur_lobatto5_recursion (UNUR_LOBATTO_FUNCT funct, struct unur_gen *gen,
   return int2;
 } 
 double
-_unur_lobatto_eval_diff (struct unur_lobatto_table *Itable, double x, double h )
+_unur_lobatto_eval_diff (struct unur_lobatto_table *Itable, double x, double h, double *fx)
 {
   int cur;                    
   double x1;                  
   double Q;                   
   struct unur_lobatto_nodes *values;
   int n_values;
+#define clear_fx() if(fx!=NULL){*fx=-1.;}
   CHECK_NULL(Itable,INFINITY);
   values = Itable->values;
   n_values = Itable->n_values;
   if (!_unur_isfinite(x+h)) {
+    clear_fx();
     return INFINITY;
   }
   if (x < Itable->bleft || x+h > Itable->bright) {
+    clear_fx();
     return _unur_lobatto5_adaptive(Itable->funct, Itable->gen, x, h, 
 				   Itable->tol, Itable->uerror, NULL);
   }
@@ -117,6 +129,7 @@ _unur_lobatto_eval_diff (struct unur_lobatto_table *Itable, double x, double h )
   while (cur < n_values && values[cur].x < x)
     ++cur;
   if (cur >= n_values) {
+    clear_fx();
     return _unur_lobatto5_adaptive(Itable->funct, Itable->gen, x, h, 
 				   Itable->tol, Itable->uerror, NULL);
   }
@@ -124,22 +137,24 @@ _unur_lobatto_eval_diff (struct unur_lobatto_table *Itable, double x, double h )
   ++cur;
   if (cur >= n_values ||
       values[cur].x > x+h) {
-    return _unur_lobatto5_simple(Itable->funct, Itable->gen, x, h);
+    return _unur_lobatto5_simple(Itable->funct, Itable->gen, x, h, fx);
   }
-  Q = _unur_lobatto5_simple(Itable->funct, Itable->gen, x, x1-x);
+  Q = _unur_lobatto5_simple(Itable->funct, Itable->gen, x, x1-x, fx);
   do {
     Q += values[cur].u;
     x1 = values[cur].x;
     ++cur;
   } while (cur < n_values && values[cur].x <= x+h);
+  clear_fx();
   if (cur >= n_values) {
     Q += _unur_lobatto5_adaptive(Itable->funct, Itable->gen, x1, x+h-x1,
 				 Itable->tol, Itable->uerror, NULL);
   }
   else {
-    Q += _unur_lobatto5_simple(Itable->funct, Itable->gen, x1, x+h-x1);
+    Q += _unur_lobatto5_simple(Itable->funct, Itable->gen, x1, x+h-x1, fx);
   }
   return Q;
+#undef clear_fx
 } 
 double
 _unur_lobatto_integral (struct unur_lobatto_table *Itable)

@@ -86,7 +86,7 @@ _unur_pinv_create_table( struct unur_gen *gen )
       use_linear = FALSE;
     }
   }
-  GEN->iv = _unur_xrealloc( GEN->iv, (GEN->n_ivs+1) * sizeof(struct unur_pinv_interval) );
+  _unur_pinv_lastinterval(gen);
   GEN->Umax = GEN->iv[GEN->n_ivs].cdfi;
 #ifdef UNUR_ENABLE_LOGGING
   if (gen->debug & PINV_DEBUG_SEARCHBD)
@@ -114,10 +114,26 @@ _unur_pinv_interval( struct unur_gen *gen, int i, double x, double cdfx )
   _unur_lobatto_find_linear(GEN->aCDF,x);
   return UNUR_SUCCESS;
 } 
+int 
+_unur_pinv_lastinterval( struct unur_gen *gen )
+{
+  double *ui, *zi;
+  int i;
+  struct unur_pinv_interval *last_iv = GEN->iv + GEN->n_ivs;
+  ui = last_iv->ui;
+  zi = last_iv->zi;
+  GEN->iv = _unur_xrealloc( GEN->iv, (GEN->n_ivs+1) * sizeof(struct unur_pinv_interval) );
+  for (i=0; i<GEN->order; i++) {
+    ui[i] = 0.;
+    zi[i] = 0.;
+  }
+  return UNUR_SUCCESS;
+} 
 int
 _unur_pinv_newton_create (struct unur_gen *gen, struct unur_pinv_interval *iv, 
 			  double *xval)
 {
+  double fx = -1.;       
   double *ui = iv->ui;   
   double *zi = iv->zi;   
   double xi, dxi;        
@@ -128,7 +144,7 @@ _unur_pinv_newton_create (struct unur_gen *gen, struct unur_pinv_interval *iv,
   for(i=0; i<GEN->order; i++) {
     xi = xval[i];
     dxi = xval[i+1]-xval[i];
-    area = _unur_pinv_Udiff(gen, xi, dxi);
+    area = _unur_pinv_Udiff(gen, xi, dxi, &fx);
     if (_unur_iszero(area)) return UNUR_ERR_SILENT;
     ui[i] = (i>0) ? (ui[i-1]+area) : area;
     zi[i] = dxi/area;
@@ -159,7 +175,7 @@ _unur_pinv_linear_create (struct unur_gen *gen, struct unur_pinv_interval *iv,
   for (i=1; i<GEN->order; i++) {
     ui[i] = zi[i] = 0.;
   }
-  area = _unur_pinv_Udiff(gen, x0, x1-x0);
+  area = _unur_pinv_Udiff(gen, x0, x1-x0, NULL);
   ui[0] = area;
   zi[0] = (x1 - x0) / area;
   ui[GEN->order-1] = area;
@@ -217,9 +233,9 @@ _unur_pinv_newton_maxerror (struct unur_gen *gen, struct unur_pinv_interval *iv,
       if (! (xval[i] <= x0+x && x0+x <=xval[i+1]) )
 	return 1000.;
     if (i==0 || xval==NULL)
-      u = _unur_pinv_Udiff(gen, x0, x);
+      u = _unur_pinv_Udiff(gen, x0, x, NULL);
     else
-      u = ui[i-1] + _unur_pinv_Udiff(gen, xval[i], x+x0-xval[i]);
+      u = ui[i-1] + _unur_pinv_Udiff(gen, xval[i], x+x0-xval[i], NULL);
     if (!_unur_isfinite(u))
       return INFINITY;
     uerror = fabs(u - testu[i]);

@@ -1,4 +1,15 @@
 
+Version 0.10: 2009-06-22
+
+	- new function 'unuran.packed' for packing 'unuran' objects.
+          When packed, all information are stored as R lists and allows
+	  handling of 'unuran' objects just as ordinary R objects, in
+	  particular they can then saved and restored in future R sessions,
+	  and they can be copied to other nodes in parallel computing.
+
+	- uq() now also supports method 'DGT' (for discrete distributions).
+
+
 Version 0.9: 2009-02-26
 
 	- IMPORTANT:

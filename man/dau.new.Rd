@@ -63,7 +63,7 @@ dau.new(pv, from=1)
 \examples{
 ## Create a sample of size 100 for a 
 ## binomial distribution with size=115, prob=0.5
-gen <- dau.new(pv=dbinom(0:115,115,0.5))
+gen <- dau.new(pv=dbinom(0:115,115,0.5), from=0)
 x <- ur(gen,100)
 }
 

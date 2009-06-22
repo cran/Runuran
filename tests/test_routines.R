@@ -334,6 +334,10 @@ unur.test.statistic <- function () {
             "\tnumber of tests = ",length(pvals),
             "(number of warnings = ",n.warns,")\n\n")
         summary(pvals)
+
+        ## call garbage collector.
+        ## this improves valgrind results on memory leaks
+        silent <- gc()
 }
 
 ## -- End -------------------------------------------------------------------

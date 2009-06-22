@@ -322,6 +322,7 @@ int unur_dau_set_urnfactor( UNUR_PAR *parameters, double factor );
 UNUR_PAR *unur_dgt_new( const UNUR_DISTR *distribution );
 int unur_dgt_set_guidefactor( UNUR_PAR *parameters, double factor );
 int unur_dgt_set_variant( UNUR_PAR *parameters, unsigned variant );
+int unur_dgt_eval_invcdf( const UNUR_GEN *generator, double u );
 UNUR_PAR *unur_dsrou_new( const UNUR_DISTR *distribution );
 int unur_dsrou_set_cdfatmode( UNUR_PAR *parameters, double Fmode );
 int unur_dsrou_set_verify( UNUR_PAR *parameters, int verify );

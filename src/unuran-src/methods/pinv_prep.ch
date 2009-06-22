@@ -366,11 +366,11 @@ _unur_pinv_cut_CDF( struct unur_gen *gen, double dom, double x0, double ul, doub
   return x;
 } 
 double
-_unur_pinv_Udiff (struct unur_gen *gen, double x, double h)
+_unur_pinv_Udiff (struct unur_gen *gen, double x, double h, double *fx)
 {
   switch (gen->variant) {
   case PINV_VARIANT_PDF:
-    return _unur_lobatto_eval_diff(GEN->aCDF, x, h );
+    return _unur_lobatto_eval_diff(GEN->aCDF, x, h, fx);
   case PINV_VARIANT_CDF:
     return CDF(x+h) - CDF(x);
   default:

@@ -30,6 +30,15 @@ uq(unr, U)
     \item \sQuote{NINV}
     \item \sQuote{PINV}
   }
+  for continuous distributions and
+  \itemize{
+    \item \sQuote{DGT}
+  }  
+  for discrete distributions.
+  
+  \code{uq} returns the left boundary of the domain of the distribution
+  if argument \code{U} is less than or equal to \code{0} and
+  the right boundary if \code{U} is greater than or equal to \code{1}.
 }
 
 \seealso{
@@ -48,23 +57,33 @@ uq(unr, U)
 }
 
 \examples{
+## Compute quantiles of normal distribution using method 'PINV'
+gen <- pinv.new(pdf=dnorm, lb=-Inf, ub=Inf)
+uq(gen,seq(0,1,0.05))
+
+## Compute quantiles of user-defined distribution using method 'PINV'
+pdf <- function (x) { exp(-x) }
+gen <- pinv.new(pdf=pdf, lb=0, ub=Inf, uresolution=1.e-12)
+uq(gen,seq(0,1,0.05))
+
+## Compute quantiles of binomial distribution using method 'DGT'
+gen <- dgt.new(pv=dbinom(0:1000,1000,0.4), from=0)
+uq(gen,seq(0,1,0.05))
+
+
 ## Compute quantiles of normal distribution using method 'HINV'
-unr <- unuran.new("normal()","hinv")
-uq(unr,0.975)
-uq(unr,c(0.025,0.975))
+## (using 'advanced' interface)
+gen <- unuran.new("normal()","hinv")
+uq(gen,0.975)
+uq(gen,c(0.025,0.975))
 
 ## Compute quantiles of user-defined distributio using method 'HINV'
+## (using 'advanced' interface)
 cdf <- function (x) { 1.-exp(-x) }
 pdf <- function (x) { exp(-x) }
 dist <- new("unuran.cont", cdf=cdf, pdf=pdf, lb=0, ub=Inf)
-unr <- unuran.new(dist, "hinv; u_resolution=1.e-12")
-uq(unr,seq(0,1,0.05))
-
-## Compute quantiles of user-defined distribution using method PINV
-pdf <- function (x) { exp(-x) }
-dist <- new("unuran.cont", pdf=pdf, lb=0, ub=Inf)
-unr <- unuran.new(dist, "pinv; u_resolution=1.e-12")
-uq(unr,seq(0,1,0.05))
+gen <- unuran.new(dist, "hinv; u_resolution=1.e-12")
+uq(gen,seq(0,1,0.05))
 
 }
 

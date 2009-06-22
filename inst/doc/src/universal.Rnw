@@ -125,6 +125,12 @@ in a computer cluster.
 UNU.RAN objects must be created in each session (and in each node) from
 scratch. 
 
+However, \emph{generator objects} for \emph{some} generation methods
+can be ``packed'' using the command 
+`\code{unuran.packed(unr)<-TRUE}'.
+Then these objects can be handled like any other \R\ object
+(and thus saved and restored).
+
 \paragraph{Timing.}
 The \emph{setup time} and \emph{marginal sampling time} given below
 only give a rough estimate and vary for particular distributions.

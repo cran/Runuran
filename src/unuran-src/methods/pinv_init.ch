@@ -5,7 +5,7 @@ struct unur_gen *
 _unur_pinv_init( struct unur_par *par )
 { 
   struct unur_gen *gen;
-  double lfm;
+  double lfc;
   _unur_check_NULL( GENTYPE,par,NULL );
   if ( par->method != UNUR_METH_PINV ) {
     _unur_error(GENTYPE,UNUR_ERR_PAR_INVALID,"");
@@ -14,17 +14,20 @@ _unur_pinv_init( struct unur_par *par )
   gen = _unur_pinv_create(par);
   _unur_par_free(par);
   if (!gen) return NULL;
-  if (DISTR.logpdf != NULL &&
-      (gen->distr->set & UNUR_DISTR_SET_MODE) &&
-      ! (gen->variant & PINV_VARIANT_CDF) &&
-      !_unur_FP_less(DISTR.mode,DISTR.domain[0]) &&
-      !_unur_FP_greater(DISTR.mode,DISTR.domain[1]) ) {
-    lfm = (DISTR.logpdf)(DISTR.mode,gen->distr);
-    if (lfm < -3.)
-      GEN->logPDFconstant = (DISTR.logpdf)(DISTR.mode,gen->distr);
-  }
   if (_unur_pinv_check_par(gen) != UNUR_SUCCESS) {
     _unur_pinv_free(gen); return NULL;
+  }
+  if (DISTR.logpdf != NULL && ! (gen->variant & PINV_VARIANT_CDF) ) {
+    lfc = UNUR_INFINITY;
+    if ( (gen->distr->set & UNUR_DISTR_SET_MODE) &&
+	 !_unur_FP_less(DISTR.mode,DISTR.domain[0]) &&
+	 !_unur_FP_greater(DISTR.mode,DISTR.domain[1]) ) {
+      lfc = (DISTR.logpdf)(DISTR.mode,gen->distr);
+    }
+    if (!_unur_isfinite(lfc))
+      lfc = (DISTR.logpdf)(DISTR.center,gen->distr);
+    if (lfc < -3.)
+      GEN->logPDFconstant = lfc;
   }
 #ifdef UNUR_ENABLE_LOGGING
   if (gen->debug) _unur_pinv_debug_init_start(gen);
@@ -95,8 +98,8 @@ _unur_pinv_check_par( struct unur_gen *gen )
   GEN->dright =  DISTR.domain[1];
   DISTR.center = unur_distr_cont_get_center(gen->distr);
   if (DISTR.center < GEN->dleft || DISTR.center > GEN->dright) {
-    _unur_warning(gen->genid,UNUR_ERR_GEN_CONDITION,
-		"center must be in given domain of distribution");
+    _unur_warning(gen->genid,UNUR_ERR_GENERIC,
+		"center moved into domain of distribution");
     DISTR.center = _unur_max(DISTR.center,GEN->dleft);
     DISTR.center = _unur_min(DISTR.center,GEN->dright);
   }
@@ -179,10 +182,20 @@ double
 _unur_pinv_eval_PDF (double x, struct unur_gen *gen)
 {
   struct unur_distr *distr = gen->distr;
-  if (DISTR.logpdf != NULL) {
-    return (exp((DISTR.logpdf)(x,distr) - GEN->logPDFconstant));
+  double fx, dx;
+  int i;
+  for (i=1; i<=2; i++) {
+    if (DISTR.logpdf != NULL)
+      fx = exp((DISTR.logpdf)(x,distr) - GEN->logPDFconstant);
+    else
+      fx = (DISTR.pdf)(x,distr);
+    if (fx >= INFINITY) {
+      dx = 2.*fabs(x)*DBL_EPSILON;
+      dx = _unur_max(dx,2.*DBL_MIN);
+      x += ((x - GEN->bleft) < (GEN->bright - x)) ? dx : -dx; 
+    }
+    else 
+      break;
   }
-  else {
-    return ((DISTR.pdf)(x,distr));
-  }
+  return fx;
 } 

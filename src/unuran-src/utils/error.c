@@ -124,7 +124,7 @@ unur_get_strerror ( const int errorcode )
   case UNUR_ERR_SILENT:
     return "(silent error)";
   case UNUR_ERR_GENERIC:
-    return "(generic error)";
+    return "";
   case UNUR_ERR_INF:
     return "invalid infinity occured";
   case UNUR_ERR_NAN:

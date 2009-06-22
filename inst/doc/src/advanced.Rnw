@@ -29,6 +29,12 @@ in a computer cluster.
 Distribution and UNU.RAN objects must be created in each session (and
 each node) from scratch. 
 
+However, \emph{generator objects} for \emph{some} generation methods
+can be ``packed'' using the command 
+`\code{unuran.packed(unr)<-TRUE}'.
+Then these objects can be handled like any other \R\ object
+(and thus saved and restored).
+
 % ---------------------------------------------------------------------------
 
 \subsection{U1 -- Create a distribution object}
@@ -108,7 +114,7 @@ object.
   \code{uq(gen,u)} computes quantiles (inverse CDF's) for the $u$ values
   given in vector \code{u}.
   However, this requires that the method (\code{gen}) we are using implements 
-  an inversion method like PINV.
+  an inversion method like PINV or DGT.
 \end{itemize}
 
 In addition it is possible to get some information about the generator

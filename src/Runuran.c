@@ -11,7 +11,7 @@
  *                                                                           *
  *****************************************************************************
  *                                                                           *
- *   Copyright (c) 2007 Wolfgang Hoermann and Josef Leydold                  *
+ *   Copyright (c) 2007-2009 Wolfgang Hoermann and Josef Leydold             *
  *   Dept. for Statistics, University of Economics, Vienna, Austria          *
  *                                                                           *
  *   This program is free software; you can redistribute it and/or modify    *
@@ -44,6 +44,28 @@
 #include <unur_source.h>
 #include <methods/unur_methods_source.h>
 
+#include "Runuran_source.h"
+
+/*---------------------------------------------------------------------------*/
+
+static SEXP _Runuran_sample_unur (struct unur_gen *gen, int n);
+/*---------------------------------------------------------------------------*/
+/* Sample from generator object: use UNU.RAN object                          */
+/*---------------------------------------------------------------------------*/
+
+static SEXP _Runuran_sample_data (SEXP sexp_data, int n);
+/*---------------------------------------------------------------------------*/
+/* Sample from generator object: use R data list (packed object)             */
+/*---------------------------------------------------------------------------*/
+
+static SEXP _Runuran_quantile_unur (struct unur_gen *gen, SEXP sexp_U);
+/*---------------------------------------------------------------------------*/
+/* Evaluate approximate quantile function: use UNU.RAN object                */
+/*---------------------------------------------------------------------------*/
+
+static SEXP _Runuran_quantile_data (SEXP sexp_data, SEXP sexp_U, SEXP sexp_unur);
+/*---------------------------------------------------------------------------*/
+/* Evaluate approximate quantile function:  use R data list (packed object)  */
 /*---------------------------------------------------------------------------*/
 
 static void _Runuran_free(SEXP sexp_gen);
@@ -66,7 +88,7 @@ static double _Runuran_R_unif_rand (void *unused);
 /*---------------------------------------------------------------------------*/
 
 /* check pointer to generator object */
-#define CHECK_PTR(s) do { \
+#define CHECK_UNUR_PTR(s) do { \
     if (TYPEOF(s) != EXTPTRSXP || R_ExternalPtrTag(s) != _Runuran_tag) \
         error("[UNU.RAN - error] invalid UNU.RAN object"); \
     } while (0)
@@ -74,7 +96,7 @@ static double _Runuran_R_unif_rand (void *unused);
 /* Use an external reference to store the UNU.RAN generator objects */
 static SEXP _Runuran_tag = NULL;
 
-/*---------------------------------------------------------------------------*/
+/*****************************************************************************/
 
 SEXP
 Runuran_init (SEXP sexp_obj, SEXP sexp_distr, SEXP sexp_method)
@@ -82,9 +104,12 @@ Runuran_init (SEXP sexp_obj, SEXP sexp_distr, SEXP sexp_method)
      /* Create and initialize UNU.RAN generator object.                      */
      /*                                                                      */
      /* Parameters:                                                          */
-     /*   obj    ... S4 class that contains unuran generator object          */ 
+     /*   obj    ... S4 class that contains 'Runuran' generator object       */ 
      /*   distr  ... distribution (string or S4 object)                      */
      /*   method ... method (string)                                         */
+     /*                                                                      */
+     /* Return:                                                              */
+     /*   pointer to UNU.RAN generator object                                */
      /*----------------------------------------------------------------------*/
 {
   SEXP sexp_gen;
@@ -147,14 +172,19 @@ SEXP
 Runuran_sample (SEXP sexp_unur, SEXP sexp_n)
      /*----------------------------------------------------------------------*/
      /* Sample from UNU.RAN generator object.                                */
+     /*                                                                      */
+     /* Parameters:                                                          */
+     /*   unur ... 'Runuran' object (S4 class)                               */ 
+     /*   n    ... sample size (positive integer)                            */
+     /*                                                                      */
+     /* Return:                                                              */
+     /*   random sample of size 'n'                                          */
      /*----------------------------------------------------------------------*/
 {
   int n;
-  struct unur_gen *gen;
-  int i,k;
-  SEXP sexp_res = NULL;
-  double *res;
   SEXP sexp_gen;
+  SEXP sexp_data;
+  struct unur_gen *gen;
 
   /* first argument must be S4 class */
   if (!IS_S4_OBJECT(sexp_unur))
@@ -168,17 +198,46 @@ Runuran_sample (SEXP sexp_unur, SEXP sexp_n)
 
   /* Extract pointer to UNU.RAN generator */
   sexp_gen = GET_SLOT(sexp_unur, install("unur"));
-
 #ifdef RUNURAN_DEBUG
-  CHECK_PTR(sexp_gen);
+  CHECK_UNUR_PTR(sexp_gen);
 #endif
   gen = R_ExternalPtrAddr(sexp_gen);
-#ifdef RUNURAN_DEBUG
-  if (gen == NULL)
-    error("[UNU.RAN - error] bad UNU.RAN object");
-#endif
+  if (gen != NULL) {
+    return _Runuran_sample_unur(gen,n);
+  }
 
-  /* TODO: this need not be called when we do not use the R built-in URNG */
+  /* Extract data list */
+  sexp_data = GET_SLOT(sexp_unur, install("data"));
+  if (TYPEOF(sexp_data)!=NILSXP) {
+    return _Runuran_sample_data(sexp_data,n);
+  }
+
+  /* Neither the UNU.RAN object nor the packed data list exists */
+  errorcall_return(R_NilValue,"[UNU.RAN - error] broken UNU.RAN object");
+ 
+} /* end of Runuran_sample() */
+
+/*---------------------------------------------------------------------------*/
+
+SEXP
+_Runuran_sample_unur (struct unur_gen *gen, int n)
+     /*----------------------------------------------------------------------*/
+     /* Sample from generator object: use UNU.RAN object                     */
+     /*                                                                      */
+     /* Parameters:                                                          */
+     /*   gen ... pointer to UNU.RAN generator object                        */
+     /*   n   ... sample size (positive integer)                             */
+     /*                                                                      */
+     /* Return:                                                              */
+     /*   random sample of size 'n'                                          */
+     /*----------------------------------------------------------------------*/
+{
+/*   struct unur_gen *gen; */
+  int i,k;
+  SEXP sexp_res = R_NilValue;
+  double *res;
+
+  /* get state for the R built-in URNG */
   GetRNGstate();
 
   /* generate random vector of length n */
@@ -215,18 +274,55 @@ Runuran_sample (SEXP sexp_unur, SEXP sexp_n)
   case UNUR_DISTR_CVEMP:  /* empirical continuous multivariate distribution */
   case UNUR_DISTR_MATR:   /* matrix distribution */
   default:
-    error("[UNU.RAN - error] '%s': Distribution type yet not support",
+    error("[UNU.RAN - error] '%s': Distribution type not support",
 	  unur_distr_get_name(unur_get_distr(gen)) );
   }
 
-  /* TODO: this must not be called when we do not use the R built-in URNG */
+  /* update state for the R built-in URNG */
   PutRNGstate();
 
   /* return result to R */
   UNPROTECT(1);
   return sexp_res;
  
-} /* end of Runuran_sample() */
+} /* end of _Runuran_sample_unur() */
+
+/*---------------------------------------------------------------------------*/
+
+SEXP
+_Runuran_sample_data (SEXP sexp_data, int n)
+     /*----------------------------------------------------------------------*/
+     /* Sample from generator object: use R data list (packed object)        */
+     /*                                                                      */
+     /* Parameters:                                                          */
+     /*   data ... data for generation method (R list)                       */
+     /*   n    ... sample size (positive integer)                            */
+     /*                                                                      */
+     /* Return:                                                              */
+     /*   random sample of size 'n'                                          */
+     /*----------------------------------------------------------------------*/
+{
+  SEXP sexp_res = R_NilValue;
+  int mid = INTEGER(VECTOR_ELT(sexp_data,0))[0];   /* method ID */
+
+  /* get state for the R built-in URNG */
+  GetRNGstate();
+
+  switch (mid) {
+  case UNUR_METH_PINV:
+    sexp_res = _Runuran_sample_pinv(sexp_data,n);
+    break;
+  default:
+    errorcall_return(R_NilValue,"[UNU.RAN - error] broken UNU.RAN object");
+  }
+
+  /* update state for the R built-in URNG */
+  PutRNGstate();
+
+  /* return result to R */
+  return sexp_res;
+ 
+} /* end of _Runuran_sample_data() */
 
 /*---------------------------------------------------------------------------*/
 
@@ -235,15 +331,18 @@ Runuran_quantile (SEXP sexp_unur, SEXP sexp_U)
      /*----------------------------------------------------------------------*/
      /* Evaluate approximate quantile function when a UNU.RAN object that    */
      /* implements an inversion method.                                      */
+     /*                                                                      */
+     /* Parameters:                                                          */
+     /*   unur ... 'Runuran' object (S4 class)                               */ 
+     /*   U    ... u-value (numeric array)                                   */
+     /*                                                                      */
+     /* Return:                                                              */
+     /*   (approximate) quantiles for given 'U' values                       */
      /*----------------------------------------------------------------------*/
 {
-  double *U;
-  int n = 1;
-  struct unur_gen *gen;
-  int i;
-  SEXP sexp_res = NULL;
   SEXP sexp_gen;
-  SEXP sexp_slotunur;
+  SEXP sexp_data;
+  struct unur_gen *gen;
 
   /* first argument must be S4 class */
   if (!IS_S4_OBJECT(sexp_unur))
@@ -253,31 +352,60 @@ Runuran_quantile (SEXP sexp_unur, SEXP sexp_U)
   if (TYPEOF(sexp_U)!=REALSXP)
     error("[UNU.RAN - error] argument invalid: 'U' must be number or vector");
 
+  /* Extract pointer to UNU.RAN generator */
+  sexp_gen = GET_SLOT(sexp_unur, install("unur"));
+#ifdef RUNURAN_DEBUG
+  CHECK_UNUR_PTR(sexp_gen);
+#endif
+  gen = R_ExternalPtrAddr(sexp_gen);
+  if (gen != NULL) {
+    return _Runuran_quantile_unur(gen,sexp_U);
+  }
+
+  /* Extract data list */
+  sexp_data = GET_SLOT(sexp_unur, install("data"));
+  if (TYPEOF(sexp_data)!=NILSXP) {
+    return _Runuran_quantile_data(sexp_data,sexp_U,sexp_unur);
+  }
+
+  /* Neither the UNU.RAN object nor the packed data list exists */
+  errorcall_return(R_NilValue,"[UNU.RAN - error] broken UNU.RAN object");
+
+} /* end of Runuran_quantile() */
+
+/*---------------------------------------------------------------------------*/
+
+SEXP
+_Runuran_quantile_unur (struct unur_gen *gen, SEXP sexp_U)
+     /*----------------------------------------------------------------------*/
+     /* Evaluate approximate quantile function: use UNU.RAN object           */
+     /*                                                                      */
+     /* Parameters:                                                          */
+     /*   gen ... pointer to UNU.RAN generator object                        */
+     /*   U    ... u-value (numeric array)                                   */
+     /*                                                                      */
+     /* Return:                                                              */
+     /*   (approximate) quantiles for given 'U' values                       */
+     /*----------------------------------------------------------------------*/
+{
+  double *U;
+  int n = 1;
+  int i;
+  SEXP sexp_res = R_NilValue;
+
   /* Extract U */
   U = NUMERIC_POINTER(sexp_U);
   n = length(sexp_U);
 
-  /* Extract pointer to UNU.RAN generator */
-  sexp_slotunur = Rf_install("unur");
-  sexp_gen = GET_SLOT(sexp_unur, sexp_slotunur);
-#ifdef RUNURAN_DEBUG
-  /*   CHECK_PTR(sexp_gen); */
-  /** CHECK_PTR is defined in Runuran.c **/
-#endif
-  gen = R_ExternalPtrAddr(sexp_gen);
-#ifdef RUNURAN_DEBUG
-  if (gen == NULL)
-    error("[UNU.RAN - error] bad UNU.RAN object");
-#endif
-
   /* check whether UNU.RAN object implements inversion method */
   switch (gen->method) {
+  case UNUR_METH_DGT:
   case UNUR_METH_HINV:
   case UNUR_METH_NINV:
   case UNUR_METH_PINV:
     break;
   default:
-    error("[UNU.RAN - error] invalid UNU.RAN object: inversion method required!\n\tUse methods 'HINV', 'NINV', or 'PINV'");
+    error("[UNU.RAN - error] invalid UNU.RAN object: inversion method required!\n\tUse methods 'HINV', 'NINV', 'PINV'; or 'DGT'");
   }
 
   /* evaluate inverse CDF */
@@ -294,30 +422,78 @@ Runuran_quantile (SEXP sexp_unur, SEXP sexp_U)
   /* return result to R */
   return sexp_res;
  
-} /* end of Runuran_quantile() */
+} /* end of _Runuran_quantile_unur() */
 
 /*---------------------------------------------------------------------------*/
 
 SEXP
-Runuran_print (SEXP sexp_gen, SEXP sexp_help)
+_Runuran_quantile_data (SEXP sexp_data, SEXP sexp_U, SEXP sexp_unur)
      /*----------------------------------------------------------------------*/
-     /* Print information about UNU.RAN generator object.                    */
+     /* Evaluate approximate quantile function:  use R data list (packed)    */
+     /*                                                                      */
+     /* Parameters:                                                          */
+     /*   data ... data for generation method (R list)                       */
+     /*   U    ... u-value (numeric array)                                   */
+     /*   unur ... 'Runuran' object (S4 class)                               */ 
+     /*                                                                      */
+     /* Return:                                                              */
+     /*   (approximate) quantiles for given 'U' values                       */
      /*----------------------------------------------------------------------*/
 {
-  struct unur_gen *gen;
+  SEXP sexp_res = R_NilValue;
+  int mid = INTEGER(VECTOR_ELT(sexp_data,0))[0];   /* method ID */
+
+  switch (mid) {
+  case UNUR_METH_PINV:
+    return _Runuran_quantile_pinv(sexp_data,sexp_U,sexp_unur);
+    break;
+  default:
+    errorcall_return(R_NilValue,"[UNU.RAN - error] broken UNU.RAN object");
+  }
+
+  /* return result to R */
+  return sexp_res;
+
+} /* end of _Runuran_quantile_data() */
+
+/*---------------------------------------------------------------------------*/
+
+SEXP
+Runuran_print (SEXP sexp_unur, SEXP sexp_help)
+     /*----------------------------------------------------------------------*/
+     /* Print information about UNU.RAN generator object.                    */
+     /*                                                                      */
+     /* Parameters:                                                          */
+     /*   unur ... 'Runuran' object (S4 class)                               */ 
+     /*   help ... whether to print detailed information (integer / boolean) */
+     /*                                                                      */
+     /* Return:                                                              */
+     /*   NilValue  [since (void) is not possible]                           */
+     /*----------------------------------------------------------------------*/
+{
+  SEXP sexp_gen;
+  SEXP sexp_data;
+  struct unur_gen *gen = NULL;
   int help;
   const char *info;
 
-#ifdef RUNURAN_DEBUG
-  CHECK_PTR(sexp_gen);
-#endif
+  /* Extract data list */
+  sexp_data = GET_SLOT(sexp_unur, install("data"));
+  if (TYPEOF(sexp_data)!=NILSXP) {
+    Rprintf("Object is PACKED !\n\n");
+    return R_NilValue;
+  }
 
-  gen = R_ExternalPtrAddr(sexp_gen);
+  /* Extract pointer to UNU.RAN generator */
+  sexp_gen = GET_SLOT(sexp_unur, install("unur"));
 #ifdef RUNURAN_DEBUG
-  if (gen == NULL)
-    error("[UNU.RAN - error] bad UNU.RAN object");
+  CHECK_UNUR_PTR(sexp_gen);
 #endif
-  
+  gen = R_ExternalPtrAddr(sexp_gen);
+  if (gen == NULL) {
+    errorcall_return(R_NilValue,"[UNU.RAN - error] broken UNU.RAN object");
+  }
+
   /* Extract help flag */
   help = *(INTEGER (AS_INTEGER (sexp_help)));
 
@@ -338,36 +514,109 @@ Runuran_print (SEXP sexp_gen, SEXP sexp_help)
 } /* end of Runuran_print() */
 
 /*---------------------------------------------------------------------------*/
+
 void
 _Runuran_free (SEXP sexp_gen)
      /*----------------------------------------------------------------------*/
      /* Free UNU.RAN generator object.                                       */
+     /*                                                                      */
+     /* Parameters:                                                          */
+     /*   gen ... pointer to UNU.RAN generator object                        */
+     /*                                                                      */
+     /* Return:                                                              */
+     /*   (void)                                                             */
      /*----------------------------------------------------------------------*/
 {
   struct unur_gen *gen;
 
 #ifdef RUNURAN_DEBUG
   /* check pointer */
-  CHECK_PTR(sexp_gen);
-  printf("Runuran_free called!\n");
+  CHECK_UNUR_PTR(sexp_gen);
+  Rprintf("Runuran_free called!\n");
 #endif
 
   /* Extract pointer to generator */
   gen = R_ExternalPtrAddr(sexp_gen);
+  if (gen==NULL) {
+    /* UNU.RAN object already destroyed: nothing to do */
+    return;
+  }
 
   /* free generator object */
   unur_free(gen);
-
   R_ClearExternalPtr(sexp_gen);
 
 } /* end of _Runuran_free() */
 
 /*---------------------------------------------------------------------------*/
 
+SEXP
+Runuran_pack (SEXP sexp_unur)
+     /*----------------------------------------------------------------------*/
+     /* Pack Runuran generator object into R list                            */
+     /*                                                                      */
+     /* Parameters:                                                          */
+     /*   unur ... 'Runuran' object (S4 class)                               */ 
+     /*                                                                      */
+     /* Return:                                                              */
+     /*   data for generation method (R list)                                */
+     /*----------------------------------------------------------------------*/
+{
+  struct unur_gen *gen;
+  SEXP sexp_gen;
+  SEXP sexp_data;
+
+  /* argument must be S4 class */
+  if (!IS_S4_OBJECT(sexp_unur))
+    error("[UNU.RAN - error] argument invalid: 'unr' must be UNU.RAN object");
+
+  /* Extract data list */
+  sexp_data = GET_SLOT(sexp_unur, install("data"));
+  if (TYPEOF(sexp_data)!=NILSXP) {
+    errorcall_return(R_NilValue,"[UNU.RAN - error] object already packed");
+  }
+
+  /* Extract pointer to UNU.RAN generator */
+  sexp_gen = GET_SLOT(sexp_unur, install("unur"));
+#ifdef RUNURAN_DEBUG
+  CHECK_UNUR_PTR(sexp_gen);
+#endif
+  gen = R_ExternalPtrAddr(sexp_gen);
+  if (gen == NULL) {
+    errorcall_return(R_NilValue,"[UNU.RAN - error] broken UNU.RAN object");
+  }
+
+  /* call packing subroutine for given generator object */
+  switch (gen->method) {
+  case UNUR_METH_PINV:
+    _Runuran_pack_pinv(gen, sexp_unur);
+    break;
+
+  default:
+    errorcall_return(R_NilValue,"[UNU.RAN - error] cannot pack UNU.RAN object");
+  }
+
+  /* remove UNU.RAN object */
+  unur_free(gen);
+  R_ClearExternalPtr(sexp_gen);
+
+  /* o.k. */
+  return R_NilValue;
+
+} /* end of Runuran_pack() */
+
+/*---------------------------------------------------------------------------*/
+
 void 
-R_init_Runuran (DllInfo *info) 
+R_init_Runuran (DllInfo *info  ATTRIBUTE__UNUSED) 
      /*----------------------------------------------------------------------*/
      /* Initialization routine when loading the DLL                          */
+     /*                                                                      */
+     /* Parameters:                                                          */
+     /*   info ... passed by R and describes the DLL                         */
+     /*                                                                      */
+     /* Return:                                                              */
+     /*   (void)                                                             */
      /*----------------------------------------------------------------------*/
 {
   /* Set new UNU.RAN error handler */
@@ -387,16 +636,43 @@ R_init_Runuran (DllInfo *info)
 /*---------------------------------------------------------------------------*/
 
 void
-_Runuran_error_handler( 
-	const char *objid,     /* id/type of object              */
-        const char *file,      /* source file name (__FILE__)    */
-        int line,              /* source line number (__LINE__)  */ 
-        const char *errortype, /* "warning" or "error"           */
-        int errorcode,         /* UNU.RAN error code             */
-        const char *reason     /* short description of reason    */
-     )   
+R_unload_Runuran (DllInfo *info  ATTRIBUTE__UNUSED)
+     /*----------------------------------------------------------------------*/
+     /* Clear memory before unloading the DLL.                               */
+     /*                                                                      */
+     /* Parameters:                                                          */
+     /*   info ... passed by R and describes the DLL                         */
+     /*                                                                      */
+     /* Return:                                                              */
+     /*   (void)                                                             */
+     /*----------------------------------------------------------------------*/
+{
+  unur_urng_free(unur_get_default_urng());
+  unur_urng_free(unur_get_default_urng_aux());
+} /* end of R_unload_Runuran() */
+
+/*---------------------------------------------------------------------------*/
+
+void
+_Runuran_error_handler( const char *objid     ATTRIBUTE__UNUSED,
+			const char *file      ATTRIBUTE__UNUSED,
+			int line              ATTRIBUTE__UNUSED,
+			const char *errortype,
+			int errorcode,
+			const char *reason )   
      /*----------------------------------------------------------------------*/
      /* Error handler for UNU.RAN routines                                   */
+     /*                                                                      */
+     /* Parameters:                                                          */
+     /*   objid     ... id/type of object                                    */
+     /*   file      ... source file name (__FILE__)                          */
+     /*   line      ... source line number (__LINE__)                        */
+     /*   errortype ... "warning" or "error"                                 */
+     /*   errorcode ... UNU.RAN error code                                   */
+     /*   reason    ... short description of reason                          */
+     /*                                                                      */
+     /* Return:                                                              */
+     /*   (void)                                                             */
      /*----------------------------------------------------------------------*/
 {
 #ifdef RUNURAN_DEBUG
@@ -431,9 +707,15 @@ _Runuran_error_handler(
 /*---------------------------------------------------------------------------*/
 
 double
-_Runuran_R_unif_rand (void *unused)
+_Runuran_R_unif_rand (void *unused  ATTRIBUTE__UNUSED)
      /*----------------------------------------------------------------------*/
      /* Wrapper for R built-in uniform random number generator               */
+     /*                                                                      */
+     /* Parameters:                                                          */
+     /*   unused ... argument required for UNU.RAN API                       */
+     /*                                                                      */
+     /* Return:                                                              */
+     /*   uniform random number                                              */ 
      /*----------------------------------------------------------------------*/
 {
   /* TODO (?): Calling GetRNGstate() and PutRNGstate() is very slow! */

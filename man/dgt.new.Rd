@@ -26,6 +26,7 @@ dgt.new(pv, from=1)
   (Discrete Guide-Table method). It can be used to draw samples of a
   discrete random variate with given probability vector
   using \code{\link{ur}}.
+  It also allows to compute quantiles by means of \code{\link{uq}}.
   
   The probabilities must be provided by a vector \code{pv} which must
   contain non-negative numbers and need not necessarily sum up to
@@ -62,7 +63,7 @@ dgt.new(pv, from=1)
 \examples{
 ## Create a sample of size 100 for a 
 ## binomial distribution with size=115, prob=0.5
-gen <- dgt.new(pv=dbinom(0:115,115,0.5))
+gen <- dgt.new(pv=dbinom(0:115,115,0.5),from=0)
 x <- ur(gen,100)
 }
 

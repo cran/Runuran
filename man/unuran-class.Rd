@@ -63,8 +63,19 @@
 } 
 
 \section{Warning}{
-  \code{unuran} objects cannot be saved and restored in later \R sessions.
-  They must be newly created!
+  \code{unuran} objects cannot be saved and restored in later \R
+  sessions, nor is it possible to copy such objects to different nodes
+  in a computer cluster.
+
+  However, \code{unuran} objects for \emph{some} generation methods can be
+  \dQuote{packed}, see \code{\link{unuran.packed}}.
+  Then these objects can be handled like any other \R object
+  (and thus saved and restored).
+
+  All other objects \strong{must} be \strong{newly created} in a new \R
+  session!
+  (Using a restored object does not work as the \code{unuran} is then
+  broken.)
 }
 
 \references{
@@ -89,6 +100,9 @@
   sampling routines, \code{\link{unuran.details}} for a more verbose
   version of \code{show}.
 
+  \code{\link{unuran.packed}} allows to pack \emph{some} \code{unuran}
+  objects.
+  
   For distribution objects see \code{\linkS4class{unuran.cont}},
   \code{\linkS4class{unuran.discr}}, and \code{\linkS4class{unuran.cmv}}.
 }

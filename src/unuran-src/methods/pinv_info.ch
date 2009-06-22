@@ -52,6 +52,8 @@ _unur_pinv_info( struct unur_gen *gen, int help )
   else {
     _unur_string_append(info,"   u-error            NA  [requires CDF]\n");
   }
+  _unur_string_append(info,  "     [ u-resolution = %g ]\n",GEN->u_resolution);
+  _unur_string_append(info,"   area below PDF   = %18.17g\n", GEN->area);
   _unur_string_append(info,"   # intervals      = %d\n", GEN->n_ivs);
   _unur_string_append(info,"\n");
   if (help) {

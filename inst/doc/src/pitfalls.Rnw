@@ -51,6 +51,59 @@ x <- ur(gen,10)
 x
 @ 
 
+% ...........................................................................
 
+\paragraph{Broken Runuran objects.}
+
+Runuran objects contain pointers to external objects. Consequently,
+it is not possible to save and restore an Runuran object between \R\
+sessions, nor to copy such objects to different nodes
+in a computer cluster. 
+Runuran objects \emph{must be newly created} in each session (and in
+each node) from scratch. 
+Otherwise, the object is \emph{broken} and \code{ur} and \code{uq}
+refuse do not work.
+
+However, \emph{generator objects} for \emph{some} generation methods
+can be \emph{packed}. 
+Then these objects can be handled like any other \R\ object
+(and thus saved and restored).
+
+Here is an example how a generator object can be packed.
+
+<<>>=
+## create a unuran object using method 'PINV'
+gen <- pinv.new(dnorm,lb=0,ub=Inf)
+
+## such an object can be packed
+unuran.packed(gen) <- TRUE
+
+## it can be still used to draw a random sample
+x <- ur(gen,10)
+x
+
+## we also can check whether a unuran object is packed
+unuran.packed(gen)
+@ 
+
+Now can save or \R\ session and start a new one with the
+previously saved workspace restored. Then we can reuse object
+\code{gen} (after loading library \code{Runuran}).
+
+Withour packing \code{gen}, it would be broken after restoring the
+saved workspace.
+
+\begin{Schunk}
+\begin{Soutput}
+[Previously saved workspace restored]
+\end{Soutput}
+\begin{Sinput}
+> library(Runuran)
+> ur(gen,10)
+\end{Sinput}
+\begin{Soutput}
+Error in ur(gen, 10) : [UNU.RAN - error] broken UNU.RAN object
+\end{Soutput}
+\end{Schunk}
 
 % ---------------------------------------------------------------------------

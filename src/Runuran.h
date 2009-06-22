@@ -11,10 +11,21 @@
 
 /*---------------------------------------------------------------------------*/
 
+/*****************************************************************************/
+/* Loading and unloading DLL                                                 */
+
 void R_init_Runuran (DllInfo *info);
 /*---------------------------------------------------------------------------*/
 /* Initialization routine when loading the DLL.                              */
 /*---------------------------------------------------------------------------*/
+
+void R_unload_Runuran (DllInfo *info);
+/*---------------------------------------------------------------------------*/
+/* Clear memory before unloading the DLL.                                    */
+/*---------------------------------------------------------------------------*/
+
+/*****************************************************************************/
+/* UNU.RAN objects                                                           */
 
 SEXP Runuran_init (SEXP sexp_obj, SEXP sexp_distr, SEXP sexp_method);
 /*---------------------------------------------------------------------------*/
@@ -31,10 +42,19 @@ SEXP Runuran_quantile (SEXP sexp_unur, SEXP sexp_U);
 /* Quantile for distribution in UNU.RAN generator object.                    */
 /*---------------------------------------------------------------------------*/
 
-SEXP Runuran_print (SEXP sexp_gen, SEXP sexp_help);
+SEXP Runuran_print (SEXP sexp_unur, SEXP sexp_help);
 /*---------------------------------------------------------------------------*/
 /* Print information about UNU.RAN generator object.                         */
 /*---------------------------------------------------------------------------*/
+
+SEXP Runuran_pack (SEXP sexp_unur);
+/*---------------------------------------------------------------------------*/
+/* Pack Runuran objects into R lists                                         */
+/*---------------------------------------------------------------------------*/
+
+
+/*****************************************************************************/
+/* UNU.RAN distribution objects                                              */
 
 SEXP Runuran_discr_init (SEXP sexp_obj, SEXP sexp_env,
 			 SEXP sexp_pv, SEXP sexp_pmf,
@@ -58,24 +78,6 @@ SEXP Runuran_cmv_init (SEXP sexp_obj, SEXP sexp_env,
 		       SEXP sexp_ll, SEXP sexp_ur, SEXP sexp_name);
 /*---------------------------------------------------------------------------*/
 /* Create and initialize UNU.RAN object for cont. multivariate distribution. */
-/*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
-/*                                                                           */
-/*  Special wrapper functions                                                */
-/*                                                                           */
-/*---------------------------------------------------------------------------*/
-
-SEXP Runuran_qhinv (SEXP sexp_unur, SEXP sexp_U);
-/*---------------------------------------------------------------------------*/
-/* Evaluate approximate quantile function when a UNU.RAN object of type HINV */
-/* is given.                                                                 */
-/*---------------------------------------------------------------------------*/
-
-SEXP Runuran_qpinv (SEXP sexp_unur, SEXP sexp_U);
-/*---------------------------------------------------------------------------*/
-/* Evaluate approximate quantile function when a UNU.RAN object of type PINV */
-/* is given.                                                                 */
 /*---------------------------------------------------------------------------*/
 
 

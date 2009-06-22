@@ -55,9 +55,10 @@ static int _unur_pinv_computational_domain (struct unur_gen *gen);
 static double _unur_pinv_cut (struct unur_gen *gen, double dom, double w, double dw, double crit);
 static int _unur_pinv_computational_domain_CDF (struct unur_gen *gen);
 static double _unur_pinv_cut_CDF( struct unur_gen *gen, double dom, double x0, double ul, double uu );
-static double _unur_pinv_Udiff (struct unur_gen *gen, double x, double h);
+static double _unur_pinv_Udiff (struct unur_gen *gen, double x, double h, double *fx);
 static int _unur_pinv_create_table( struct unur_gen *gen );
 static int _unur_pinv_interval( struct unur_gen *gen, int i, double x, double cdfx );
+static int _unur_pinv_lastinterval( struct unur_gen *gen );
 static int _unur_pinv_newton_create (struct unur_gen *gen, struct unur_pinv_interval *iv, 
 				     double *xval);
 static int _unur_pinv_linear_create (struct unur_gen *gen, struct unur_pinv_interval *iv, 

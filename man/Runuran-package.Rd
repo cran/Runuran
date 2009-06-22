@@ -17,8 +17,8 @@
   \tabular{ll}{
     Package: \tab Runuran       \cr
     Type:    \tab Package       \cr
-    Version: \tab 0.9.0         \cr
-    Date:    \tab 2009-02-26    \cr
+    Version: \tab 0.10.0        \cr
+    Date:    \tab 2009-06-22    \cr
     License: \tab GPL 2 or later\cr
   }
   \pkg{Runuran} provides an interface to the UNU.RAN library for
@@ -211,8 +211,17 @@
 \section{Warning}{
   \code{unuran} objects cannot be saved and restored in later \R
   sessions, nor is it possible to copy such objects to different nodes
-  in a computer cluster.  
-  They must be newly created!
+  in a computer cluster.
+
+  However, \code{unuran} objects for \emph{some} generation methods can be
+  \dQuote{packed}, see \code{\link{unuran.packed}}.
+  Then these objects can be handled like any other \R object
+  (and thus saved and restored).
+
+  All other objects \strong{must} be \strong{newly created} in a new \R
+  session!
+  (Using a restored object does not work as the \code{unuran} is then
+  broken.)
 }
 
 \note{
