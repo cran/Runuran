@@ -24,7 +24,7 @@ u <- (-1:(samplesize+1))/samplesize
 xu <- uq(gu,u)
 xp <- uq(gp,u)
 
-if (! identical(xu,xp))
+if (! isTRUE(all.equal(xu,xp)))
   stop("packed and unpacked version of PINV differ !")
 
 rm(gu)
@@ -40,7 +40,7 @@ u <- (-1:(samplesize+1))/samplesize
 xu <- uq(gu,u)
 xp <- uq(gp,u)
 
-if (! identical(xu,xp))
+if (! isTRUE(all.equal(xu,xp)))
   stop("packed and unpacked version of PINV differ !")
 
 rm(gu)
@@ -56,7 +56,7 @@ u <- (-1:(samplesize+1))/samplesize
 xu <- uq(gu,u)
 xp <- uq(gp,u)
 
-if (! identical(xu,xp))
+if (! isTRUE(all.equal(xu,xp)))
   stop("packed and unpacked version of PINV differ !")
 
 rm(gu)

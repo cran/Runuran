@@ -1,4 +1,10 @@
 
+Version 0.10.1: 2009-08-06
+
+	- bugfix: pinv.new() now also works for R versions compiled with 
+          SunStudio compiler.
+
+
 Version 0.10: 2009-06-22
 
 	- new function 'unuran.packed' for packing 'unuran' objects.

@@ -694,7 +694,5 @@ _unur_distr_discr_find_mode(struct unur_distr *distr )
       x[1] = xnew; fx[1] = fxnew;
     }
   }   
-  distr->set |= UNUR_DISTR_SET_MODE | UNUR_DISTR_SET_MODE_APPROX ; 
-  return UNUR_SUCCESS;
 } 
 #undef DISTR

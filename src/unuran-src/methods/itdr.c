@@ -291,7 +291,7 @@ _unur_itdr_check_par( struct unur_gen *gen )
       if (dPDFo(DISTR.BD_LEFT) <= 0.) break;
     }
     if (!_unur_isfinite(DISTR.BD_LEFT) && _unur_isfinite(DISTR.BD_RIGHT)) {
-      GEN->sign = -1.; break;
+      GEN->sign = -1.;
       if (dPDFo(DISTR.BD_RIGHT) >= 0.) break;
     }
     if (_unur_isfinite(DISTR.BD_LEFT) && _unur_isfinite(DISTR.BD_RIGHT)) {

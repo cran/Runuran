@@ -18,7 +18,6 @@ unur_test_inverror( const UNUR_GEN *gen,
 		    int verbosity, FILE *out )
 {
 #define DISTR   gen->distr->data.cont
-  UNUR_FUNCT_CONT *cdf;      
   double CDFmin, CDFmax;     
   double (*quantile)(const UNUR_GEN *, double);  
   double U, X;               
@@ -47,7 +46,6 @@ unur_test_inverror( const UNUR_GEN *gen,
     _unur_error(test_name,UNUR_ERR_GENERIC,"CDF required");
     return -2.;
   }
-  cdf = DISTR.cdf;
   CDFmin = (DISTR.trunc[0] > -INFINITY) ? _unur_cont_CDF((DISTR.trunc[0]),(gen->distr)) : 0.;
   CDFmax = (DISTR.trunc[1] < INFINITY)  ? _unur_cont_CDF((DISTR.trunc[1]),(gen->distr)) : 1.;
   umax = 0.;

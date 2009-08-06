@@ -97,7 +97,6 @@ _unur_read_data( const char *filename, int no_of_entries, double **ar )
   char line[LINELENGTH];
   char *toline;
   char *chktoline;
-  char *tmp;
   double *data;              
   int n_data;                
   FILE *fp;
@@ -114,9 +113,9 @@ _unur_read_data( const char *filename, int no_of_entries, double **ar )
     free(data);
     return 0; 
   }
-  for ( tmp=fgets(line, LINELENGTH, fp), i=0;
+  for ( fgets(line, LINELENGTH, fp), i=0;
         !feof(fp);
-        tmp=fgets(line, LINELENGTH, fp) ) {
+        fgets(line, LINELENGTH, fp) ) {
     if (i > memfactor*datasize - no_of_entries-2){
       memfactor++;
       data = _unur_xrealloc(data, memfactor*datasize*sizeof(double));

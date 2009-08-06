@@ -264,7 +264,6 @@ int
 _unur_pinv_computational_domain_CDF (struct unur_gen *gen)
 {
   double tailcut_error;    
-  double range;            
   double fl, fr;
   fl = CDF(DISTR.domain[0]);
   fr = CDF(DISTR.domain[1]);
@@ -276,7 +275,6 @@ _unur_pinv_computational_domain_CDF (struct unur_gen *gen)
   tailcut_error = _unur_min( tailcut_error, PINV_TAILCUTOFF_MAX );
   tailcut_error = _unur_max( tailcut_error, 2*DBL_EPSILON );
   tailcut_error *= GEN->area * PINV_UERROR_CORRECTION;
-  range = GEN->bright-GEN->bleft;
   if(GEN->sleft) {
     GEN->bleft = _unur_pinv_cut_CDF( gen, GEN->dleft, DISTR.center, 0.5*tailcut_error, tailcut_error);
     if ( !_unur_isfinite(GEN->bleft) ) {

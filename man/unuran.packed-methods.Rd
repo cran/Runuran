@@ -53,6 +53,12 @@ unuran.packed(unr) <- value
   packed.
 }
 
+\note{
+  Note that due to limitations of floating point arithmetic the output
+  of a \code{\link{uq}} call with the same input value for \code{u} may
+  slightly differ for the packed and unpacked version.
+}
+  
 \seealso{%
   \code{\linkS4class{unuran}}, \code{\link{pinv.new}}.
 }

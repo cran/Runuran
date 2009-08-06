@@ -537,10 +537,10 @@ _unur_arou_get_starting_cpoints( struct unur_par *par, struct unur_gen *gen )
   struct unur_arou_segment *seg, *seg_new;
   double left_angle, right_angle, diff_angle, angle;
   double x, x_last, fx, fx_last;
-  int i, use_center, is_center, was_center, is_increasing;
+  int i, use_center, is_center, is_increasing;
   CHECK_NULL(par,UNUR_ERR_NULL);  COOKIE_CHECK(par,CK_AROU_PAR,UNUR_ERR_COOKIE);
   CHECK_NULL(gen,UNUR_ERR_NULL);  COOKIE_CHECK(gen,CK_AROU_GEN,UNUR_ERR_COOKIE);
-  is_center = was_center = FALSE;
+  is_center = FALSE;
   use_center = (gen->variant & AROU_VARFLAG_USECENTER) ? TRUE : FALSE;
   GEN->n_segs = 0;
   if (!PAR->starting_cpoints) {
@@ -557,7 +557,6 @@ _unur_arou_get_starting_cpoints( struct unur_par *par, struct unur_gen *gen )
   if (seg == NULL) return UNUR_ERR_GEN_CONDITION;  
   is_increasing = 1; 
   for( i=0; i<=PAR->n_starting_cpoints; i++ ) {
-    was_center = is_center;
     if (i < PAR->n_starting_cpoints) {
       if (PAR->starting_cpoints) {   
 	x = PAR->starting_cpoints[i];
@@ -810,7 +809,6 @@ _unur_arou_segment_split( struct unur_gen *gen, struct unur_arou_segment *seg_ol
 {
   struct unur_arou_segment *seg_newr;    
   struct unur_arou_segment seg_bak;      
-  double backup;
   double Adiff;
   CHECK_NULL(gen,UNUR_ERR_NULL);      COOKIE_CHECK(gen,CK_AROU_GEN,UNUR_ERR_COOKIE);
   CHECK_NULL(seg_oldl,UNUR_ERR_NULL); COOKIE_CHECK(seg_oldl,CK_AROU_SEG,UNUR_ERR_COOKIE);
@@ -827,11 +825,9 @@ _unur_arou_segment_split( struct unur_gen *gen, struct unur_arou_segment *seg_ol
   memcpy(&seg_bak, seg_oldl, sizeof(struct unur_arou_segment));
   if (fx <= 0.) {
     if (seg_oldl->rtp[1] <= 0. && seg_oldl->rtp[0] <= 0. ) {
-      backup = seg_oldl->drtp[1];
       seg_oldl->drtp[1] = x;    
     }
     else if (seg_oldl->ltp[1] <= 0. && seg_oldl->ltp[0] <= 0. ) {
-      backup = seg_oldl->dltp[1];
       seg_oldl->dltp[1] = x;    
     }
     else {

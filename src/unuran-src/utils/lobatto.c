@@ -92,10 +92,11 @@ _unur_lobatto5_recursion (UNUR_LOBATTO_FUNCT funct, struct unur_gen *gen,
       *W_accuracy = TRUE;
     }
     else {
-      return ( _unur_lobatto5_recursion(funct,gen,x,h/2,tol/1.,uerror,
-					intl,fl,flc,fc, W_accuracy,Itable) +
-	       _unur_lobatto5_recursion(funct,gen,x+h/2,h/2,tol/1.,uerror,
-					intr,fc,frc,fr, W_accuracy,Itable) );
+      int2  = _unur_lobatto5_recursion(funct,gen,x,h/2,tol/1.,uerror,
+				      intl,fl,flc,fc, W_accuracy,Itable);
+      int2 += _unur_lobatto5_recursion(funct,gen,x+h/2,h/2,tol/1.,uerror,
+				       intr,fc,frc,fr, W_accuracy,Itable);
+      return int2;
     }
   }
   if (Itable) {
@@ -185,7 +186,8 @@ _unur_lobatto_init (UNUR_LOBATTO_FUNCT funct, struct unur_gen *gen,
   Itable->uerror = uerror;
   _unur_lobatto_table_append(Itable,left,0.);
   Itable->integral = 
-    _unur_lobatto5_adaptive(funct, gen, left, center-left, tol, uerror, Itable ) +
+    _unur_lobatto5_adaptive(funct, gen, left, center-left, tol, uerror, Itable );
+  Itable->integral += 
     _unur_lobatto5_adaptive(funct, gen, center, right-center, tol, uerror, Itable );
   _unur_lobatto_table_resize(Itable);
   return Itable;
