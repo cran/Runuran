@@ -12,12 +12,13 @@
   (Do not confuse with the Chi-Squared (\eqn{\chi^2}{chi^2})
   distribution!)
   
-  [Distribution] -- Sampling Function: Chi.  %% Continuous
+  [Special Generator] -- Sampling Function: Chi.  %% Continuous
 }
 
 \usage{
 urchi(n, df, lb=0, ub=Inf)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{df}{degrees of freedom (strictly positive, but can be non-integer).}
@@ -29,8 +30,8 @@ urchi(n, df, lb=0, ub=Inf)
   The Chi distribution with \code{df}\eqn{= n > 0} degrees of
   freedom has density
   \deqn{
-    f(x) = x^{n-1} e^{-x^2/2}}{%
-    f(x) = x^(n-1) * exp(-x^2/2)}
+    f(x) = x^{n-1} e^{-x^2/2}
+  }{f(x) = x^(n-1) * exp(-x^2/2)}
   for \eqn{x > 0}.
 
   The generation algorithm uses fast numerical inversion. The parameters
@@ -57,7 +58,7 @@ urchi(n, df, lb=0, ub=Inf)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -70,5 +71,3 @@ x <- urchi(n=1000,df=3)
 }
 
 \keyword{distribution}
-\keyword{datagen}
-

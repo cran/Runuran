@@ -11,12 +11,13 @@
   location parameter \code{location} and scale parameter \code{scale}.
   It also allows sampling from the truncated distribution.
   
-  [Distribution] -- Sampling Function: Frechet (extreme value type II).  %% Continuous
+  [Special Generator] -- Sampling Function: Frechet (extreme value type II).  %% Continuous
 }
 
 \usage{
 urextremeII(n, shape, location=0, scale=1, lb=location, ub=Inf)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{shape}{(strictly positive) shape parameter.}
@@ -30,11 +31,11 @@ urextremeII(n, shape, location=0, scale=1, lb=location, ub=Inf)
   If \code{location} or \code{scale} are not specified, they assume
   the default values of \code{0} and \code{1} respectively.
 
-  The Frechet distribution with shape \eqn{k}, location \eqn{l} and
-  scale \eqn{s} has density
+  The Frechet distribution function with shape \eqn{k}, location \eqn{l}
+  and scale \eqn{s} is
   \deqn{
-    f(x) = \exp(-(\frac{x-l}{s})^{-k})\,(\frac{x-l}{s})^{-k-1}}{%
-    f(x) = exp(-((x-l)/s)^(-k))*((x-l)/s)^(-k-1)}
+    F(x) = \exp(-(\frac{x-l}{s})^{-k})
+  }{F(x) = exp(-((x-l)/s)^(-k))}
   for \eqn{x \ge l}.
   
   The generation algorithm uses fast numerical inversion. The parameters
@@ -60,7 +61,7 @@ urextremeII(n, shape, location=0, scale=1, lb=location, ub=Inf)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -73,5 +74,3 @@ x <- urextremeII(n=1000,shape=2)
 }
 
 \keyword{distribution}
-\keyword{datagen}
-

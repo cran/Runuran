@@ -2,6 +2,7 @@
 \docType{function}
 
 \alias{dgt.new}
+\alias{dgtd.new}
 
 \title{UNU.RAN generator based on table guided discrete inversion (DGT)}
 
@@ -15,10 +16,12 @@
 
 \usage{
 dgt.new(pv, from=1)
+dgtd.new(distr)
 }
 \arguments{
   \item{pv}{vector of non-negative numbers (need not sum to 1). (numeric vector)}
   \item{from}{index of first entry in vector. (integer)}
+  \item{distr}{distribution object. (S4 object of class \code{"unuran.discr"})}
 }
 
 \details{
@@ -27,10 +30,9 @@ dgt.new(pv, from=1)
   discrete random variate with given probability vector
   using \code{\link{ur}}.
   It also allows to compute quantiles by means of \code{\link{uq}}.
-  
-  The probabilities must be provided by a vector \code{pv} which must
-  contain non-negative numbers and need not necessarily sum up to
-  1.
+
+  Vector \code{pv} must be postive but need not be normalized
+  (i.e., it can be any multiple of a probability vector).
 
   The method runs fast in constant time, i.e., marginal sampling
   times do not depend on the length of the given probability vector.
@@ -38,10 +40,21 @@ dgt.new(pv, from=1)
   
   Notice that the range of random variates is
   \code{from:(from+length(pv)-1)}.
+
+  Alternatively, one can use function \code{dgtd.new} where the object
+  \code{distr} of class \code{"unuran.discr"} must contain all required
+  information about the distribution.
+}
+
+\value{
+  An object of class \code{"unuran"}.
 }
 
 \seealso{
-  \code{\link{ur}}, \code{\link{unuran.new}}, \code{\linkS4class{unuran}}.
+  \code{\link{ur}}, \code{\link{uq}},
+  \code{\linkS4class{unuran.discr}},
+  \code{\link{unuran.new}},
+  \code{\linkS4class{unuran}}.
 }
 
 \references{
@@ -57,7 +70,7 @@ dgt.new(pv, from=1)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \examples{
@@ -65,7 +78,13 @@ dgt.new(pv, from=1)
 ## binomial distribution with size=115, prob=0.5
 gen <- dgt.new(pv=dbinom(0:115,115,0.5),from=0)
 x <- ur(gen,100)
+
+## Alternative approach
+distr <- udbinom(size=100,prob=0.3)
+gen <- dgtd.new(distr)
+x <- ur(gen,100)
+
 }
 
-\keyword{distribution}
 \keyword{datagen}
+\keyword{distribution}

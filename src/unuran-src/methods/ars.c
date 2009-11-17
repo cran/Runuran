@@ -507,7 +507,7 @@ _unur_ars_free( struct unur_gen *gen )
 double
 _unur_ars_sample( struct unur_gen *gen )
 { 
-  struct unur_ars_interval *iv, *pt;
+  struct unur_ars_interval *iv, *cp;
   double U, logV;                   
   double X;                         
   double logfx, logsqx, loghx;      
@@ -527,15 +527,15 @@ _unur_ars_sample( struct unur_gen *gen )
     }
     U -= iv->Acum;    
     if (-U < (scaled_area(iv) * iv->Ahatr_fract)) { 
-      pt = iv->next;
+      cp = iv->next;
     }
     else {                
-      pt = iv;
+      cp = iv;
       U += scaled_area(iv);
     }
-    x0 = pt->x;
-    logfx0 = pt->logfx;
-    dlogfx0 = pt->dlogfx;
+    x0 = cp->x;
+    logfx0 = cp->logfx;
+    dlogfx0 = cp->dlogfx;
     fx0 = exp(rescaled_logf(logfx0));
     if (_unur_iszero(dlogfx0))
       X = x0 + U / fx0;
@@ -572,7 +572,7 @@ _unur_ars_sample( struct unur_gen *gen )
 double
 _unur_ars_sample_check( struct unur_gen *gen )
 { 
-  struct unur_ars_interval *iv, *pt;
+  struct unur_ars_interval *iv, *cp;
   double U, logV;                   
   double X;                         
   double logfx, logsqx, loghx;      
@@ -592,15 +592,15 @@ _unur_ars_sample_check( struct unur_gen *gen )
     }
     U -= iv->Acum;    
     if (-U < (scaled_area(iv) * iv->Ahatr_fract)) { 
-      pt = iv->next;
+      cp = iv->next;
     }
     else {                
-      pt = iv;
+      cp = iv;
       U += scaled_area(iv);
     }
-    x0 = pt->x;
-    logfx0 = pt->logfx;
-    dlogfx0 = pt->dlogfx;
+    x0 = cp->x;
+    logfx0 = cp->logfx;
+    dlogfx0 = cp->dlogfx;
     fx0 = exp(rescaled_logf(logfx0));
     if (_unur_iszero(dlogfx0))
       X = x0 + U / fx0;
@@ -646,7 +646,7 @@ _unur_ars_sample_check( struct unur_gen *gen )
 double
 unur_ars_eval_invcdfhat( const struct unur_gen *gen, double U )
 { 
-  struct unur_ars_interval *iv, *pt;
+  struct unur_ars_interval *iv, *cp;
   double X;                         
   double x0, logfx0, dlogfx0, fx0;  
   _unur_check_NULL( GENTYPE, gen, INFINITY );
@@ -671,15 +671,15 @@ unur_ars_eval_invcdfhat( const struct unur_gen *gen, double U )
   }
   U -= iv->Acum;
   if (-U < (scaled_area(iv) * iv->Ahatr_fract)) { 
-    pt = iv->next;
+    cp = iv->next;
   }
   else {                
-    pt = iv;
+    cp = iv;
     U += scaled_area(iv);
   }
-  x0 = pt->x;
-  logfx0 = pt->logfx;
-  dlogfx0 = pt->dlogfx;
+  x0 = cp->x;
+  logfx0 = cp->logfx;
+  dlogfx0 = cp->dlogfx;
   fx0 = exp(rescaled_logf(logfx0));
   if (_unur_iszero(dlogfx0))
     X = x0 + U / fx0;

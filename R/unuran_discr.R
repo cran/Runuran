@@ -35,7 +35,8 @@ setClass( "unuran.discr",
 ## Initialize ---------------------------------------------------------------
 
 setMethod( "initialize", "unuran.discr",
-          function(.Object, pv=NULL, pmf=NULL, lb=NA, ub=NA, mode=NA, sum=NA, name=NA) {
+          function(.Object, pv=NULL, pmf=NULL, lb=NA, ub=NA, mode=NA, sum=NA,
+                   name=NA, empty=FALSE) {
                   ## pv ..... probability vector (PV)
                   ## pmf .... probability mass function (PMF)
                   ## lb ..... lower bound of domain
@@ -43,7 +44,10 @@ setMethod( "initialize", "unuran.discr",
                   ## mode ... mode of distribution
                   ## sum .... sum over PV / PMF
                   ## name ... name of distribution
+                  ## empty .. if TRUE only return empty object (for internal use only)
                   
+                  if (isTRUE(empty)) return (.Object)
+            
                   ## Check entries
                   if (! (is.numeric(pv) || is.null(pv) ))
                           stop("invalid argument 'pv'", call.=FALSE)

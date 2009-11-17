@@ -231,6 +231,11 @@ _unur_pinv_cut( struct unur_gen *gen, double dom, double w, double dw, double cr
 	break;
     }
     df = (fr-fl)/(2.*dx);
+    if (! _unur_isfinite(df)) {
+      _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,
+		  "numerical problems with cut-off point, PDF too steep");
+      return INFINITY;
+    }
     lc = fl/(fl-fx)+fr/(fr-fx) - 1;
     area = fabs(fx*fx / ((lc+1.) * df));
     if (_unur_isnan(area)) {
@@ -250,8 +255,8 @@ _unur_pinv_cut( struct unur_gen *gen, double dom, double w, double dw, double cr
       xnew = x + fx/(lc*df) * ( pow(crit*fabs(df)*(lc+1.)/(fx*fx),lc/(lc+1.)) - 1.);
     }
     if (! _unur_isfinite(xnew)) {
-      _unur_warning(gen->genid,UNUR_ERR_NAN,"numerical problems with cut-off point");
-      return x;
+      _unur_error(gen->genid,UNUR_ERR_NAN,"numerical problems with cut-off point");
+      return INFINITY;
     }
     if (sgn*dom < sgn*x) {
       return dom;

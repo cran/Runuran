@@ -9,6 +9,7 @@
 #include <methods/unif.h>
 #include <distr/distr.h>
 #include <distributions/unur_distributions.h>
+#include <parser/parser.h>
 #include <urng/urng.h>
 #include "unuran_tests.h"
 #if defined(HAVE_GETTIMEOFDAY) && defined(HAVE_SYS_TIME_H)
@@ -30,7 +31,7 @@ compare_doubles (const void *a, const void *b)
 }
 struct unur_gen*
 unur_test_timing( struct unur_par *par, 
-		  int log_samplesize, 
+		  int log10_samplesize, 
 		  double *time_setup,
 		  double *time_sample,
 		  int verbosity,
@@ -42,13 +43,13 @@ unur_test_timing( struct unur_par *par,
   double *vec = NULL;
   double time_uniform, time_exponential;
   double time_start, *time_gen;
-  long samples, samplesize, log_samples;
+  long samples, samplesize, log10_samples;
   _unur_check_NULL(test_name,par,NULL);
-  if (log_samplesize < 2) log_samplesize = 2;
-  time_gen = _unur_xmalloc((log_samplesize+1) * sizeof(double));
-  time_uniform = unur_test_timing_uniform( par,log_samplesize );
-  time_exponential = unur_test_timing_exponential( par,log_samplesize );
-  if (_unur_gen_is_vec(par))
+  if (log10_samplesize < 2) log10_samplesize = 2;
+  time_gen = _unur_xmalloc((log10_samplesize+1) * sizeof(double));
+  time_uniform = unur_test_timing_uniform( par,log10_samplesize );
+  time_exponential = unur_test_timing_exponential( par,log10_samplesize );
+  if (par->distr && _unur_gen_is_vec(par))
     vec = _unur_xmalloc( par->distr->dim * sizeof(double) );
   time_start = _unur_get_time();
   gen = _unur_init(par);
@@ -59,7 +60,7 @@ unur_test_timing( struct unur_par *par,
   }
   samplesize = 10;
   samples = 0;
-  for( log_samples=1; log_samples<=log_samplesize; log_samples++ ) {
+  for( log10_samples=1; log10_samples<=log10_samplesize; log10_samples++ ) {
     switch (gen->method & UNUR_MASK_TYPE) {
     case UNUR_METH_DISCR:
       for( ; samples < samplesize; samples++ )
@@ -78,14 +79,14 @@ unur_test_timing( struct unur_par *par,
       _unur_error(test_name,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
       return NULL;
     }
-    time_gen[log_samples] = _unur_get_time();
+    time_gen[log10_samples] = _unur_get_time();
     samplesize *= 10;
   }
-  *time_sample = (time_gen[log_samplesize] - time_gen[log_samplesize-1]) / (0.09 * samplesize);
+  *time_sample = (time_gen[log10_samplesize] - time_gen[log10_samplesize-1]) / (0.09 * samplesize);
   samplesize = 1;
-  for( log_samples=1; log_samples<=log_samplesize; log_samples++ ) {
+  for( log10_samples=1; log10_samples<=log10_samplesize; log10_samples++ ) {
     samplesize *= 10;
-    time_gen[log_samples] = (time_gen[log_samples] - time_start) / samplesize;
+    time_gen[log10_samples] = (time_gen[log10_samples] - time_start) / samplesize;
   }
   *time_setup -= time_start;
   if (verbosity) {
@@ -100,15 +101,97 @@ unur_test_timing( struct unur_par *par,
 	    (*time_sample)/time_uniform,
 	    (*time_sample)/time_exponential);
     fprintf(out,"\n   average generation time for samplesize:\n");
-    for( log_samples=1; log_samples<=log_samplesize; log_samples++ )
-      fprintf(out,"\t10^%ld:\t    %#g \t %#g \t %#g\n",log_samples,
-	      time_gen[log_samples],
-	      time_gen[log_samples]/time_uniform,
-	      time_gen[log_samples]/time_exponential);
+    for( log10_samples=1; log10_samples<=log10_samplesize; log10_samples++ )
+      fprintf(out,"\t10^%ld:\t    %#g \t %#g \t %#g\n",log10_samples,
+	      time_gen[log10_samples],
+	      time_gen[log10_samples]/time_uniform,
+	      time_gen[log10_samples]/time_exponential);
   }
   free(time_gen);
   if (vec) free(vec);
   return gen;
+} 
+double 
+unur_test_timing_R( struct unur_par *par, const char *distrstr, const char *methodstr,
+		    double log10_samplesize, double *time_setup, double *time_marginal )
+{
+  const int n_steps = 2;    
+  const int n_reps = 10;    
+  struct unur_distr *distr_tmp = NULL; 
+  struct unur_par   *par_tmp   = NULL; 
+  struct unur_gen   *gen_tmp   = NULL; 
+  struct unur_slist *mlist     = NULL; 
+  int k;
+  double x;
+  double *vec = NULL;
+  double time_start, *time_gen = NULL;
+  int sample, rep;
+  long samplesize, n;
+  double sx = 0.;         
+  double sy = 0.;
+  double sxx = 0.;
+  double syy = 0.;
+  double sxy = 0.;
+  double Rsq = -100.;     
+  *time_setup = -100.;
+  *time_marginal = -100.;
+  Rsq = -100.;
+  if (log10_samplesize < 2) log10_samplesize = 2;
+  if (par == NULL) {
+    distr_tmp = unur_str2distr(distrstr);
+    if (distr_tmp == NULL) goto error;
+    par = _unur_str2par( distr_tmp, methodstr, &mlist );
+    if (par == NULL) goto error;
+  }
+  time_gen = _unur_xmalloc( n_reps * sizeof(double) );
+  if (par->distr && _unur_gen_is_vec(par))
+    vec = _unur_xmalloc( par->distr->dim * sizeof(double) );
+  for (sample=0; sample<n_steps; sample++) {
+    samplesize = (long) exp(M_LN10 * (1. + sample * (log10_samplesize - 1.) / (n_steps - 1.)));
+    for (rep=0; rep<n_reps; rep++) {
+      par_tmp = _unur_par_clone(par);
+      time_start = _unur_get_time();
+      gen_tmp = _unur_init(par_tmp);
+      if (!gen_tmp) goto error;  
+      switch (gen_tmp->method & UNUR_MASK_TYPE) {
+      case UNUR_METH_DISCR:
+	for( n=0; n<samplesize; n++ )
+	  k = unur_sample_discr(gen_tmp);
+	break;
+      case UNUR_METH_CONT:
+	for( n=0; n<samplesize; n++ )
+	  x = unur_sample_cont(gen_tmp);
+	break;
+      case UNUR_METH_VEC:
+	for( n=0; n<samplesize; n++ )
+	  unur_sample_vec(gen_tmp,vec);
+	break;
+      default: 
+	_unur_error(test_name,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
+      }
+      time_gen[rep]= _unur_get_time() - time_start;
+      unur_free(gen_tmp);
+    }
+    qsort( time_gen, (size_t)n_reps, sizeof(double), compare_doubles);
+    for (rep=2; rep<n_reps-3; rep++) {
+      sx += samplesize;
+      sy += time_gen[rep];
+      sxx += ((double)samplesize) * ((double)samplesize);
+      syy += time_gen[rep] * time_gen[rep];
+      sxy += ((double)samplesize) * time_gen[rep];
+    }
+  }
+  n = n_steps * (n_reps-5);
+  *time_marginal = ( n*sxy - sx*sy ) / ( n*sxx - sx*sx );
+  *time_setup = sy/n - *time_marginal * sx/n;
+  Rsq = ( n*sxy - sx*sy ) / sqrt( (n*sxx - sx*sx) * (n*syy - sy*sy) );
+ error:
+  if (distr_tmp) unur_distr_free(distr_tmp);
+  if (par)       _unur_par_free(par);
+  if (mlist)     _unur_slist_free(mlist);
+  if (time_gen)  free(time_gen);
+  if (vec)       free(vec);
+  return Rsq;
 } 
 double 
 unur_test_timing_total( const UNUR_PAR *par, int samplesize, double avg_duration )
@@ -179,7 +262,7 @@ double unur_test_timing_total_run( const struct unur_par *par, int samplesize, i
   if (samplesize < 0 || n_repeat < 1) 
     return -1.;
   time = _unur_xmalloc( n_repeat * sizeof(double) );
-  if (_unur_gen_is_vec(par))
+  if (par->distr && _unur_gen_is_vec(par))
     vec = _unur_xmalloc( par->distr->dim * sizeof(double) );
   for (rep = 0; rep < n_repeat; rep++) {
     par_tmp = _unur_par_clone(par);
@@ -217,7 +300,7 @@ double unur_test_timing_total_run( const struct unur_par *par, int samplesize, i
   return time_total;
 } 
 double
-unur_test_timing_uniform( const struct unur_par *par, int log_samplesize )
+unur_test_timing_uniform( const struct unur_par *par, int log10_samplesize )
 {
 #define TIMING_REPETITIONS (21)
   struct unur_gen *gen_urng;
@@ -227,7 +310,7 @@ unur_test_timing_uniform( const struct unur_par *par, int log_samplesize )
   int j,n;
   if (uniform_time <= 0.) {  
     int samplesize = 1;
-    for( j=0; j<log_samplesize; j++ )
+    for( j=0; j<log10_samplesize; j++ )
       samplesize *= 10;
     gen_urng = unur_init( unur_unif_new(NULL) );
     _unur_check_NULL( test_name,gen_urng,-1. );
@@ -246,7 +329,7 @@ unur_test_timing_uniform( const struct unur_par *par, int log_samplesize )
 #undef TIMING_REPETITIONS
 } 
 double
-unur_test_timing_exponential( const struct unur_par *par, int log_samplesize )
+unur_test_timing_exponential( const struct unur_par *par, int log10_samplesize )
 {
 #define TIMING_REPETITIONS (21)
   struct unur_distr *unit_distr;
@@ -258,7 +341,7 @@ unur_test_timing_exponential( const struct unur_par *par, int log_samplesize )
   int j,n;
   if (exponential_time <= 0.) {  
     int samplesize = 1;
-    for( j=0; j<log_samplesize; j++ )
+    for( j=0; j<log10_samplesize; j++ )
       samplesize *= 10;
     unit_distr = unur_distr_exponential(NULL,0);
     unit_par = unur_cstd_new(unit_distr);

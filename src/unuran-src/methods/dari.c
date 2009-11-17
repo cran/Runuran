@@ -556,7 +556,7 @@ _unur_dari_info( struct unur_gen *gen, int help )
   _unur_string_append(info,"   mode      = %d   %s\n", DISTR.mode,
                       (distr->set & UNUR_DISTR_SET_MODE_APPROX) ? "[numeric.]" : "");
   _unur_string_append(info,"   sum(PMF)  = %g   %s\n", DISTR.sum,
-                      (distr->set & UNUR_DISTR_SET_PMFSUM) ? "" : "[unkown]");
+                      (distr->set & UNUR_DISTR_SET_PMFSUM) ? "" : "[unknown]");
   _unur_string_append(info,"\n");
   if (help) {
     if ( distr->set & UNUR_DISTR_SET_MODE_APPROX )

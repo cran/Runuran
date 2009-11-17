@@ -10,12 +10,13 @@
   kind) with shape parameters \code{k} and \code{a}.
   It also allows sampling from the truncated distribution.
   
-  [Distribution] -- Sampling Function: Pareto (of first kind).  %% Continuous
+  [Special Generator] -- Sampling Function: Pareto (of first kind).  %% Continuous
 }
 
 \usage{
 urpareto(n, k, a, lb=k, ub=Inf)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{k}{(strictly positive) shape and location parameter.}
@@ -28,8 +29,8 @@ urpareto(n, k, a, lb=k, ub=Inf)
   The Pareto distribution with parameters \code{k} and \code{a} 
   has density
   \deqn{
-    f(x) = a k^a x^{-(a+1)}}{%
-    f(x) = a * k^a * x^(-a-1)}
+    f(x) = a k^a x^{-(a+1)}
+  }{f(x) = a * k^a * x^(-a-1)}
   for \eqn{x \ge k}, \eqn{k> 0} and \eqn{a>0}.
 
   The generation algorithm uses fast numerical inversion. The parameters
@@ -56,7 +57,7 @@ urpareto(n, k, a, lb=k, ub=Inf)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -69,5 +70,3 @@ x <- urpareto(n=1000,k=2,a=3)
 }
 
 \keyword{distribution}
-\keyword{datagen}
-

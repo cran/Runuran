@@ -10,12 +10,13 @@
   shape parameter \code{shape}.
   It also allows sampling from the truncated distribution.
   
-  [Distribution] -- Sampling Function: Logarithmic.  %% Discrete
+  [Special Generator] -- Sampling Function: Logarithmic.  %% Discrete
 }
 
 \usage{
 urlogarithmic(n, shape, lb = 1, ub = Inf)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{shape}{shape parameter. Must be between 0 and 1.}
@@ -27,8 +28,8 @@ urlogarithmic(n, shape, lb = 1, ub = Inf)
   The Logarithmic distribution with parameters \code{shape} \eqn{=
     \theta}{= t} has density
   \deqn{
-    f(x) = -\log(1-\theta) \theta^x / x}{%
-    f(x) = -log(1-t) * t^x / x}
+    f(x) = -\log(1-\theta) \theta^x / x
+  }{f(x) = -log(1-t) * t^x / x}
   for \eqn{x = 1, 2, \ldots} and \eqn{0 < \theta < 1}{0 < t < 1}.
 
   The generation algorithm uses guide table based inversion when the
@@ -56,7 +57,7 @@ urlogarithmic(n, shape, lb = 1, ub = Inf)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -69,5 +70,4 @@ x <- urlogarithmic(n=1000,shape=0.3)
 }
 
 \keyword{distribution}
-\keyword{datagen}
 

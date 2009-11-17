@@ -10,12 +10,13 @@
   with parameters \code{shape} and \code{scale}.
   It also allows sampling from the truncated distribution.
   
-  [Distribution] -- Sampling Function: Hyperbolic.  %% Continuous
+  [Special Generator] -- Sampling Function: Hyperbolic.  %% Continuous
 }
 
 \usage{
 urhyperbolic(n, shape, scale=1, lb = -Inf, ub = Inf)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{shape}{(strictly positive) shape parameter.}
@@ -30,8 +31,8 @@ urhyperbolic(n, shape, scale=1, lb = -Inf, ub = Inf)
   The Hyperbolic distribution with parameters \code{shape} \eqn{=\alpha}{= a}
   and \code{scale} \eqn{=\sigma}{= s} has density proportional to
   \deqn{
-    f(x) \sim \exp(-\alpha \sqrt{1+(\frac{x}{s})^2})}{%
-    f(x) ~ exp(-a * sqrt(1+(x/s)^2))}
+    f(x) \sim \exp(-\alpha \sqrt{1+(\frac{x}{s})^2})
+  }{f(x) ~ exp(-a * sqrt(1+(x/s)^2))}
   for all \eqn{x}, \eqn{\alpha > 0}{a > 0} and \eqn{\sigma > 0}{s > 0}.
 
   The generation algorithm uses transformed density rejection \sQuote{TDR}. The
@@ -52,7 +53,7 @@ urhyperbolic(n, shape, scale=1, lb = -Inf, ub = Inf)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -69,5 +70,3 @@ x <- urhyperbolic(n=1000,shape=3)
 }
 
 \keyword{distribution}
-\keyword{datagen}
-

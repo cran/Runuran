@@ -10,12 +10,13 @@
   distribution with with parameters \code{size} and \code{prob}.
   It also allows sampling from the truncated distribution.
   
-  [Distribution] -- Sampling Function: Negative Binomial.  %% Discrete
+  [Special Generator] -- Sampling Function: Negative Binomial.  %% Discrete
 }
 
 \usage{
 urnbinom(n, size, prob, lb = 0, ub = Inf)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{size}{target for number of successful trials, or dispersion
@@ -30,8 +31,8 @@ urnbinom(n, size, prob, lb = 0, ub = Inf)
   The Negative Binomial distribution with \code{size} \eqn{= n} and
   \code{prob} \eqn{= p} has density
   \deqn{
-    p(x) = \frac{\Gamma(x+n)}{\Gamma(n) x!} p^n (1-p)^x}{%
-    p(x) = Gamma(x+n)/(Gamma(n) x!) p^n (1-p)^x}
+    p(x) = \frac{\Gamma(x+n)}{\Gamma(n) x!} p^n (1-p)^x
+  }{p(x) = Gamma(x+n)/(Gamma(n) x!) p^n (1-p)^x}
   for \eqn{x = 0, 1, 2, \ldots}, \eqn{n > 0} and \eqn{0 < p \le 1}.
   This represents the number of failures which occur in a sequence of
   Bernoulli trials before a target number of successes is reached.
@@ -57,7 +58,7 @@ urnbinom(n, size, prob, lb = 0, ub = Inf)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -74,5 +75,3 @@ x <- urnbinom(n=1000,size=10,prob=0.3)
 }
 
 \keyword{distribution}
-\keyword{datagen}
-

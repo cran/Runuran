@@ -43,6 +43,9 @@ setClass( "unuran.distr",
 setMethod( "print", "unuran.distr",
           function(x, ...) {
                   cat("\nObject is UNU.RAN distribution object\n\n")
+                  if (!is.null(x@name)) {
+                    cat("name:",x@name,"\n\n")
+                  }
           } )
 
 setMethod( "show", "unuran.distr",

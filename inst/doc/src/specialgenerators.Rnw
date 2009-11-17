@@ -1,0 +1,69 @@
+% ---------------------------------------------------------------------------
+
+\section{{\Runuran} -- Special Generator}
+\label{sec:generator}
+ 
+There are generation functions for approximately 30 standard
+distributions to facilitate the use of the package.
+All these functions share a similar syntax and naming scheme 
+(only \code{u} is prefixed) with their analogous \R
+built-in generating functions (if these exist) but have optional
+domain arguments \code{lb} and \code{ub},
+i.e., these calls also allow to draw samples from truncated
+distributions:
+\begin{center}
+  \code{ur...(n, \textsl{distribution parameters}, lb , ub)}
+\end{center}
+Compared to the corresponding \R\ functions these \code{ur...} functions
+have a slightly different behavior.
+\begin{itemize}
+\item 
+  For large sample sizes these functions are often much faster (e.g.,
+  a factor of about 5 for the $t$-distribution.
+\item 
+  For small samples they are comparatively slow.
+\item
+  All \code{ur...} functions allow to sample from truncated
+  versions of the original distributions. Therefore the arguments
+  \code{lb} (lower border) and \code{ub} (upper border) are
+  available for all \code{ur...} functions.
+\item 
+  Almost all \code{ur...} functions are based on fast numerical
+  inversion algorithms. This is important for example for generating
+  order statistics or random vectors from copulas.
+\item 
+  All \code{ur...} functions do \textbf{not} allow vectors as
+  arguments (to be more precise: they only use the first element of
+  the vector).
+\end{itemize}
+
+<<>>=
+## Draw sample of size 10 from standard Gaussian distribution 
+urnorm(10)
+
+## Draw sample from truncated non-standard Gaussian distribution 
+urnorm(10, mean = 1, sd = 0.5, lb = 2, ub = Inf)
+@
+
+The \code{ur...} functions can be used as-is. But they also are
+examples how the more advanced functions in 
+\autoref{sec:universal}--\ref{sec:advanced} can be used. 
+Just type the name of such a function to display its source.
+<<>>=
+urnorm
+@ 
+
+\noindent
+Currently the following distributions are available (see the
+corresponding help page for details):
+
+%% Table of functions
+\SweaveInput{tab-generators.tex}
+
+\paragraph{Uniform random numbers.}
+All UNU.RAN methods use the \R\ built-in random number generator as
+the source of (pseudo-) random numbers. Thus the generated samples depend
+on the state \code{.Random.seed} and can be controlled by the
+\R\ functions \code{RNGkind} and \code{set.seed}.
+
+% ---------------------------------------------------------------------------

@@ -17,6 +17,7 @@
 unuran.cmv.new(dim=1, pdf=NULL, ll=NULL, ur=NULL,
                mode=NULL, center=NULL, name=NA)
 }
+
 \arguments{
   \item{dim}{number of dimensions of the distribution. (integer)}
   \item{pdf}{probability density function. (\R function)}
@@ -43,8 +44,8 @@ unuran.cmv.new(dim=1, pdf=NULL, ll=NULL, ur=NULL,
 }
 
 \note{
-  \code{unuran.cmv.new(...)} is an alias for 
-  \code{new("unuran.cmv", ...)}.
+  \code{unuran.cmv.new(\dots)} is an alias for 
+  \code{new("unuran.cmv", \dots)}.
 }
 
 \seealso{
@@ -60,7 +61,7 @@ unuran.cmv.new(dim=1, pdf=NULL, ll=NULL, ur=NULL,
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \examples{
@@ -77,4 +78,3 @@ mvd <- unuran.cmv.new(dim=2, pdf=mvpdf, ll=c(0,0), ur=c(1,1), mode=c(0,0))
 
 \keyword{distribution}
 \keyword{datagen}
-

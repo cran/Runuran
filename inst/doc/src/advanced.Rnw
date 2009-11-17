@@ -66,6 +66,9 @@ consistent data. It is not necessary to fill all the ``slots''
 of the objects. It depends on the chosen method which data are
 essential or used if provided (all other data are simply ignored).
 
+The functions of \autoref{sec:distribution} immediately create such
+S4 objects for some particular distributions.
+
 % ---------------------------------------------------------------------------
 
 \subsection{U2 -- Create a UNU.RAN generator object}

@@ -1,4 +1,59 @@
 
+Version 0.11.0: 2009-11-17
+
+	- method 'r' is defunct. 
+	  Please use (the identical but faster function) 'ur'.
+
+	- new functions for creating S4 distributions objects for
+	  special distributions:        
+
+          continuous distributions:
+	    udbeta        ... beta
+	    udcauchy      ... Cauchy
+	    udchi         ... chi
+	    udchisq       ... chi-squared
+	    udexp         ... exponential
+	    udf           ... F
+	    udfrechet     ... Frechet
+	    udgamma       ... gamma
+	    udghyp        ... generalized hyperbolic
+	    udgig         ... generalized inverse Gaussian
+	    udgumbel      ... Gumbel
+	    udhyperbolic  ... hyperbolic
+	    udig          ... inverse Gaussian
+	    udlaplace     ... Laplace
+	    udlnorm       ... log normal
+	    udlogis       ... logistic
+	    udlomax       ... lomax
+	    udnorm        ... normal
+	    udpareto      ... Pareto
+	    udpowerexp    ... powerexponential
+	    udrayleigh    ... Rayleigh
+	    udslash       ... Slash
+	    udt           ... Student's t
+	    udweibull     ... Weibull
+
+          discrete distributions:
+	    udbinom       ... binomial
+	    udgeom        ... geometric
+	    udhyper       ... hypergeometric
+	    udlogarithmic ... logarithmic
+	    udnbinom      ... negative binomial
+	    udpois        ... Poisson
+
+	- deprecated functions are defunct.
+	  Please replace 
+
+            uqhinv         by uq
+
+            unuran.cmv     by unuran.cmv.new
+	    unuran.cont    by unuran.cont.new
+	    unuran.discr   by unuran.discr.new
+
+            urhitro(n,...) by ur(hitro.new(...),n)
+            urtdr(n,...)   by ur(tdr.new(...),n)
+
+
 Version 0.10.1: 2009-08-06
 
 	- bugfix: pinv.new() now also works for R versions compiled with 

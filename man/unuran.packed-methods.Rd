@@ -17,6 +17,8 @@
   Packed \code{unuran} objects can be saved and loaded or sent to other
   nodes in a computer cluster (which is not possible for unpacked
   object).
+
+  FIXME
 }
 
 \usage{

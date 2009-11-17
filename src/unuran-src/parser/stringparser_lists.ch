@@ -76,10 +76,28 @@ _unur_str_distr_new( char *distribution )
 			 distr = unur_distr_geometric (darray,n_darray);
 			 break;
 		 }
+		 if ( !strcmp( distribution, "gig") ) {
+			 distr = unur_distr_gig (darray,n_darray);
+			 break;
+		 }
+		 if ( !strcmp( distribution, "gig2") ) {
+			 distr = unur_distr_gig2 (darray,n_darray);
+			 break;
+		 }
 		 break;
 	 case 'h':
+		 if ( !strcmp( distribution, "hyperbolic") ) {
+			 distr = unur_distr_hyperbolic (darray,n_darray);
+			 break;
+		 }
 		 if ( !strcmp( distribution, "hypergeometric") ) {
 			 distr = unur_distr_hypergeometric (darray,n_darray);
+			 break;
+		 }
+		 break;
+	 case 'i':
+		 if ( !strcmp( distribution, "ig") ) {
+			 distr = unur_distr_ig (darray,n_darray);
 			 break;
 		 }
 		 break;
@@ -94,6 +112,10 @@ _unur_str_distr_new( char *distribution )
 		 }
 		 if ( !strcmp( distribution, "logistic") ) {
 			 distr = unur_distr_logistic (darray,n_darray);
+			 break;
+		 }
+		 if ( !strcmp( distribution, "lognormal") ) {
+			 distr = unur_distr_lognormal (darray,n_darray);
 			 break;
 		 }
 		 if ( !strcmp( distribution, "lomax") ) {
@@ -132,6 +154,10 @@ _unur_str_distr_new( char *distribution )
 		 }
 		 break;
 	 case 's':
+		 if ( !strcmp( distribution, "slash") ) {
+			 distr = unur_distr_slash (darray,n_darray);
+			 break;
+		 }
 		 if ( !strcmp( distribution, "student") ) {
 			 distr = unur_distr_student (darray,n_darray);
 			 break;
@@ -1021,6 +1047,14 @@ _unur_str_par_set( UNUR_PAR *par, const char *key, char *value, struct unur_slis
 			 }
 			 break;
 		 case 'u':
+			 if ( !strcmp(key, "u_resolution") ) {
+				 result = _unur_str_par_set_d(par,key,type_args,args,unur_ninv_set_u_resolution);
+				 break;
+			 }
+			 if ( !strcmp(key, "usebisect") ) {
+				 result = _unur_str_par_set_void(par,key,type_args,args,unur_ninv_set_usebisect);
+				 break;
+			 }
 			 if ( !strcmp(key, "usenewton") ) {
 				 result = _unur_str_par_set_void(par,key,type_args,args,unur_ninv_set_usenewton);
 				 break;

@@ -38,14 +38,12 @@
 #include <Rinternals.h>
 #include <R_ext/Rdynload.h>
 
-#include "Runuran.h"
 #include <unuran.h>
+#include "Runuran.h"
 
 #include <unur_source.h>
 #include <methods/unur_methods_source.h>
 #include <methods/pinv_struct.h>
-
-#include "Runuran_source.h"
 
 /*---------------------------------------------------------------------------*/
 

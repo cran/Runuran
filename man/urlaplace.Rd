@@ -11,12 +11,13 @@
   parameter \code{scale}.
   It also allows sampling from the truncated distribution.
   
-  [Distribution] -- Sampling Function: Laplace.  %% Continuous
+  [Special Generator] -- Sampling Function: Laplace.  %% Continuous
 }
 
 \usage{
 urlaplace(n, location=0, scale=1, lb = -Inf, ub = Inf)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{location}{location parameter.}
@@ -32,8 +33,8 @@ urlaplace(n, location=0, scale=1, lb = -Inf, ub = Inf)
   The Laplace distribution with location \eqn{l} and scale \eqn{s} has
   density
   \deqn{
-    f(x) = \exp( -\frac{|x-l|}{s} )}{%
-    f(x) = exp( -|x-l|/s )}
+    f(x) = \exp( -\frac{|x-l|}{s} )
+  }{f(x) = exp( -|x-l|/s )}
   for all \eqn{x}.
 
   The generation algorithm uses fast numerical inversion. The parameters
@@ -59,7 +60,7 @@ urlaplace(n, location=0, scale=1, lb = -Inf, ub = Inf)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -72,5 +73,3 @@ x <- urlaplace(n=1000)
 }
 
 \keyword{distribution}
-\keyword{datagen}
-

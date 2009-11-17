@@ -7,15 +7,16 @@
 #include <methods/x_gen.h>
 #include <methods/x_gen_source.h>
 #include <methods/hinv.h>
+#include <methods/ninv.h>
 #include <methods/pinv.h>
 #include "unuran_tests.h"
 static char test_name[] = "InvError";
 static double qrng (int i, int samplesize);
 double
-unur_test_inverror( const UNUR_GEN *gen, 
-		    double *max_error, double *MAE, double threshold,
-		    int samplesize, int randomized, int testtails, 
-		    int verbosity, FILE *out )
+unur_test_u_error( const UNUR_GEN *gen, 
+		   double *max_error, double *MAE, double threshold,
+		   int samplesize, int randomized, int testtails, 
+		   int verbosity, FILE *out )
 {
 #define DISTR   gen->distr->data.cont
   double CDFmin, CDFmax;     
@@ -34,6 +35,9 @@ unur_test_inverror( const UNUR_GEN *gen,
   switch (gen->method) {
   case UNUR_METH_HINV:
     quantile = unur_hinv_eval_approxinvcdf;
+    break;
+  case UNUR_METH_NINV:
+    quantile = unur_ninv_eval_approxinvcdf;
     break;
   case UNUR_METH_PINV:
     quantile = unur_pinv_eval_approxinvcdf;

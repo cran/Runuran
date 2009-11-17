@@ -179,9 +179,11 @@ library("Runuran")
 \SweaveInput{src/intro.Rnw}
 
 \clearpage
-\SweaveInput{src/distributions.Rnw}
+\SweaveInput{src/specialgenerators.Rnw}
 \clearpage
 \SweaveInput{src/universal.Rnw}
+\clearpage
+\SweaveInput{src/distributions.Rnw}
 \clearpage
 \SweaveInput{src/advanced.Rnw}
 

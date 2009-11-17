@@ -10,12 +10,13 @@
   rate \code{rate} (i.e., mean \code{1/rate}).
   It also allows sampling from the truncated distribution.
   
-  [Distribution] -- Sampling Function: Exponential.  %% Continuous
+  [Special Generator] -- Sampling Function: Exponential.  %% Continuous
 }
 
 \usage{
 urexp(n, rate=1, lb=0, ub=Inf)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{rate}{(strictly positive) rate parameter.}
@@ -29,8 +30,8 @@ urexp(n, rate=1, lb=0, ub=Inf)
 
   The Exponential distribution with rate \eqn{\lambda} has density
   \deqn{
-    f(x) = \lambda {e}^{- \lambda x}}{
-    f(x) = lambda e^(- lambda x)}
+    f(x) = \lambda e^{-\lambda x}
+  }{f(x) = lambda * exp(-lambda x)}
   for \eqn{x \ge 0}.
 
   The generation algorithm uses fast numerical inversion. The parameters
@@ -52,7 +53,7 @@ urexp(n, rate=1, lb=0, ub=Inf)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -69,5 +70,3 @@ x <- urexp(n=1000)
 }
 
 \keyword{distribution}
-\keyword{datagen}
-

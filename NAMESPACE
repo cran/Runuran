@@ -8,15 +8,10 @@ exportClass(unuran.discr)
 exportClass(unuran.cont)
 exportClass(unuran.cmv)
 
-exportMethods(r)
 exportMethods(initialize)
 exportMethods(print)
 exportMethods(show)
 exportMethods(unuran.packed, "unuran.packed<-")
-
-export(unuran.cont)
-export(unuran.cmv)
-export(unuran.discr)
 
 export(unuran.new)
 export(unuran.sample)
@@ -24,4 +19,5 @@ export(unuran.details)
 
 exportPattern("\\.new$")
 exportPattern("^ur")
-exportPattern("^uq")
+exportPattern("^ud")
+export("uq")

@@ -38,13 +38,11 @@
 #include <Rinternals.h>
 #include <R_ext/Rdynload.h>
 
-#include "Runuran.h"
 #include <unuran.h>
+#include "Runuran.h"
 
 #include <unur_source.h>
 #include <methods/unur_methods_source.h>
-
-#include "Runuran_source.h"
 
 /*---------------------------------------------------------------------------*/
 
@@ -85,16 +83,18 @@ static double _Runuran_R_unif_rand (void *unused);
 /* Wrapper for R built-in uniform random number generator.                   */
 /*---------------------------------------------------------------------------*/
 
+static SEXP _Runuran_tag(void); 
+/*---------------------------------------------------------------------------*/
+/* Make tag for R generator object [Contains static variable!]               */
 /*---------------------------------------------------------------------------*/
 
-/* check pointer to generator object */
 #define CHECK_UNUR_PTR(s) do { \
-    if (TYPEOF(s) != EXTPTRSXP || R_ExternalPtrTag(s) != _Runuran_tag) \
-        error("[UNU.RAN - error] invalid UNU.RAN object"); \
-    } while (0)
-
-/* Use an external reference to store the UNU.RAN generator objects */
-static SEXP _Runuran_tag = NULL;
+    if (TYPEOF(s) != EXTPTRSXP || R_ExternalPtrTag(s) != _Runuran_tag()) \
+      error("[UNU.RAN - error] invalid UNU.RAN object");		\
+  } while (0)
+/*---------------------------------------------------------------------------*/
+/* Check pointer to R UNU.RAN generator object.                              */
+/*---------------------------------------------------------------------------*/
 
 /*****************************************************************************/
 
@@ -115,9 +115,6 @@ Runuran_init (SEXP sexp_obj, SEXP sexp_distr, SEXP sexp_method)
   SEXP sexp_gen;
   struct unur_gen *gen;
   const char *method;
-
-  /* make tag for R object */
-  if (!_Runuran_tag) _Runuran_tag = install("R_UNURAN_TAG");
 
   /* check argument */
   if (!sexp_method || TYPEOF(sexp_method) != STRSXP)
@@ -155,7 +152,7 @@ Runuran_init (SEXP sexp_obj, SEXP sexp_distr, SEXP sexp_method)
   }
 
   /* make R external pointer and store pointer to structure */
-  PROTECT(sexp_gen = R_MakeExternalPtr(gen, _Runuran_tag, sexp_obj));
+  PROTECT(sexp_gen = R_MakeExternalPtr(gen, _Runuran_tag(), sexp_obj));
   
   /* register destructor as C finalizer */
   R_RegisterCFinalizer(sexp_gen, _Runuran_free);
@@ -459,6 +456,77 @@ _Runuran_quantile_data (SEXP sexp_data, SEXP sexp_U, SEXP sexp_unur)
 /*---------------------------------------------------------------------------*/
 
 SEXP
+Runuran_PDF (SEXP sexp_distr, SEXP sexp_x)
+     /*----------------------------------------------------------------------*/
+     /* Evaluate PDF for UNU.RAN distribution object.   [EXPERIMENTAL]       */
+     /*                                                                      */
+     /* Parameters:                                                          */
+     /*   distr ... 'Runuran' distribution object (S4 class)                 */ 
+     /*   x     ... x-value (numeric array)                                  */
+     /*                                                                      */
+     /* Return:                                                              */
+     /*   PDF in UNU.RAN distribution object for given 'x' values            */
+     /*----------------------------------------------------------------------*/
+{
+  struct unur_distr *distr;
+  double *x;
+  int n = 1;
+  int i;
+  SEXP sexp_res = R_NilValue;
+
+  /* check argument */
+  if (! (sexp_distr && TYPEOF(sexp_distr) == EXTPTRSXP) )
+    /* this error should not happen. But we add it just in case. */
+    errorcall_return(R_NilValue,"[UNU.RAN - error] invalid argument");
+
+  /* Extract x */
+  x = REAL(AS_NUMERIC(sexp_x));
+  n = length(sexp_x);
+
+  /* extract distribution */
+  distr = R_ExternalPtrAddr(sexp_distr);
+
+  /* create array for results */
+  PROTECT(sexp_res = NEW_NUMERIC(n));
+
+  /* which type of distribution */
+  switch (unur_distr_get_type(distr)) {
+  case UNUR_DISTR_CONT:
+    /* univariate continuous distribution  --> evaluate PDF */
+    for (i=0; i<n; i++) {
+      if (ISNAN(x[i]))
+	/* if NA or NaN is given then we simply return the same value */
+	NUMERIC_POINTER(sexp_res)[i] = x[i];
+      else 
+	NUMERIC_POINTER(sexp_res)[i] = unur_distr_cont_eval_pdf(x[i], distr);
+    }
+    break;
+
+  case UNUR_DISTR_DISCR:
+    /* discrete univariate distribution  --> evaluate PMF */
+    for (i=0; i<n; i++) {
+      if (ISNAN(x[i]))
+	/* if NA or NaN is given then we simply return the same value */
+	NUMERIC_POINTER(sexp_res)[i] = x[i];
+      else 
+	NUMERIC_POINTER(sexp_res)[i] = unur_distr_discr_eval_pmf ((int) x[i], distr);
+    }
+    break;
+
+  default:
+    UNPROTECT(1);
+    errorcall_return(R_NilValue,"[UNU.RAN - error] invalid distribution type");
+  }
+
+  /* return result to R */
+  UNPROTECT(1);
+  return sexp_res;
+
+} /* end of Runuran_PDF() */
+
+/*---------------------------------------------------------------------------*/
+
+SEXP
 Runuran_print (SEXP sexp_unur, SEXP sexp_help)
      /*----------------------------------------------------------------------*/
      /* Print information about UNU.RAN generator object.                    */
@@ -728,5 +796,25 @@ _Runuran_R_unif_rand (void *unused  ATTRIBUTE__UNUSED)
 
   return unif_rand();
 } /* end _Runuran_R_unif_rand() */
+
+/*---------------------------------------------------------------------------*/
+
+SEXP _Runuran_tag(void) 
+     /*----------------------------------------------------------------------*/
+     /* Make tag for R UNU.RAN generator object                              */
+     /*                                                                      */
+     /* Parameters: none                                                     */
+     /*                                                                      */
+     /* Return:                                                              */
+     /*   tag (R object)                                                     */ 
+     /*----------------------------------------------------------------------*/
+{
+  static SEXP tag = NULL;
+
+  /* make tag for R object */
+  if (!tag) tag = install("R_UNURAN_TAG");
+
+  return tag;
+} /* end _Runuran_tag() */
 
 /*---------------------------------------------------------------------------*/

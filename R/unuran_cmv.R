@@ -37,14 +37,18 @@ setClass( "unuran.cmv",
 ## Initialize ---------------------------------------------------------------
 
 setMethod( "initialize", "unuran.cmv",
-          function(.Object, dim=1, pdf=NULL, ll=NULL, ur=NULL, mode=NULL, center=NULL, name=NA) {
+          function(.Object, dim=1, pdf=NULL, ll=NULL, ur=NULL, mode=NULL, center=NULL,
+                   name=NA, empty=FALSE) {
                   ## dim  ... dimension of distribution
                   ## pdf  ... probability density function (PDF)
                   ## ll   ... lower left vertex of rectangular domain
                   ## ur   ... upper right vertex of rectangular domain
                   ## mode ... mode of distribution
                   ## name ... name of distribution
+                  ## empty .. if TRUE only return empty object (for internal use only)
 
+                  if (isTRUE(empty)) return (.Object)
+            
                   ## Check entries
                   ndim <- as.integer(dim)
                   if (ndim < 1 || ndim > 100000)

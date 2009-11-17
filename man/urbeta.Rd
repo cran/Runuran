@@ -7,15 +7,16 @@
 
 \description{
   UNU.RAN random variate generator for the Beta distribution with
-  \code{shape1} and \code{shape2}.
+  parameters \code{shape1} and \code{shape2}.
   It also allows sampling from the truncated distribution.
   
-  [Distribution] -- Sampling Function: Beta.  %% Continuous
+  [Special Generator] -- Sampling Function: Beta.  %% Continuous
 }
 
 \usage{
 urbeta(n, shape1, shape2, lb = 0, ub = 1)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{shape1,shape2}{positive shape parameters of the Beta distribution.}
@@ -27,10 +28,8 @@ urbeta(n, shape1, shape2, lb = 0, ub = 1)
   The Beta distribution with parameters \code{shape1} \eqn{= a} and
   \code{shape2} \eqn{= b} has density
   \deqn{
-    f(x)=
-    \frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)}{x}^{a} {(1-x)}^{b}}{%
-    Gamma(a+b)/(Gamma(a)Gamma(b))x^(a-1)(1-x)^(b-1)
-  }
+    f(x) = \frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)}{x}^{a} {(1-x)}^{b}
+  }{f(x) = Gamma(a+b)/(Gamma(a)Gamma(b))x^(a-1)(1-x)^(b-1)}
   for \eqn{a > 0}, \eqn{b > 0} and \eqn{0 \le x \le 1}{0 <= x <= 1}.
 
   The generation algorithm uses fast numerical inversion. The parameters
@@ -52,7 +51,7 @@ urbeta(n, shape1, shape2, lb = 0, ub = 1)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -69,5 +68,3 @@ x <- urbeta(n=1000,shape1=2,shape2=5)
 }
 
 \keyword{distribution}
-\keyword{datagen}
-

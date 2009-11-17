@@ -10,12 +10,13 @@
   with parameter \code{lambda}.
   It also allows sampling from the truncated distribution.
   
-  [Distribution] -- Sampling Function: Poisson.  %% Discrete
+  [Special Generator] -- Sampling Function: Poisson.  %% Discrete
 }
 
 \usage{
 urpois(n, lambda, lb = 0, ub = Inf)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{lambda}{(non-negative) mean.}
@@ -25,9 +26,9 @@ urpois(n, lambda, lb = 0, ub = Inf)
 
 \details{
   The Poisson distribution has density
-  %-- please leave the linebreaking for the next two lines ! --
-  \deqn{p(x) = \frac{\lambda^x e^{-\lambda}}{x!}}{%
-        p(x) = lambda^x exp(-lambda)/x!}
+  \deqn{
+    p(x) = \frac{\lambda^x e^{-\lambda}}{x!}
+  }{p(x) = lambda^x exp(-lambda)/x!}
   for \eqn{x = 0, 1, 2, \ldots}.
 
   The generation algorithm uses guide table based inversion when the
@@ -51,7 +52,7 @@ urpois(n, lambda, lb = 0, ub = Inf)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -68,5 +69,3 @@ x <- urpois(n=1000,lambda=2.3)
 }
 
 \keyword{distribution}
-\keyword{datagen}
-

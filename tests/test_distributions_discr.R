@@ -30,6 +30,19 @@ for (i in 1:n.rep.params) {
         unur.test.discr("binom", size=s, prob=p, domain=c(0,s))
 }
 
+
+size <- 1000
+prob <- 0.2
+binom.pmf <- function (x) { dbinom(x, size, prob) }
+rud <- function (n,lb=0,ub=size) {
+  dist <- udbinom(size=size,prob=prob)
+  gen <- unuran.new(dist)
+  ur(gen,n)
+}
+unur.test.discr("rud.binom", rfunc=rud, dfunc=binom.pmf, domain=c(0,size))
+rm(rud)
+rm(size,prob,binom.pmf)
+
 ## Geometric distribution - (replacement for rgeom) -------------------------
 for (i in 1:n.rep.domains) {
         d <- sort(rbinom(2,size=200,prob=0.29))

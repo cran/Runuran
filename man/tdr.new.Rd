@@ -2,6 +2,7 @@
 \docType{function}
 
 \alias{tdr.new}
+\alias{tdrd.new}
 
 \title{UNU.RAN generator based on Transformed Density Rejection (TDR)}
 
@@ -14,7 +15,8 @@
 }
 
 \usage{
-tdr.new(pdf, dpdf=NULL, lb, ub, islog=FALSE, ...)
+tdr.new(pdf, dpdf=NULL, lb, ub, islog=FALSE, \dots)
+tdrd.new(distr)
 }
 \arguments{
   \item{pdf}{probability density function. (\R function)}
@@ -25,7 +27,8 @@ tdr.new(pdf, dpdf=NULL, lb, ub, islog=FALSE, ...)
     use \code{Inf} if unbounded from right. (numeric)}
   \item{islog}{whether \code{pdf} is given as log-density (the
     \code{dpdf} must then be the derivative of the log-density). (boolean)}
-  \item{...}{(optional) arguments for \code{pdf}}
+  \item{\dots}{(optional) arguments for \code{pdf}.}
+  \item{distr}{distribution object. (S4 object of class \code{"unuran.cont"})}
 }
 
 \details{
@@ -33,23 +36,26 @@ tdr.new(pdf, dpdf=NULL, lb, ub, islog=FALSE, ...)
   (Transformed Density Rejection). It can be used to draw samples of a
   continuous random variate with given probability density function
   using \code{\link{ur}}.
-  
-  The density must be provided by a function \code{pdf} which must
-  return non-negative numbers and which need not be normalized (i.e., it
-  can be any multiple of a density function).
-  Moreover, the given function must be \eqn{T_{-0.5}}{T_(-0.5)}-concave
-  (i.e., unimodal densities with tails not higher than
+
+  The density \code{pdf} must be positive but need not be normalized
+  (i.e., it can be any multiple of a density function).
+  The derivative \code{dpdf} of the (log-) density is optional. If
+  omitted, numerical differentiation is used. Notice, however, that this
+  might cause some round-off errors such that the algorithm fails.
+  This is in particular the case when the density function is
+  provided instead of the log-density.
+
+  The given \code{pdf} must be \eqn{T_{-0.5}}{T_(-0.5)}-concave
+  (with implies unimodal densities with tails not higher than
   \eqn{(1/x^2)}; this includes all log-concave distributions).
   
   It is recommended to use the log-density (instead of the density
   function) as this is numerically more stable.
   
-  The derivative \code{dpdf} is optional. If omitted, numerical
-  differentiation is used. Notice, however, that this might cause some
-  round-off errors such that generation does not work. This is in
-  particular the case when the density function is provided instead of
-  the log-density.
-  
+  Alternatively, one can use function \code{tdrd.new} where the object
+  \code{distr} of class \code{"unuran.cont"} must contain all required
+  information about the distribution.
+
   The setup time of this method depends on the given PDF, whereas its
   marginal generation times are almost independent of the target
   distribution.
@@ -59,9 +65,16 @@ tdr.new(pdf, dpdf=NULL, lb, ub, islog=FALSE, ...)
   via the \code{\link{ars.new}} function.
 }
 
+\value{
+  An object of class \code{"unuran"}.
+}
+
 \seealso{
-  \code{\link{ur}}, \code{\link{ars.new}},
-  \code{\link{unuran.new}}, \code{\linkS4class{unuran}}.
+  \code{\link{ur}},
+  \code{\link{ars.new}},
+  \code{\linkS4class{unuran.cont}},
+  \code{\link{unuran.new}},
+  \code{\linkS4class{unuran}}.
 }
 
 \references{
@@ -73,7 +86,7 @@ tdr.new(pdf, dpdf=NULL, lb, ub, islog=FALSE, ...)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \examples{
@@ -106,8 +119,12 @@ logpdf <- function (x) { -0.5*x^2 }
 gen <- tdr.new(pdf=logpdf, lb=5, ub=Inf, islog=TRUE)
 x <- ur(gen,100)
 
+## Alternative approach
+distr <- udnorm()
+gen <- tdrd.new(distr)
+x <- ur(gen,100)
+
 }
 
-\keyword{distribution}
 \keyword{datagen}
-
+\keyword{distribution}

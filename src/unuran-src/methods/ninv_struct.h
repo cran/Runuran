@@ -3,14 +3,16 @@
 
 struct unur_ninv_par { 
   int     max_iter;          
-  double  rel_x_resolution;  
+  double  x_resolution;      
+  double  u_resolution;      
   double  s[2];              
   int     table_on;          
   int     table_size;        
 };
 struct unur_ninv_gen { 
   int     max_iter;          
-  double  rel_x_resolution;  
+  double  x_resolution;      
+  double  u_resolution;      
   double *table;             
   double *f_table;	     
   int     table_on;          

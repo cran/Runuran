@@ -2,6 +2,7 @@
 \docType{function}
 
 \alias{ars.new}
+\alias{arsd.new}
 
 \title{UNU.RAN generator based on Adaptive Rejection Sampling (ARS)}
 
@@ -14,7 +15,8 @@
 }
 
 \usage{
-ars.new(logpdf, dlogpdf=NULL, lb, ub, ...)
+ars.new(logpdf, dlogpdf=NULL, lb, ub, \dots)
+arsd.new(distr)
 }
 \arguments{
   \item{logpdf}{log-density function. (\R function)}
@@ -23,7 +25,8 @@ ars.new(logpdf, dlogpdf=NULL, lb, ub, ...)
     use \code{-Inf} if unbounded from left. (numeric)}
   \item{ub}{upper bound of domain;
     use \code{Inf} if unbounded from right. (numeric)}
-  \item{...}{(optional) arguments for \code{logpdf}}
+  \item{\dots}{(optional) arguments for \code{logpdf}.}
+  \item{distr}{distribution object. (S4 object of class \code{"unuran.cont"})}
 }
 
 \details{
@@ -31,16 +34,20 @@ ars.new(logpdf, dlogpdf=NULL, lb, ub, ...)
   (Adaptive Rejection Sampling). It can be used to draw samples from
   continuous distributions with given probability density function
   using \code{\link{ur}}.
-  
-  The log-density must be provided by a function \code{logpdf} 
-  which need not be normalized (i.e., it can be a log-density plus some
-  arbitrary constant).
-  Moreover, the given function must be concave (i.e., the distribution
-  must be log-concave).
-  
-  The derivative \code{dlogpdf} is optional. If omitted, numerical
-  differentiation is used. Notice, however, that this might cause some
-  round-off errors such that the algorithm fails.
+
+  Function \code{logpdf} is the logarithm the density function of the
+  target distribution. It must be a concave function (i.e., the
+  distribution must be log-concave).
+  However, it need not be normalized (i.e., it can be a log-density plus
+  some arbitrary constant).
+
+  The derivative \code{dlogpdf} of the log-density is optional. If
+  omitted, numerical differentiation is used. Notice, however, that this
+  might cause some round-off errors such that the algorithm fails.
+
+  Alternatively, one can use function \code{arsd.new} where the object
+  \code{distr} of class \code{"unuran.cont"} must contain all required
+  information about the distribution.
 
   The setup time of this method depends on the given PDF, whereas its
   marginal generation times are almost independent of the target
@@ -56,9 +63,16 @@ ars.new(logpdf, dlogpdf=NULL, lb, ub, ...)
   analytically and not by just using \code{log(pdf(x))}.
 }
 
+\value{
+  An object of class \code{"unuran"}.
+}
+
 \seealso{
-  \code{\link{ur}}, \code{\link{tdr.new}}, 
-  \code{\link{unuran.new}}, \code{\linkS4class{unuran}}.
+  \code{\link{ur}},
+  \code{\link{tdr.new}}, 
+  \code{\linkS4class{unuran.cont}},
+  \code{\link{unuran.new}},
+  \code{\linkS4class{unuran}}.
 }
 
 \references{
@@ -74,7 +88,7 @@ ars.new(logpdf, dlogpdf=NULL, lb, ub, ...)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \examples{
@@ -97,8 +111,12 @@ lpdf <- function (x) { -0.5*x^2 }
 gen <- ars.new(logpdf=lpdf, lb=50, ub=Inf)
 x <- ur(gen,100)
 
+## Alternative approach
+distr <- udnorm()
+gen <- arsd.new(distr)
+x <- ur(gen,100)
+
 }
 
-\keyword{distribution}
 \keyword{datagen}
-
+\keyword{distribution}

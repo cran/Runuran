@@ -10,12 +10,13 @@
   with parameters \code{shape} and \code{scale}.
   It also allows sampling from the truncated distribution.
   
-  [Distribution] -- Sampling Function: Weibull.  %% Continuous
+  [Special Generator] -- Sampling Function: Weibull.  %% Continuous
 }
 
 \usage{
 urweibull(n, shape, scale=1, lb=0, ub=Inf)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{shape}{(strictly positive) shape parameter.}
@@ -27,8 +28,9 @@ urweibull(n, shape, scale=1, lb=0, ub=Inf)
 \details{
   The Weibull distribution with \code{shape} parameter \eqn{a} and
   \code{scale} parameter \eqn{\sigma}{b} has density given by
-  \deqn{f(x) = (a/\sigma) {(x/\sigma)}^{a-1} \exp (-{(x/\sigma)}^{a})}{%
-        f(x) = (a/b) (x/b)^(a-1) exp(- (x/b)^a)}
+  \deqn{
+    f(x) = (a/\sigma) {(x/\sigma)}^{a-1} \exp (-{(x/\sigma)}^{a})
+  }{f(x) = (a/b) (x/b)^(a-1) exp(- (x/b)^a)}
   for \eqn{x \ge 0}.
 
   The generation algorithm uses fast numerical inversion. The parameters
@@ -50,7 +52,7 @@ urweibull(n, shape, scale=1, lb=0, ub=Inf)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -67,5 +69,3 @@ x <- urweibull(n=1000,shape=3)
 }
 
 \keyword{distribution}
-\keyword{datagen}
-

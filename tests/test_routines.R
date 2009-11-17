@@ -39,6 +39,60 @@ assign("n.warns", 0, env = unur.envir)
 
 library(Runuran)
 
+#############################################################################
+##                                                                          #
+##  Error Measures for Inversion Algorithms                                 #
+##                                                                          #
+#############################################################################
+
+## --- U-error --------------------------------------------------------------
+
+unur.cont.uerror <- function (n, aqfunc, pfunc) {
+  ## Compute maximal u-error(u) = | u - pfunc( aqfunc (u) ) |
+  ##
+  ##  n      ... sample size
+  ##  aqfunc ... approximate quantile function
+  ##  pfunc  ... cumulative probability function (CDF)
+  ##
+
+  ## check input
+  if (missing(aqfunc) || missing(pfunc))
+    stop ("aqfunc and pfunc required!")
+
+  ## u-values (equidistributed)
+  u <- (0:(n-1))/n + 1/(2*n)
+  
+  ## u-error
+  ue <- abs( u - pfunc( aqfunc (u) ) )
+
+  ## return maximal u-error
+  max(ue)
+}
+
+## --- X-error --------------------------------------------------------------
+
+unur.xerror <- function (n, aqfunc, qfunc) {
+  ## Compute maximal x-error(u) = | aqfunct(u) - qfunc(u) |
+  ##
+  ##  n      ... sample size
+  ##  aqfunc ... approximate quantile function
+  ##  qfunc  ... (exact) quantile function
+  ##
+
+  ## check input
+  if (missing(aqfunc) || missing(qfunc))
+    stop ("aqfunc and qfunc required!")
+
+  ## u-values (equidistributed)
+  u <- (0:(n-1))/n + 1/(2*n)
+  
+  ## u-error
+  xe <- abs( qfunc(u) - aqfunc(u) )
+
+  ## return maximal x-error
+  max(xe)
+}
+
 
 #############################################################################
 ##                                                                          #

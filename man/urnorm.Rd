@@ -10,12 +10,13 @@
   equal to \code{mean} and standard deviation to \code{sd}.
   It also allows sampling from the truncated distribution.
   
-  [Distribution] -- Sampling Function: Normal (Gaussian).  %% Continuous
+  [Special Generator] -- Sampling Function: Normal (Gaussian).  %% Continuous
 }
 
 \usage{
 urnorm(n, mean = 0, sd = 1, lb = -Inf, ub = Inf)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{mean}{mean of distribution.}
@@ -30,10 +31,8 @@ urnorm(n, mean = 0, sd = 1, lb = -Inf, ub = Inf)
 
   The normal distribution has density
   \deqn{
-    f(x) =
-    \frac{1}{\sqrt{2\pi}\sigma} e^{-(x-\mu)^2/2\sigma^2}}{
-    f(x) = 1/(sqrt(2 pi) sigma) e^-((x - mu)^2/(2 sigma^2))
-  }
+    f(x) = \frac{1}{\sqrt{2\pi}\sigma} e^{-(x-\mu)^2/2\sigma^2}
+  }{f(x) = 1/(sqrt(2 pi) sigma) e^-((x - mu)^2/(2 sigma^2))}
   where \eqn{\mu}{mu} is the mean of the distribution and
   \eqn{\sigma}{sigma} the standard deviation.
 
@@ -57,7 +56,7 @@ urnorm(n, mean = 0, sd = 1, lb = -Inf, ub = Inf)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -74,5 +73,3 @@ x <- urnorm(n=1000)
 }
 
 \keyword{distribution}
-\keyword{datagen}
-

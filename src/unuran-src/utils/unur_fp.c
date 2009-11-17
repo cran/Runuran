@@ -50,10 +50,10 @@ _unur_isfinite (const double x)
     return FALSE;
 #else
 # error
-# error +--------------------------------------------------+
-# error ! Sorry, Cannot handle INFINITY correctly! ....... !
-# error ! Please contact <unuran@statistik.wu-wien.ac.at>. !
-# error +--------------------------------------------------+
+# error +--------------------------------------------+
+# error ! Sorry, Cannot handle INFINITY correctly! . !
+# error ! Please contact <unuran@statmath.wu.ac.at>. !
+# error +--------------------------------------------+
 # error
 #endif
 } 
@@ -68,10 +68,10 @@ _unur_isnan (const double x)
   return ((x!=x) ? TRUE : FALSE);
 #else
 # error
-# error +--------------------------------------------------+
-# error ! Sorry, Cannot handle NaN correctly! ............ !
-# error ! Please contact <unuran@statistik.wu-wien.ac.at>. !
-# error +--------------------------------------------------+
+# error +--------------------------------------------+
+# error ! Sorry, Cannot handle NaN correctly! ...... !
+# error ! Please contact <unuran@statmath.wu.ac.at>. !
+# error +--------------------------------------------+
 # error
 #endif
 } 
@@ -97,10 +97,10 @@ _unur_isinf (const double x)
     return 0;
 #else
 # error
-# error +--------------------------------------------------+
-# error ! Sorry, Cannot handle INFINITY correctly! ....... !
-# error ! Please contact <unuran@statistik.wu-wien.ac.at>. !
-# error +--------------------------------------------------+
+# error +--------------------------------------------+
+# error ! Sorry, Cannot handle INFINITY correctly! . !
+# error ! Please contact <unuran@statmath.wu.ac.at>. !
+# error +--------------------------------------------+
 # error
 #endif
 } 

@@ -120,11 +120,11 @@
 #undef TIME_WITH_SYS_TIME
 
 /* Define to 1 if you want to use the info routine for printing informations
-   about UNU.RAN objects */
+   about UNU.RAN objects. */
 #undef UNUR_ENABLE_INFO
 
 /* Define to 1 if you want to use a logfile for logging informations about
-   UNU.RAN objects */
+   UNU.RAN objects. */
 #undef UNUR_ENABLE_LOGGING
 
 /* Define to empty if `const' does not conform to ANSI C. */
@@ -138,6 +138,12 @@
 
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 #undef size_t
+
+/* Use R functions in UNU.RAN. */
+#define HAVE_LIBRMATH 1
+
+/* Tell UNU.RAN that we are within R. */
+#define R_UNURAN 1
 
 #if !HAVE_DECL_LOG1P
 #define log1p _unur_log1p

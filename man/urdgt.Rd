@@ -20,6 +20,7 @@
 urdgt(n, probvector, from = 0, by = 1)
 urdau(n, probvector, from = 0, by = 1)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{probvector}{vector of non-negative numbers (need not sum to 1).}
@@ -65,7 +66,7 @@ urdau(n, probvector, from = 0, by = 1)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -74,6 +75,6 @@ urdgt() and urdau() are very fast for probvector not longer than about 1000.
 
 %%\examples{}
 
-\keyword{distribution}
 \keyword{datagen}
+\keyword{distribution}
 

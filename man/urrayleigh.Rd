@@ -10,12 +10,13 @@
   scale parameter \code{scale}.
   It also allows sampling from the truncated distribution.
   
-  [Distribution] -- Sampling Function: Rayleigh.  %% Continuous
+  [Special Generator] -- Sampling Function: Rayleigh.  %% Continuous
 }
 
 \usage{
 urrayleigh(n, scale=1, lb = 0, ub = Inf)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{scale}{(strictly positive) scale parameter.}
@@ -29,8 +30,8 @@ urrayleigh(n, scale=1, lb = 0, ub = Inf)
   The Rayleigh distribution with scale parameter \code{scale}
   \eqn{=\sigma}{= s} has density 
   \deqn{
-    f(x) = \frac{1}{sigma^2} x \exp( -\frac{1}{2}(\frac{x}{sigma})^2 )}{%
-    f(x) = 1/s^2 * x * exp(-1/2*(x/s)^2)}
+    f(x) = \frac{1}{sigma^2} x \exp( -\frac{1}{2}(\frac{x}{sigma})^2 )
+  }{f(x) = 1/s^2 * x * exp(-1/2*(x/s)^2)}
   for \eqn{x \ge 0} and \eqn{\sigma > 0}{s > 0}.
 
   The generation algorithm uses fast numerical inversion. The parameters
@@ -57,7 +58,7 @@ urrayleigh(n, scale=1, lb = 0, ub = Inf)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -70,5 +71,3 @@ x <- urrayleigh(n=1000,scale=1)
 }
 
 \keyword{distribution}
-\keyword{datagen}
-

@@ -17,6 +17,7 @@
 unuran.discr.new(pv=NULL, pmf=NULL, lb=NA, ub=NA,
                  mode=NA, sum=NA, name=NA)
 }
+
 \arguments{
     \item{pv}{probability vector. (numeric vector)}
     \item{pmf}{probability mass function. (\R function)}
@@ -42,8 +43,8 @@ unuran.discr.new(pv=NULL, pmf=NULL, lb=NA, ub=NA,
 }
 
 \note{
-  \code{unuran.discr.new(...)} is an alias for 
-  \code{new("unuran.discr", ...)}.
+  \code{unuran.discr.new(\dots)} is an alias for 
+  \code{new("unuran.discr", \dots)}.
 }
 
 \seealso{
@@ -59,7 +60,7 @@ unuran.discr.new(pv=NULL, pmf=NULL, lb=NA, ub=NA,
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \examples{

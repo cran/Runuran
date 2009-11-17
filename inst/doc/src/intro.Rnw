@@ -35,7 +35,7 @@ this library.
   random samples for special applications like variate reduction
   techniques, QMC or copula methods;
 \item 
-  simuilate random variates from some unusual, nameless distribution
+  simuilate random variates from some unusual distribution
   that you just found in a paper or derived from your statistical model;
 \item 
   to find out properties of various generation methods (such as speed,
@@ -104,12 +104,12 @@ many times for creating random samples.
 UNU.RAN library\footnote{We first described such a package in
   \citep{Tirler;Leydold:2003a}. However, the interface has been
   changed and extended since then.}.
-The package implements three sets of functions of increasing power
+The package implements four sets of functions of increasing power
 (and thus complexity):
 \begin{itemize}
 \item 
-  \textbf{\hyperref[sec:distribution]{\Runuran\ -- Distribution}}
-  (\autoref{sec:distribution}):
+  \textbf{\hyperref[sec:distribution]{\Runuran\ -- Special Generator}}
+  (\autoref{sec:generator}):
 
   These functions provide easy-to-use sampling algorithms for
   particular distributions. Their syntax is similar to the
@@ -131,9 +131,18 @@ The package implements three sets of functions of increasing power
   data and parameters. Thus they combine Steps~(U1) and (U2) in a
   single function. On the contrary to functions like \code{urnorm},
   they do not return a random sample but a UNU.RAN generator object
-  that can be used for sampling (Step~U3).
+  that can be used for sampling using \code{ur} or \code{uq} (Step~U3).
   For example, the function \code{tdr.new} creates a generator object that
   applies the \emph{transformed density rejection} (TDR) method.
+  
+\item 
+  \textbf{\hyperref[sec:distribution]{\Runuran\ -- Distribution}}
+  (\autoref{sec:distribution}):
+
+  Coding the required functions for particular distributions can be
+  tedious. Thus we have compiled a set of functions that create UNU.RAN
+  distribution objects that can directly be used with the functions from
+  section \hyperref[sec:universal]{Universal} (\autoref{sec:universal}).
   
 \item 
   \textbf{\hyperref[sec:advanced]{\Runuran\ -- Advanced}}
@@ -147,7 +156,7 @@ The package implements three sets of functions of increasing power
 \end{itemize}
 
 \paragraph{Uniform random numbers.}
-All UNU.RAN methods use the \R\ built-in random number generator as
+All UNU.RAN methods use the \R\ built-in uniform random number generator as
 the source of (pseudo-) random numbers. Thus the generated samples depend
 on the state \code{.Random.seed} and can be controlled by the
 \R\ functions \code{RNGkind} and \code{set.seed}.

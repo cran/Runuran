@@ -10,12 +10,13 @@
   Distribution with parameters \code{lambda} and \code{omega}.
   It also allows sampling from the truncated distribution.
   
-  [Distribution] -- Sampling Function: GIG (generalized inverse Gaussian).  %% Continuous
+  [Special Generator] -- Sampling Function: GIG (generalized inverse Gaussian).  %% Continuous
 }
 
 \usage{
 urgig(n, lambda, omega, lb=1.e-12, ub=Inf)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{lambda}{(strictly positive) shape parameter.}
@@ -29,8 +30,8 @@ urgig(n, lambda, omega, lb=1.e-12, ub=Inf)
   \code{lambda} \eqn{=\lambda}{=a} and \code{omega} \eqn{=\omega}{=b}
   has a density proportional to 
   \deqn{
-    f(x)\sim x^{\lambda-1}\exp(-(\omega/2)(x+1/x))}{%
-    f(x) ~ x^(a-1) exp(-(b/2)(x+1/x))}
+    f(x) \sim x^{\lambda-1}\exp(-(\omega/2)(x+1/x))
+  }{f(x) ~ x^(a-1) exp(-(b/2)(x+1/x))}
   for \eqn{x \ge 0}, \eqn{\lambda > 0}{a > 0} and \eqn{\omega > 0}{b > 0}.
 
   The generation algorithm uses transformed density rejection \sQuote{TDR}. The
@@ -61,7 +62,7 @@ urgig(n, lambda, omega, lb=1.e-12, ub=Inf)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -74,5 +75,3 @@ x <- urgig(n=1000,lambda=2,omega=3)
 }
 
 \keyword{distribution}
-\keyword{datagen}
-

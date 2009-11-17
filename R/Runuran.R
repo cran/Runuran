@@ -97,21 +97,20 @@ unuran.sample <- function(unr,n=1) {
         .Call("Runuran_sample", unr, n, PACKAGE="Runuran")
 }
 
-## r
-##    method alias for unuran.sample  (slow!!)
-if(!isGeneric("r"))
-        setGeneric("r", function(unr,...) standardGeneric("r"))
-
-setMethod("r", "unuran",
-          function(unr,n=1) {
-                  .Call("Runuran_sample", unr, n, PACKAGE="Runuran")
-          } )
-
 ## Quantile -----------------------------------------------------------------
 
 ## uq
 uq <- function(unr,U) { 
         .Call("Runuran_quantile", unr, U, PACKAGE="Runuran")
+}
+
+## PDF & PMF -- [EXPERIMENTAL] ----------------------------------------------
+
+## ud
+ud <- function(distr,x) {
+  if ( ! (is(distr,"unuran.cont") || is(distr,"unuran.discr")) )
+    stop("argument 'distr' must be UNU.RAN distribution object")
+  .Call("Runuran_PDF", distr@distr, x, PACKAGE="Runuran")
 }
 
 ## Packing ------------------------------------------------------------------

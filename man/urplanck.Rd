@@ -10,12 +10,13 @@
   shape parameter \code{a}.
   It also allows sampling from the truncated distribution.
   
-  [Distribution] -- Sampling Function: Planck.  %% Continuous
+  [Special Generator] -- Sampling Function: Planck.  %% Continuous
 }
 
 \usage{
 urplanck(n, a, lb = 1.e-12, ub = Inf)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{a}{(strictly positive) shape parameter.}
@@ -27,8 +28,8 @@ urplanck(n, a, lb = 1.e-12, ub = Inf)
   The Planck distribution with parameter \code{a}
   has density proportional to 
   \deqn{
-    f(x) \sim \frac{x^a}{\exp(x)-1}}{%
-    f(x) ~ (x^a)/(exp(x)-1)}
+    f(x) \sim \frac{x^a}{\exp(x)-1}
+  }{f(x) ~ (x^a)/(exp(x)-1)}
   for \eqn{x \ge 0} and \eqn{a\ge 1}{a >= 1}.
 
   The generation algorithm uses transformed density rejection
@@ -50,7 +51,7 @@ urplanck(n, a, lb = 1.e-12, ub = Inf)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -63,5 +64,3 @@ x <- urplanck(n=1000,a=2)
 }
 
 \keyword{distribution}
-\keyword{datagen}
-

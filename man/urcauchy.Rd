@@ -10,12 +10,13 @@
   location parameter \code{location} and scale parameter \code{scale}.
   It also allows sampling from the truncated distribution.
   
-  [Distribution] -- Sampling Function: Cauchy.  %% Continuous
+  [Special Generator] -- Sampling Function: Cauchy.  %% Continuous
 }
 
 \usage{
 urcauchy(n, location=0, scale=1, lb = -Inf, ub = Inf)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{location}{location parameter.}
@@ -30,8 +31,9 @@ urcauchy(n, location=0, scale=1, lb = -Inf, ub = Inf)
 
   The Cauchy distribution with location \eqn{l} and scale \eqn{s} has
   density
-  \deqn{f(x) = \frac{1}{\pi s}
-    \left( 1 + \left(\frac{x - l}{s}\right)^2 \right)^{-1}%
+  \deqn{
+    f(x) = \frac{1}{\pi s}
+    \left( 1 + \left(\frac{x - l}{s}\right)^2 \right)^{-1}
   }{f(x) = 1 / (pi s (1 + ((x-l)/s)^2))}
   for all \eqn{x}.
 
@@ -54,7 +56,7 @@ urcauchy(n, location=0, scale=1, lb = -Inf, ub = Inf)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -71,5 +73,3 @@ x <- urcauchy(n=1000)
 }
 
 \keyword{distribution}
-\keyword{datagen}
-

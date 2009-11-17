@@ -17,6 +17,7 @@
 unuran.cont.new( cdf=NULL, pdf=NULL, dpdf=NULL, islog=FALSE,
                  lb=NA, ub=NA, mode=NA, center=NA, area=NA, name=NA)
 }
+
 \arguments{
   \item{cdf}{cumulative distribution function. (\R function)}
   \item{pdf}{probability density function. (\R function)}
@@ -45,8 +46,8 @@ unuran.cont.new( cdf=NULL, pdf=NULL, dpdf=NULL, islog=FALSE,
 }
 
 \note{
-  \code{unuran.cont.new(...)} is an alias for 
-  \code{new("unuran.cont", ...)}.
+  \code{unuran.cont.new(\dots)} is an alias for 
+  \code{new("unuran.cont", \dots)}.
 }
 
 \seealso{
@@ -62,7 +63,7 @@ unuran.cont.new( cdf=NULL, pdf=NULL, dpdf=NULL, islog=FALSE,
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \examples{
@@ -70,8 +71,14 @@ unuran.cont.new( cdf=NULL, pdf=NULL, dpdf=NULL, islog=FALSE,
 mypdf <- function (x) { exp(-x) }
 distr <- unuran.cont.new(pdf=mypdf, islog=FALSE, lb=0, ub=Inf, mode=0)
 
+## This object can now be used to create an generator object.
+## 1. select a method using a Runuran function:
+gen <- pinvd.new(distr, uresolution=1e-12)
+
+## 2. directly use the UNU.RAN string API
+gen <- unuran.new(distr, method="pinv; u_resolution=1e-12")
+
 }
 
 \keyword{distribution}
 \keyword{datagen}
-

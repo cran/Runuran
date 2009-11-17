@@ -20,7 +20,7 @@
   Objects can be created by calls of the form
   \code{new("unuran", distribution, method)}.
 
-  \itemize{
+  \describe{
     \item{distribution:}{A character string that describes the target
       distribution (see UNU.RAN User Manual) or one of the S4 classes
       \code{\linkS4class{unuran.cont}},
@@ -55,7 +55,7 @@
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -81,7 +81,7 @@
 \references{
   J. Leydold and W. H\"ormann (2000-2007):
   UNU.RAN User Manual, see
-  \url{http://statmath.wu-wien.ac.at/unuran/}.
+  \url{http://statmath.wu.ac.at/unuran/}.
   
   W. H\"ormann, J. Leydold, and G. Derflinger (2004):
   Automatic Nonuniform Random Variate Generation.
@@ -89,9 +89,9 @@
 
   G. Tirler and J. Leydold (2003):
   Automatic Nonuniform Random Variate Generation in \R.
-  In: K.~Hornik and F.~Leisch, 
+  In: K. Hornik and F. Leisch, 
   Proceedings of the 3rd International Workshop on
-  Distributed Statistical Computing (DSC~2003),
+  Distributed Statistical Computing (DSC 2003),
   March 20--22, Vienna, Austria.
 }
 

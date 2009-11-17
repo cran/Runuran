@@ -15,6 +15,7 @@
 \usage{
 uq(unr, U)
 }
+
 \arguments{
   \item{unr}{a \code{unuran} object that implements an inversion menthod.}
   \item{U}{vector of probabilities.}
@@ -53,7 +54,7 @@ uq(unr, U)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \examples{
@@ -89,4 +90,3 @@ uq(gen,seq(0,1,0.05))
 
 \keyword{distribution}
 \keyword{datagen}
-

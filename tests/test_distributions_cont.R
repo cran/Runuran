@@ -94,6 +94,14 @@ for (i in 1:n.rep.domains)
 for (i in 1:n.rep.params)
         unur.test.cont("norm", mean=rcauchy(1), sd=rgamma(1,shape=2))
 
+rud <- function (n) {
+   dist <- udnorm()
+   gen <- unuran.new(dist)
+   ur(gen,n)
+}
+unur.test.cont("udnorm", rfunc=rud, pfunc=pnorm)
+rm(rud)
+
 ## Pareto distribution ------------------------------------------------------
 
 ## Planck distribution ------------------------------------------------------

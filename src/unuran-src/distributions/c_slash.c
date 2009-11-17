@@ -13,6 +13,7 @@ static const char distr_name[] = "slash";
 #define NORMCONSTANT (distr->data.cont.norm_constant)
 static double _unur_pdf_slash( double x, const UNUR_DISTR *distr );
 static double _unur_dpdf_slash( double x, const UNUR_DISTR *distr );
+static int _unur_upd_mode_slash( UNUR_DISTR *distr );
 static int _unur_set_params_slash( UNUR_DISTR *distr, const double *params, int n_params );
 double
 _unur_pdf_slash(double x, const UNUR_DISTR *distr)
@@ -29,7 +30,17 @@ _unur_dpdf_slash(double x, const UNUR_DISTR *distr ATTRIBUTE__UNUSED)
   if (_unur_iszero(x))
     return 0.;
   else
-    return ((-2. + exp(-xsq/2.) * (2. + xsq)) / (xsq * x));
+    return (NORMCONSTANT * ((-2. + exp(-xsq/2.) * (2. + xsq)) / (xsq * x)));
+} 
+int
+_unur_upd_mode_slash( UNUR_DISTR *distr )
+{
+  DISTR.mode = 0.;
+  if (DISTR.mode < DISTR.domain[0]) 
+    DISTR.mode = DISTR.domain[0];
+  else if (DISTR.mode > DISTR.domain[1]) 
+    DISTR.mode = DISTR.domain[1];
+  return UNUR_SUCCESS;
 } 
 int
 _unur_set_params_slash( UNUR_DISTR *distr, const double *params ATTRIBUTE__UNUSED, int n_params )
@@ -65,6 +76,7 @@ unur_distr_slash( const double *params, int n_params )
   DISTR.mode = 0.;
   DISTR.area = 1.;
   DISTR.set_params = _unur_set_params_slash;
+  DISTR.upd_mode  = _unur_upd_mode_slash;   
   return distr;
 } 
 #undef nu

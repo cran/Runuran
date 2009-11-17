@@ -11,11 +11,13 @@
 #define UNUR_TEST_SAMPLE   0x010u    
 void unur_run_tests( UNUR_PAR *parameters, unsigned tests, FILE *out );
 void unur_test_printsample( UNUR_GEN *generator, int n_rows, int n_cols, FILE *out );
-UNUR_GEN *unur_test_timing( UNUR_PAR *parameters, int log_samplesize, 
+UNUR_GEN *unur_test_timing( UNUR_PAR *parameters, int log10_samplesize, 
 			    double *time_setup, double *time_sample,
 			    int verbosity, FILE *out );
-double unur_test_timing_uniform( const UNUR_PAR *parameters, int log_samplesize );
-double unur_test_timing_exponential( const UNUR_PAR *parameters, int log_samplesize );
+double unur_test_timing_R( UNUR_PAR *parameters, const char *distrstr, const char *methodstr,
+			   double log10_samplesize, double *time_setup, double *time_marginal );
+double unur_test_timing_uniform( const UNUR_PAR *parameters, int log10_samplesize );
+double unur_test_timing_exponential( const UNUR_PAR *parameters, int log10_samplesize );
 double unur_test_timing_total( const UNUR_PAR *parameters, int samplesize, double avg_duration );
 int unur_test_count_urn( UNUR_GEN *generator, int samplesize, int verbosity, FILE *out );
 int unur_test_count_pdf( UNUR_GEN *generator, int samplesize, int verbosity, FILE *out );
@@ -29,9 +31,9 @@ double unur_test_correlation( UNUR_GEN *generator1, UNUR_GEN *generator2,
 int unur_test_quartiles( UNUR_GEN *generator,
 			 double *q0, double *q1, double *q2, double *q3, double *q4, 
 			 int samplesize, int verbosity, FILE *out );
-double unur_test_inverror( const UNUR_GEN *generator, 
-			   double *max_error, double *MAE, double threshold,
-			   int samplesize, int randomized, int testtails,
-			   int verbosity, FILE *out );
+double unur_test_u_error( const UNUR_GEN *generator, 
+			  double *max_error, double *MAE, double threshold,
+			  int samplesize, int randomized, int testtails,
+			  int verbosity, FILE *out );
 int unur_test_cvec_rankcorr( double *rc, UNUR_GEN *gen, int samplesize, int verbose, FILE *out );
 #endif  

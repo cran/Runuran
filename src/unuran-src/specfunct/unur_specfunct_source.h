@@ -14,6 +14,11 @@ double _unur_cephes_ndtr(double x);
 #define _unur_sf_cdfnormal(x)   _unur_cephes_ndtr(x)
 double _unur_cephes_ndtri(double x);
 #define _unur_sf_inv_cdfnormal(x)   _unur_cephes_ndtri(x)
+#ifdef HAVE_LIBRMATH
+#define HAVE_BESSEL_K 1
+double _unur_sf_bessel_k(double x, double nu);
+double _unur_sf_bessel_k_expo(double x, double nu);
+#endif
 #if !HAVE_DECL_LOG1P
 double _unur_log1p(double x);
 #endif

@@ -10,12 +10,13 @@
   with \code{df} degrees of freedom.
   It also allows sampling from the truncated distribution.
   
-  [Distribution] -- Sampling Function: t (Student).  %% Continuous
+  [Special Generator] -- Sampling Function: t (Student).  %% Continuous
 }
 
 \usage{
 urt(n, df, lb = -Inf, ub = Inf)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{df}{degrees of freedom (\eqn{> 0}, maybe non-integer).}
@@ -53,7 +54,7 @@ urt(n, df, lb = -Inf, ub = Inf)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -70,5 +71,3 @@ x <- urt(n=1000,df=4)
 }
 
 \keyword{distribution}
-\keyword{datagen}
-

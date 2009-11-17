@@ -394,16 +394,19 @@ int unur_mcorr_chg_eigenvalues( UNUR_GEN *gen, const double *eigenvalues );
 UNUR_PAR *unur_ninv_new( const UNUR_DISTR *distribution );
 int unur_ninv_set_useregula( UNUR_PAR *parameters );
 int unur_ninv_set_usenewton( UNUR_PAR *parameters );
+int unur_ninv_set_usebisect( UNUR_PAR *parameters );
 int unur_ninv_set_max_iter( UNUR_PAR *parameters, int max_iter );
 int unur_ninv_chg_max_iter(UNUR_GEN *generator, int max_iter);
 int unur_ninv_set_x_resolution( UNUR_PAR *parameters, double x_resolution);
 int unur_ninv_chg_x_resolution(UNUR_GEN *generator, double x_resolution);
+int unur_ninv_set_u_resolution( UNUR_PAR *parameters, double u_resolution);
+int unur_ninv_chg_u_resolution(UNUR_GEN *generator, double u_resolution);
 int unur_ninv_set_start( UNUR_PAR *parameters, double left, double right);
 int unur_ninv_chg_start(UNUR_GEN *gen, double left, double right);
 int unur_ninv_set_table(UNUR_PAR *parameters, int no_of_points);
 int unur_ninv_chg_table(UNUR_GEN *gen, int no_of_points);
 int unur_ninv_chg_truncated(UNUR_GEN *gen, double left, double right);
-double unur_ninv_eval_approxinvcdf( UNUR_GEN *generator, double u );
+double unur_ninv_eval_approxinvcdf( const UNUR_GEN *generator, double u );
 UNUR_PAR *unur_nrou_new( const UNUR_DISTR *distribution );
 int unur_nrou_set_u( UNUR_PAR *parameters, double umin, double umax );
 int unur_nrou_set_v( UNUR_PAR *parameters, double vmax );
@@ -659,7 +662,7 @@ UNUR_GEN *unur_str2gen( const char *string );
 UNUR_DISTR *unur_str2distr( const char *string );
 UNUR_GEN *unur_makegen_ssu( const char *distrstr, const char *methodstr, UNUR_URNG *urng );
 UNUR_GEN *unur_makegen_dsu( const UNUR_DISTR *distribution, const char *methodstr, UNUR_URNG *urng );
-UNUR_PAR *_unur_str2par( const UNUR_DISTR *distribution, const char *string, struct unur_slist **mlist );
+UNUR_PAR *_unur_str2par( const UNUR_DISTR *distribution, const char *method, struct unur_slist **mlist );
 UNUR_GEN *unur_init( UNUR_PAR *parameters );
 int unur_reinit( UNUR_GEN *generator );
 int    unur_sample_discr(UNUR_GEN *generator);
@@ -695,7 +698,11 @@ enum {
   UNUR_DISTR_EXTREME_II       = 0x00000801u,  
   UNUR_DISTR_F                = 0x00000901u,  
   UNUR_DISTR_GAMMA            = 0x00000a01u,  
+  UNUR_DISTR_GHYP             = 0x00002401u,  
   UNUR_DISTR_GIG              = 0x00000b01u,  
+  UNUR_DISTR_GIG2             = 0x00002201u,  
+  UNUR_DISTR_HYPERBOLIC       = 0x00002301u,  
+  UNUR_DISTR_IG               = 0x00002101u,  
   UNUR_DISTR_LAPLACE          = 0x00000c01u,  
   UNUR_DISTR_LOGISTIC         = 0x00000d01u,  
   UNUR_DISTR_LOGNORMAL        = 0x00000e01u,  
@@ -748,7 +755,11 @@ UNUR_DISTR *unur_distr_extremeI(const double *params, int n_params);
 UNUR_DISTR *unur_distr_extremeII(const double *params, int n_params);
 UNUR_DISTR *unur_distr_F(const double *params, int n_params);
 UNUR_DISTR *unur_distr_gamma(const double *params, int n_params);
+UNUR_DISTR *unur_distr_ghyp(const double *params, int n_params);
 UNUR_DISTR *unur_distr_gig(const double *params, int n_params);
+UNUR_DISTR *unur_distr_gig2(const double *params, int n_params);
+UNUR_DISTR *unur_distr_hyperbolic(const double *params, int n_params);
+UNUR_DISTR *unur_distr_ig(const double *params, int n_params);
 UNUR_DISTR *unur_distr_laplace(const double *params, int n_params);
 UNUR_DISTR *unur_distr_logistic(const double *params, int n_params);
 UNUR_DISTR *unur_distr_lognormal(const double *params, int n_params);

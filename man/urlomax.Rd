@@ -11,12 +11,13 @@
   shape parameter \code{shape} and scale parameter \code{scale}.
   It also allows sampling from the truncated distribution.
   
-  [Distribution] -- Sampling Function: Lomax.  %% Continuous
+  [Special Generator] -- Sampling Function: Lomax.  %% Continuous
 }
 
 \usage{
 urlomax(n, shape, scale=1, lb=0, ub=Inf)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{shape}{(strictly positive) shape parameter.}
@@ -31,8 +32,8 @@ urlomax(n, shape, scale=1, lb=0, ub=Inf)
   The Lomax distribution with parameters \code{shape} \eqn{=\alpha}{=a}
   and \code{scale} \eqn{=\sigma}{= s} has density
   \deqn{
-    f(x) = \alpha \sigma^\alpha (x+\sigma)^{-(\alpha+1)}}{%
-    f(x) = a s^a (x+s)^(-a-1)}
+    f(x) = \alpha \sigma^\alpha (x+\sigma)^{-(\alpha+1)}
+  }{f(x) = a s^a (x+s)^(-a-1)}
   for \eqn{x \ge 0}, \eqn{\alpha > 0}{a > 0} and \eqn{\sigma > 0}{s > 0}.
 
   The generation algorithm uses fast numerical inversion. The parameters
@@ -59,7 +60,7 @@ urlomax(n, shape, scale=1, lb=0, ub=Inf)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -72,5 +73,3 @@ x <- urlomax(n=1000,shape=2)
 }
 
 \keyword{distribution}
-\keyword{datagen}
-

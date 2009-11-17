@@ -2,6 +2,7 @@
 \docType{function}
 
 \alias{pinv.new}
+\alias{pinvd.new}
 
 \title{UNU.RAN generator based on Polynomial interpolation of INVerse CDF (PINV)}
 
@@ -15,7 +16,8 @@
 }
 
 \usage{
-pinv.new(pdf, cdf, lb, ub, islog=FALSE, center=0, uresolution=1.e-10, ...)
+pinv.new(pdf, cdf, lb, ub, islog=FALSE, center=0, uresolution=1.e-10, \dots)
+pinvd.new(distr, uresolution=1.e-10)
 }
 \arguments{
   \item{pdf}{probability density function. (\R function)}
@@ -27,8 +29,9 @@ pinv.new(pdf, cdf, lb, ub, islog=FALSE, center=0, uresolution=1.e-10, ...)
   \item{islog}{whether \code{pdf} and \code{cdf} are given by their
     corresponding logarithms. (boolean)}
   \item{center}{\dQuote{typical} point of distribution. (numeric)}
+  \item{\dots}{(optional) arguments for \code{pdf} and \code{cdf}.}
+  \item{distr}{distribution object. (S4 object of class \code{"unuran.cont"})}
   \item{uresolution}{maximal acceptable u-error. (numeric)}
-  \item{...}{(optional) arguments for \code{pdf} and \code{cdf}.}
 }
 
 \details{
@@ -38,22 +41,24 @@ pinv.new(pdf, cdf, lb, ub, islog=FALSE, center=0, uresolution=1.e-10, ...)
   function \code{pdf} or cumulative distribution function \code{cdf}
   by means of \code{\link{ur}}.
   It also allows to compute quantiles by means of \code{\link{uq}}.
-  
-  \code{pdf} is (a multiple of) a density, i.e., it must return
-  non-negative numbers but need not integrate to 1.
-  However, the set of points where the \code{pdf} is strictly positive
+
+  Function \code{pdf} must be positive but need not be normalized
+  (i.e., it can be any multiple of a density function).
+  The set of points where the \code{pdf} is strictly positive
   must be connected.
-  The algorithm then automatically computes the CDF using Gauss-Lobatto
-  integration.
+  The \code{center} is a point where the \code{pdf} is not too
+  small, e.g., (a point near) the mode of the distribution.
   
+  If the density \code{pdf} is given, then the algorithm automatically
+  computes the CDF using Gauss-Lobatto integration.
   If the \code{cdf} is given but not the \code{pdf} then the CDF is used
   instead of the PDF. However, we found in our experiments that using
   the PDF is numerically more stable.
   
-  The \code{center} must be a point where the \code{pdf} is not too
-  small, e.g., (a point near) the mode of the distribution.
-  By default \code{0.} is assumed.
-  
+  Alternatively, one can use function \code{pinvd.new} where the object
+  \code{distr} of class \code{"unuran.cont"} must contain all required
+  information about the distribution.
+
   The algorithms approximates the inverse of the CDF of the
   distribution. The distribution error is estimated by means of the the
   u-error, i.e., \eqn{|CDF(G(U)) - U|},
@@ -70,19 +75,25 @@ pinv.new(pdf, cdf, lb, ub, islog=FALSE, center=0, uresolution=1.e-10, ...)
   distribution.
 }
 
+\value{
+  An object of class \code{"unuran"}.
+}
+
 \seealso{
   \code{\link{ur}}, \code{\link{uq}},
-  \code{\link{unuran.new}}, \code{\linkS4class{unuran}}.
+  \code{\linkS4class{unuran.cont}},
+  \code{\link{unuran.new}}, 
+  \code{\linkS4class{unuran}}.
 }
 
 \references{
   G. Derflinger, W. H\"ormann, and J. Leydold (2009):
-  in preparation.
+  ACM Trans. Model. Comput. Simul., to appear.
 }
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \examples{
@@ -114,8 +125,13 @@ x <- ur(gen,100)
 ## We have to provide a 'center' when PDF (almost) vanishes at 0.
 gen <- pinv.new(pdf=dgamma, lb=0, ub=Inf, center=4, shape=5)
 x <- ur(gen,100)
+
+## Alternative approach
+distr <- udnorm()
+gen <- pinvd.new(distr)
+x <- ur(gen,100)
+
 }
 
-\keyword{distribution}
 \keyword{datagen}
-
+\keyword{distribution}

@@ -40,7 +40,7 @@ setClass( "unuran.cont",
 
 setMethod( "initialize", "unuran.cont",
           function(.Object, cdf=NULL, pdf=NULL, dpdf=NULL, islog=FALSE,
-                   lb=NA, ub=NA, mode=NA, center=NA, area=NA, name=NA) {
+                   lb=NA, ub=NA, mode=NA, center=NA, area=NA, name=NA, empty=FALSE) {
                   ## cdf .... cumulative distribution function (CDF)
                   ## pdf .... probability density function (PDF)
                   ## dpdf ... derivative of PDF
@@ -52,7 +52,10 @@ setMethod( "initialize", "unuran.cont",
                   ## center . "center" (typical point) of distribution
                   ## area ... area below PDF
                   ## name ... name of distribution
-
+                  ## empty .. if TRUE only return empty object (for internal use only)
+            
+                  if (isTRUE(empty)) return (.Object)
+            
                   ## Check entries
                   if(! (is.numeric(lb) && is.numeric(ub) && lb < ub) )
                           stop("domain ('lb','ub') missing or invalid", call.=FALSE)

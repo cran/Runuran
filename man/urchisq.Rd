@@ -10,12 +10,13 @@
   (\eqn{\chi^2}{chi^2}) distribution with \code{df} degrees of freedom.
   It also allows sampling from the truncated distribution.
   
-  [Distribution] -- Sampling Function: Chi-square.  %% Continuous
+  [Special Generator] -- Sampling Function: Chi-squared.  %% Continuous
 }
 
 \usage{
 urchisq(n, df, lb=0, ub=Inf)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{df}{degrees of freedom (strictly positive, but can be non-integer).}
@@ -26,8 +27,9 @@ urchisq(n, df, lb=0, ub=Inf)
 \details{
   The Chi-squared distribution with \code{df}\eqn{= n > 0} degrees of
   freedom has density
-  \deqn{f_n(x) = \frac{1}{{2}^{n/2} \Gamma (n/2)} {x}^{n/2-1} {e}^{-x/2}}{%
-    f_n(x) = 1 / (2^(n/2) Gamma(n/2))  x^(n/2-1) e^(-x/2)}
+  \deqn{
+    f_n(x) = \frac{1}{{2}^{n/2} \Gamma (n/2)} {x}^{n/2-1} {e}^{-x/2}
+  }{f_n(x) = 1 / (2^(n/2) Gamma(n/2))  x^(n/2-1) e^(-x/2)}
   for \eqn{x > 0}.
 
   The generation algorithm uses fast numerical inversion. The parameters
@@ -49,7 +51,7 @@ urchisq(n, df, lb=0, ub=Inf)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -66,5 +68,3 @@ x <- urchisq(n=1000,df=3)
 }
 
 \keyword{distribution}
-\keyword{datagen}
-

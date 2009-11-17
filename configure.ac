@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 
 dnl --- Initialize ----------------------------------------------------------- 
 AC_PREREQ(2.59)
-AC_INIT([Runuran],[0.7],[unuran@statmath.wu-wien.ac.at])
+AC_INIT([Runuran],[0.7],[unuran@statmath.wu.ac.at])
 AC_CONFIG_HEADER([src/config.h])
 
 dnl --- Configure flags ------------------------------------------------------
@@ -16,7 +16,7 @@ AC_ARG_ENABLE(logging,
 	[enable_logging=no])
 AS_IF([test "x$enable_logging" = xyes],
 	[AC_DEFINE([UNUR_ENABLE_LOGGING], [1], 
-	           [Define to 1 if you want to use a logfile for logging informations about UNU.RAN objects])], 
+	           [Define to 1 if you want to use a logfile for logging informations about UNU.RAN objects].)], 
 	[])
 
 dnl UNU.RAN provides a function that returns a string with some information
@@ -29,7 +29,7 @@ AC_ARG_ENABLE(info,
 	[enable_info=yes])
 AS_IF([test "x$enable_info" = xyes],
 	[AC_DEFINE([UNUR_ENABLE_INFO], [1], 
-	           [Define to 1 if you want to use the info routine for printing informations about UNU.RAN objects])], 
+	           [Define to 1 if you want to use the info routine for printing informations about UNU.RAN objects.])], 
 	[])
 
 dnl --- Compiler and compiler flags ------------------------------------------
@@ -45,6 +45,13 @@ export CFLAGS=`"${R_HOME}/bin/R" CMD config CFLAGS`
 export CPPFLAGS=`"${R_HOME}/bin/R" CMD config CPPFLAGS`
 AC_PROG_CC
 AC_PROG_CPP
+
+dnl --- Enable Rmath library in UNU.RAN -------------------------------------
+AH_BOTTOM([/* Use R functions in UNU.RAN. */
+#define HAVE_LIBRMATH 1])
+
+AH_BOTTOM([/* Tell UNU.RAN that we are within R. */
+#define R_UNURAN 1])
 
 dnl --- Checks for libraries -------------------------------------------------
 dnl libm: the standard math library

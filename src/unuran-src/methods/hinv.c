@@ -451,7 +451,7 @@ unur_hinv_estimate_error( const UNUR_GEN *gen, int samplesize, double *max_error
 { 
   _unur_check_NULL(GENTYPE, gen, UNUR_ERR_NULL);  
   COOKIE_CHECK(gen,CK_HINV_GEN,UNUR_ERR_COOKIE);
-  unur_test_inverror(gen, max_error, MAE, 1.e-20, samplesize, 
+  unur_test_u_error(gen, max_error, MAE, 1.e-20, samplesize, 
 		     FALSE, FALSE, FALSE, NULL);
   return UNUR_SUCCESS;
 } 

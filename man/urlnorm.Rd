@@ -11,12 +11,13 @@
   deviation equal to \code{sdlog}.
   It also allows sampling from the truncated distribution.
   
-  [Distribution] -- Sampling Function: Log-Normal.  %% Continuous
+  [Special Generator] -- Sampling Function: Log-Normal.  %% Continuous
 }
 
 \usage{
 urlnorm(n, meanlog=0, sdlog=1, lb=0, ub=Inf)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{meanlog, sdlog}{mean and standard deviation of the distribution
@@ -53,7 +54,7 @@ urlnorm(n, meanlog=0, sdlog=1, lb=0, ub=Inf)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -70,5 +71,3 @@ x <- urlnorm(n=1000)
 }
 
 \keyword{distribution}
-\keyword{datagen}
-

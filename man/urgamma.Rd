@@ -6,16 +6,17 @@
 \title{UNU.RAN Gamma random variate generator}
 
 \description{
-  UNU.RAN random variate generator for the Gamma distribution with
+  UNU.RAN random variate generator for the Gamma distribution
   with parameters \code{shape} and \code{scale}.
   It also allows sampling from the truncated distribution.
   
-  [Distribution] -- Sampling Function: Gamma.  %% Continuous
+  [Special Generator] -- Sampling Function: Gamma.  %% Continuous
 }
 
 \usage{
 urgamma(n, shape, scale=1, lb=0, ub=Inf)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{shape}{(strictly positive) shape parameter.}
@@ -30,8 +31,8 @@ urgamma(n, shape, scale=1, lb=0, ub=Inf)
   The Gamma distribution with parameters \code{shape} \eqn{=\alpha}{= a}
   and \code{scale} \eqn{=\sigma}{= s} has density
   \deqn{
-    f(x)= \frac{1}{{\sigma}^{\alpha}\Gamma(\alpha)} {x}^{\alpha-1} e^{-x/\sigma}}{%
-    f(x)= 1/(s^a Gamma(a)) x^(a-1) e^-(x/s)}
+    f(x)= \frac{1}{{\sigma}^{\alpha}\Gamma(\alpha)} {x}^{\alpha-1} e^{-x/\sigma}
+  }{f(x)= 1/(s^a Gamma(a)) x^(a-1) * exp(-x/s)}
   for \eqn{x \ge 0}, \eqn{\alpha > 0}{a > 0} and \eqn{\sigma > 0}{s > 0}.
   (Here \eqn{\Gamma(\alpha)}{Gamma(a)} is the function implemented by \R's
   \code{\link{gamma}()} and defined in its help.)
@@ -55,7 +56,7 @@ urgamma(n, shape, scale=1, lb=0, ub=Inf)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -72,5 +73,3 @@ x <- urgamma(n=1000,shape=2)
 }
 
 \keyword{distribution}
-\keyword{datagen}
-

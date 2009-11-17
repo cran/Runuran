@@ -15,8 +15,9 @@
 }
 
 \usage{
-vnrou.new(dim=1, pdf, ll=NULL, ur=NULL, mode=NULL, center=NULL, ...)
+vnrou.new(dim=1, pdf, ll=NULL, ur=NULL, mode=NULL, center=NULL, \dots)
 }
+
 \arguments{
   \item{dim}{number of dimensions of the distribution. (integer)}
   \item{pdf}{probability density function. (\R function)}
@@ -29,7 +30,7 @@ vnrou.new(dim=1, pdf, ll=NULL, ur=NULL, mode=NULL, center=NULL, ...)
     e.g. the approximate location of the mode. If omitted the
     \code{mode} is used. If the \code{mode} is not given
     either, the origin is used. (numeric vector)}
-  \item{...}{(optional) arguments for \code{pdf}}
+  \item{\dots}{(optional) arguments for \code{pdf}}
 }
 
 \details{
@@ -69,7 +70,7 @@ vnrou.new(dim=1, pdf, ll=NULL, ur=NULL, mode=NULL, center=NULL, ...)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \examples{
@@ -91,6 +92,5 @@ x <- ur(gen,100)
 
 }
 
-\keyword{distribution}
 \keyword{datagen}
-
+\keyword{distribution}

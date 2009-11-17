@@ -78,6 +78,18 @@ ars.new <- function (logpdf, dlogpdf=NULL, lb, ub, ...) {
         unuran.new(dist, "ars")
 } 
 
+## ..........................................................................
+
+arsd.new <- function (distr) {
+
+  ## check arguments
+  if ( missing(distr) || !(isS4(distr) &&  is(distr,"unuran.cont")) )
+    stop ("argument 'distr' invalid")
+  
+  ## create and return UNU.RAN object
+  unuran.new(distr, "ars")
+}
+
 
 ## -- ITDR: Inverse Transformed Density Rejection ---------------------------
 ##
@@ -108,6 +120,18 @@ itdr.new <- function (pdf, dpdf, lb, ub, pole, islog=FALSE, ...) {
 
         ## create and return UNU.RAN object
         unuran.new(dist, "itdr")
+}
+
+## ..........................................................................
+
+itdrd.new <- function (distr) {
+
+  ## check arguments
+  if ( missing(distr) || !(isS4(distr) &&  is(distr,"unuran.cont")) )
+    stop ("argument 'distr' invalid")
+
+  ## create and return UNU.RAN object
+  unuran.new(distr, "itdr")
 }
 
 
@@ -160,7 +184,20 @@ pinv.new <- function (pdf, cdf, lb, ub, islog=FALSE, center=0, uresolution=1.e-1
 
         ## create and return UNU.RAN object
         method <- paste("pinv;",usefunc,"u_resolution=",uresolution, sep="")
-        return (unuran.new(dist,method))
+        unuran.new(dist, method)
+}
+
+## ..........................................................................
+
+pinvd.new <- function (distr, uresolution=1.e-10) {
+
+  ## check arguments
+  if ( missing(distr) || !(isS4(distr) &&  is(distr,"unuran.cont")) )
+    stop ("argument 'distr' invalid")
+
+  ## create and return UNU.RAN object
+  method <- paste("pinv;u_resolution=",uresolution, sep="")
+  unuran.new(distr, method)
 }
 
 
@@ -193,6 +230,19 @@ srou.new <- function (pdf, lb, ub, mode, area, islog=FALSE, r=1, ...) {
         ## create and return UNU.RAN object
         method <- paste("srou; r=",r, sep="")
         unuran.new(dist, method)
+}
+
+## ..........................................................................
+
+sroud.new <- function (distr, r=1) {
+
+  ## check arguments
+  if ( missing(distr) || !(isS4(distr) &&  is(distr,"unuran.cont")) )
+    stop ("argument 'distr' invalid")
+
+  ## create and return UNU.RAN object
+  method <- paste("srou; r=",r, sep="")
+  unuran.new(distr, method)
 }
 
 
@@ -235,6 +285,18 @@ tdr.new <- function (pdf, dpdf=NULL, lb, ub, islog=FALSE, ...) {
         unuran.new(dist, "tdr")
 }
 
+## ..........................................................................
+
+tdrd.new <- function (distr) {
+
+  ## check arguments
+  if ( missing(distr) || !(isS4(distr) &&  is(distr,"unuran.cont")) )
+    stop ("argument 'distr' invalid")
+
+  ## create and return UNU.RAN object
+  unuran.new(distr, "tdr")
+}
+
 
 #############################################################################
 ##                                                                          #
@@ -251,7 +313,7 @@ tdr.new <- function (pdf, dpdf=NULL, lb, ub, islog=FALSE, ...) {
 ##
 
 dari.new <- function (pmf, lb, ub, mode=NA, sum=1, ...) {
-
+        
         ## check arguemngts
         if (missing(pmf) || !is.function(pmf))
                 stop ("argument 'pmf' missing or invalid")
@@ -266,7 +328,19 @@ dari.new <- function (pmf, lb, ub, mode=NA, sum=1, ...) {
         distr <- new("unuran.discr",pmf=f,lb=lb,ub=ub,mode=mode,sum=sum)
 
         ## create and return UNU.RAN object
-        new("unuran", distr, "DARI")
+        unuran.new(distr, "dari")
+}
+
+## ..........................................................................
+
+darid.new <- function (distr) {
+
+  ## check arguments
+  if ( missing(distr) || !(isS4(distr) &&  is(distr,"unuran.discr")) )
+    stop ("argument 'distr' invalid")
+
+  ## create and return UNU.RAN object
+  unuran.new(distr, "dari")
 }
 
 
@@ -290,8 +364,21 @@ dau.new <- function (pv, from=1) {
         distr <- new("unuran.discr",pv=pv,lb=from,ub=Inf)
 
         ## create and return UNU.RAN object
-        new("unuran", distr, "DAU")
+        unuran.new(distr, "dau")
 }
+
+## ..........................................................................
+
+daud.new <- function (distr) {
+
+  ## check arguments
+  if ( missing(distr) || !(isS4(distr) &&  is(distr,"unuran.discr")) )
+    stop ("argument 'distr' invalid")
+
+  ## create and return UNU.RAN object
+  unuran.new(distr, "dau")
+}
+
 
 ## -- DGT: Guide Table Method -----------------------------------------------
 ##
@@ -313,7 +400,19 @@ dgt.new <- function (pv, from=1) {
         distr <- new("unuran.discr",pv=pv,lb=from,ub=Inf)
 
         ## create and return UNU.RAN object
-        new("unuran", distr, "DGT")
+        unuran.new(distr, "dgt")
+}
+
+## ..........................................................................
+
+dgtd.new <- function (distr) {
+
+  ## check arguments
+  if ( missing(distr) || !(isS4(distr) &&  is(distr,"unuran.discr")) )
+    stop ("argument 'distr' invalid")
+
+  ## create and return UNU.RAN object
+  unuran.new(distr, "dgt")
 }
 
 

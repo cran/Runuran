@@ -73,6 +73,32 @@
   concavity is less than $c$, i.e.,
   $\mathrm{lc}_f(x) \leq c$.
 
+\item[$u$-error]
+  for a given approximate inverse CDF $X=G^{-1}(U)$ the $u$-error is
+  given as
+  \[ \mbox{$u$-error} = |U-F(G^{-1}(U))| \]
+  where $F$ denotes the exact CDF.
+  Goodness-of-fit tests like the Kolmogorov-Smirnov test or the
+  chi-squared test look at this type of error.
+
+\item[$u$-resolution]
+  the maximal tolerated $u$-error for an approximate inverse CDF.
+
+\item[$x$-error]
+  for a given approximate inverse CDF $X=G^{-1}(U)$ the $x$-error is
+  given as 
+  \[ \mbox{$x$-error} = |F^{-1}(U)-G^{-1}(U)| \]
+  where $F^{-1}$ denotes the exact inverse CDF.
+  The $x$-error measure the deviation of $G^{-1}(U)$
+  from the exact result.
+  Notice that we have to distinguish between \emph{absolute} and
+  \emph{relative} $x$-error. In UNU.RAN we use the absolute $x$-error
+  near $0$ and the relative $x$-error otherwise,
+  see \autoref{sec:inverror} for more details.
+
+\item[$x$-resolution]
+  the maximal tolerated $x$-error for an approximate inverse CDF.
+
 \end{labeling}
 
 % ---------------------------------------------------------------------------

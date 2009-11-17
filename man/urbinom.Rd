@@ -7,15 +7,16 @@
 
 \description{
   UNU.RAN random variate generator for the Binomial distribution
-  with parameters \code{size}and \code{prob}.
+  with parameters \code{size} and \code{prob}.
   It also allows sampling from the truncated distribution.
   
-  [Distribution] -- Sampling Function: Binomial.  %% Discrete
+  [Special Generator] -- Sampling Function: Binomial.  %% Discrete
 }
 
 \usage{
 urbinom(n, size, prob, lb = 0, ub = size)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{size}{number of trials (one or more).}
@@ -27,8 +28,9 @@ urbinom(n, size, prob, lb = 0, ub = size)
 \details{
   The Binomial distribution with \code{size} \eqn{= n} and
   \code{prob} \eqn{= p} has density
-  \deqn{p(x) = {n \choose x} {p}^{x} {(1-p)}^{n-x}}{
-    p(x) = choose(n,x) p^x (1-p)^(n-x)}
+  \deqn{
+    p(x) = {n \choose x} {p}^{x} {(1-p)}^{n-x}
+  }{p(x) = choose(n,x) p^x (1-p)^(n-x)}
   for \eqn{x = 0, \ldots, n}.
 
   The generation algorithm uses guide table based inversion. The parameters
@@ -50,7 +52,7 @@ urbinom(n, size, prob, lb = 0, ub = size)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -67,5 +69,3 @@ x <- urbinom(n=1000,size=10,prob=0.3)
 }
 
 \keyword{distribution}
-\keyword{datagen}
-

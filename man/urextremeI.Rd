@@ -11,12 +11,13 @@
   location parameter \code{location} and scale parameter \code{scale}.
   It also allows sampling from the truncated distribution.
   
-  [Distribution] -- Sampling Function: Gumbel (extreme value type I).  %% Continuous
+  [Special Generator] -- Sampling Function: Gumbel (extreme value type I).  %% Continuous
 }
 
 \usage{
 urextremeI(n, location=0, scale=1, lb=-Inf, ub=Inf)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{location}{location parameter.}
@@ -30,10 +31,10 @@ urextremeI(n, location=0, scale=1, lb=-Inf, ub=Inf)
   the default values of \code{0} and \code{1} respectively.
 
   The Gumbel distribution with location \eqn{l} and scale \eqn{s} has
-  density
+  distribution function
   \deqn{
-    f(x) = \exp(-\exp(-\frac{x-l}{s}) - \frac{x-l}{s})}{%
-    f(x) = exp(-exp(-(x-l)/s) - (x-l)/s)}
+    F(x) = \exp(-\exp(-\frac{x-l}{s}))
+  }{F(x) = exp(-exp(-(x-l)/s))}
   for all \eqn{x}.
 
   The generation algorithm uses fast numerical inversion. The parameters
@@ -59,7 +60,7 @@ urextremeI(n, location=0, scale=1, lb=-Inf, ub=Inf)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -72,5 +73,3 @@ x <- urextremeI(n=1000)
 }
 
 \keyword{distribution}
-\keyword{datagen}
-

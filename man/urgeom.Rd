@@ -10,12 +10,13 @@
   with parameter \code{prob}.
   It also allows sampling from the truncated distribution.
   
-  [Distribution] -- Sampling Function: Geometric.  %% Discrete
+  [Special Generator] -- Sampling Function: Geometric.  %% Discrete
 }
 
 \usage{
 urgeom(n, prob, lb = 0, ub = Inf)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{prob}{probability of success in each trial. \code{0 < prob <= 1}.}
@@ -25,8 +26,8 @@ urgeom(n, prob, lb = 0, ub = Inf)
 
 \details{
   The Geometric distribution with \code{prob} \eqn{= p} has density
-  \deqn{p(x) = p {(1-p)}^{x}}{p(x) = p (1-p)^x}
-  for \eqn{x = 0, 1, 2, \ldots}{x = 0, 1, 2, ...}, \eqn{0 < p \le 1}.
+  \deqn{p(x) = p (1-p)^x}
+  for \eqn{x = 0, 1, 2, \ldots}{x = 0, 1, 2, \ldots}, \eqn{0 < p \le 1}.
 
   The generation algorithm uses guide table based inversion for
   \eqn{p > 0.02} and method \sQuote{DARI} otherwise.
@@ -49,7 +50,7 @@ urgeom(n, prob, lb = 0, ub = Inf)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -66,5 +67,3 @@ x <- urgeom(n=1000,prob=0.2)
 }
 
 \keyword{distribution}
-\keyword{datagen}
-

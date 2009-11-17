@@ -2,6 +2,7 @@
 \docType{function}
 
 \alias{dari.new}
+\alias{darid.new}
 
 \title{UNU.RAN generator based on Discrete Automatic Rejection Inversion (DARI)}
 
@@ -14,7 +15,8 @@
 }
 
 \usage{
-dari.new(pmf, lb, ub, mode=NA, sum=1, ...)
+dari.new(pmf, lb, ub, mode=NA, sum=1, \dots)
+darid.new(distr)
 }
 \arguments{
   \item{pmf}{probability mass function. (\R function)}
@@ -24,7 +26,8 @@ dari.new(pmf, lb, ub, mode=NA, sum=1, ...)
     use \code{Inf} if unbounded from right. (numeric, integer)}
   \item{mode}{mode of distribution. (integer)}
   \item{sum}{sum over all \dQuote{probabilities}. (numeric)}
-  \item{...}{(optional) arguments for \code{pmf}}
+  \item{\dots}{(optional) arguments for \code{pmf}.}
+  \item{distr}{distribution object. (S4 object of class \code{"unuran.discr"})}
 }
 
 \details{
@@ -32,11 +35,11 @@ dari.new(pmf, lb, ub, mode=NA, sum=1, ...)
   (Discrete Automatic Rejection Inversion). It can be used to draw
   samples of a discrete random variate with given probability mass function
   using \code{\link{ur}}.
-  
-  The probabilities must be provided by a probability mass function
-  \code{pmf} which must return non-negative numbers and which need not
-  be normalized (i.e., it can be any multiple of a PMF).
-  Moreover, the given function must be \eqn{T_{-0.5}}{T_(-0.5)}-concave;
+
+  Function \code{pmf} must be postive but need not be normalized
+  (i.e., it can be any multiple of a probability mass function).
+
+  The given function must be \eqn{T_{-0.5}}{T_(-0.5)}-concave;
   this includes all log-concave distributions.
 
   In addition the algorithm requires the location of the \code{mode}.
@@ -44,10 +47,21 @@ dari.new(pmf, lb, ub, mode=NA, sum=1, ...)
 
   If the sum over all probabilities is different from 1 then a rough
   estimate of this sum is required.
+
+  Alternatively, one can use function \code{darid.new} where the object
+  \code{distr} of class \code{"unuran.discr"} must contain all required
+  information about the distribution.
+}
+
+\value{
+  An object of class \code{"unuran"}.
 }
 
 \seealso{
-  \code{\link{ur}}, \code{\link{unuran.new}}, \code{\linkS4class{unuran}}.
+  \code{\link{ur}},
+  \code{\linkS4class{unuran.discr}},
+  \code{\link{unuran.new}},
+  \code{\linkS4class{unuran}}.
 }
 
 \references{
@@ -60,7 +74,7 @@ dari.new(pmf, lb, ub, mode=NA, sum=1, ...)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \examples{
@@ -75,8 +89,12 @@ zipf <- function (x) { 1/x^3 }
 gen <- dari.new(pmf=zipf, lb=1, ub=Inf)
 x <- ur(gen,100)
 
+## Alternative approach
+distr <- udbinom(size=100,prob=0.3)
+gen <- darid.new(distr)
+x <- ur(gen,100)
+
 }
 
-\keyword{distribution}
 \keyword{datagen}
-
+\keyword{distribution}

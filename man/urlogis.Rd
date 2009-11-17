@@ -10,12 +10,13 @@
   parameters \code{location} and \code{scale}.
   It also allows sampling from the truncated distribution.
   
-  [Distribution] -- Sampling Function: Logistic.  %% Continuous
+  [Special Generator] -- Sampling Function: Logistic.  %% Continuous
 }
 
 \usage{
 urlogis(n, location=0, scale=1, lb=-Inf, ub=Inf)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{location}{location parameter.}
@@ -32,10 +33,11 @@ urlogis(n, location=0, scale=1, lb=-Inf, ub=Inf)
   \code{scale} \eqn{= \sigma}{= s} has distribution function
   \deqn{
     F(x) = \frac{1}{1 + e^{-(x-\mu)/\sigma}}%
-  }{F(x) = 1 / (1 + exp(-(x-m)/s))}  and density
+  }{F(x) = 1 / (1 + exp(-(x-m)/s))}
+  and density
   \deqn{
     f(x)= \frac{1}{\sigma}\frac{e^{(x-\mu)/\sigma}}{(1 + e^{(x-\mu)/\sigma})^2}%
-  }{f(x) = 1/s exp((x-m)/s) (1 + exp((x-m)/s))^-2.}
+  }{f(x) = 1/s exp((x-m)/s) (1 + exp((x-m)/s))^-2}
 
   The generation algorithm uses inversion. The parameters
   \code{lb} and \code{ub} can be used to generate variates from 
@@ -56,7 +58,7 @@ urlogis(n, location=0, scale=1, lb=-Inf, ub=Inf)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -73,5 +75,3 @@ x <- urlogis(n=1000)
 }
 
 \keyword{distribution}
-\keyword{datagen}
-

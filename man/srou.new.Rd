@@ -2,6 +2,7 @@
 \docType{function}
 
 \alias{srou.new}
+\alias{sroud.new}
 
 \title{UNU.RAN generator based on Simple Ratio-Of-Uniforms Method (SROU)}
 
@@ -14,7 +15,8 @@
 }
 
 \usage{
-srou.new(pdf, lb, ub, mode, area, islog=FALSE, r=1, ...)
+srou.new(pdf, lb, ub, mode, area, islog=FALSE, r=1, \dots)
+sroud.new(distr, r=1)
 }
 \arguments{
   \item{pdf}{probability density function. (\R function)}
@@ -26,8 +28,9 @@ srou.new(pdf, lb, ub, mode, area, islog=FALSE, r=1, ...)
   \item{area}{area below \code{pdf}. (numeric)}
   \item{islog}{whether \code{pdf} is given as log-density (the
     \code{dpdf} must then be the derivative of the log-density). (boolean)}
+  \item{\dots}{(optional) arguments for \code{pdf}.}
+  \item{distr}{distribution object. (S4 object of class \code{"unuran.cont"})}
   \item{r}{adjust algorithm to heavy-tailed distribution. (numeric)}
-  \item{...}{(optional) arguments for \code{pdf}}
 }
 
 \details{
@@ -35,16 +38,20 @@ srou.new(pdf, lb, ub, mode, area, islog=FALSE, r=1, ...)
   (Simple Ratio-Of-Uniforms Method). It can be used to draw samples of a
   continuous random variate with given probability density function
   using \code{\link{ur}}.
-  
-  The density must be provided by a function \code{pdf} which must
-  return non-negative numbers and which need not be normalized (i.e., it
-  can be any multiple of a density function).
+
+  The density \code{pdf} must be positive but need not be normalized
+  (i.e., it can be any multiple of a density function).
+  It must be \eqn{T_c}{T_c}-concave for
+  \eqn{c = -r/(r+1)}{c = -r/(r+1)}; this includes all log-concave
+  distributions.
+
   The (exact) location of the \code{mode} and the area below
   the \code{pdf} are essential.
-  Moreover, the given function must be \eqn{T_c}{T_c}-concave
-  for \eqn{c = -r/(r+1)}{c = -r/(r+1)};
-  this includes all log-concave distributions).
 
+  Alternatively, one can use function \code{sroud.new} where the object
+  \code{distr} of class \code{"unuran.cont"} must contain all required
+  information about the distribution.
+  
   The acceptance probability decreases with increasing parameter
   \code{r}. Thus it should be as small as possible. On the other hand it
   must be sufficiently large for heavy tailed distributions.
@@ -56,8 +63,15 @@ srou.new(pdf, lb, ub, mode, area, islog=FALSE, r=1, ...)
   that are heavier than those of the Cauchy distribution.
 }
 
+\value{
+  An object of class \code{"unuran"}.
+}
+
 \seealso{
-  \code{\link{ur}}, \code{\link{unuran.new}}, \code{\linkS4class{unuran}}.
+  \code{\link{ur}},
+  \code{\linkS4class{unuran.cont}},
+  \code{\link{unuran.new}},
+  \code{\linkS4class{unuran}}.
 }
 
 \references{
@@ -69,7 +83,7 @@ srou.new(pdf, lb, ub, mode, area, islog=FALSE, r=1, ...)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \examples{
@@ -83,8 +97,12 @@ x <- ur(gen,100)
 gen <- srou.new(pdf=dnorm, lb=-Inf, ub=Inf, mode=0, area=1)
 x <- ur(gen,100)
 
+## Alternative approach
+distr <- udnorm()
+gen <- sroud.new(distr)
+x <- ur(gen,100)
+
 }
 
-\keyword{distribution}
 \keyword{datagen}
-
+\keyword{distribution}

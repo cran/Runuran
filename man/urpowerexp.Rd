@@ -10,12 +10,13 @@
   distribution with shape parameter \code{shape}.
   It also allows sampling from the truncated distribution.
   
-  [Distribution] -- Sampling Function: Powerexponential (Subbotin).  %% Continuous
+  [Special Generator] -- Sampling Function: Powerexponential (Subbotin).  %% Continuous
 }
 
 \usage{
 urpowerexp(n, shape, lb = -Inf, ub = Inf)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{shape}{(strictly positive) shape parameter.}
@@ -27,8 +28,8 @@ urpowerexp(n, shape, lb = -Inf, ub = Inf)
   The Powerexponential distribution with parameter \code{shape}
   \eqn{=\tau}{= t} has density
   \deqn{
-    f(x) = \frac{1}{2\Gamma(1+1/\tau)} \exp(-|x|^\tau)}{%
-    f(x) = 1/(2 * Gamma(1+1/t)) * exp(-|x|^t )}
+    f(x) = \frac{1}{2\Gamma(1+1/\tau)} \exp(-|x|^\tau)
+  }{f(x) = 1/(2 * Gamma(1+1/t)) * exp(-|x|^t )}
   for all \eqn{x} and \eqn{\tau > 0}{t > 0}.
   (Here \eqn{\Gamma(\alpha)}{Gamma(a)} is the function implemented by \R's
   \code{\link{gamma}()} and defined in its help.)
@@ -56,7 +57,7 @@ urpowerexp(n, shape, lb = -Inf, ub = Inf)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -69,5 +70,3 @@ x <- urpowerexp(n=1000, shape=4)
 }
 
 \keyword{distribution}
-\keyword{datagen}
-

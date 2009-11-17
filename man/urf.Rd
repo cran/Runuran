@@ -10,12 +10,13 @@
   with \code{df1} and \code{df2} degrees of freedom.
   It also allows sampling from the truncated distribution.
   
-  [Distribution] -- Sampling Function: F.  %% Continuous
+  [Special Generator] -- Sampling Function: F.  %% Continuous
 }
 
 \usage{
 urf(n, df1, df2, lb=0, ub=Inf)
 }
+
 \arguments{
   \item{n}{size of required sample.}
   \item{df1, df2}{(strictly positive) degrees of freedom. Non-integer
@@ -31,9 +32,7 @@ urf(n, df1, df2, lb=0, ub=Inf)
     f(x) = \frac{\Gamma(n_1/2 + n_2/2)}{\Gamma(n_1/2)\Gamma(n_2/2)}
     \left(\frac{n_1}{n_2}\right)^{n_1/2} x^{n_1/2 -1}
     \left(1 + \frac{n_1 x}{n_2}\right)^{-(n_1 + n_2) / 2}%
-  }{f(x) = Gamma((n1 + n2)/2) / (Gamma(n1/2) Gamma(n2/2))
-    (n1/n2)^(n1/2) x^(n1/2 - 1)
-    (1 + (n1/n2) x)^-(n1 + n2)/2}
+  }{f(x) = Gamma((n1 + n2)/2) / (Gamma(n1/2) Gamma(n2/2)) * (n1/n2)^(n1/2) x^(n1/2 - 1) * (1 + (n1/n2) x)^-(n1 + n2)/2}
   for \eqn{x > 0}.
 
   The generation algorithm uses fast numerical inversion. The parameters
@@ -55,7 +54,7 @@ urf(n, df1, df2, lb=0, ub=Inf)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \note{
@@ -72,5 +71,3 @@ x <- urf(n=1000,df1=3,df2=5)
 }
 
 \keyword{distribution}
-\keyword{datagen}
-

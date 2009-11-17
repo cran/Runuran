@@ -101,6 +101,79 @@ disadvantage that they may be slow or not exact, i.e. they compute
 approximate values. The methods \texttt{HINV}, \texttt{HINV} and
 \texttt{PINV} of UNU.RAN are such numerical inversion methods. 
 
+% ...........................................................................
+
+\subsubsection{Approximation Errors}
+\label{sec:inverror}
+
+For numerical inversion methods the approximation error is important
+for the quality of the generated point set. Let $X=G^{-1}(U)$ denote
+the approximate inverse CDF, and let $F$ and $F^{-1}$ be the exact CDF
+and inverse CDF of the distribution, resp.
+There are three measures for the approximation error:
+
+\begin{labeling}[~--~]{\hspace{1em}}
+\item[$u$-error]
+  is given by
+  \[ \mbox{$u$-error} = |U-F(G^{-1}(U))| \]
+  Goodness-of-fit tests like the Kolmogorov-Smirnov test or the
+  chi-squared test look at this type of error.
+  We are also convinced that it is the most suitable error measure for
+  Monte Carlo simulations as pseudo-random numbers and points of low
+  discrepancy sets are located on a grid of restricted resolution.
+  
+\item[$x$-error]
+  is given by 
+  \[
+  \begin{array}{l@{\;}c@{\;}l}
+    \mbox{absolute $x$-error} &=& |F^{-1}(U)-G^{-1}(U)| \\
+    \mbox{relative $x$-error} &=& |F^{-1}(U)-G^{-1}(U)|\cdot
+    |F^{-1}(U)|
+  \end{array}
+  \]
+  The x-error measure the deviation of $G^{-1}(U)$
+  from the exact result. This measure is suitable when the inverse
+  CDF is used as a quantile function in some computations.
+  The main problem with the $x$-error is that we have to use the
+  \emph{absolute $x$-error} for $X=F^{-1}(U)$ close to zero
+  and the \emph{relative $x$-error} in the tails.
+\end{labeling}
+
+We use the terms \emph{$u$-resolution} and \emph{$x$-resolution} as
+the maximal tolerated $u$-error and $x$-error, resp.
+
+UNU.RAN allows to set $u$-resolution and $x$-resolution
+independently. Both requirements must be fulfilled.
+We use the following strategy for checking whether the
+precision goal is reached:
+
+\begin{labeling}[:~]{\hspace{1em}}
+\item[checking $u$-error]
+  The u-error must be slightly smaller than the given u-resolution:
+  \[ |U-F(G^{-1}(U))| < 0.9\cdot \mbox{$u$-resolution}\;. \]
+  There is no necessity to consinder the relative $u$-error as we have
+  $0 < U < 1$.
+
+\item[checking $x$-error]
+  We combine absoute and relative $x$-error and use the criterion
+  \[
+  |F^{-1}(U)-G^{-1}(U)| < 
+  \mbox{$x$-resolution} \cdot (|G^{-1}(U)| + \mbox{$x$-resolution})\;
+  \]
+\end{labeling}
+
+\paragraph{Remark.}
+
+It should be noted here that the criterion based on the $u$-error is
+too stringent whereever the CDF is extremely steep (and thus the
+PDF has a pole or a high and narrow peak). This is in particular a
+problem for distributions with a pole (e.g., the gamma distribution
+with shape parameter less than 0.5).
+On the other hand using a criterion based on the $x$-error causes
+problems whereever the CDF is extremly flat. This is in particular
+the case in the (far) tails of heavy-tailed distributions (e.g.,
+for the Cauchy distribution).
+
 % ---------------------------------------------------------------------------
 
 \subsection{The Acceptance-Rejection Method}

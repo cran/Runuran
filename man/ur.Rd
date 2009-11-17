@@ -17,6 +17,7 @@
 ur(unr, n=1)
 unuran.sample(unr, n=1)
 }
+
 \arguments{
   \item{unr}{a \code{unuran} object.}
   \item{n}{sample size.}
@@ -33,7 +34,7 @@ unuran.sample(unr, n=1)
 
 \author{
   Josef Leydold and Wolfgang H\"ormann
-  \email{unuran@statmath.wu-wien.ac.at}.
+  \email{unuran@statmath.wu.ac.at}.
 }
 
 \examples{
