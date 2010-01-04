@@ -46,6 +46,12 @@ unr <- new("unuran", "normal()")
 unr
 print(unr)
 unuran.details(unr)
+unuran.details(unr,show=TRUE,return.list=FALSE)
+unuran.details(unr,show=TRUE,return.list=TRUE)
+unuran.details(unr,show=FALSE,return.list=TRUE)
+print(unuran.details(unr,show=FALSE,return.list=TRUE))
+unuran.details(unr,show=FALSE,return.list=FALSE)
+print(unuran.details(unr,show=FALSE,return.list=FALSE))
 
 ## Draw samples
 unuran.sample(unr)
@@ -74,6 +80,7 @@ unr <- new("unuran", "normal()", "arou")
 unr
 print(unr)
 unuran.details(unr)
+print(unuran.details(unr,show=TRUE,return.list=TRUE))
 
 ## remove (so that valgrind does not see lost memory from UNU.RAN)
 rm(unr)
@@ -240,6 +247,10 @@ unr <- pinv.new(dnorm,lb=0,ub=Inf)
 unuran.packed(unr) <- TRUE
 unr
 unuran.details(unr)
+unuran.details(unr,show=TRUE,return.list=TRUE)
+unuran.details(unr,show=FALSE,return.list=TRUE)
+print(unuran.details(unr,show=FALSE,return.list=TRUE))
+unuran.details(unr,show=FALSE,return.list=FALSE)
 rm(unr)
 
 ## check whether un/packing works/fails

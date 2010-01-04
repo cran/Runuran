@@ -544,6 +544,13 @@ Runuran_print (SEXP sexp_unur, SEXP sexp_help)
   struct unur_gen *gen = NULL;
   int help;
   const char *info;
+  SEXP sexp_info;
+
+  /* These two variables are used for replacing URNG in generator object */
+  /* while executing unur_gen_info(). However, this might change the     */
+  /* URNG permanently when the useR hits CRTL-C during execution!        */
+  /* So it is not used, yet!                                             */
+  /* UNUR_URNG *urng_tmp, *urng_aux_tmp; */
 
   /* Extract data list */
   sexp_data = GET_SLOT(sexp_unur, install("data"));
@@ -565,20 +572,34 @@ Runuran_print (SEXP sexp_unur, SEXP sexp_help)
   /* Extract help flag */
   help = *(INTEGER (AS_INTEGER (sexp_help)));
 
+  /* Replace URNG by UNU.RAN built-in URNG */
+  /* urng_aux_tmp = urng_tmp = unur_urng_builtin(); */
+  /* urng_aux_tmp = unur_chg_urng(gen, urng_aux_tmp ); */
+  /* urng_tmp = unur_chg_urng(gen, urng_tmp ); */
+
+  /* get state for the R built-in URNG */
+  GetRNGstate();
+
   /* get info string */
   info = unur_gen_info(gen,help);
-
-  /* print info string */
-  if (info) {
-    Rprintf("%s",info);
+  if (info==NULL) { 
+    /* this should not happen. but we want to protect against NULL. */
+    info = ""; 
   }
-  /*   else { */
-  /*     /\* no info string available *\/ */
-  /*     Rprintf("nix\n");  */
-  /*   } */
-  
-  /* nothing to return */
-  return R_NilValue;
+
+  /* update state for the R built-in URNG */
+  PutRNGstate();
+
+  /* restore URNG in generator object */
+  /* urng_aux_tmp = unur_chg_urng(gen, urng_aux_tmp ); */
+  /* urng_tmp = unur_chg_urng(gen, urng_tmp ); */
+  /* unur_urng_free(urng_tmp); */
+
+  /* create R string */
+  PROTECT(sexp_info = mkString(info));
+  UNPROTECT(1);
+  return sexp_info;
+
 } /* end of Runuran_print() */
 
 /*---------------------------------------------------------------------------*/

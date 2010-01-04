@@ -1,10 +1,21 @@
 
+Version 0.12.0: 2010-01-04
+	
+	- unuran.details() now has two new arguments 'show' and
+	  'return.list'. If 'return.list=TRUE' then the function returns
+	  a list that contains some of the data.
+
+	- some improved error messages
+
+	- fixed bug that caused unuran.details() to hang
+
+
 Version 0.11.0: 2009-11-17
 
 	- method 'r' is defunct. 
 	  Please use (the identical but faster function) 'ur'.
 
-	- new functions for creating S4 distributions objects for
+	- new functions for creating S4 distribution objects for
 	  special distributions:        
 
           continuous distributions:

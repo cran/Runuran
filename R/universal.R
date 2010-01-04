@@ -49,9 +49,13 @@ numerical.derivative <- function (x, func, lb=-Inf, ub=Inf, xmin=1, delta=1.e-7)
 ars.new <- function (logpdf, dlogpdf=NULL, lb, ub, ...) {
 
         ## check arguments
-        if (missing(logpdf) || !is.function(logpdf))
+        if (missing(logpdf) || !is.function(logpdf)) {
+           if (!missing(logpdf) && is(logpdf,"unuran.cont"))
+                stop ("argument 'logpdf' is UNU.RAN distribution object. Did you mean 'arsd.new'?")
+           else
                 stop ("argument 'logpdf' missing or invalid")
-
+        }
+        
         if (missing(lb) || missing(ub))
                 stop ("domain ('lb','ub') missing")
         
@@ -84,7 +88,7 @@ arsd.new <- function (distr) {
 
   ## check arguments
   if ( missing(distr) || !(isS4(distr) &&  is(distr,"unuran.cont")) )
-    stop ("argument 'distr' invalid")
+    stop ("argument 'distr' missing or invalid")
   
   ## create and return UNU.RAN object
   unuran.new(distr, "ars")
@@ -101,8 +105,12 @@ arsd.new <- function (distr) {
 itdr.new <- function (pdf, dpdf, lb, ub, pole, islog=FALSE, ...) {
 
         ## check arguments 
-        if (missing(pdf) || !is.function(pdf))
+        if (missing(pdf) || !is.function(pdf)) {
+           if (!missing(pdf) && is(pdf,"unuran.cont"))
+                stop ("argument 'pdf' is UNU.RAN distribution object. Did you mean 'itdrd.new'?")
+           else
                 stop ("argument 'pdf' missing or invalid")
+        }
         if (missing(dpdf) || !is.function(dpdf))
                 stop ("argument 'dpdf' missing or invalid")
         if (missing(pole) || !is.numeric(pole)) 
@@ -128,7 +136,7 @@ itdrd.new <- function (distr) {
 
   ## check arguments
   if ( missing(distr) || !(isS4(distr) &&  is(distr,"unuran.cont")) )
-    stop ("argument 'distr' invalid")
+    stop ("argument 'distr' missing or invalid")
 
   ## create and return UNU.RAN object
   unuran.new(distr, "itdr")
@@ -147,6 +155,9 @@ pinv.new <- function (pdf, cdf, lb, ub, islog=FALSE, center=0, uresolution=1.e-1
         ## check arguments
         if (missing(pdf) && missing(cdf))
                 stop ("argument 'pdf' or 'cdf' required")
+        if (!missing(pdf) && is(pdf,"unuran.cont"))
+                stop ("argument 'pdf' is UNU.RAN distribution object. Did you mean 'pinvd.new'?")
+
         if (!is.numeric(center))
                 stop ("argument 'center' invalid")
         if (!is.numeric(uresolution))
@@ -193,7 +204,7 @@ pinvd.new <- function (distr, uresolution=1.e-10) {
 
   ## check arguments
   if ( missing(distr) || !(isS4(distr) &&  is(distr,"unuran.cont")) )
-    stop ("argument 'distr' invalid")
+    stop ("argument 'distr' missing or invalid")
 
   ## create and return UNU.RAN object
   method <- paste("pinv;u_resolution=",uresolution, sep="")
@@ -211,8 +222,12 @@ pinvd.new <- function (distr, uresolution=1.e-10) {
 srou.new <- function (pdf, lb, ub, mode, area, islog=FALSE, r=1, ...) {
 
         ## check arguments
-        if (missing(pdf) || !is.function(pdf))
+        if (missing(pdf) || !is.function(pdf)) {
+           if (!missing(pdf) && is(pdf,"unuran.cont"))
+                stop ("argument 'pdf' is UNU.RAN distribution object. Did you mean 'sroud.new'?")
+           else
                 stop ("argument 'pdf' missing or invalid")
+        }
         if (missing(mode) || !is.numeric(mode))
                 stop ("argument 'mode' missing or invalid")
         if (missing(area) || !is.numeric(area))
@@ -238,7 +253,7 @@ sroud.new <- function (distr, r=1) {
 
   ## check arguments
   if ( missing(distr) || !(isS4(distr) &&  is(distr,"unuran.cont")) )
-    stop ("argument 'distr' invalid")
+    stop ("argument 'distr' missing or invalid")
 
   ## create and return UNU.RAN object
   method <- paste("srou; r=",r, sep="")
@@ -256,8 +271,12 @@ sroud.new <- function (distr, r=1) {
 tdr.new <- function (pdf, dpdf=NULL, lb, ub, islog=FALSE, ...) {
 
         ## check arguments
-        if (missing(pdf) || !is.function(pdf))
+        if (missing(pdf) || !is.function(pdf)) {
+           if (!missing(pdf) && is(pdf,"unuran.cont"))
+                stop ("argument 'pdf' is UNU.RAN distribution object. Did you mean 'tdrd.new'?")
+           else
                 stop ("argument 'pdf' missing or invalid")
+        }
 
         if (missing(lb) || missing(ub))
                 stop ("domain ('lb','ub') missing")
@@ -291,7 +310,7 @@ tdrd.new <- function (distr) {
 
   ## check arguments
   if ( missing(distr) || !(isS4(distr) &&  is(distr,"unuran.cont")) )
-    stop ("argument 'distr' invalid")
+    stop ("argument 'distr' missing or invalid")
 
   ## create and return UNU.RAN object
   unuran.new(distr, "tdr")
@@ -314,9 +333,13 @@ tdrd.new <- function (distr) {
 
 dari.new <- function (pmf, lb, ub, mode=NA, sum=1, ...) {
         
-        ## check arguemngts
-        if (missing(pmf) || !is.function(pmf))
+        ## check arguments
+        if (missing(pmf) || !is.function(pmf)) {
+           if (!missing(pmf) && is(pmf,"unuran.discr"))
+                stop ("argument 'pmf' is UNU.RAN distribution object. Did you mean 'darid.new'?")
+           else
                 stop ("argument 'pmf' missing or invalid")
+        }
 
         if (missing(lb) || missing(ub))
                 stop ("domain ('lb','ub') missing")
@@ -337,7 +360,7 @@ darid.new <- function (distr) {
 
   ## check arguments
   if ( missing(distr) || !(isS4(distr) &&  is(distr,"unuran.discr")) )
-    stop ("argument 'distr' invalid")
+    stop ("argument 'distr' missing or invalid")
 
   ## create and return UNU.RAN object
   unuran.new(distr, "dari")
@@ -357,8 +380,12 @@ darid.new <- function (distr) {
 dau.new <- function (pv, from=1) {
 
         ## check arguments
-        if (missing(pv) || !is.numeric(pv))
+        if (missing(pv) || !is.numeric(pv)) {
+           if (!missing(pv) && is(pv,"unuran.discr"))
+                stop ("argument 'pv' is UNU.RAN distribution object. Did you mean 'daud.new'?")
+           else
                 stop ("argument 'pv' missing or invalid")
+        }
 
         ## S4 class for discrete distribution
         distr <- new("unuran.discr",pv=pv,lb=from,ub=Inf)
@@ -373,7 +400,7 @@ daud.new <- function (distr) {
 
   ## check arguments
   if ( missing(distr) || !(isS4(distr) &&  is(distr,"unuran.discr")) )
-    stop ("argument 'distr' invalid")
+    stop ("argument 'distr' missing or invalid")
 
   ## create and return UNU.RAN object
   unuran.new(distr, "dau")
@@ -393,8 +420,12 @@ daud.new <- function (distr) {
 dgt.new <- function (pv, from=1) {
 
         ## check arguments
-        if (missing(pv) || !is.numeric(pv))
+        if (missing(pv) || !is.numeric(pv)) {
+           if (!missing(pv) && is(pv,"unuran.discr"))
+                stop ("argument 'pv' is UNU.RAN distribution object. Did you mean 'dgtd.new'?")
+           else
                 stop ("argument 'pv' missing or invalid")
+        }
 
         ## S4 class for discrete distribution
         distr <- new("unuran.discr",pv=pv,lb=from,ub=Inf)
@@ -409,7 +440,7 @@ dgtd.new <- function (distr) {
 
   ## check arguments
   if ( missing(distr) || !(isS4(distr) &&  is(distr,"unuran.discr")) )
-    stop ("argument 'distr' invalid")
+    stop ("argument 'distr' missing or invalid")
 
   ## create and return UNU.RAN object
   unuran.new(distr, "dgt")

@@ -183,7 +183,7 @@ setMethod( "print", "unuran",
                   cat("\nObject is UNU.RAN object:\n")
                   cat("\tmethod: ",x@method.str,"\n")
                   cat("\tdistr:  ",x@distr.str,"\n\n")
-                  .Call("Runuran_print", x, FALSE, PACKAGE="Runuran")
+                  cat(.Call("Runuran_print", x, FALSE, PACKAGE="Runuran"))
                   cat("")
 } )
 
@@ -192,12 +192,18 @@ setMethod( "show", "unuran",
 
 ## unuran.details
 ## (print for information and hints)
-unuran.details <- function(unr) {
-        cat("\nObject is UNU.RAN object:\n")
-        cat("\tmethod: ",unr@method.str,"\n")
-        cat("\tdistr:  ",unr@distr.str,"\n\n")
-        .Call("Runuran_print", unr, TRUE, PACKAGE="Runuran")
-        cat("")
+unuran.details <- function(unr, show=TRUE, return.list=FALSE) {
+  if (isTRUE(show)) {
+    cat("\nObject is UNU.RAN object:\n")
+    cat("\tmethod: ",unr@method.str,"\n")
+    cat("\tdistr:  ",unr@distr.str,"\n\n")
+    info <- .Call("Runuran_print", unr, TRUE, PACKAGE="Runuran")
+    cat(info)
+  }
+  if (isTRUE(return.list)) {
+    data <- .Call("Runuran_performance", unr, PACKAGE="Runuran")
+    invisible(data)
+  }
 }
 
 
