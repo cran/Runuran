@@ -20,6 +20,7 @@ struct unur_gen *_unur_generic_create( struct unur_par *par, size_t s );
 struct unur_gen *_unur_generic_clone( const struct unur_gen *gen, const char *type );
 #define _unur_gen_clone(gen)    ((gen)->clone(gen))
 void _unur_generic_free( struct unur_gen *gen );
+int _unur_gen_is_inversion ( struct unur_gen *gen );
 struct unur_gen **_unur_gen_list_set( struct unur_gen *gen, int n_gen_list );
 struct unur_gen **_unur_gen_list_clone( struct unur_gen **gen_list, int n_gen_list );
 void _unur_gen_list_free( struct unur_gen **gen_list, int n_gen_list );

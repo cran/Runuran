@@ -62,6 +62,11 @@ SEXP Runuran_performance (SEXP sexp_unur);
 /* Get some informations about UNU.RAN generator object in an R list.        */
 /*---------------------------------------------------------------------------*/
 
+SEXP Runuran_mixt (SEXP sexp_obj, SEXP sexp_prob, SEXP sexp_comp, SEXP sexp_inversion);
+/*---------------------------------------------------------------------------*/
+/* Create UNU.RAN generator object for mixture of distribution.              */
+/*---------------------------------------------------------------------------*/
+
 
 /*****************************************************************************/
 /* UNU.RAN distribution objects                                              */
@@ -152,6 +157,17 @@ void _Runuran_distr_free(SEXP sexp_distr);
 /* Free UNU.RAN distribution object.                                         */
 /*---------------------------------------------------------------------------*/
 
+SEXP _Runuran_tag(void); 
+/*---------------------------------------------------------------------------*/
+/* Make tag for R generator object [Contains static variable!]               */
+/*---------------------------------------------------------------------------*/
+
+void _Runuran_free(SEXP sexp_gen);
+/*---------------------------------------------------------------------------*/
+/* Free UNU.RAN generator object.                                            */
+/*---------------------------------------------------------------------------*/
+
+
 /*****************************************************************************/
 /* Special packing functions                                                 */
 
@@ -169,3 +185,5 @@ SEXP _Runuran_quantile_pinv (SEXP sexp_data, SEXP sexp_U, SEXP sexp_unur);
 /*---------------------------------------------------------------------------*/
 /* Evaluate approximate quantile function:  use R data list (packed object)  */
 /*---------------------------------------------------------------------------*/
+
+

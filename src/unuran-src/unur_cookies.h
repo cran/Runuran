@@ -58,6 +58,8 @@
 #define CK_EMPL_GEN      0x00100111u
 #define CK_HIST_PAR      0x00100120u
 #define CK_HIST_GEN      0x00100121u
+#define CK_MIXT_PAR      0x00110130u
+#define CK_MIXT_GEN      0x00110131u
 #define CK_MVTDR_PAR     0x00200010u
 #define CK_MVTDR_GEN     0x00200010u
 #define CK_VMT_PAR       0x00200020u

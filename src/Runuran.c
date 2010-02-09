@@ -41,8 +41,10 @@
 #include <unuran.h>
 #include "Runuran.h"
 
+/* internal header files for UNU.RAN */
 #include <unur_source.h>
 #include <methods/unur_methods_source.h>
+#include <methods/x_gen_source.h>
 
 /*---------------------------------------------------------------------------*/
 
@@ -66,11 +68,6 @@ static SEXP _Runuran_quantile_data (SEXP sexp_data, SEXP sexp_U, SEXP sexp_unur)
 /* Evaluate approximate quantile function:  use R data list (packed object)  */
 /*---------------------------------------------------------------------------*/
 
-static void _Runuran_free(SEXP sexp_gen);
-/*---------------------------------------------------------------------------*/
-/* Free UNU.RAN generator object.                                            */
-/*---------------------------------------------------------------------------*/
-
 static void _Runuran_error_handler( 
 	const char *objid, const char *file, int line,
         const char *errortype, int errorcode, const char *reason );
@@ -81,11 +78,6 @@ static void _Runuran_error_handler(
 static double _Runuran_R_unif_rand (void *unused);
 /*---------------------------------------------------------------------------*/
 /* Wrapper for R built-in uniform random number generator.                   */
-/*---------------------------------------------------------------------------*/
-
-static SEXP _Runuran_tag(void); 
-/*---------------------------------------------------------------------------*/
-/* Make tag for R generator object [Contains static variable!]               */
 /*---------------------------------------------------------------------------*/
 
 #define CHECK_UNUR_PTR(s) do { \
@@ -395,14 +387,9 @@ _Runuran_quantile_unur (struct unur_gen *gen, SEXP sexp_U)
   n = length(sexp_U);
 
   /* check whether UNU.RAN object implements inversion method */
-  switch (gen->method) {
-  case UNUR_METH_DGT:
-  case UNUR_METH_HINV:
-  case UNUR_METH_NINV:
-  case UNUR_METH_PINV:
-    break;
-  default:
-    error("[UNU.RAN - error] invalid UNU.RAN object: inversion method required!\n\tUse methods 'HINV', 'NINV', 'PINV'; or 'DGT'");
+  if (! _unur_gen_is_inversion(gen)) {
+    error("[UNU.RAN - error] invalid UNU.RAN object: inversion method required!\n\
+\tUse methods 'HINV', 'NINV', 'PINV'; or 'DGT'");
   }
 
   /* evaluate inverse CDF */

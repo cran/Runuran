@@ -1,4 +1,10 @@
 
+Version 0.13.0: 2010-02-09
+
+	- added new function mixt.new() for creating a generator for a
+	  finite mixture of (continuous/discrete) univariate distributions.
+
+
 Version 0.12.0: 2010-01-04
 	
 	- unuran.details() now has two new arguments 'show' and

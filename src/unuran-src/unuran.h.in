@@ -133,6 +133,9 @@
 #include <methods/dstd.h>     /* discrete   */
 #include <methods/mvstd.h>    /* multivariate continuous */
 
+/* meta methods */
+#include <methods/mixt.h>
+
 /* wrapper for external random variate generators */
 #include <methods/cext.h>     /* continuous */
 #include <methods/dext.h>     /* discrete */

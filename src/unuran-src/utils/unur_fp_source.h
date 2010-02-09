@@ -4,14 +4,14 @@
 #ifndef UNUR_FP_SOURCE_H_SEEN
 #define UNUR_FP_SOURCE_H_SEEN
 int _unur_FP_cmp( double x1, double x2, double eps);
-#define _unur_FP_cmp_same(a,b) (_unur_FP_cmp(a,b,DBL_EPSILON))
-#define _unur_FP_cmp_equal(a,b) (_unur_FP_cmp(a,b,UNUR_EPSILON))
-#define _unur_FP_cmp_approx(a,b) (_unur_FP_cmp(a,b,UNUR_SQRT_DBL_EPSILON))
+#define _unur_FP_cmp_same(a,b) (_unur_FP_cmp((a),(b),DBL_EPSILON))
+#define _unur_FP_cmp_equal(a,b) (_unur_FP_cmp((a),(b),UNUR_EPSILON))
+#define _unur_FP_cmp_approx(a,b) (_unur_FP_cmp((a),(b),UNUR_SQRT_DBL_EPSILON))
 #define _unur_FP_same(a,b) (_unur_FP_cmp((a),(b),DBL_EPSILON)==0)
 #define _unur_FP_equal(a,b) (_unur_FP_cmp((a),(b),UNUR_EPSILON)==0)
 #define _unur_FP_approx(a,b) (_unur_FP_cmp((a),(b),UNUR_SQRT_DBL_EPSILON)==0)
-#define _unur_FP_less(a,b) ((_unur_FP_cmp(a,b,UNUR_EPSILON)<0) ? TRUE : FALSE)
-#define _unur_FP_greater(a,b) ((_unur_FP_cmp(a,b,UNUR_EPSILON)>0) ? TRUE : FALSE)
+#define _unur_FP_less(a,b) ((_unur_FP_cmp((a),(b),UNUR_EPSILON)<0) ? TRUE : FALSE)
+#define _unur_FP_greater(a,b) ((_unur_FP_cmp((a),(b),UNUR_EPSILON)>0) ? TRUE : FALSE)
 #define _unur_iszero(x)     ((x)==0.0)
 #define _unur_isone(x)      ((x)==1.0)
 #define _unur_isfsame(x,y)  ((x)==(y))

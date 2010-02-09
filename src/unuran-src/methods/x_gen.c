@@ -8,6 +8,8 @@
 #include <methods/cstd_struct.h>
 #include <methods/dgt.h>
 #include <methods/hinv.h>
+#include <methods/mixt.h>
+#include <methods/mixt_struct.h>
 #include <methods/ninv.h>
 #include <methods/pinv.h>
 #include "unur_methods_source.h"
@@ -77,6 +79,7 @@ unur_sample_matr( struct unur_gen *gen, double *matrix )
 double
 unur_quantile ( struct unur_gen *gen, double U )
 {
+  CHECK_NULL(gen,FALSE);
   switch (gen->method) {
   case UNUR_METH_HINV:
     return unur_hinv_eval_approxinvcdf(gen,U);
@@ -85,15 +88,35 @@ unur_quantile ( struct unur_gen *gen, double U )
   case UNUR_METH_PINV:
     return unur_pinv_eval_approxinvcdf(gen,U);
   case UNUR_METH_CSTD:
-#define GEN ((struct unur_cstd_gen*)gen->datap) 
-    if (GEN->is_inversion)
+    if (((struct unur_cstd_gen*)gen->datap)->is_inversion)
       return unur_cstd_eval_invcdf(gen,U);
-#undef GEN
+    break;
+  case UNUR_METH_MIXT:
+    if (((struct unur_mixt_gen*)gen->datap)->is_inversion)
+      return unur_mixt_eval_invcdf(gen,U);
+    break;
   case UNUR_METH_DGT:
-    return ((double) unur_dgt_eval_invcdf(gen,U));
+    return ((double) unur_dgt_eval_invcdf(gen,U,NULL));
+  }
+  _unur_error(gen->genid,UNUR_ERR_NO_QUANTILE,"");
+  return UNUR_INFINITY;
+} 
+int
+_unur_gen_is_inversion ( struct unur_gen *gen )
+{
+  CHECK_NULL(gen,FALSE);
+  switch (gen->method) {
+  case UNUR_METH_HINV:
+  case UNUR_METH_NINV:
+  case UNUR_METH_PINV:
+  case UNUR_METH_DGT:
+    return TRUE;
+  case UNUR_METH_CSTD:
+    return (((struct unur_cstd_gen*)gen->datap)->is_inversion);
+  case UNUR_METH_MIXT:
+    return (((struct unur_mixt_gen*)gen->datap)->is_inversion);
   default:
-    _unur_error(gen->genid,UNUR_ERR_NO_QUANTILE,"");
-    return UNUR_INFINITY;
+    return FALSE;
   }
 } 
 int
@@ -233,6 +256,7 @@ _unur_generic_create( struct unur_par *par, size_t s )
   gen->urng_aux = par->urng_aux;    
   gen->gen_aux = NULL;              
   gen->gen_aux_list = NULL;         
+  gen->n_gen_aux_list = 0;
   gen->status = UNUR_FAILURE;       
 #ifdef UNUR_ENABLE_INFO
   gen->infostr = NULL;              
@@ -259,8 +283,10 @@ _unur_generic_clone( const struct unur_gen *gen, const char *type )
     clone->distr = gen->distr;
   if (gen->gen_aux)
     clone->gen_aux = _unur_gen_clone( gen->gen_aux );
-  if (gen->gen_aux_list && gen->distr) 
-    clone->gen_aux_list = _unur_gen_list_clone( gen->gen_aux_list, gen->distr->dim );
+  if (gen->gen_aux_list && gen->n_gen_aux_list) {
+    clone->gen_aux_list = _unur_gen_list_clone( gen->gen_aux_list, gen->n_gen_aux_list );
+    clone->n_gen_aux_list = gen->n_gen_aux_list;
+  }
   return clone;
 } 
 void
@@ -268,8 +294,8 @@ _unur_generic_free( struct unur_gen *gen )
 { 
   if (gen->gen_aux)
     _unur_free(gen->gen_aux);
-  if (gen->gen_aux_list && gen->distr)
-    _unur_gen_list_free( gen->gen_aux_list, gen->distr->dim );
+  if (gen->gen_aux_list && gen->n_gen_aux_list)
+    _unur_gen_list_free( gen->gen_aux_list, gen->n_gen_aux_list );
   if (gen->distr_is_privatecopy && gen->distr)
     _unur_distr_free( gen->distr );
   _unur_free_genid(gen);

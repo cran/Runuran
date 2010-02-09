@@ -48,6 +48,7 @@
 #define UNUR_METH_CSTD     0x0200f100u   
 #define UNUR_METH_DSTD     0x0100f200u   
 #define UNUR_METH_MVSTD    0x0800f300u   
+#define UNUR_METH_MIXT     0x0200e100u   
 #define UNUR_METH_CEXT     0x0200f400u   
 #define UNUR_METH_DEXT     0x0100f500u   
 #define UNUR_METH_AUTO     0x00a00000u   

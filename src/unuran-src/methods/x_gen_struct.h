@@ -39,6 +39,7 @@ struct unur_gen {
   char *genid;                
   struct unur_gen *gen_aux;   
   struct unur_gen **gen_aux_list; 
+  int n_gen_aux_list;         
   size_t s_datap;             
   unsigned debug;             
   void (*destroy)(struct unur_gen *gen);  

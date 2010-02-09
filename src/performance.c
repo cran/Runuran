@@ -413,6 +413,13 @@ Runuran_performance (SEXP sexp_unur)
     break;
     /* ..................................................................... */
 
+  case UNUR_METH_MIXT:
+#define GEN ((struct unur_mixt_gen*)gen->datap)
+    METHOD("MIXT"); KIND_OTHER;
+#undef GEN
+    break;
+    /* ..................................................................... */
+
 #undef DISTR
 
 

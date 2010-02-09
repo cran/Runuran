@@ -272,6 +272,25 @@ if( ! is.error( unuran.packed(unr) <- TRUE ) )
 rm(unr)
 
 
+## --- mixture --------------------------------------------------------------
+
+comp <- c(unuran.new("normal"),unuran.new("cauchy"),unuran.new("exponential"))
+prob <- c(1,2,3)
+unr <- mixt.new(prob,comp)
+x <- unuran.sample(unr, 10)
+x
+rm(unr)
+
+comp <- c(pinvd.new(udnorm(lb=-Inf,ub=-1)),
+          pinvd.new(udcauchy(lb=-1,ub=1)),
+          pinvd.new(udexp(lb=1,ub=Inf)) )
+prob <- c(1,2,3)
+unr <- mixt.new(prob,comp,inversion=TRUE)
+x <- unuran.sample(unr, 10)
+x
+rm(unr)
+
+
 ## --- End ------------------------------------------------------------------
 
 silent <- gc()

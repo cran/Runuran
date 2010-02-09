@@ -2,7 +2,7 @@
 ##                                                                         ##
 ##   Runuran                                                               ##
 ##                                                                         ##
-##   (c) 2007, Josef Leydold and Wolfgang Hoermann                         ##
+##   (c) 2007-2010, Josef Leydold and Wolfgang Hoermann                    ##
 ##   Department for Statistics and Mathematics, WU Wien                    ##
 ##                                                                         ##
 #############################################################################
@@ -206,5 +206,48 @@ unuran.details <- function(unr, show=TRUE, return.list=FALSE) {
   }
 }
 
+
+## Mixture ------------------------------------------------------------------
+
+## UNU.RAN meta method for sampling from a mixture of distributions
+
+mixt.new <- function (prob, comp, inversion=FALSE) {
+
+  ## Check arguments
+  if (length(prob) != length(comp))
+    stop ("'prob' and 'comp' must have same length")
+  if (! is.numeric(prob))
+    stop ("invalid argment 'prob'")
+  if (! is.list(comp))
+    stop ("invalid argment 'comp'")
+
+  if (! is(comp[[1]],"unuran")) {
+    if (is(comp[[1]],"unuran.distr")) {
+      stop ("invalid argment: 'comp' must be list of generators not of distributions")
+    } else {
+      stop ("invalid argment: 'comp' must be list of generators")
+    }
+  }
+  
+  ## Create empty "unuran" object
+  ## Unfortunately we cannot use new(), since then method 'initialize'
+  ## is called which does not work at all in for this task.
+  ## Thus the following is copied from function new().
+  ClassDef <- getClass("unuran", where = topenv(parent.frame()))
+  .Object <- .Call("R_do_new_object", ClassDef, PACKAGE = "base")
+
+  ## Store informations 
+  .Object@distr.str <- "mixture of distributions"
+  .Object@method.str <- "mixt"
+
+  ## Create UNU.RAN object
+  .Object@unur <- .Call("Runuran_mixt", .Object, prob, comp, inversion, PACKAGE="Runuran")
+  if (is.null(.Object@unur)) {
+    stop("Cannot create UNU.RAN object", call.=FALSE)
+  }
+
+  ## Return new UNU.RAN object
+  .Object
+}
 
 ## End ----------------------------------------------------------------------

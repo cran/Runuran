@@ -213,9 +213,10 @@ _unur_dgt_sample( struct unur_gen *gen )
   return (j + DISTR.domain[0]);
 } 
 int
-unur_dgt_eval_invcdf( const struct unur_gen *gen, double u )
+unur_dgt_eval_invcdf( const struct unur_gen *gen, double u, double *recycle )
 {
   int j;
+  if (recycle) *recycle = 0.;
   _unur_check_NULL( GENTYPE, gen, INT_MAX );
   if ( gen->method != UNUR_METH_DGT ) {
     _unur_error(gen->genid,UNUR_ERR_GEN_INVALID,"");
@@ -233,6 +234,9 @@ unur_dgt_eval_invcdf( const struct unur_gen *gen, double u )
   j = GEN->guide_table[(int)(u * GEN->guide_size)];
   u *= GEN->sum;
   while (GEN->cumpv[j] < u) j++;
+  if (recycle) {
+    *recycle = 1. - (GEN->cumpv[j] - u) / DISTR.pv[j];
+  }
   j+=DISTR.domain[0];
   if (j<DISTR.domain[0]) j = DISTR.domain[0];
   if (j>DISTR.domain[1]) j = DISTR.domain[1];

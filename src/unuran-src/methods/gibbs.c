@@ -381,6 +381,7 @@ _unur_gibbs_create( struct unur_par *par )
   memcpy( GEN->x0, PAR->x0, GEN->dim * sizeof(double));
   GEN->distr_condi = NULL;
   GEN_CONDI = _unur_xmalloc( GEN->dim * sizeof(struct unur_gen *) );
+  gen->n_gen_aux_list = GEN->dim;   
   for (i=0; i<GEN->dim; i++) GEN_CONDI[i] = NULL;
   GEN->direction = _unur_xmalloc( GEN->dim * sizeof(double));
   GEN->coord = (GEN->dim)-1;      
