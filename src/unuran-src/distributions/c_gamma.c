@@ -102,6 +102,12 @@ _unur_upd_mode_gamma( UNUR_DISTR *distr )
     DISTR.mode = DISTR.domain[0];
   else if (DISTR.mode > DISTR.domain[1]) 
     DISTR.mode = DISTR.domain[1];
+  if (alpha < 1.) {
+    double center = alpha * beta + gamma;
+    center = _unur_max(center,DISTR.domain[0]);
+    center = _unur_min(center,DISTR.domain[1]);
+    unur_distr_cont_set_center(distr,center);
+  }
   return UNUR_SUCCESS;
 } 
 int

@@ -16,6 +16,7 @@ exportMethods(unuran.packed, "unuran.packed<-")
 export(unuran.new)
 export(unuran.sample)
 export(unuran.details)
+export(unuran.verify.hat)
 
 exportPattern("\\.new$")
 exportPattern("^ur")

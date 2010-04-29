@@ -201,7 +201,6 @@ unur_distr_beta( const double *params, int n_params )
   DISTR.dpdf    = _unur_dpdf_beta;    
   DISTR.dlogpdf = _unur_dlogpdf_beta; 
   DISTR.cdf     = _unur_cdf_beta;     
-  DISTR.cdf     = _unur_cdf_beta;     
   distr->set = ( UNUR_DISTR_SET_DOMAIN |
 		 UNUR_DISTR_SET_STDDOMAIN |
 		 UNUR_DISTR_SET_PDFAREA |

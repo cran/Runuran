@@ -11,6 +11,22 @@
 
 /*---------------------------------------------------------------------------*/
 
+/* R header files */
+#include <R.h>
+#include <Rdefines.h>
+#include <Rinternals.h>
+#include <R_ext/Rdynload.h>
+
+/* UNU.RAN header files */
+#include <unuran.h>
+
+/*****************************************************************************/
+/*                                                                           */
+/*   R <--> C programming interface (used in .Call)                          */
+/*   (public part)                                                           */
+/*                                                                           */
+/*****************************************************************************/
+
 /*****************************************************************************/
 /* Loading and unloading DLL                                                 */
 
@@ -24,8 +40,9 @@ void R_unload_Runuran (DllInfo *info);
 /* Clear memory before unloading the DLL.                                    */
 /*---------------------------------------------------------------------------*/
 
+
 /*****************************************************************************/
-/* UNU.RAN objects                                                           */
+/* Create and handle UNU.RAN generator objects                               */
 
 SEXP Runuran_init (SEXP sexp_obj, SEXP sexp_distr, SEXP sexp_method);
 /*---------------------------------------------------------------------------*/
@@ -57,27 +74,27 @@ SEXP Runuran_pack (SEXP sexp_unur);
 /* Pack Runuran objects into R lists                                         */
 /*---------------------------------------------------------------------------*/
 
-SEXP Runuran_performance (SEXP sexp_unur);
+SEXP Runuran_performance (SEXP sexp_unur, SEXP sexp_debug);
 /*---------------------------------------------------------------------------*/
 /* Get some informations about UNU.RAN generator object in an R list.        */
 /*---------------------------------------------------------------------------*/
+
+SEXP Runuran_verify_hat (SEXP sexp_unur, SEXP sexp_n);
+/*---------------------------------------------------------------------------*/
+/* Verify hat of UNU.RAN generator object that implements rejection method.  */
+/*---------------------------------------------------------------------------*/
+
+
+/*****************************************************************************/
+/* Meta methods                                                              */
 
 SEXP Runuran_mixt (SEXP sexp_obj, SEXP sexp_prob, SEXP sexp_comp, SEXP sexp_inversion);
 /*---------------------------------------------------------------------------*/
 /* Create UNU.RAN generator object for mixture of distribution.              */
 /*---------------------------------------------------------------------------*/
 
-
 /*****************************************************************************/
-/* UNU.RAN distribution objects                                              */
-
-SEXP Runuran_discr_init (SEXP sexp_obj, SEXP sexp_env,
-			 SEXP sexp_pv, SEXP sexp_pmf,
-			 SEXP sexp_mode, SEXP sexp_domain,
-			 SEXP sexp_sum, SEXP sexp_name);
-/*---------------------------------------------------------------------------*/
-/* Create and initialize UNU.RAN object for discrete distribution.           */
-/*---------------------------------------------------------------------------*/
+/* Create and handle UNU.RAN distribution objects                            */
 
 SEXP Runuran_cont_init (SEXP sexp_obj, SEXP sexp_env, 
 			SEXP sexp_cdf, SEXP sexp_pdf, SEXP sexp_dpdf, SEXP sexp_islog,
@@ -85,6 +102,14 @@ SEXP Runuran_cont_init (SEXP sexp_obj, SEXP sexp_env,
 			SEXP sexp_area, SEXP sexp_name);
 /*---------------------------------------------------------------------------*/
 /* Create and initialize UNU.RAN object for continuous distribution.         */
+/*---------------------------------------------------------------------------*/
+
+SEXP Runuran_discr_init (SEXP sexp_obj, SEXP sexp_env,
+			 SEXP sexp_pv, SEXP sexp_pmf,
+			 SEXP sexp_mode, SEXP sexp_domain,
+			 SEXP sexp_sum, SEXP sexp_name);
+/*---------------------------------------------------------------------------*/
+/* Create and initialize UNU.RAN object for discrete distribution.           */
 /*---------------------------------------------------------------------------*/
 
 SEXP Runuran_cmv_init (SEXP sexp_obj, SEXP sexp_env, 
@@ -131,7 +156,7 @@ UNUR_DISTR *_Runuran_get_std_discr( const char *name, const double *params, int 
 
 /*****************************************************************************/
 /*                                                                           */
-/* Internal functions (not used by .Call from R)                             */
+/*   Internal functions (not used by .Call from R)                           */
 /*                                                                           */
 /*****************************************************************************/
 
@@ -152,9 +177,14 @@ UNUR_DISTR *_Runuran_get_std_discr( const char *name, const double *params, int 
 /* Handle fatal error: print error message and exit.                         */
 /*---------------------------------------------------------------------------*/
 
-void _Runuran_distr_free(SEXP sexp_distr);
+void _Runuran_set_error_handler(int status);
 /*---------------------------------------------------------------------------*/
-/* Free UNU.RAN distribution object.                                         */
+/* set status of error handler (on / off).                                   */
+/*---------------------------------------------------------------------------*/
+
+void _Runuran_free(SEXP sexp_gen);
+/*---------------------------------------------------------------------------*/
+/* Free UNU.RAN generator object.                                            */
 /*---------------------------------------------------------------------------*/
 
 SEXP _Runuran_tag(void); 
@@ -162,10 +192,37 @@ SEXP _Runuran_tag(void);
 /* Make tag for R generator object [Contains static variable!]               */
 /*---------------------------------------------------------------------------*/
 
-void _Runuran_free(SEXP sexp_gen);
+void _Runuran_distr_free(SEXP sexp_distr);
 /*---------------------------------------------------------------------------*/
-/* Free UNU.RAN generator object.                                            */
+/* Free UNU.RAN distribution object.                                         */
 /*---------------------------------------------------------------------------*/
+
+SEXP _Runuran_distr_tag(void); 
+/*---------------------------------------------------------------------------*/
+/* Make tag for R object [Contains static variable!]                         */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/* Check pointer to R UNU.RAN generator object.                              */
+#ifdef RUNURAN_DEBUG
+#define CHECK_UNUR_PTR(s) do { \
+    if (TYPEOF(s) != EXTPTRSXP || R_ExternalPtrTag(s) != _Runuran_tag()) \
+      error("[UNU.RAN - error] invalid UNU.RAN object");		\
+  } while (0)
+#else
+#define CHECK_UNUR_PTR(s)  do {} while(0)
+#endif
+
+/*---------------------------------------------------------------------------*/
+/* Check pointer to R UNU.RAN distribution object.                           */
+#ifdef RUNURAN_DEBUG
+#define CHECK_DISTR_PTR(s) do { \
+    if (TYPEOF(s) != EXTPTRSXP || R_ExternalPtrTag(s) != _Runuran_distr_tag()) \
+      error("[UNU.RAN - error] invalid UNU.RAN distribution object");	\
+  } while (0)
+#else
+#define CHECK_DISTR_PTR(s)  do {} while(0)
+#endif
 
 
 /*****************************************************************************/
@@ -185,5 +242,4 @@ SEXP _Runuran_quantile_pinv (SEXP sexp_data, SEXP sexp_U, SEXP sexp_unur);
 /*---------------------------------------------------------------------------*/
 /* Evaluate approximate quantile function:  use R data list (packed object)  */
 /*---------------------------------------------------------------------------*/
-
 

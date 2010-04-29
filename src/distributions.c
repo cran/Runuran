@@ -30,12 +30,6 @@
 
 /*---------------------------------------------------------------------------*/
 
-#include <R.h>
-#include <Rdefines.h>
-#include <Rinternals.h>
-#include <R_ext/Rdynload.h>
-
-#include <unuran.h>
 #include "Runuran.h"
 
 /*---------------------------------------------------------------------------*/
@@ -44,6 +38,7 @@
     if ( strcmp( distribution, #name)==0 ) \
       return unur_distr_##name (params,n_params); \
     } while(0)
+
 
 /*****************************************************************************/
 /* Continuous distribution                                                   */
@@ -134,6 +129,7 @@ _Runuran_get_std_cont( const char *distribution, const double *params, int n_par
   return NULL;
 } /* _Runuran_get_std_cont() */
  
+
 /*****************************************************************************/
 /* Discrete distribution                                                     */
 

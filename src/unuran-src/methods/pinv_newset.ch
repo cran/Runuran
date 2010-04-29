@@ -15,6 +15,7 @@ unur_pinv_new( const struct unur_distr *distr )
   COOKIE_SET(par,CK_PINV_PAR);
   par->distr   = distr;           
   PAR->order = 5;                
+  PAR->smooth = 0;               
   PAR->u_resolution = 1.0e-10;   
   PAR->bleft = -1.e100;          
   PAR->bright = 1.e100;          
@@ -22,9 +23,9 @@ unur_pinv_new( const struct unur_distr *distr )
   PAR->sright = TRUE;            
   PAR->max_ivs = PINV_DEFAULT_MAX_IVS; 
   par->method   = UNUR_METH_PINV; 
-  par->variant  = ( (DISTR_IN.pdf != NULL)  
-		    ? PINV_VARIANT_PDF      
-		    : PINV_VARIANT_CDF );   
+  par->variant  = 0u;             
+  if (DISTR_IN.pdf != NULL)
+    par->variant |= PINV_VARIANT_PDF;  
   par->set      = 0u;                      
   par->urng     = unur_get_default_urng(); 
   par->urng_aux = NULL;                    
@@ -38,11 +39,24 @@ unur_pinv_set_order( struct unur_par *par, int order)
   _unur_check_NULL( GENTYPE, par, UNUR_ERR_NULL );
   _unur_check_par_object( par, PINV );
   if (order<3 || order>MAX_ORDER) {
-    _unur_warning(GENTYPE,UNUR_ERR_PAR_SET,"order <3 or >12");
+    _unur_warning(GENTYPE,UNUR_ERR_PAR_SET,"order <3 or >17");
     return UNUR_ERR_PAR_SET;
   }
   PAR->order = order;
   par->set |= PINV_SET_ORDER;
+  return UNUR_SUCCESS;
+} 
+int
+unur_pinv_set_smoothness( struct unur_par *par, int smooth)
+{
+  _unur_check_NULL( GENTYPE, par, UNUR_ERR_NULL );
+  _unur_check_par_object( par, PINV );
+  if (smooth<0 || smooth>2) {
+    _unur_warning(GENTYPE,UNUR_ERR_PAR_SET,"smoothness must be 0, 1, or 2");
+    return UNUR_ERR_PAR_SET;
+  }
+  PAR->smooth = smooth;
+  par->set |= PINV_SET_SMOOTH;
   return UNUR_SUCCESS;
 } 
 int
@@ -63,6 +77,18 @@ unur_pinv_set_u_resolution( struct unur_par *par, double u_resolution )
   return UNUR_SUCCESS;
 } 
 int
+unur_pinv_set_use_upoints( struct unur_par *par, int use_upoints )
+{
+  _unur_check_NULL( GENTYPE, par, UNUR_ERR_NULL );
+  _unur_check_par_object( par, PINV );
+  if (use_upoints)
+    par->variant |= PINV_VARIANT_UPOINTS;
+  else
+    par->variant &= ~PINV_VARIANT_UPOINTS;
+  par->set |= PINV_SET_UPOINTS;
+  return UNUR_SUCCESS;
+} 
+int
 unur_pinv_set_usepdf( struct unur_par *par )
 {
   _unur_check_NULL( GENTYPE, par, UNUR_ERR_NULL );
@@ -71,7 +97,7 @@ unur_pinv_set_usepdf( struct unur_par *par )
     _unur_warning(GENTYPE,UNUR_ERR_PAR_SET,"PDF missing");
     return UNUR_ERR_PAR_SET;
   }
-  par->variant = PINV_VARIANT_PDF;
+  par->variant |= PINV_VARIANT_PDF;
   par->set |= PINV_SET_VARIANT;
   return UNUR_SUCCESS;
 } 
@@ -84,7 +110,7 @@ unur_pinv_set_usecdf( struct unur_par *par )
     _unur_warning(GENTYPE,UNUR_ERR_PAR_SET,"CDF missing");
     return UNUR_ERR_PAR_SET;
   }
-  par->variant = PINV_VARIANT_CDF;
+  par->variant &= ~PINV_VARIANT_PDF;
   par->set |= PINV_SET_VARIANT;
   return UNUR_SUCCESS;
 } 

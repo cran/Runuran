@@ -16,8 +16,9 @@
 }
 
 \usage{
-pinv.new(pdf, cdf, lb, ub, islog=FALSE, center=0, uresolution=1.e-10, \dots)
-pinvd.new(distr, uresolution=1.e-10)
+pinv.new(pdf, cdf, lb, ub, islog=FALSE, center=0,
+         uresolution=1.e-10, smooth=FALSE, \dots)
+pinvd.new(distr, uresolution=1.e-10, smooth=FALSE)
 }
 \arguments{
   \item{pdf}{probability density function. (\R function)}
@@ -32,6 +33,7 @@ pinvd.new(distr, uresolution=1.e-10)
   \item{\dots}{(optional) arguments for \code{pdf} and \code{cdf}.}
   \item{distr}{distribution object. (S4 object of class \code{"unuran.cont"})}
   \item{uresolution}{maximal acceptable u-error. (numeric)}
+  \item{smooth}{whether the inverse CDF is differentiable. (boolean)}
 }
 
 \details{
@@ -59,8 +61,17 @@ pinvd.new(distr, uresolution=1.e-10)
   \code{distr} of class \code{"unuran.cont"} must contain all required
   information about the distribution.
 
-  The algorithms approximates the inverse of the CDF of the
-  distribution. The distribution error is estimated by means of the the
+  The algorithm approximates the inverse of the CDF of the
+  distribution by means of Newton interpolation between carefully
+  selected nodes. The approxiating functing is thus continuous.
+  Argument \code{smooth} controls whether this function is also
+  differentiable(\dQuote{smooth}) at the nodes.
+  Using \code{smooth=TRUE} requires the \code{pdf} of the
+  distribution. It results in a higher setup time and memory
+  consumption. Thus using \code{smooth=TRUE} is not
+  \emph{not recommended}, unless differentiability is important.
+
+  The approximation error is estimated by means of the the
   u-error, i.e., \eqn{|CDF(G(U)) - U|},
   where \eqn{G} denotes the approximation of the inverse CDF.
   The error can be controlled by means of argument \code{uresolution}.
@@ -87,8 +98,8 @@ pinvd.new(distr, uresolution=1.e-10)
 }
 
 \references{
-  G. Derflinger, W. H\"ormann, and J. Leydold (2009):
-  ACM Trans. Model. Comput. Simul., to appear.
+  G. Derflinger, W. H\"ormann, and J. Leydold (2010):
+  ACM Trans. Model. Comput. Simul., 20:4, #18
 }
 
 \author{
@@ -124,6 +135,10 @@ x <- ur(gen,100)
 
 ## We have to provide a 'center' when PDF (almost) vanishes at 0.
 gen <- pinv.new(pdf=dgamma, lb=0, ub=Inf, center=4, shape=5)
+x <- ur(gen,100)
+
+## We also can force a smoother approximation
+gen <- pinv.new(pdf=dnorm, lb=-Inf, ub=Inf, smooth=TRUE)
 x <- ur(gen,100)
 
 ## Alternative approach

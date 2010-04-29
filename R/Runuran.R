@@ -192,7 +192,7 @@ setMethod( "show", "unuran",
 
 ## unuran.details
 ## (print for information and hints)
-unuran.details <- function(unr, show=TRUE, return.list=FALSE) {
+unuran.details <- function(unr, show=TRUE, return.list=FALSE, debug=FALSE) {
   if (isTRUE(show)) {
     cat("\nObject is UNU.RAN object:\n")
     cat("\tmethod: ",unr@method.str,"\n")
@@ -200,8 +200,8 @@ unuran.details <- function(unr, show=TRUE, return.list=FALSE) {
     info <- .Call("Runuran_print", unr, TRUE, PACKAGE="Runuran")
     cat(info)
   }
-  if (isTRUE(return.list)) {
-    data <- .Call("Runuran_performance", unr, PACKAGE="Runuran")
+  if (isTRUE(return.list) || isTRUE(debug)) {
+    data <- .Call("Runuran_performance", unr, debug, PACKAGE="Runuran")
     invisible(data)
   }
 }
@@ -248,6 +248,58 @@ mixt.new <- function (prob, comp, inversion=FALSE) {
 
   ## Return new UNU.RAN object
   .Object
+}
+
+
+## Check --------------------------------------------------------------------
+
+## verify hat and squeeze of a rejection method.
+## it counts the number of violations, i.e.,
+## when (hat(x) < density(x) or squeeze(x) > density(x))
+
+unuran.verify.hat <- function (unr, n=1e5, show = TRUE) {
+
+  ## check arguments
+  if (! is(unr,"unuran"))
+    stop ("invalid argument 'unr'");
+  if (! (is.numeric(n) && n>10) )
+    stop ("invalid sample size 'n'");
+  
+  ## run test
+  failed <- .Call("Runuran_verify_hat", unr, n, PACKAGE="Runuran")
+  ratio <- failed / n
+  perc <- round(100*ratio,digits=2)
+
+  ## print diagnostics
+  if (isTRUE(show)) {
+    cat ("\n  Check inequality squeeze(x) <= density(x) <= hat(x) \n  for automatic rejection method:\n\n")
+    cat ("\t ",failed," out of ",n," (= ",perc,"%) points failed.\n\n", sep="")
+
+    if (isTRUE(all.equal(failed,0))) {
+      cat ("\t No problems have been detected!\n\n")
+    }
+    else if (ratio < 1e-4) {
+      cat ("\t Some points failed!\n")
+      cat ("\t Probably there are a few round-off errors.\n\n")
+    }
+    else if (ratio < 1e-3) {
+      cat ("\t Some points failed!\n")
+      cat ("\t These might be round-off errors.\n\n")
+    }
+    else if (ratio < 1e-2) {
+      cat ("\t Points failed!\n")
+      cat ("\t These might be round-off errors but the\n")
+      cat ("\t sampling distribution could deviate from the requested one.\n\n")
+    }
+    else {
+      cat ("\t Verifying hat and squeeze failed!\n")
+      cat ("\t The generator does not sample from the \n")
+      cat ("\t requested distribution!\n\n")
+    }
+  }
+
+  ## return ratio
+  invisible(ratio)
 }
 
 ## End ----------------------------------------------------------------------

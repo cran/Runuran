@@ -291,6 +291,40 @@ x
 rm(unr)
 
 
+## --- Check generator ------------------------------------------------------
+
+## run with defaults
+unr <- tdrd.new(udnorm())
+unuran.verify.hat(unr)
+rm(unr)
+
+## do not show result
+unr <- tdrd.new(udnorm())
+unuran.verify.hat(unr,show=FALSE)
+rm(unr)
+
+## another example
+pdf <- function(x) { -x - 0.999*log(x) }
+dpdf <- function(x) { -1 - 0.999/x }
+distr <- unuran.cont.new(pdf=pdf, dpdf=dpdf, islog=TRUE, lb=0, ub=0.5, mode=0)
+unr <- unuran.new(distr,method="itdr;cp=-0.999")
+unuran.verify.hat(unr)
+rm(unr); rm(distr); rm(pdf); rm(dpdf)
+
+## example where the hat violates condition hat(x) >= pdf(x)
+## it also stores the ratio in variable 'failed'
+unr <- unuran.new(udnorm(),method="nrou;v=0.6")
+failed <- unuran.verify.hat(unr)
+failed
+rm(unr); rm (failed)
+
+## Example for a method that does not implement rejection
+unr <- pinvd.new(udnorm())
+if (! is.error( unuran.verify.hat(unr) ) )
+  stop("method must throw error for inversion method")
+rm(unr)
+
+
 ## --- End ------------------------------------------------------------------
 
 silent <- gc()

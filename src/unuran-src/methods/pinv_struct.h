@@ -3,6 +3,7 @@
 
 struct unur_pinv_par { 
   int order;               
+  int smooth;              
   double u_resolution;     
   double bleft;            
   double bright;           
@@ -25,6 +26,7 @@ struct unur_pinv_gen {
   int     guide_size;      
   double  Umax;            
   double  u_resolution;    
+  int smooth;              
   double  bleft;           
   double  bright;          
   struct unur_pinv_interval *iv; 

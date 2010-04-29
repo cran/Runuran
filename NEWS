@@ -1,4 +1,17 @@
 
+Version 0.14.0: 2010-04-29
+
+	- new argument 'smooth' for function pinv.new().
+
+	- method PINV (pinv.new and pinvd.new) is now more robust 
+          for distributions with "rough" PDFs (e.g. those created by
+          spline interpolation).
+
+	- new function unuran.verify.hat():
+          Check hat and squeeze of method that implements a
+	  rejection method.
+
+
 Version 0.13.0: 2010-02-09
 
 	- added new function mixt.new() for creating a generator for a

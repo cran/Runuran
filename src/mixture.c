@@ -33,25 +33,7 @@
 
 /*---------------------------------------------------------------------------*/
 
-/* R header files */
-#include <R.h>
-#include <Rdefines.h>
-#include <Rinternals.h>
-#include <R_ext/Rdynload.h>
-
-/* UNU.RAN header files */
-#include <unuran.h>
 #include "Runuran.h"
-
-/*---------------------------------------------------------------------------*/
-
-#define CHECK_UNUR_PTR(s) do { \
-    if (TYPEOF(s) != EXTPTRSXP || R_ExternalPtrTag(s) != _Runuran_tag()) \
-      error("[UNU.RAN - error] invalid UNU.RAN object");		\
-  } while (0)
-/*---------------------------------------------------------------------------*/
-/* Check pointer to R UNU.RAN generator object.                              */
-/*---------------------------------------------------------------------------*/
 
 /*****************************************************************************/
 

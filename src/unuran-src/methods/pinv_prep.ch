@@ -4,24 +4,25 @@
 int
 _unur_pinv_preprocessing (struct unur_gen *gen)
 {
-  switch (gen->variant) {
-  case PINV_VARIANT_PDF:
+  double area_approx;
+  if (gen->variant & PINV_VARIANT_PDF) {
     if (_unur_pinv_relevant_support(gen) != UNUR_SUCCESS)
       return UNUR_FAILURE;
     if (_unur_pinv_approx_pdfarea(gen) != UNUR_SUCCESS)
       return UNUR_FAILURE;
+    area_approx = GEN->area; 
     if (_unur_pinv_computational_domain(gen) != UNUR_SUCCESS)
       return UNUR_FAILURE;
     if (_unur_pinv_pdfarea(gen) != UNUR_SUCCESS) 
       return UNUR_FAILURE;
-    break;
-  case PINV_VARIANT_CDF:
+    if (GEN->area < 0.99 * area_approx) {
+      _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"integration of pdf: numerical problems with cut-off points");
+      return UNUR_FAILURE;
+    }
+  }
+  else { 
     if (_unur_pinv_computational_domain_CDF(gen) != UNUR_SUCCESS)
       return UNUR_FAILURE;
-    break;
-  default:
-    _unur_error(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
-    return UNUR_FAILURE;
   }
   return UNUR_SUCCESS;
 } 
@@ -182,14 +183,14 @@ _unur_pinv_computational_domain (struct unur_gen *gen)
   tailcut_error *= GEN->area * PINV_UERROR_CORRECTION;
   range = GEN->bright-GEN->bleft;
   if(GEN->sleft) {
-    GEN->bleft = _unur_pinv_cut( gen, GEN->dleft, GEN->bleft, -range, tailcut_error);
+    GEN->bleft = _unur_pinv_cut( gen, GEN->bleft, -range, tailcut_error);
     if ( !_unur_isfinite(GEN->bleft) ) {
       _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"cannot find left boundary for computational domain");
       return UNUR_FAILURE;
     }
   }
   if(GEN->sright) {
-    GEN->bright = _unur_pinv_cut( gen, GEN->dright, GEN->bright, range, tailcut_error);
+    GEN->bright = _unur_pinv_cut( gen, GEN->bright, range, tailcut_error);
     if ( !_unur_isfinite(GEN->bright) ) {
       _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"cannot find right boundary for computational domain");
       return UNUR_FAILURE;
@@ -202,9 +203,8 @@ _unur_pinv_computational_domain (struct unur_gen *gen)
   return UNUR_SUCCESS;
 } 
 double
-_unur_pinv_cut( struct unur_gen *gen, double dom, double w, double dw, double crit )
+_unur_pinv_cut( struct unur_gen *gen, double w, double dw, double crit )
 {
-  double sgn = (dw>0) ? 1. : -1.; 
   double fl,fx,fr;  
   double x = w;     
   double dx;                                           
@@ -215,39 +215,63 @@ _unur_pinv_cut( struct unur_gen *gen, double dom, double w, double dw, double cr
   int i,j;          
   if (_unur_iszero(fabs(dw))) return w;
   x = w;
+  fx = PDF(x);
+#ifdef PINV_DEVEL
+  _unur_log_debug("%s: Find cut-off points on %s hand side near %g:\n",
+		  gen->genid, (dw>0)?"right":"left", x);
+#endif
   for (i=1; i<100; i++) {
+#ifdef PINV_DEVEL
+    _unur_log_debug("%s: (% 2d): x=%g, fx=%g\n", gen->genid, i, x, fx);
+#endif
     dx = (fabs(dw) + fabs(x-w)) * 1.e-3;
     if (x-dx < GEN->dleft)  dx = x - GEN->dleft;
     if (x+dx > GEN->dright) dx = GEN->dright - x;
     for (j=1;;j++) {
       dx = dx/2.;
       if (dx < 128.*DBL_EPSILON*fabs(dw)) {
+#ifdef PINV_DEVEL
+	_unur_log_debug("%s:\tclose to the boundary: dx=%g, dw=%g --> return %g\n",
+			gen->genid, dx, dw, x);
+#endif
 	return x;
       }
-      fx = PDF(x);
       fl = PDF(x-dx);
       fr = PDF(x+dx);
       if (! (_unur_iszero(fl) || _unur_iszero(fx) ||_unur_iszero(fr)) )
 	break;
     }
     df = (fr-fl)/(2.*dx);
+    lc = fl/(fl-fx)+fr/(fr-fx) - 1;
+    area = fabs(fx*fx / ((lc+1.) * df));
+#ifdef PINV_DEVEL
+    _unur_log_debug("%s:\tdx=%g, fl=%g, fr=%g, df=%g\n", gen->genid, dx,fl,fr,df);
+    _unur_log_debug("%s:\tlc = fl/(fl-fx)+fr/(fr-fx) - 1 = %g\n", gen->genid, lc);
+    _unur_log_debug("%s:\tarea = |fx^2/((lc+1.)*df)| = %g\n", gen->genid, area);
+#endif
     if (! _unur_isfinite(df)) {
       _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,
 		  "numerical problems with cut-off point, PDF too steep");
       return INFINITY;
     }
-    lc = fl/(fl-fx)+fr/(fr-fx) - 1;
-    area = fabs(fx*fx / ((lc+1.) * df));
+    if (  ((dw>0)?1.:-1.) * df > 0.) {
+      _unur_warning(gen->genid,UNUR_ERR_GEN_CONDITION,"PDF increasing towards boundary");
+      xnew = (dw>0) ? GEN->dright : GEN->dleft;
+      return _unur_pinv_cut_bisect(gen, x, xnew);
+    }
     if (_unur_isnan(area)) {
       _unur_warning(gen->genid,UNUR_ERR_NAN,"tail probability gives NaN --> assume 0.");
+#ifdef PINV_DEVEL
+      _unur_log_debug("%s:\treturn %g\n",gen->genid, x);
+#endif
       return x;
     }
-    if (sgn * df > 0.) {
-      _unur_warning(gen->genid,UNUR_ERR_GEN_CONDITION,"PDF not monotone at boundary");
+    if (fabs(area/crit-1.) < 1.e-4) {
+#ifdef PINV_DEVEL
+      _unur_log_debug("%s:\taccuracy goal reached --> return %g\n",gen->genid, x);
+#endif
       return x;
     }
-    if (fabs(area/crit-1.) < 1.e-4)
-      return x;
     if (_unur_iszero(lc)) {
       xnew = x + fx/df * log(crit*fabs(df)/(fx*fx));
     }
@@ -258,11 +282,54 @@ _unur_pinv_cut( struct unur_gen *gen, double dom, double w, double dw, double cr
       _unur_error(gen->genid,UNUR_ERR_NAN,"numerical problems with cut-off point");
       return INFINITY;
     }
-    if (sgn*dom < sgn*x) {
-      return dom;
+    if (xnew < GEN->dleft || xnew > GEN->dright) {
+      if ( (dw > 0 && xnew < GEN->dleft) ||
+    	   (dw < 0 && xnew > GEN->dright) ) {
+	_unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,
+		    "numerical problems with cut-off point, out of domain");
+	return INFINITY;
+      }
+      else {
+	xnew = (xnew < GEN->dleft) ? GEN->dleft : GEN->dright;
+#ifdef PINV_DEVEL
+	_unur_log_debug("%s:\tboundary exceeded --> return boundary %g\n",gen->genid, xnew);
+#endif
+	return _unur_pinv_cut_bisect(gen, x, xnew);
+      }
     }
+    fx = PDF(xnew);
+    if (_unur_iszero(fx))
+      return _unur_pinv_cut_bisect(gen, x, xnew);
     x = xnew;
   }
+#ifdef PINV_DEVEL
+  _unur_log_debug("%s:\tmaximum number of iterations exceeded --> return %g\n",gen->genid, x);
+#endif
+  return x;
+} 
+double
+_unur_pinv_cut_bisect (struct unur_gen *gen, double x0, double x1)
+{
+  double x,fx;
+  if (! (_unur_isfinite(x0) && _unur_isfinite(x1)) )
+    return INFINITY;
+  x = x1;
+  fx = PDF(x);
+  if (fx > 0.) return x;
+#ifdef PINV_DEVEL
+  _unur_log_debug("%s:\tpoint out of support --> find boundary by bisectioning\n",gen->genid);
+#endif
+  while ( !_unur_FP_equal(x0,x1) ) {
+    x = _unur_arcmean(x0,x1);
+    fx = PDF(x);
+    if (fx > 0.)
+      x0 = x;
+    else
+      x1 = x;
+  }
+#ifdef PINV_DEVEL
+  _unur_log_debug("%s:\treturn boundary of support = %g\n",gen->genid,x);
+#endif
   return x;
 } 
 int
@@ -371,13 +438,8 @@ _unur_pinv_cut_CDF( struct unur_gen *gen, double dom, double x0, double ul, doub
 double
 _unur_pinv_Udiff (struct unur_gen *gen, double x, double h, double *fx)
 {
-  switch (gen->variant) {
-  case PINV_VARIANT_PDF:
+  if (gen->variant & PINV_VARIANT_PDF) 
     return _unur_lobatto_eval_diff(GEN->aCDF, x, h, fx);
-  case PINV_VARIANT_CDF:
+  else  
     return CDF(x+h) - CDF(x);
-  default:
-    _unur_error(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
-    return INFINITY;
-  }
 } 

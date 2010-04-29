@@ -8,6 +8,9 @@
 #include "unur_distributions.h"
 #include "unur_distributions_source.h"
 #include "unur_stddistr.h"
+#ifdef USE_EXPERIMENTAL_CODE
+#include <gsl/gsl_integration.h>
+#endif
 static const char distr_name[] = "gig2";
 #define theta  params[0]    
 #define psi    params[1]    
@@ -18,6 +21,9 @@ static double _unur_pdf_gig2( double x, const UNUR_DISTR *distr );
 static double _unur_logpdf_gig2( double x, const UNUR_DISTR *distr );
 static double _unur_dpdf_gig2( double x, const UNUR_DISTR *distr );
 static double _unur_dlogpdf_gig2( double x, const UNUR_DISTR *distr );
+#ifdef USE_EXPERIMENTAL_CODE
+static double _unur_cdf_gig2( double x, const UNUR_DISTR *distr );
+#endif
 static int _unur_upd_mode_gig2( UNUR_DISTR *distr );
 static double _unur_normconstant_gig2( const double *params, int n_params );
 static int _unur_set_params_gig2( UNUR_DISTR *distr, const double *params, int n_params );
@@ -54,6 +60,30 @@ _unur_dlogpdf_gig2(double x, const UNUR_DISTR *distr)
     return 0.;
   return ( -0.5*(psi - chi/(x*x)) + (theta-1.)/x  + log(NORMCONSTANT) ) ;
 } 
+#ifdef USE_EXPERIMENTAL_CODE
+#ifndef HAVE_BESSEL_K
+#error run ./configure with flag --with-Rmath
+#endif 
+double
+_unur_cdf_gig2(double x, const UNUR_DISTR *distr)
+{
+  double epsabs = 1.e-13;
+  double epsrel = 1.e-13;
+  double result, abserr;
+  size_t limit = 1000;
+  gsl_integration_workspace *work;
+  if (x <= 0.)
+    return 0.;
+  work = gsl_integration_workspace_alloc (limit);
+  gsl_function F;
+  F.function = _unur_pdf_gig2;
+  F.params = distr;
+  gsl_integration_qag (&F, 0, x, epsabs, epsrel, limit,  GSL_INTEG_GAUSS61,
+		       work, &result, &abserr);
+  gsl_integration_workspace_free (work);
+  return result;
+} 
+#endif
 int
 _unur_upd_mode_gig2( UNUR_DISTR *distr )
 {
@@ -114,6 +144,9 @@ unur_distr_gig2( const double *params, int n_params )
   DISTR.logpdf  = _unur_logpdf_gig2;  
   DISTR.dpdf    = _unur_dpdf_gig2;    
   DISTR.dlogpdf = _unur_dlogpdf_gig2; 
+#ifdef USE_EXPERIMENTAL_CODE
+  DISTR.cdf     = _unur_cdf_gig2;     
+#endif
   distr->set = ( UNUR_DISTR_SET_DOMAIN |
 		 UNUR_DISTR_SET_STDDOMAIN |
 		 UNUR_DISTR_SET_MODE   );

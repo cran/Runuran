@@ -17,18 +17,24 @@ _unur_pinv_debug_init_start( const struct unur_gen *gen )
   fprintf(LOG,"%s:\n",gen->genid);
   fprintf(LOG,"%s: order of polynomial = %d",gen->genid,GEN->order);
   _unur_print_if_default(gen,PINV_SET_ORDER);
+  if(gen->set & PINV_SET_ORDER_COR) fprintf(LOG,"  [corrected]");
+  fprintf(LOG,"\n%s: smoothness = %d",gen->genid,GEN->smooth);
+  _unur_print_if_default(gen,PINV_SET_SMOOTH);
+  if(gen->set & PINV_SET_SMOOTH_COR) fprintf(LOG,"  [corrected]");
   fprintf(LOG,"\n%s: u-resolution = %g",gen->genid,GEN->u_resolution);
   _unur_print_if_default(gen,PINV_SET_U_RESOLUTION);
   fprintf(LOG,"\n%s: maximum number of subintervals = %d",gen->genid,GEN->max_ivs);
   _unur_print_if_default(gen,PINV_SET_MAX_IVS);
   fprintf(LOG,"\n%s: variant = ",gen->genid);
-  switch (gen->variant) {
-  case PINV_VARIANT_PDF:
-    fprintf(LOG,"use PDF + Lobatto integration"); break;
-  case PINV_VARIANT_CDF:
-    fprintf(LOG,"use CDF"); break;
-  }
+  if (gen->variant & PINV_VARIANT_PDF)
+    fprintf(LOG,"use PDF + Lobatto integration");
+  else
+    fprintf(LOG,"use CDF");
   _unur_print_if_default(gen,PINV_SET_VARIANT);
+  fprintf(LOG,"\n");
+  fprintf(LOG,"%s: use Chebyshev points in %s scale",gen->genid,
+	  (gen->variant & PINV_VARIANT_UPOINTS) ? "u" : "x");
+  _unur_print_if_default(gen,PINV_SET_UPOINTS);
   fprintf(LOG,"\n");
   fprintf(LOG,"%s:\n",gen->genid);
   fflush(LOG);
@@ -101,8 +107,20 @@ _unur_pinv_debug_intervals( const struct unur_gen *gen )
   LOG = unur_get_stream();
   if (gen->debug & PINV_DEBUG_TABLE) {
     for (n=0; n<=GEN->n_ivs; n++) {
-      fprintf(LOG,"%s: [%3d] xi = %g, cdfi = %g\n",gen->genid,
+      fprintf(LOG,"%s: [%3d] xi = %.14g, cdfi = %.14g\n",gen->genid,
 	      n, GEN->iv[n].xi, GEN->iv[n].cdfi);
+#ifdef PINV_DEVEL
+      { 
+	int j;
+	fprintf(LOG,"%s:\tui = %.14g",gen->genid, GEN->iv[n].ui[0]);
+	for (j=1; j<GEN->order; j++)
+	  fprintf(LOG,", %.14g",GEN->iv[n].ui[j]);
+	fprintf(LOG,"\n%s:\tzi = %.14g",gen->genid, GEN->iv[n].zi[0]);
+	for (j=1; j<GEN->order; j++)
+	  fprintf(LOG,", %.14g",GEN->iv[n].zi[j]);
+	fprintf(LOG,"\n");
+      }	
+#endif
     }
   }
   fprintf(LOG,"%s:\n",gen->genid);

@@ -15,7 +15,7 @@
 }
 
 \usage{
-unuran.details(unr, show=TRUE, return.list=FALSE)
+unuran.details(unr, show=TRUE, return.list=FALSE, debug=FALSE)
 }
 
 \arguments{
@@ -23,6 +23,8 @@ unuran.details(unr, show=TRUE, return.list=FALSE)
   \item{show}{whether the data are printed on the console. (boolean)}
   \item{return.list}{whether some of the data are returned in a
     list. (boolean)}
+  \item{debug}{if TRUE, store additional data in returned list. This
+    might be useful to examine a method. (boolean)}
 }
 
 \details{

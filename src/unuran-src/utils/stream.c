@@ -31,8 +31,7 @@ _unur_log_printf( const char *genid ATTRIBUTE__UNUSED,
   return;
 #endif
 } 
-void
-_unur_log_printf_simple( const char *format ATTRIBUTE__UNUSED, ... )
+void _unur_log_debug( const char *format ATTRIBUTE__UNUSED, ... )
 {
 #ifdef UNUR_ENABLE_LOGGING
   va_list ap;

@@ -17,7 +17,7 @@ _unur_pinv_init( struct unur_par *par )
   if (_unur_pinv_check_par(gen) != UNUR_SUCCESS) {
     _unur_pinv_free(gen); return NULL;
   }
-  if (DISTR.logpdf != NULL && ! (gen->variant & PINV_VARIANT_CDF) ) {
+  if (DISTR.logpdf != NULL && (gen->variant & PINV_VARIANT_PDF) ) {
     lfc = UNUR_INFINITY;
     if ( (gen->distr->set & UNUR_DISTR_SET_MODE) &&
 	 !_unur_FP_less(DISTR.mode,DISTR.domain[0]) &&
@@ -63,6 +63,7 @@ _unur_pinv_create( struct unur_par *par )
   gen->destroy = _unur_pinv_free;
   gen->clone = _unur_pinv_clone;
   GEN->order = PAR->order;            
+  GEN->smooth = PAR->smooth;          
   GEN->u_resolution = PAR->u_resolution; 
   GEN->bleft_par  = PAR->bleft;          
   GEN->bright_par = PAR->bright;
@@ -90,6 +91,46 @@ _unur_pinv_create( struct unur_par *par )
 int
 _unur_pinv_check_par( struct unur_gen *gen )
 {
+  switch (GEN->smooth) {
+  case 2:
+    if (GEN->order < 5) {
+      _unur_warning(gen->genid,UNUR_ERR_GENERIC,"order must be >= 5 when smoothness equals 2");
+      GEN->order = 5;
+      gen->set |= PINV_SET_ORDER_COR;
+    }
+    if (GEN->order % 3 != 2) {
+      _unur_warning(gen->genid,UNUR_ERR_GENERIC,"order must be 2 mod 3 when smoothness equals 2");
+      GEN->order = 2 + 3 * (GEN->order / 3);
+      gen->set |= PINV_SET_ORDER_COR;
+    }
+    if (DISTR.pdf == NULL || DISTR.dpdf == NULL) {
+      _unur_warning(gen->genid,UNUR_ERR_DISTR_REQUIRED,"PDF or dPDF --> try smoothness=1 instead");
+      GEN->smooth = 1;
+      gen->set |= PINV_SET_SMOOTH_COR;
+    }
+    else {
+      break;
+    }
+  case 1:
+    if (GEN->order % 2 != 1) {
+      _unur_warning(gen->genid,UNUR_ERR_GENERIC,"order must be odd when smoothness equals 1");
+      GEN->order += 1;
+      gen->set |= PINV_SET_ORDER_COR;
+    }
+    if (DISTR.pdf == NULL) {
+      _unur_warning(gen->genid,UNUR_ERR_DISTR_REQUIRED,"PDF --> use smoothness=0 instead");
+      GEN->smooth = 0;
+      gen->set |= PINV_SET_SMOOTH_COR;
+    }
+    else { 
+      break;
+    }
+  case 0:
+    break;
+  default:
+    _unur_warning(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"smoothness must be 0, 1, or 2");
+    GEN->smooth = 0; 
+  }
   GEN->bleft = _unur_max(GEN->bleft_par,DISTR.domain[0]);
   GEN->bright = _unur_min(GEN->bright_par,DISTR.domain[1]);
   DISTR.trunc[0] = DISTR.domain[0];
@@ -103,7 +144,7 @@ _unur_pinv_check_par( struct unur_gen *gen )
     DISTR.center = _unur_max(DISTR.center,GEN->dleft);
     DISTR.center = _unur_min(DISTR.center,GEN->dright);
   }
-  if (gen->variant == PINV_VARIANT_PDF) {
+  if (gen->variant & PINV_VARIANT_PDF) {
     if (PDF(DISTR.center)<=0.) {
       _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,
 		  "PDF(center) <= 0.");

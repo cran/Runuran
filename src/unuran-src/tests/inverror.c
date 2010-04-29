@@ -6,7 +6,11 @@
 #include <distr/distr_source.h>
 #include <methods/x_gen.h>
 #include <methods/x_gen_source.h>
+#include <methods/cstd.h>
+#include <methods/cstd_struct.h>
 #include <methods/hinv.h>
+#include <methods/mixt.h>
+#include <methods/mixt_struct.h>
 #include <methods/ninv.h>
 #include <methods/pinv.h>
 #include "unuran_tests.h"
@@ -41,6 +45,16 @@ unur_test_u_error( const UNUR_GEN *gen,
     break;
   case UNUR_METH_PINV:
     quantile = unur_pinv_eval_approxinvcdf;
+    break;
+  case UNUR_METH_CSTD:
+    if (! (((struct unur_cstd_gen*)gen->datap)->is_inversion))
+      return -1.;
+    quantile = unur_cstd_eval_invcdf;
+    break;
+  case UNUR_METH_MIXT:
+    if (! (((struct unur_mixt_gen*)gen->datap)->is_inversion))
+      return -1.;
+    quantile = unur_cstd_eval_invcdf;
     break;
   default:
     _unur_error(test_name,UNUR_ERR_GENERIC,"inversion method required");

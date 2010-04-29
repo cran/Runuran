@@ -33,12 +33,6 @@
 
 /*---------------------------------------------------------------------------*/
 
-#include <R.h>
-#include <Rdefines.h>
-#include <Rinternals.h>
-#include <R_ext/Rdynload.h>
-
-#include <unuran.h>
 #include "Runuran.h"
 
 /*---------------------------------------------------------------------------*/
@@ -85,19 +79,6 @@ static double _Runuran_cont_eval_dpdf( double x, const struct unur_distr *distr 
 static double _Runuran_cmv_eval_pdf( const double *x, struct unur_distr *distr );
 /* Evaluate PDF function.                                                    */
 
-/*---------------------------------------------------------------------------*/
-
-static SEXP _Runuran_distr_tag(void); 
-/*---------------------------------------------------------------------------*/
-/* Make tag for R object [Contains static variable!]                         */
-/*---------------------------------------------------------------------------*/
-
-#define CHECK_UNUR_PTR(s) do { \
-    if (TYPEOF(s) != EXTPTRSXP || R_ExternalPtrTag(s) != _Runuran_distr_tag()) \
-      error("[UNU.RAN - error] invalid UNU.RAN distribution object");	\
-  } while (0)
-/*---------------------------------------------------------------------------*/
-/* Check pointer to R UNU.RAN distribution object.                           */
 /*---------------------------------------------------------------------------*/
 
 

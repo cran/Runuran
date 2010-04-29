@@ -150,7 +150,8 @@ itdrd.new <- function (distr) {
 ## Generate continuous random variates from a given PDF or CDF
 ##
 
-pinv.new <- function (pdf, cdf, lb, ub, islog=FALSE, center=0, uresolution=1.e-10, ...) {
+pinv.new <- function (pdf, cdf, lb, ub, islog=FALSE, center=0,
+                      uresolution=1.e-10, smooth=FALSE, ...) {
 
         ## check arguments
         if (missing(pdf) && missing(cdf))
@@ -167,7 +168,7 @@ pinv.new <- function (pdf, cdf, lb, ub, islog=FALSE, center=0, uresolution=1.e-1
                 stop ("domain ('lb','ub') missing")
 
         ## use PDF or CDF ?
-        usefunc <- if (missing(pdf)) "usecdf;" else "usepdf;"
+        usefunc <- if (missing(pdf)) "usecdf" else "usepdf"
                 
         ## create internal version of PDF and CDF
         if (!missing(pdf)) {
@@ -194,23 +195,28 @@ pinv.new <- function (pdf, cdf, lb, ub, islog=FALSE, center=0, uresolution=1.e-1
         dist <- new("unuran.cont", pdf=PDF, cdf=CDF, lb=lb, ub=ub, center=center, islog=islog)
 
         ## create and return UNU.RAN object
-        method <- paste("pinv;",usefunc,"u_resolution=",uresolution, sep="")
+        method <- paste("pinv;",usefunc,
+                        ";u_resolution=",uresolution,
+                        ";smoothness=",as.integer(smooth),
+                        sep="")
         unuran.new(dist, method)
 }
 
 ## ..........................................................................
 
-pinvd.new <- function (distr, uresolution=1.e-10) {
+pinvd.new <- function (distr, uresolution=1.e-10, smooth=FALSE) {
 
   ## check arguments
   if ( missing(distr) || !(isS4(distr) &&  is(distr,"unuran.cont")) )
     stop ("argument 'distr' missing or invalid")
-
+  
   ## create and return UNU.RAN object
-  method <- paste("pinv;u_resolution=",uresolution, sep="")
+  method <- paste("pinv",
+                  ";u_resolution=",uresolution,
+                  ";smoothness=",as.integer(smooth),
+                  sep="")
   unuran.new(distr, method)
 }
-
 
 ## -- SROU: Simple Ratio-Of-Uniforms Method ---------------------------------
 ##

@@ -8,7 +8,7 @@
 ## --- Test Parameters ------------------------------------------------------
 
 ## size of sample for test
-samplesize <- 1.e7
+samplesize <- 1.e6
 
 ## --- Load library ---------------------------------------------------------
 
@@ -27,8 +27,9 @@ xp <- uq(gp,u)
 if (! isTRUE(all.equal(xu,xp)))
   stop("packed and unpacked version of PINV differ !")
 
-rm(gu)
-rm(gp)
+rm(u,xu,xp) 
+rm(gu,gp)
+gc()
 
 ## --------------------------------------------------------------------------
 
@@ -43,8 +44,9 @@ xp <- uq(gp,u)
 if (! isTRUE(all.equal(xu,xp)))
   stop("packed and unpacked version of PINV differ !")
 
-rm(gu)
-rm(gp)
+rm(u,xu,xp) 
+rm(gu,gp)
+gc()
 
 ## --------------------------------------------------------------------------
 
@@ -59,8 +61,9 @@ xp <- uq(gp,u)
 if (! isTRUE(all.equal(xu,xp)))
   stop("packed and unpacked version of PINV differ !")
 
-rm(gu)
-rm(gp)
+rm(u,xu,xp) 
+rm(gu,gp)
+gc()
 
 ## --- End ------------------------------------------------------------------
 

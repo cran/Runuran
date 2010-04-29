@@ -5,6 +5,10 @@
 #define UNUR_ERROR_SOURCE_H_SEEN
 void _unur_error_x( const char *objid, const char *file, int line, 
 		    const char *errortype, int errorcode, const char *reason );
+void _unur_error_handler_default( const char *objid, const char *file, int line, 
+				  const char *errortype, int errorcode, const char *reason );
+void _unur_error_handler_off( const char *objid, const char *file, int line, 
+			      const char *errortype, int errorcode, const char *reason );
 #ifdef UNUR_COOKIES
 void _unur_error_cookies( const char *file, int line, unsigned observed, unsigned expected );
 #endif

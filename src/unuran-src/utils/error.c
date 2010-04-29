@@ -4,10 +4,6 @@
 #include <unur_source.h>
 #include <time.h>
 #include <stdarg.h>
-static void _unur_error_handler_default( const char *objid, const char *file, int line, 
-					 const char *errortype, int errorcode, const char *reason );
-static void _unur_error_handler_off( const char *objid, const char *file, int line, 
-				     const char *errortype, int errorcode, const char *reason );
 int unur_errno = UNUR_SUCCESS;
 static UNUR_ERROR_HANDLER *_unur_error_handler = _unur_error_handler_default;
 void 

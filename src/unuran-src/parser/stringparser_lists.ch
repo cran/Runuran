@@ -1127,10 +1127,18 @@ _unur_str_par_set( UNUR_PAR *par, const char *key, char *value, struct unur_slis
 				 result = _unur_str_par_set_ii(par,key,type_args,args,unur_pinv_set_searchboundary);
 				 break;
 			 }
+			 if ( !strcmp(key, "smoothness") ) {
+				 result = _unur_str_par_set_i(par,key,type_args,args,unur_pinv_set_smoothness);
+				 break;
+			 }
 			 break;
 		 case 'u':
 			 if ( !strcmp(key, "u_resolution") ) {
 				 result = _unur_str_par_set_d(par,key,type_args,args,unur_pinv_set_u_resolution);
+				 break;
+			 }
+			 if ( !strcmp(key, "use_upoints") ) {
+				 result = _unur_str_par_set_i(par,key,type_args,args,unur_pinv_set_use_upoints);
 				 break;
 			 }
 			 if ( !strcmp(key, "usecdf") ) {

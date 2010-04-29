@@ -21,7 +21,7 @@ _unur_stdgen_gig_init( struct unur_par *par, struct unur_gen *gen )
   switch ((par) ? par->variant : gen->variant) {
   case 0:  
   case 1:  
-    if (par->distr->data.cont.params[0] <= 0.) {    
+    if (par!=NULL && par->distr->data.cont.params[0] <= 0.) {    
       _unur_error(NULL,UNUR_ERR_GEN_CONDITION,"");
       return UNUR_ERR_GEN_CONDITION;
     }

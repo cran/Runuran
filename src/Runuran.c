@@ -33,12 +33,6 @@
 
 /*---------------------------------------------------------------------------*/
 
-#include <R.h>
-#include <Rdefines.h>
-#include <Rinternals.h>
-#include <R_ext/Rdynload.h>
-
-#include <unuran.h>
 #include "Runuran.h"
 
 /* internal header files for UNU.RAN */
@@ -68,24 +62,23 @@ static SEXP _Runuran_quantile_data (SEXP sexp_data, SEXP sexp_U, SEXP sexp_unur)
 /* Evaluate approximate quantile function:  use R data list (packed object)  */
 /*---------------------------------------------------------------------------*/
 
-static void _Runuran_error_handler( 
+static void _Runuran_error_handler ( 
 	const char *objid, const char *file, int line,
         const char *errortype, int errorcode, const char *reason );
 /*---------------------------------------------------------------------------*/
 /* Error handler for UNU.RAN routines.                                       */
 /*---------------------------------------------------------------------------*/
 
+static void _Runuran_error_suppress ( 
+	const char *objid, const char *file, int line,
+        const char *errortype, int errorcode, const char *reason );
+/*---------------------------------------------------------------------------*/
+/* Error handler for UNU.RAN routines that suppresses all warnings/errors.   */
+/*---------------------------------------------------------------------------*/
+
 static double _Runuran_R_unif_rand (void *unused);
 /*---------------------------------------------------------------------------*/
 /* Wrapper for R built-in uniform random number generator.                   */
-/*---------------------------------------------------------------------------*/
-
-#define CHECK_UNUR_PTR(s) do { \
-    if (TYPEOF(s) != EXTPTRSXP || R_ExternalPtrTag(s) != _Runuran_tag()) \
-      error("[UNU.RAN - error] invalid UNU.RAN object");		\
-  } while (0)
-/*---------------------------------------------------------------------------*/
-/* Check pointer to R UNU.RAN generator object.                              */
 /*---------------------------------------------------------------------------*/
 
 /*****************************************************************************/
@@ -187,9 +180,7 @@ Runuran_sample (SEXP sexp_unur, SEXP sexp_n)
 
   /* Extract pointer to UNU.RAN generator */
   sexp_gen = GET_SLOT(sexp_unur, install("unur"));
-#ifdef RUNURAN_DEBUG
   CHECK_UNUR_PTR(sexp_gen);
-#endif
   gen = R_ExternalPtrAddr(sexp_gen);
   if (gen != NULL) {
     return _Runuran_sample_unur(gen,n);
@@ -343,9 +334,7 @@ Runuran_quantile (SEXP sexp_unur, SEXP sexp_U)
 
   /* Extract pointer to UNU.RAN generator */
   sexp_gen = GET_SLOT(sexp_unur, install("unur"));
-#ifdef RUNURAN_DEBUG
   CHECK_UNUR_PTR(sexp_gen);
-#endif
   gen = R_ExternalPtrAddr(sexp_gen);
   if (gen != NULL) {
     return _Runuran_quantile_unur(gen,sexp_U);
@@ -523,7 +512,7 @@ Runuran_print (SEXP sexp_unur, SEXP sexp_help)
      /*   help ... whether to print detailed information (integer / boolean) */
      /*                                                                      */
      /* Return:                                                              */
-     /*   NilValue  [since (void) is not possible]                           */
+     /*   info string                                                        */
      /*----------------------------------------------------------------------*/
 {
   SEXP sexp_gen;
@@ -548,9 +537,7 @@ Runuran_print (SEXP sexp_unur, SEXP sexp_help)
 
   /* Extract pointer to UNU.RAN generator */
   sexp_gen = GET_SLOT(sexp_unur, install("unur"));
-#ifdef RUNURAN_DEBUG
   CHECK_UNUR_PTR(sexp_gen);
-#endif
   gen = R_ExternalPtrAddr(sexp_gen);
   if (gen == NULL) {
     errorcall_return(R_NilValue,"[UNU.RAN - error] broken UNU.RAN object");
@@ -654,9 +641,7 @@ Runuran_pack (SEXP sexp_unur)
 
   /* Extract pointer to UNU.RAN generator */
   sexp_gen = GET_SLOT(sexp_unur, install("unur"));
-#ifdef RUNURAN_DEBUG
   CHECK_UNUR_PTR(sexp_gen);
-#endif
   gen = R_ExternalPtrAddr(sexp_gen);
   if (gen == NULL) {
     errorcall_return(R_NilValue,"[UNU.RAN - error] broken UNU.RAN object");
@@ -730,6 +715,25 @@ R_unload_Runuran (DllInfo *info  ATTRIBUTE__UNUSED)
 /*---------------------------------------------------------------------------*/
 
 void
+_Runuran_set_error_handler(int status)
+     /*----------------------------------------------------------------------*/
+     /* set status of error handler (on / off).                              */
+     /*                                                                      */
+     /* Parameter:                                                           */
+     /*   status ... 0 = suppress all warnings / error messages              */
+     /*              1 = print (almost all) warnings and error messages      */
+     /*----------------------------------------------------------------------*/
+{
+  /* Set UNU.RAN error handler */
+  if (status)
+    unur_set_error_handler( _Runuran_error_handler );
+  else
+    unur_set_error_handler( _Runuran_error_suppress );
+}
+
+/*---------------------------------------------------------------------------*/
+
+void
 _Runuran_error_handler( const char *objid     ATTRIBUTE__UNUSED,
 			const char *file      ATTRIBUTE__UNUSED,
 			int line              ATTRIBUTE__UNUSED,
@@ -778,7 +782,40 @@ _Runuran_error_handler( const char *objid     ATTRIBUTE__UNUSED,
   Rprintf("\tfile: %s, line: %d\n",file,line);
 #endif
 
+#ifdef UNUR_ENABLE_LOGGING
+  /* print error message into log file (use UNU.RAN default error handler) */
+  _unur_error_handler_default( objid, file, line, errortype, errorcode, reason );
+#endif
+
 } /* end of _Runuran_error_handler() */
+
+/*---------------------------------------------------------------------------*/
+
+void
+_Runuran_error_suppress( const char *objid     ATTRIBUTE__UNUSED,
+			 const char *file      ATTRIBUTE__UNUSED,
+			 int line              ATTRIBUTE__UNUSED,
+			 const char *errortype ATTRIBUTE__UNUSED,
+			 int errorcode         ATTRIBUTE__UNUSED,
+			 const char *reason    ATTRIBUTE__UNUSED )
+     /*----------------------------------------------------------------------*/
+     /* Error handler that suppresses all warnings/errors.                   */
+     /* Error handler for UNU.RAN routines                                   */
+     /*                                                                      */
+     /* Parameters:                                                          */
+     /*   objid     ... id/type of object                                    */
+     /*   file      ... source file name (__FILE__)                          */
+     /*   line      ... source line number (__LINE__)                        */
+     /*   errortype ... "warning" or "error"                                 */
+     /*   errorcode ... UNU.RAN error code                                   */
+     /*   reason    ... short description of reason                          */
+     /*                                                                      */
+     /* Return:                                                              */
+     /*   (void)                                                             */
+     /*----------------------------------------------------------------------*/
+{
+  ; /* nothing to do */
+} /* end of _Runuran_error_suppress() */
 
 /*---------------------------------------------------------------------------*/
 
