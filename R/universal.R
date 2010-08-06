@@ -198,6 +198,7 @@ pinv.new <- function (pdf, cdf, lb, ub, islog=FALSE, center=0,
         method <- paste("pinv;",usefunc,
                         ";u_resolution=",uresolution,
                         ";smoothness=",as.integer(smooth),
+                        ";keepcdf=on",
                         sep="")
         unuran.new(dist, method)
 }
@@ -214,6 +215,7 @@ pinvd.new <- function (distr, uresolution=1.e-10, smooth=FALSE) {
   method <- paste("pinv",
                   ";u_resolution=",uresolution,
                   ";smoothness=",as.integer(smooth),
+                  ";keepcdf=on",
                   sep="")
   unuran.new(distr, method)
 }

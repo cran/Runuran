@@ -13,6 +13,9 @@ static const char distr_name[] = "poisson";
 #define DISTR distr->data.discr
 static double _unur_pmf_poisson( int k, const UNUR_DISTR *distr );
 static double _unur_cdf_poisson( int k, const UNUR_DISTR *distr );      
+#ifdef _unur_SF_invcdf_binomial
+static int    _unur_invcdf_poisson( double u, const UNUR_DISTR *distr ); 
+#endif
 static int _unur_upd_mode_poisson( UNUR_DISTR *distr );
 static int _unur_upd_sum_poisson( UNUR_DISTR *distr );
 static int _unur_set_params_poisson( UNUR_DISTR *distr, const double *params, int n_params );
@@ -20,7 +23,7 @@ double
 _unur_pmf_poisson(int k, const UNUR_DISTR *distr)
 { 
   if (k>=0)
-    return exp( -DISTR.theta + k * log(DISTR.theta) - _unur_sf_ln_factorial(k) );
+    return exp( -DISTR.theta + k * log(DISTR.theta) - _unur_SF_ln_factorial(k) );
   else
     return 0.;
 } 
@@ -28,10 +31,20 @@ double
 _unur_cdf_poisson(int k, const UNUR_DISTR *distr)
 { 
   if (k>=0)
-    return (1.-_unur_sf_incomplete_gamma(DISTR.theta,k+1.));
+    return (1.-_unur_SF_incomplete_gamma(DISTR.theta,k+1.));
   else
     return 0.;
 } 
+#ifdef _unur_SF_invcdf_poisson
+int
+_unur_invcdf_poisson(double u, const UNUR_DISTR *distr)
+{ 
+  const double *params = DISTR.params;
+  double x;
+  x = _unur_SF_invcdf_poisson(u,theta);
+  return ((x>=INT_MAX) ? INT_MAX : ((int) x));
+} 
+#endif
 int
 _unur_upd_mode_poisson( UNUR_DISTR *distr )
 {
@@ -84,6 +97,9 @@ unur_distr_poisson( const double *params, int n_params )
   DISTR.init = _unur_stdgen_poisson_init;
   DISTR.pmf  = _unur_pmf_poisson;   
   DISTR.cdf  = _unur_cdf_poisson;   
+#ifdef _unur_SF_invcdf_poisson
+  DISTR.invcdf = _unur_invcdf_poisson;  
+#endif
   distr->set = ( UNUR_DISTR_SET_DOMAIN |
 		 UNUR_DISTR_SET_STDDOMAIN |
 		 UNUR_DISTR_SET_PMFSUM |

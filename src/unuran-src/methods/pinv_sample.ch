@@ -49,6 +49,28 @@ unur_pinv_eval_approxinvcdf( const struct unur_gen *gen, double u )
   if (x>DISTR.domain[1]) x = DISTR.domain[1];
   return x;
 } 
+double
+unur_pinv_eval_approxcdf( const struct unur_gen *gen, double x )
+{
+  _unur_check_NULL( GENTYPE, gen, INFINITY );
+  if ( gen->method != UNUR_METH_PINV ) {
+    _unur_error(gen->genid,UNUR_ERR_GEN_INVALID,"");
+    return INFINITY;
+  }
+  COOKIE_CHECK(gen,CK_PINV_GEN,INFINITY);
+  if ( (gen->variant & PINV_VARIANT_PDF) && GEN->aCDF == NULL) {
+    _unur_error(gen->genid,UNUR_ERR_GENERIC,"'keepcdf' not set");
+    return INFINITY;
+  }
+  if (x <= DISTR.domain[0]) return 0.;
+  if (x >= DISTR.domain[1]) return 1.;
+  if (gen->variant & PINV_VARIANT_PDF) {
+    return _unur_lobatto_eval_CDF(GEN->aCDF,x);
+  }
+  else {
+    return (CDF(x));
+  }
+} 
 int
 unur_pinv_estimate_error( const UNUR_GEN *gen, int samplesize, double *max_error, double *MAE )
 { 

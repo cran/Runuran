@@ -19,6 +19,9 @@ static double _unur_logpdf_gamma( double x, const UNUR_DISTR *distr );
 static double _unur_dpdf_gamma( double x, const UNUR_DISTR *distr );
 static double _unur_dlogpdf_gamma( double x, const UNUR_DISTR *distr );
 static double _unur_cdf_gamma( double x, const UNUR_DISTR *distr );
+#ifdef _unur_SF_invcdf_gamma
+static double _unur_invcdf_gamma( double x, const UNUR_DISTR *distr );
+#endif
 static int _unur_upd_mode_gamma( UNUR_DISTR *distr );
 static int _unur_upd_area_gamma( UNUR_DISTR *distr );
 static double _unur_lognormconstant_gamma(const double *params, int n_params);
@@ -89,8 +92,19 @@ _unur_cdf_gamma( double x, const UNUR_DISTR *distr )
     return 0.;
   if (_unur_isinf(x)==1)
     return 1.;
-  return _unur_sf_incomplete_gamma(x,alpha);
+  return _unur_SF_incomplete_gamma(x,alpha);
 } 
+#ifdef _unur_SF_invcdf_gamma
+double
+_unur_invcdf_gamma( double x, const UNUR_DISTR *distr )
+{ 
+  const double *params = DISTR.params;
+  if (DISTR.n_params == 1)
+    return _unur_SF_invcdf_gamma(x, alpha, 1.);
+  else
+    return (gamma + _unur_SF_invcdf_gamma(x, alpha, beta));
+} 
+#endif
 int
 _unur_upd_mode_gamma( UNUR_DISTR *distr )
 {
@@ -126,9 +140,9 @@ double
 _unur_lognormconstant_gamma( const double *params, int n_params )
 {
   if (n_params > 1)
-    return ( _unur_sf_ln_gamma(alpha) + log(beta) );
+    return ( _unur_SF_ln_gamma(alpha) + log(beta) );
   else
-    return (_unur_sf_ln_gamma(alpha));
+    return (_unur_SF_ln_gamma(alpha));
 } 
 int
 _unur_set_params_gamma( UNUR_DISTR *distr, const double *params, int n_params )
@@ -179,6 +193,9 @@ unur_distr_gamma( const double *params, int n_params )
   DISTR.dpdf    = _unur_dpdf_gamma;    
   DISTR.dlogpdf = _unur_dlogpdf_gamma; 
   DISTR.cdf     = _unur_cdf_gamma;     
+#ifdef _unur_SF_invcdf_gamma
+  DISTR.invcdf  = _unur_invcdf_gamma;  
+#endif
   distr->set = ( UNUR_DISTR_SET_DOMAIN |
 		 UNUR_DISTR_SET_STDDOMAIN |
 		 UNUR_DISTR_SET_PDFAREA |

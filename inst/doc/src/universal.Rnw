@@ -93,6 +93,31 @@ gen <- pinv.new(pdf=pdf, lb=0, ub=Inf, uresolution=1e-14)
 uq(gen, c(0.005, 0.01, 0.025, 0.05, 0.5, 0.95, 0.975, 0.99, 0.995))
 @ 
 
+Functions \code{ud} and \code{up} allow to evaluate density and
+(approximate) cumulative distribution function of the requested
+distribution. However, this feature may not be available for all
+distribution objects or generator objects.
+<<>>=
+## Compute density for a given distribution or generator object.
+## However, this only works when the density is already stored in 
+## the object.
+
+## Use distribution object
+distr <- unuran.cont.new(pdf=function(x){exp(-x)}, lb=0,ub=Inf)
+x <- ud(distr, 0:5)
+x
+
+## Use generator object
+gen <- pinvd.new(distr)
+x <- ud(gen, 0:5)
+x
+
+## Method PINV can also be used to estimate the CDF of the distribution
+x <- up(gen, 0:5)
+x
+
+@ 
+
 \paragraph{Uniform random numbers.}
 All UNU.RAN methods use the \R\ built-in random number generator as
 the source of (pseudo-) random numbers. Thus the generated samples depend

@@ -19,7 +19,7 @@ _unur_stdgen_exponential_init( struct unur_par *par, struct unur_gen *gen )
   case 0:  
   case UNUR_STDGEN_INVERSION:   
     if (gen) GEN->is_inversion = TRUE;
-    _unur_cstd_set_sampling_routine(par,gen,_unur_stdgen_sample_exponential_inv);
+    _unur_cstd_set_sampling_routine(gen, _unur_stdgen_sample_exponential_inv);
     return UNUR_SUCCESS;
   default: 
     if (gen) _unur_warning(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");

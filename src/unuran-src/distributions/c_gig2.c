@@ -61,7 +61,7 @@ _unur_dlogpdf_gig2(double x, const UNUR_DISTR *distr)
   return ( -0.5*(psi - chi/(x*x)) + (theta-1.)/x  + log(NORMCONSTANT) ) ;
 } 
 #ifdef USE_EXPERIMENTAL_CODE
-#ifndef HAVE_BESSEL_K
+#ifndef _unur_SF_bessel_k
 #error run ./configure with flag --with-Rmath
 #endif 
 double
@@ -99,8 +99,8 @@ _unur_upd_mode_gig2( UNUR_DISTR *distr )
 double
 _unur_normconstant_gig2(const double *params ATTRIBUTE__UNUSED, int n_params ATTRIBUTE__UNUSED)
 { 
-#ifdef HAVE_BESSEL_K
-  return ( pow(psi/chi, theta/2.) / (2. * _unur_sf_bessel_k(sqrt(psi*chi),theta)) );
+#ifdef _unur_SF_bessel_k
+  return ( pow(psi/chi, theta/2.) / (2. * _unur_SF_bessel_k(sqrt(psi*chi),theta)) );
 #else
   return 1.;
 #endif

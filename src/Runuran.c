@@ -432,73 +432,196 @@ _Runuran_quantile_data (SEXP sexp_data, SEXP sexp_U, SEXP sexp_unur)
 /*---------------------------------------------------------------------------*/
 
 SEXP
-Runuran_PDF (SEXP sexp_distr, SEXP sexp_x)
+Runuran_PDF (SEXP sexp_obj, SEXP sexp_x)
      /*----------------------------------------------------------------------*/
-     /* Evaluate PDF for UNU.RAN distribution object.   [EXPERIMENTAL]       */
+     /* Evaluate PDF or PMF for UNU.RAN distribution or generator object.    */
      /*                                                                      */
      /* Parameters:                                                          */
-     /*   distr ... 'Runuran' distribution object (S4 class)                 */ 
-     /*   x     ... x-value (numeric array)                                  */
+     /*   obj ... 'Runuran' object (distribution or generator, S4 class)     */ 
+     /*   x   ... x-value (numeric array)                                    */
      /*                                                                      */
      /* Return:                                                              */
-     /*   PDF in UNU.RAN distribution object for given 'x' values            */
+     /*   PDF in UNU.RAN object for given 'x' values                         */
      /*----------------------------------------------------------------------*/
 {
-  struct unur_distr *distr;
-  double *x;
+  SEXP sexp_distr;                 /* S4 class containing distribution object */
+  SEXP sexp_gen;                   /* S4 class containing generator object */
+  SEXP sexp_res = R_NilValue;      /* R vector for storing result */
+  struct unur_distr *distr = NULL; /* UNU.RAN distribution object */
+  struct unur_gen *gen = NULL;     /* UNU.RAN generator object */
+  const char *class;               /* class name of 'obj' */ 
+  double *x;                       /* pointer to array arguments for PDF */
   int n = 1;
   int i;
-  SEXP sexp_res = R_NilValue;
 
-  /* check argument */
-  if (! (sexp_distr && TYPEOF(sexp_distr) == EXTPTRSXP) )
-    /* this error should not happen. But we add it just in case. */
-    errorcall_return(R_NilValue,"[UNU.RAN - error] invalid argument");
+  /* get class name */ 
+  class = translateChar(STRING_ELT(GET_CLASS(sexp_obj), 0));
 
-  /* Extract x */
+  /* which type of Runuran object */
+  if (!strcmp(class,"unuran.cont") || !strcmp(class,"unuran.discr") ) {
+    /* distribution object */
+    sexp_distr = GET_SLOT(sexp_obj, install("distr"));
+    CHECK_DISTR_PTR(sexp_distr);
+    distr = R_ExternalPtrAddr(sexp_distr);
+  }
+  else if (!strcmp(class,"unuran")) {
+    /* generator object */
+    sexp_gen = GET_SLOT(sexp_obj, install("unur"));
+    CHECK_UNUR_PTR(sexp_gen);
+    gen = R_ExternalPtrAddr(sexp_gen);
+    if (gen==NULL) {
+      /* the generator object is packed */
+      error("[UNU.RAN - error] cannot compute PDF for packed UNU.RAN object");
+    }
+    distr = unur_get_distr(gen);
+  }
+  else {
+    error("[UNU.RAN - error] invalid UNU.RAN object");
+  }
+
+  /* check objects */
+  if (distr->type == UNUR_DISTR_CONT && distr->data.cont.pdf == NULL)
+      error("[UNU.RAN - error] UNU.RAN object does not contain PDF");
+  if (distr->type == UNUR_DISTR_DISCR && distr->data.discr.pmf == NULL)
+      error("[UNU.RAN - error] UNU.RAN object does not contain PMF");
+
+  /* extract x */
   x = REAL(AS_NUMERIC(sexp_x));
   n = length(sexp_x);
 
-  /* extract distribution */
-  distr = R_ExternalPtrAddr(sexp_distr);
-
-  /* create array for results */
+  /* allocate memory for result */
   PROTECT(sexp_res = NEW_NUMERIC(n));
 
-  /* which type of distribution */
-  switch (unur_distr_get_type(distr)) {
-  case UNUR_DISTR_CONT:
-    /* univariate continuous distribution  --> evaluate PDF */
-    for (i=0; i<n; i++) {
-      if (ISNAN(x[i]))
-	/* if NA or NaN is given then we simply return the same value */
-	NUMERIC_POINTER(sexp_res)[i] = x[i];
-      else 
-	NUMERIC_POINTER(sexp_res)[i] = unur_distr_cont_eval_pdf(x[i], distr);
+  /* evaluate CDF */
+  for (i=0; i<n; i++) {
+    if (ISNAN(x[i])) {
+      /* if NA or NaN is given then we simply return the same value */
+      NUMERIC_POINTER(sexp_res)[i] = x[i];
+      continue;
     }
-    break;
 
-  case UNUR_DISTR_DISCR:
-    /* discrete univariate distribution  --> evaluate PMF */
-    for (i=0; i<n; i++) {
-      if (ISNAN(x[i]))
-	/* if NA or NaN is given then we simply return the same value */
-	NUMERIC_POINTER(sexp_res)[i] = x[i];
-      else 
-	NUMERIC_POINTER(sexp_res)[i] = unur_distr_discr_eval_pmf ((int) x[i], distr);
+    switch (unur_distr_get_type(distr)) {
+    case UNUR_DISTR_CONT:
+      /* univariate continuous distribution  --> evaluate PDF */
+      NUMERIC_POINTER(sexp_res)[i] = unur_distr_cont_eval_pdf(x[i], distr);
+      break;
+
+    case UNUR_DISTR_DISCR:
+      /* discrete univariate distribution  --> evaluate PMF */
+      NUMERIC_POINTER(sexp_res)[i] = unur_distr_discr_eval_pmf ((int) x[i], distr);
+      break;
+      
+    default:
+      error("[UNU.RAN - error] invalid distribution type");
     }
-    break;
+  }
+  
+  /* return result to R */
+  UNPROTECT(1);
+  return sexp_res;
 
-  default:
-    UNPROTECT(1);
-    errorcall_return(R_NilValue,"[UNU.RAN - error] invalid distribution type");
+} /* end of Runuran_PDF() */
+
+/*---------------------------------------------------------------------------*/
+
+SEXP
+Runuran_CDF (SEXP sexp_obj, SEXP sexp_x)
+     /*----------------------------------------------------------------------*/
+     /* Evaluate CDF for UNU.RAN distribution or generator object.           */
+     /*                                                                      */
+     /* Parameters:                                                          */
+     /*   obj ... 'Runuran' object (distribution or generator, S4 class)     */ 
+     /*   x   ... x-value (numeric array)                                    */
+     /*                                                                      */
+     /* Return:                                                              */
+     /*   CDF in UNU.RAN object for given 'x' values                         */
+     /*----------------------------------------------------------------------*/
+{
+  SEXP sexp_distr;                 /* S4 class containing distribution object */
+  SEXP sexp_gen;                   /* S4 class containing generator object */
+  SEXP sexp_res = R_NilValue;      /* R vector for storing result */
+  struct unur_distr *distr = NULL; /* UNU.RAN distribution object */
+  struct unur_gen *gen = NULL;     /* UNU.RAN generator object */
+  const char *class;               /* class name of 'obj' */ 
+  double *x;                       /* pointer to array arguments for PDF */
+  int n = 1;
+  int i;
+
+  /* get class name */
+  class = translateChar(STRING_ELT(GET_CLASS(sexp_obj), 0));
+
+  /* which type of Runuran object */
+  if (!strcmp(class,"unuran.cont") || !strcmp(class,"unuran.discr") ) {
+    /* distribution object */
+    sexp_distr = GET_SLOT(sexp_obj, install("distr"));
+    CHECK_DISTR_PTR(sexp_distr);
+    distr = R_ExternalPtrAddr(sexp_distr);
+  }
+  else if (!strcmp(class,"unuran")) {
+    /* generator object */
+    sexp_gen = GET_SLOT(sexp_obj, install("unur"));
+    CHECK_UNUR_PTR(sexp_gen);
+    gen = R_ExternalPtrAddr(sexp_gen);
+    if (gen==NULL) {
+      /* the generator object is packed */
+      error("[UNU.RAN - error] cannot compute CDF for packed UNU.RAN object");
+    }
+    distr = unur_get_distr(gen);
+  }
+  else {
+    error("[UNU.RAN - error] invalid UNU.RAN object");
+  }
+
+  /* check objects */
+  if (distr->type == UNUR_DISTR_DISCR && distr->data.discr.cdf == NULL)
+      error("[UNU.RAN - error] UNU.RAN object does not contain CDF");
+
+  if (distr->type == UNUR_DISTR_CONT && distr->data.cont.cdf == NULL) {
+    if (gen==NULL)
+      error("[UNU.RAN - error] UNU.RAN object does not contain CDF");
+    else if (gen->method != UNUR_METH_PINV)
+      error("[UNU.RAN - error] function requires method PINV");
+  }
+
+  /* extract x */
+  x = REAL(AS_NUMERIC(sexp_x));
+  n = length(sexp_x);
+
+  /* allocate memory for result */
+  PROTECT(sexp_res = NEW_NUMERIC(n));
+
+  /* evaluate CDF */
+  for (i=0; i<n; i++) {
+    if (ISNAN(x[i])) {
+      /* if NA or NaN is given then we simply return the same value */
+      NUMERIC_POINTER(sexp_res)[i] = x[i];
+      continue;
+    }
+
+    switch (unur_distr_get_type(distr)) {
+    case UNUR_DISTR_CONT:
+      /* univariate continuous distribution */
+      if (distr->data.cont.cdf != NULL)
+	NUMERIC_POINTER(sexp_res)[i] = unur_distr_cont_eval_cdf(x[i], distr);
+      else
+	NUMERIC_POINTER(sexp_res)[i] = unur_pinv_eval_approxcdf(gen, x[i]);
+      break;
+
+    case UNUR_DISTR_DISCR:
+      /* discrete univariate distribution */
+      NUMERIC_POINTER(sexp_res)[i] = unur_distr_discr_eval_cdf ((int) x[i], distr);
+      break;
+
+    default:
+      error("[UNU.RAN - error] invalid distribution type");
+    }
   }
 
   /* return result to R */
   UNPROTECT(1);
   return sexp_res;
 
-} /* end of Runuran_PDF() */
+} /* end of Runuran_CDF() */
 
 /*---------------------------------------------------------------------------*/
 

@@ -20,36 +20,31 @@ _unur_stdgen_normal_init( struct unur_par *par, struct unur_gen *gen )
 {
   switch ((par) ? par->variant : gen->variant) {
   case 1:    
-    _unur_cstd_set_sampling_routine( par,gen,_unur_stdgen_sample_normal_bm );
+    _unur_cstd_set_sampling_routine(gen, _unur_stdgen_sample_normal_bm );
     return normal_bm_init( gen );
   case 2:    
-    _unur_cstd_set_sampling_routine( par,gen,_unur_stdgen_sample_normal_pol );
+    _unur_cstd_set_sampling_routine(gen, _unur_stdgen_sample_normal_pol );
     return normal_pol_init( gen );
   case 3:    
-    _unur_cstd_set_sampling_routine( par,gen,_unur_stdgen_sample_normal_kr );
+    _unur_cstd_set_sampling_routine(gen, _unur_stdgen_sample_normal_kr );
     return UNUR_SUCCESS;
   case 0:    
   case 4:    
-    _unur_cstd_set_sampling_routine( par,gen,_unur_stdgen_sample_normal_acr );
+    _unur_cstd_set_sampling_routine(gen, _unur_stdgen_sample_normal_acr );
     return UNUR_SUCCESS;
   case 5:    
-    _unur_cstd_set_sampling_routine( par,gen,_unur_stdgen_sample_normal_nquo );
+    _unur_cstd_set_sampling_routine(gen, _unur_stdgen_sample_normal_nquo );
     return UNUR_SUCCESS;
   case 6:    
-    _unur_cstd_set_sampling_routine( par,gen,_unur_stdgen_sample_normal_quo );
+    _unur_cstd_set_sampling_routine(gen, _unur_stdgen_sample_normal_quo );
     return UNUR_SUCCESS;
   case 7:    
-    _unur_cstd_set_sampling_routine( par,gen,_unur_stdgen_sample_normal_leva );
+    _unur_cstd_set_sampling_routine(gen, _unur_stdgen_sample_normal_leva );
     return UNUR_SUCCESS;
   case 99:   
-    _unur_cstd_set_sampling_routine( par,gen,_unur_stdgen_sample_normal_sum );
-    return UNUR_SUCCESS;
-  case UNUR_STDGEN_INVERSION:   
-    if (gen) GEN->is_inversion = TRUE;
-    _unur_cstd_set_sampling_routine(par,gen,_unur_cstd_sample_inv);
+    _unur_cstd_set_sampling_routine(gen, _unur_stdgen_sample_normal_sum );
     return UNUR_SUCCESS;
   default: 
-    if (gen) _unur_warning(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
     return UNUR_FAILURE;
   }
 } 

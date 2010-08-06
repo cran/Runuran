@@ -213,7 +213,7 @@ _unur_dgt_sample( struct unur_gen *gen )
   return (j + DISTR.domain[0]);
 } 
 int
-unur_dgt_eval_invcdf( const struct unur_gen *gen, double u, double *recycle )
+unur_dgt_eval_invcdf_recycle( const struct unur_gen *gen, double u, double *recycle )
 {
   int j;
   if (recycle) *recycle = 0.;
@@ -241,6 +241,11 @@ unur_dgt_eval_invcdf( const struct unur_gen *gen, double u, double *recycle )
   if (j<DISTR.domain[0]) j = DISTR.domain[0];
   if (j>DISTR.domain[1]) j = DISTR.domain[1];
   return j;
+} 
+int
+unur_dgt_eval_invcdf( const struct unur_gen *gen, double u )
+{
+  return unur_dgt_eval_invcdf_recycle(gen,u,NULL);
 } 
 int
 _unur_dgt_create_tables( struct unur_gen *gen )

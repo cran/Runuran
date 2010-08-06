@@ -16,6 +16,8 @@ static const char distr_name[] = "lognormal";
 #define NORMCONSTANT (distr->data.cont.norm_constant)
 static double _unur_pdf_lognormal( double x, const UNUR_DISTR *distr );
 static double _unur_dpdf_lognormal( double x, const UNUR_DISTR *distr );
+static double _unur_cdf_lognormal( double x, const UNUR_DISTR *distr );
+static double _unur_invcdf_lognormal( double x, const UNUR_DISTR *distr );
 static int _unur_upd_mode_lognormal( UNUR_DISTR *distr );
 static int _unur_set_params_lognormal( UNUR_DISTR *distr, const double *params, int n_params );
 double
@@ -38,6 +40,22 @@ _unur_dpdf_lognormal( double x, const UNUR_DISTR *distr )
   z = log(x-theta)-zeta;
   sigmasqu = sigma * sigma;
   return ( 1/((x-theta)*(x-theta)) * exp( -z*z/(2*sigmasqu) ) * (1.+z/sigmasqu) / NORMCONSTANT );
+} 
+double
+_unur_cdf_lognormal( double x, const UNUR_DISTR *distr )
+{ 
+  const double *params = DISTR.params;
+  double z;
+  if (x <= theta)
+    return 0.;
+  z = (log(x-theta)-zeta) / sigma;
+  return _unur_SF_cdf_normal(z);
+} 
+double
+_unur_invcdf_lognormal( double x, const UNUR_DISTR *distr )
+{ 
+  const double *params = DISTR.params;
+  return (theta + exp( _unur_SF_invcdf_normal(x) * sigma + zeta));
 } 
 int
 _unur_upd_mode_lognormal( UNUR_DISTR *distr )
@@ -87,9 +105,10 @@ unur_distr_lognormal( const double *params, int n_params )
   distr = unur_distr_cont_new();
   distr->id = UNUR_DISTR_LOGNORMAL;
   distr->name = distr_name;
-  DISTR.init = NULL;         
-  DISTR.pdf  = _unur_pdf_lognormal;  
-  DISTR.dpdf = _unur_dpdf_lognormal; 
+  DISTR.pdf    = _unur_pdf_lognormal;     
+  DISTR.dpdf   = _unur_dpdf_lognormal;    
+  DISTR.cdf    = _unur_cdf_lognormal;     
+  DISTR.invcdf = _unur_invcdf_lognormal;  
   distr->set = ( UNUR_DISTR_SET_DOMAIN |
 		 UNUR_DISTR_SET_STDDOMAIN |
  		 UNUR_DISTR_SET_MODE   |

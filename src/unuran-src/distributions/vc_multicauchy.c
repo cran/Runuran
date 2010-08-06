@@ -132,7 +132,7 @@ _unur_upd_volume_multicauchy( UNUR_DISTR *distr )
   double det_covar;
   det_covar = (DISTR.covar == NULL)
     ? 1. : _unur_matrix_determinant(distr->dim, DISTR.covar);
-  LOGNORMCONSTANT = _unur_sf_ln_gamma((distr->dim+1)/2.) 
+  LOGNORMCONSTANT = _unur_SF_ln_gamma((distr->dim+1)/2.) 
                   - ( (distr->dim+1) * log(M_PI) + log(det_covar) ) / 2.;
   return UNUR_SUCCESS;
 } 
@@ -167,7 +167,7 @@ unur_distr_multicauchy( int dim, const double *mean, const double *covar )
   }
 #endif
   det_covar = (DISTR.covar == NULL) ? 1. : _unur_matrix_determinant(dim, DISTR.covar);
-  LOGNORMCONSTANT = _unur_sf_ln_gamma((distr->dim+1)/2.) 
+  LOGNORMCONSTANT = _unur_SF_ln_gamma((distr->dim+1)/2.) 
                   - ( (distr->dim+1) * log(M_PI) + log(det_covar) ) / 2.;
   DISTR.mode = _unur_xmalloc( distr->dim * sizeof(double) );
   memcpy( DISTR.mode, DISTR.mean, distr->dim * sizeof(double) );

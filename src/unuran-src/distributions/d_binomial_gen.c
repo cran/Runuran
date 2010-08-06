@@ -23,15 +23,13 @@ _unur_stdgen_binomial_init( struct unur_par *par, struct unur_gen *gen )
   case 0:  
   case 1:  
      if (gen==NULL) return UNUR_SUCCESS; 
-     _unur_dstd_set_sampling_routine( par,gen,_unur_stdgen_sample_binomial_bruec );
+     _unur_dstd_set_sampling_routine(gen, _unur_stdgen_sample_binomial_bruec );
      return binomial_bruec_init( gen );
-  case UNUR_STDGEN_INVERSION:   
   default: 
-    if (gen) _unur_warning(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
     return UNUR_FAILURE;
   }
 } 
-#define flogfak(k) _unur_sf_ln_factorial(k)
+#define flogfak(k) _unur_SF_ln_factorial(k)
 #define p       (DISTR.params[1])
 #define n       (GEN->gen_iparam[0])
 #define b       (GEN->gen_iparam[1])

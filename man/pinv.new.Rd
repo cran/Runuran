@@ -86,12 +86,20 @@ pinvd.new(distr, uresolution=1.e-10, smooth=FALSE)
   distribution.
 }
 
+\section{Remark}{
+  Using function \code{\link{up}} generator objects that implement
+  method \sQuote{PINV} may also be used to approximate the cumulative
+  distribution function of the given distribution when only the density
+  is given. The approximation error is about one tenth of the requested
+  \code{uresolution}.
+}
+
 \value{
   An object of class \code{"unuran"}.
 }
 
 \seealso{
-  \code{\link{ur}}, \code{\link{uq}},
+  \code{\link{ur}}, \code{\link{uq}}, \code{\link{up}},
   \code{\linkS4class{unuran.cont}},
   \code{\link{unuran.new}}, 
   \code{\linkS4class{unuran}}.

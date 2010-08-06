@@ -12,7 +12,9 @@ _unur_lobatto_init (UNUR_LOBATTO_FUNCT funct, struct unur_gen *gen,
 		    double tol, UNUR_LOBATTO_ERROR uerror, int size);
 int _unur_lobatto_find_linear (struct unur_lobatto_table *Itable, double x);
 double _unur_lobatto_eval_diff (struct unur_lobatto_table *Itable, double x, double h, double *fx);
+double _unur_lobatto_eval_CDF (struct unur_lobatto_table *Itable, double x);
 double _unur_lobatto_integral (struct unur_lobatto_table *Itable );
 void _unur_lobatto_free (struct unur_lobatto_table **Itable);
 void _unur_lobatto_debug_table (struct unur_lobatto_table *Itable,
 				const struct unur_gen *gen, int print_Itable );
+int _unur_lobatto_size_table (struct unur_lobatto_table *Itable);

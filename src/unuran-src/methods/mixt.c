@@ -202,7 +202,7 @@ _unur_mixt_sample_inv( struct unur_gen *gen )
   int J;
   CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_MIXT_GEN,INFINITY);
   U = _unur_call_urng(gen->urng);
-  J =unur_dgt_eval_invcdf( gen->INDEX, U, &recycle );
+  J =unur_dgt_eval_invcdf_recycle( gen->INDEX, U, &recycle );
   if (_unur_iszero(recycle)) recycle = DBL_MIN;
   if (_unur_isone(recycle))  recycle = 1. - DBL_EPSILON;
   return unur_quantile(gen->COMP[J], recycle);
@@ -226,7 +226,7 @@ unur_mixt_eval_invcdf( const struct unur_gen *gen, double u )
     if (u>=1.) return DISTR.domain[1];
     return u;  
   }
-  J =unur_dgt_eval_invcdf( gen->INDEX, u, &recycle );
+  J =unur_dgt_eval_invcdf_recycle( gen->INDEX, u, &recycle );
   if (_unur_iszero(recycle)) recycle = DBL_MIN;
   if (_unur_isone(recycle))  recycle = 1. - DBL_EPSILON;
   return unur_quantile(gen->COMP[J], recycle);

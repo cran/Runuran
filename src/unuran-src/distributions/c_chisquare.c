@@ -15,6 +15,9 @@ static const char distr_name[] = "chisquare";
 static double _unur_pdf_chisquare( double x, const UNUR_DISTR *distr );
 static double _unur_dpdf_chisquare( double x, const UNUR_DISTR *distr );
 static double _unur_cdf_chisquare( double x, const UNUR_DISTR *distr );
+#ifdef _unur_SF_invcdf_gamma
+static double _unur_invcdf_chisquare( double x, const UNUR_DISTR *distr );
+#endif
 static int _unur_upd_mode_chisquare( UNUR_DISTR *distr );
 static int _unur_upd_area_chisquare( UNUR_DISTR *distr );
 static int _unur_set_params_chisquare( UNUR_DISTR *distr, const double *params, int n_params );
@@ -44,8 +47,16 @@ _unur_cdf_chisquare(double x, const UNUR_DISTR *distr)
   register const double *params = DISTR.params;
   if (x <= 0.)
     return 0.;
-  return _unur_sf_incomplete_gamma(x/2.,nu/2.);
+  return _unur_SF_incomplete_gamma(x/2.,nu/2.);
 } 
+#ifdef _unur_SF_invcdf_gamma
+double
+_unur_invcdf_chisquare( double x, const UNUR_DISTR *distr )
+{ 
+  const double *params = DISTR.params;
+  return _unur_SF_invcdf_gamma(x, 0.5*nu, 2.);
+} 
+#endif
 int
 _unur_upd_mode_chisquare( UNUR_DISTR *distr )
 {
@@ -59,7 +70,7 @@ _unur_upd_mode_chisquare( UNUR_DISTR *distr )
 int
 _unur_upd_area_chisquare( UNUR_DISTR *distr )
 {
-  LOGNORMCONSTANT = _unur_sf_ln_gamma(DISTR.nu/2.) + M_LN2 * (DISTR.nu/2.);
+  LOGNORMCONSTANT = _unur_SF_ln_gamma(DISTR.nu/2.) + M_LN2 * (DISTR.nu/2.);
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
     DISTR.area = 1.;
     return UNUR_SUCCESS;
@@ -100,6 +111,9 @@ unur_distr_chisquare( const double *params, int n_params )
   DISTR.pdf  = _unur_pdf_chisquare;   
   DISTR.dpdf = _unur_dpdf_chisquare;  
   DISTR.cdf  = _unur_cdf_chisquare;   
+#ifdef _unur_SF_invcdf_gamma
+  DISTR.invcdf = _unur_invcdf_chisquare;  
+#endif
   distr->set = ( UNUR_DISTR_SET_DOMAIN |
 		 UNUR_DISTR_SET_STDDOMAIN |
 		 UNUR_DISTR_SET_PDFAREA |
@@ -108,7 +122,7 @@ unur_distr_chisquare( const double *params, int n_params )
     free(distr);
     return NULL;
   }
-  LOGNORMCONSTANT = _unur_sf_ln_gamma(DISTR.nu/2.) + M_LN2 * (DISTR.nu/2.);
+  LOGNORMCONSTANT = _unur_SF_ln_gamma(DISTR.nu/2.) + M_LN2 * (DISTR.nu/2.);
   DISTR.mode = (DISTR.nu >= 2.) ? (DISTR.nu - 2.) : 0.;
   DISTR.area = 1.;
   DISTR.set_params = _unur_set_params_chisquare;

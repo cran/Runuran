@@ -63,7 +63,7 @@ unur_distr_cxtrans_get_distribution( const struct unur_distr *cxt )
   _unur_check_NULL( distr_name, cxt, NULL );
   _unur_check_distr_object( cxt, CONT, NULL );
   if (cxt->id != UNUR_DISTR_CXTRANS) {
-    _unur_warning(distr_name,UNUR_ERR_DISTR_INVALID,"");
+    _unur_error(distr_name,UNUR_ERR_DISTR_INVALID,"");
     return NULL;
   }
   return cxt->base;

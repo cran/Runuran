@@ -20,11 +20,9 @@ _unur_stdgen_slash_init( struct unur_par *par, struct unur_gen *gen )
   switch ((par) ? par->variant : gen->variant) {
   case 0:  
   case 1:  
-    _unur_cstd_set_sampling_routine( par,gen,_unur_stdgen_sample_slash_slash );
+    _unur_cstd_set_sampling_routine(gen, _unur_stdgen_sample_slash_slash );
     return slash_slash_init( gen );
-  case UNUR_STDGEN_INVERSION:   
   default: 
-    if (gen) _unur_warning(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
     return UNUR_FAILURE;
   }
 } 

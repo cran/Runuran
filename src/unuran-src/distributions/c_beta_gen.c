@@ -28,36 +28,34 @@ _unur_stdgen_beta_init( struct unur_par *par, struct unur_gen *gen )
   case 1:  
     if (gen==NULL) return UNUR_SUCCESS; 
     if (p>1. && q>1.) {
-      _unur_cstd_set_sampling_routine( par,gen,_unur_stdgen_sample_beta_bb );
+      _unur_cstd_set_sampling_routine(gen, _unur_stdgen_sample_beta_bb );
       return beta_bb_init( gen );
     }
     else {
-      _unur_cstd_set_sampling_routine( par,gen,_unur_stdgen_sample_beta_bc );
+      _unur_cstd_set_sampling_routine(gen, _unur_stdgen_sample_beta_bc );
       return beta_bc_init( gen );
     }
   case 2:  
     if (gen==NULL) return UNUR_SUCCESS;  
     if (p>1.)
       if (q>1.) {    
-	_unur_cstd_set_sampling_routine( par,gen,_unur_stdgen_sample_beta_b1prs );
+	_unur_cstd_set_sampling_routine(gen, _unur_stdgen_sample_beta_b1prs );
 	return beta_b1prs_init( gen );
       }
       else {         
-	_unur_cstd_set_sampling_routine( par,gen,_unur_stdgen_sample_beta_b01 );
+	_unur_cstd_set_sampling_routine(gen, _unur_stdgen_sample_beta_b01 );
 	return beta_b01_init( gen );
       }
     else
       if (q>1.) {    
-	_unur_cstd_set_sampling_routine( par,gen,_unur_stdgen_sample_beta_b01 );
+	_unur_cstd_set_sampling_routine(gen, _unur_stdgen_sample_beta_b01 );
 	return beta_b01_init( gen );
       }
       else {         
-	_unur_cstd_set_sampling_routine( par,gen,_unur_stdgen_sample_beta_b00 );
+	_unur_cstd_set_sampling_routine(gen, _unur_stdgen_sample_beta_b00 );
 	return beta_b00_init( gen );
       }
-  case UNUR_STDGEN_INVERSION:   
   default: 
-    if (gen) _unur_warning(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
     return UNUR_FAILURE;
   }
 } 

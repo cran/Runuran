@@ -25,6 +25,7 @@
 #define PINV_GUIDE_FACTOR  (1)
 #define PINV_VARIANT_PDF      0x0010u   
 #define PINV_VARIANT_UPOINTS  0x0040u   
+#define PINV_VARIANT_KEEPCDF  0x0080u   
 #define PINV_DEBUG_REINIT    0x00000002u   
 #define PINV_DEBUG_TABLE     0x00000010u   
 #define PINV_DEBUG_SEARCHBD  0x00010000u   
@@ -39,6 +40,7 @@
 #define PINV_SET_SEARCHBOUNDARY 0x0020u  
 #define PINV_SET_VARIANT        0x0040u  
 #define PINV_SET_MAX_IVS        0x0080u  
+#define PINV_SET_KEEPCDF        0x0100u  
 #define GENTYPE "PINV"         
 static struct unur_gen *_unur_pinv_init (struct unur_par *par);
 static struct unur_gen *_unur_pinv_create (struct unur_par *par);

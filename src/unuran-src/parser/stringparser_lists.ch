@@ -1110,6 +1110,12 @@ _unur_str_par_set( UNUR_PAR *par, const char *key, char *value, struct unur_slis
 				 break;
 			 }
 			 break;
+		 case 'k':
+			 if ( !strcmp(key, "keepcdf") ) {
+				 result = _unur_str_par_set_i(par,key,type_args,args,unur_pinv_set_keepcdf);
+				 break;
+			 }
+			 break;
 		 case 'm':
 			 if ( !strcmp(key, "max_intervals") ) {
 				 result = _unur_str_par_set_i(par,key,type_args,args,unur_pinv_set_max_intervals);

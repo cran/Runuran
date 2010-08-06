@@ -65,8 +65,9 @@ struct unur_distr_cvec {
 struct unur_distr_discr {
   double *pv;                   
   int     n_pv;                 
-  UNUR_FUNCT_DISCR *pmf;        
-  UNUR_FUNCT_DISCR *cdf;        
+  UNUR_FUNCT_DISCR  *pmf;       
+  UNUR_FUNCT_DISCR  *cdf;       
+  UNUR_IFUNCT_DISCR *invcdf;    
   double params[UNUR_DISTR_MAXPARAMS];  
   int    n_params;              
   double norm_constant;         

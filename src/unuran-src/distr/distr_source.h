@@ -22,6 +22,7 @@
 #define UNUR_DISTR_SET_MODE           0x00000001u
 #define UNUR_DISTR_SET_MODE_APPROX    0x00000020u 
 #define UNUR_DISTR_SET_CENTER         0x00000002u
+#define UNUR_DISTR_SET_CENTER_APPROX  0x00000040u 
 #define UNUR_DISTR_SET_PDFAREA        0x00000004u
 #define UNUR_DISTR_SET_PMFSUM         0x00000008u
 #define UNUR_DISTR_SET_PDFVOLUME      0x00000010u
@@ -35,6 +36,7 @@
 #define _unur_cont_HR(x,distr)      ((*((distr)->data.cont.hr))  ((x),(distr)))
 #define _unur_discr_PMF(x,distr)    ((*((distr)->data.discr.pmf))((x),(distr)))
 #define _unur_discr_CDF(x,distr)    ((*((distr)->data.discr.cdf))((x),(distr)))
+#define _unur_discr_invCDF(u,distr) ((int) (*((distr)->data.discr.invcdf)) ((u),(distr)))
 double _unur_cvec_PDF(const double *x, struct unur_distr *distr);
 int _unur_cvec_dPDF(double *result, const double *x, struct unur_distr *distr);
 double _unur_cvec_pdPDF(const double *x, int coord, struct unur_distr *distr);
@@ -74,6 +76,7 @@ void _unur_distr_info_typename( struct unur_gen *gen );
 void _unur_distr_info_vector( struct unur_gen *gen, const double *vec, int n );
 void _unur_distr_cvec_info_domain( struct unur_gen *gen );
 #endif
+int _unur_distr_cont_find_center( struct unur_distr *distr );
 int _unur_distr_cvec_marginals_are_equal( struct unur_distr **marginals, int dim );
 int _unur_distr_cvec_duplicate_firstmarginal( struct unur_distr *distribution );
 int _unur_distr_cvec_is_indomain( const double *x, const struct unur_distr *distribution);

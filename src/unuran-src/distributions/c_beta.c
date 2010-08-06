@@ -20,6 +20,9 @@ static double _unur_logpdf_beta( double x, const UNUR_DISTR *distr );
 static double _unur_dpdf_beta( double x, const UNUR_DISTR *distr );
 static double _unur_dlogpdf_beta( double x, const UNUR_DISTR *distr );
 static double _unur_cdf_beta( double x, const UNUR_DISTR *distr );
+#ifdef _unur_SF_invcdf_beta
+static double _unur_invcdf_beta( double x, const UNUR_DISTR *distr );
+#endif
 static int _unur_upd_mode_beta( UNUR_DISTR *distr );
 static int _unur_upd_area_beta( UNUR_DISTR *distr );
 inline static double _unur_lognormconstant_beta( const double *params, int n_params );
@@ -107,8 +110,19 @@ _unur_cdf_beta(double x, const UNUR_DISTR *distr)
     x = (x-a) / (b-a);
   if (x <= 0.) return 0.;
   if (x >= 1.) return 1.;
-  return _unur_sf_incomplete_beta(x,p,q);
+  return _unur_SF_incomplete_beta(x,p,q);
 } 
+#ifdef _unur_SF_invcdf_beta
+double
+_unur_invcdf_beta(double x, const UNUR_DISTR *distr)
+{
+  const double *params = DISTR.params;
+  if (DISTR.n_params == 2)
+    return _unur_SF_invcdf_beta(x,p,q);
+  else
+    return (a + _unur_SF_invcdf_beta(x,p,q))*(b-a);
+} 
+#endif
 int
 _unur_upd_mode_beta( UNUR_DISTR *distr )
 {
@@ -147,9 +161,9 @@ double
 _unur_lognormconstant_beta(const double *params, int n_params)
 { 
   if (n_params > 2)
-    return (_unur_sf_ln_gamma(p) + _unur_sf_ln_gamma(q) - _unur_sf_ln_gamma(p+q) + log(b-a) );
+    return (_unur_SF_ln_gamma(p) + _unur_SF_ln_gamma(q) - _unur_SF_ln_gamma(p+q) + log(b-a) );
   else
-    return (_unur_sf_ln_gamma(p) + _unur_sf_ln_gamma(q) - _unur_sf_ln_gamma(p+q));
+    return (_unur_SF_ln_gamma(p) + _unur_SF_ln_gamma(q) - _unur_SF_ln_gamma(p+q));
 } 
 int
 _unur_set_params_beta( UNUR_DISTR *distr, const double *params, int n_params )
@@ -201,6 +215,9 @@ unur_distr_beta( const double *params, int n_params )
   DISTR.dpdf    = _unur_dpdf_beta;    
   DISTR.dlogpdf = _unur_dlogpdf_beta; 
   DISTR.cdf     = _unur_cdf_beta;     
+#ifdef _unur_SF_invcdf_beta
+  DISTR.invcdf  = _unur_invcdf_beta;  
+#endif
   distr->set = ( UNUR_DISTR_SET_DOMAIN |
 		 UNUR_DISTR_SET_STDDOMAIN |
 		 UNUR_DISTR_SET_PDFAREA |

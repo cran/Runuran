@@ -204,8 +204,7 @@ _Runuran_discr_eval_pmf( int k, const struct unur_distr *distr )
   Rdistr = unur_distr_get_extobj(distr);
   PROTECT(arg = NEW_NUMERIC(1));
   NUMERIC_POINTER(arg)[0] = (double)k;
-  PROTECT(R_fcall = lang2(Rdistr->pmf, R_NilValue));
-  SETCADR(R_fcall, arg);
+  PROTECT(R_fcall = lang2(Rdistr->pmf, arg));
   y = REAL(eval(R_fcall, Rdistr->env))[0];
   UNPROTECT(2);
   return y;
@@ -352,8 +351,7 @@ _Runuran_cont_eval_cdf( double x, const struct unur_distr *distr )
   Rdistr = unur_distr_get_extobj(distr);
   PROTECT(arg = NEW_NUMERIC(1));
   NUMERIC_POINTER(arg)[0] = x;
-  PROTECT(R_fcall = lang2(Rdistr->cdf, R_NilValue));
-  SETCADR(R_fcall, arg);
+  PROTECT(R_fcall = lang2(Rdistr->cdf, arg));
   y = REAL(eval(R_fcall, Rdistr->env))[0];
   UNPROTECT(2);
   return y;
@@ -374,8 +372,7 @@ _Runuran_cont_eval_pdf( double x, const struct unur_distr *distr )
   Rdistr = unur_distr_get_extobj(distr);
   PROTECT(arg = NEW_NUMERIC(1));
   NUMERIC_POINTER(arg)[0] = x;
-  PROTECT(R_fcall = lang2(Rdistr->pdf, R_NilValue));
-  SETCADR(R_fcall, arg);
+  PROTECT(R_fcall = lang2(Rdistr->pdf, arg));
   y = REAL(eval(R_fcall, Rdistr->env))[0];
   UNPROTECT(2);
   return y;
@@ -396,8 +393,7 @@ _Runuran_cont_eval_dpdf( double x, const struct unur_distr *distr )
   Rdistr = unur_distr_get_extobj(distr);
   PROTECT(arg = NEW_NUMERIC(1));
   NUMERIC_POINTER(arg)[0] = x;
-  PROTECT(R_fcall = lang2(Rdistr->dpdf, R_NilValue));
-  SETCADR(R_fcall, arg);
+  PROTECT(R_fcall = lang2(Rdistr->dpdf, arg));
   y = REAL(eval(R_fcall, Rdistr->env))[0];
   UNPROTECT(2);
   return y;
@@ -537,8 +533,7 @@ _Runuran_cmv_eval_pdf( const double *x, struct unur_distr *distr )
     rarg[i] = x[i];
 
   /* evaluate PDF */
-  PROTECT(R_fcall = lang2(Rdistr->pdf, R_NilValue));
-  SETCADR(R_fcall, arg);
+  PROTECT(R_fcall = lang2(Rdistr->pdf, arg));
   y = REAL(eval(R_fcall, Rdistr->env))[0];
   UNPROTECT(2);
 

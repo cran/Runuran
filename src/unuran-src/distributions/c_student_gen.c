@@ -19,18 +19,16 @@ _unur_stdgen_student_init( struct unur_par *par, struct unur_gen *gen )
   switch ((par) ? par->variant : gen->variant) {
   case 0:  
   case 1:  
-    _unur_cstd_set_sampling_routine( par,gen,_unur_stdgen_sample_student_tpol );
+    _unur_cstd_set_sampling_routine(gen, _unur_stdgen_sample_student_tpol );
     return UNUR_SUCCESS;
   case 2:  
     if (par!=NULL && par->distr->data.cont.params[0] < 1.) {   
       _unur_error(NULL,UNUR_ERR_GEN_CONDITION,"");
       return UNUR_ERR_GEN_CONDITION;
     }
-    _unur_cstd_set_sampling_routine( par,gen,_unur_stdgen_sample_student_trouo );
+    _unur_cstd_set_sampling_routine(gen, _unur_stdgen_sample_student_trouo );
     return student_trouo_init( gen );
-  case UNUR_STDGEN_INVERSION:   
   default: 
-    if (gen) _unur_warning(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
     return UNUR_FAILURE;
   }
 } 

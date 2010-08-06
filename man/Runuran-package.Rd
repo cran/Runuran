@@ -17,8 +17,8 @@
   \tabular{ll}{
     Package: \tab Runuran       \cr
     Type:    \tab Package       \cr
-    Version: \tab 0.14.0        \cr
-    Date:    \tab 2010-04-29    \cr
+    Version: \tab 0.15.0        \cr
+    Date:    \tab 2010-08-06    \cr
     License: \tab GPL 2 or later\cr
   }
   \pkg{Runuran} provides an interface to the UNU.RAN library for
@@ -187,6 +187,12 @@
       \code{\link{unuran.details}} \tab \ldots \tab show \code{unuran} object \cr
     }
   }
+}
+
+\section{Density and distribution function}{
+  UNU.RAN distribution objects and generator objects may also be used to
+  compute density and distribution function for a given distribution by
+  means of \code{\link{ud}} and \code{\link{up}}.
 }
 
 \section{Uniform random numbers}{

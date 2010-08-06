@@ -19,11 +19,9 @@ _unur_stdgen_logarithmic_init( struct unur_par *par, struct unur_gen *gen )
   switch ((par) ? par->variant : gen->variant) {
   case 0:  
   case 1:  
-    _unur_dstd_set_sampling_routine( par,gen,_unur_stdgen_sample_logarithmic_lsk );
+    _unur_dstd_set_sampling_routine(gen, _unur_stdgen_sample_logarithmic_lsk );
     return logarithmic_lsk_init( gen );
-  case UNUR_STDGEN_INVERSION:   
   default: 
-    if (gen) _unur_warning(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
     return UNUR_FAILURE;
   }
 } 

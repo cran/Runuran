@@ -162,3 +162,15 @@ unur_pinv_get_n_intervals( const struct unur_gen *gen )
   _unur_check_gen_object( gen, PINV, 0 );
   return GEN->n_ivs;
 } 
+int
+unur_pinv_set_keepcdf( struct unur_par *par, int keepcdf)
+{
+  _unur_check_NULL( GENTYPE, par, UNUR_ERR_NULL );
+  _unur_check_par_object( par, PINV );
+  if (keepcdf)
+    par->variant |= PINV_VARIANT_KEEPCDF;
+  else
+    par->variant &= ~PINV_VARIANT_KEEPCDF;
+  par->set |= PINV_SET_KEEPCDF;
+  return UNUR_SUCCESS;
+} 

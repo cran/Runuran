@@ -86,11 +86,11 @@ x
 unuran.packed(gen)
 @ 
 
-Now can save or \R\ session and start a new one with the
+Now we can save or \R\ session and start a new one with the
 previously saved workspace restored. Then we can reuse object
 \code{gen} (after loading library \code{Runuran}).
 
-Withour packing \code{gen}, it would be broken after restoring the
+Without packing \code{gen}, it would be broken after restoring the
 saved workspace.
 
 \begin{Schunk}

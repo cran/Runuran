@@ -25,7 +25,7 @@ unur_distr_corder_new( const struct unur_distr *distr, int n, int k )
     _unur_error(distr_name,UNUR_ERR_DISTR_INVALID,""); return NULL; }
   COOKIE_CHECK(distr,CK_DISTR_CONT,NULL);
   if (distr->id == UNUR_DISTR_CORDER) {
-    _unur_warning(distr_name,UNUR_ERR_DISTR_INVALID,"No order statistics of order statistics allowed");
+    _unur_error(distr_name,UNUR_ERR_DISTR_INVALID,"No order statistics of order statistics allowed");
     return NULL; 
   }
   if (n < 2 || k < 1 || k > n) {
@@ -78,7 +78,7 @@ unur_distr_corder_set_rank( struct unur_distr *os, int n, int k )
     _unur_error(distr_name,UNUR_ERR_DISTR_INVALID,""); return UNUR_ERR_DISTR_INVALID; }
   COOKIE_CHECK(os,CK_DISTR_CONT,UNUR_ERR_COOKIE);
   if (n < 2 || k < 1 || k > n) {
-    _unur_warning(distr_name,UNUR_ERR_DISTR_SET,"n < 2 or k < 1 or k > n");
+    _unur_error(distr_name,UNUR_ERR_DISTR_SET,"n < 2 or k < 1 or k > n");
     return UNUR_ERR_DISTR_SET;
   }
   os->set &= ~UNUR_DISTR_SET_MODE; 
@@ -163,14 +163,14 @@ _unur_cdf_corder( double x, const struct unur_distr *os )
   Fx = (*(os->base->data.cont.cdf)) (x, os->base);
   p = OS.params[1];                       
   q = OS.params[0] - OS.params[1] + 1.;   
-  return _unur_sf_incomplete_beta(Fx,p,q);
+  return _unur_SF_incomplete_beta(Fx,p,q);
 } 
 int
 _unur_upd_area_corder( UNUR_DISTR *os )
 {
-  LOGNORMCONSTANT = ( _unur_sf_ln_gamma(OS.params[1]) 
-		      + _unur_sf_ln_gamma(OS.params[0] - OS.params[1] + 1.) 
-		      - _unur_sf_ln_gamma(OS.params[0] + 1.) );
+  LOGNORMCONSTANT = ( _unur_SF_ln_gamma(OS.params[1]) 
+		      + _unur_SF_ln_gamma(OS.params[0] - OS.params[1] + 1.) 
+		      - _unur_SF_ln_gamma(OS.params[0] + 1.) );
   if (!(os->set & UNUR_DISTR_SET_STDDOMAIN)) {
     if (OS.cdf == NULL)
       return UNUR_ERR_DISTR_REQUIRED;

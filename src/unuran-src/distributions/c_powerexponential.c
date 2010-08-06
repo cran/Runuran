@@ -55,7 +55,7 @@ _unur_cdf_powerexponential( double x, const UNUR_DISTR *distr )
 { 
   register const double *params = DISTR.params;
   register double cdf;
-  cdf = _unur_sf_incomplete_gamma(pow(fabs(x),tau),1./tau) / 2.;
+  cdf = _unur_SF_incomplete_gamma(pow(fabs(x),tau),1./tau) / 2.;
   return ((x<0.) ? 0.5 - cdf : 0.5 + cdf);
 } 
 int
@@ -71,7 +71,7 @@ _unur_upd_mode_powerexponential( UNUR_DISTR *distr )
 int
 _unur_upd_area_powerexponential( UNUR_DISTR *distr )
 {
-  LOGNORMCONSTANT = _unur_sf_ln_gamma(1. + 1./DISTR.tau) + M_LN2;
+  LOGNORMCONSTANT = _unur_SF_ln_gamma(1. + 1./DISTR.tau) + M_LN2;
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
     DISTR.area = 1.;
     return UNUR_SUCCESS;
@@ -123,7 +123,7 @@ unur_distr_powerexponential( const double *params, int n_params )
     free(distr);
     return NULL;
   }
-  LOGNORMCONSTANT = _unur_sf_ln_gamma(1. + 1./DISTR.tau) + M_LN2;
+  LOGNORMCONSTANT = _unur_SF_ln_gamma(1. + 1./DISTR.tau) + M_LN2;
   DISTR.mode = 0;
   DISTR.area = 1.;
   DISTR.set_params = _unur_set_params_powerexponential;

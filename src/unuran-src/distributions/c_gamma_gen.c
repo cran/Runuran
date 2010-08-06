@@ -28,19 +28,17 @@ _unur_stdgen_gamma_init( struct unur_par *par, struct unur_gen *gen )
   case 1:  
     if (gen==NULL) return UNUR_SUCCESS; 
     if (alpha < 1.) {
-      _unur_cstd_set_sampling_routine( par,gen,_unur_stdgen_sample_gamma_gs );
+      _unur_cstd_set_sampling_routine(gen, _unur_stdgen_sample_gamma_gs );
       return gamma_gs_init( gen );
     }
     else {
-      _unur_cstd_set_sampling_routine( par,gen,_unur_stdgen_sample_gamma_gd );
+      _unur_cstd_set_sampling_routine(gen, _unur_stdgen_sample_gamma_gd );
       return gamma_gd_init( gen );
     }
   case 2:  
-    _unur_cstd_set_sampling_routine( par,gen,_unur_stdgen_sample_gamma_gll );
+    _unur_cstd_set_sampling_routine(gen, _unur_stdgen_sample_gamma_gll );
     return gamma_gll_init( gen );
-  case UNUR_STDGEN_INVERSION:   
   default: 
-    if (gen) _unur_warning(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
     return UNUR_FAILURE;
   }
 } 

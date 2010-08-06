@@ -26,11 +26,9 @@ _unur_stdgen_chi_init( struct unur_par *par, struct unur_gen *gen )
 	return UNUR_ERR_GEN_CONDITION;
       }
     }
-    _unur_cstd_set_sampling_routine( par,gen,_unur_stdgen_sample_chi_chru );
+    _unur_cstd_set_sampling_routine(gen, _unur_stdgen_sample_chi_chru );
     return chi_chru_init( gen );
-  case UNUR_STDGEN_INVERSION:   
   default: 
-    if (gen) _unur_warning(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
     return UNUR_FAILURE;
   }
 } 

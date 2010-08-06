@@ -68,7 +68,7 @@ double
 _unur_cdf_ig( double x, const UNUR_DISTR *distr ) 
 {
   register const double *params = DISTR.params;
-#define Phi(x)   (_unur_sf_cdfnormal(x))
+#define Phi(x)   (_unur_SF_cdf_normal(x))
   if (x<=0.)
     return 0.;
   return 

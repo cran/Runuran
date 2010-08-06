@@ -59,9 +59,14 @@ SEXP Runuran_quantile (SEXP sexp_unur, SEXP sexp_U);
 /* Quantile for distribution in UNU.RAN generator object.                    */
 /*---------------------------------------------------------------------------*/
 
-SEXP Runuran_PDF (SEXP sexp_distr, SEXP sexp_x);
+SEXP Runuran_PDF (SEXP sexp_obj, SEXP sexp_x);
 /*---------------------------------------------------------------------------*/
-/* Evaluate PDF or PMF for UNU.RAN distribution object. [EXPERIMENTAL]       */
+/* Evaluate PDF or PMF for UNU.RAN distribution or generator object.         */
+/*---------------------------------------------------------------------------*/
+
+SEXP Runuran_CDF (SEXP sexp_obj, SEXP sexp_x);
+/*---------------------------------------------------------------------------*/
+/* Evaluate CDF for UNU.RAN distribution or generator object.                */
 /*---------------------------------------------------------------------------*/
 
 SEXP Runuran_print (SEXP sexp_unur, SEXP sexp_help);

@@ -60,13 +60,13 @@ int _unur_stdgen_sample_poisson_pdac( UNUR_GEN *generator );
 int _unur_stdgen_sample_poisson_pprsc( UNUR_GEN *generator );
 int _unur_stdgen_zipf_init( UNUR_PAR *parameters, UNUR_GEN *generator );
 int _unur_stdgen_sample_zipf_zet( UNUR_GEN *generator );
-#define _unur_cstd_set_sampling_routine(par,gen,routine) \
+#define _unur_cstd_set_sampling_routine(gen,routine) \
    do { \
      if ((gen)==NULL) return UNUR_SUCCESS;            \
      (gen)->sample.cont = (routine);                  \
      ((struct unur_cstd_gen*)gen->datap)->sample_routine_name = #routine;   \
    } while (0)
-#define _unur_dstd_set_sampling_routine(par,gen,routine) \
+#define _unur_dstd_set_sampling_routine(gen,routine) \
    do { \
      if ((gen)==NULL) return UNUR_SUCCESS;            \
      (gen)->sample.discr = (routine);                 \

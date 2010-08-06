@@ -6,9 +6,11 @@
 #include <distr/distr_source.h>
 #include <distr/discr.h>
 #include <distributions/unur_stddistr.h>
+#include <distributions/unur_distributions_source.h>
 #include <urng/urng.h>
 #include "unur_methods_source.h"
 #include "x_gen_source.h"
+#include "cstd.h"    
 #include "dstd.h"
 #include "dstd_struct.h"
 #ifdef UNUR_ENABLE_INFO
@@ -24,9 +26,12 @@ static struct unur_gen *_unur_dstd_create( struct unur_par *par );
 static int _unur_dstd_check_par( struct unur_gen *gen );
 static struct unur_gen *_unur_dstd_clone( const struct unur_gen *gen );
 static void _unur_dstd_free( struct unur_gen *gen);
+static int _unur_dstd_sample_inv( struct unur_gen *gen ); 
+static int _unur_dstd_inversion_init( struct unur_par *par, struct unur_gen *gen );
 #ifdef UNUR_ENABLE_LOGGING
 static void _unur_dstd_debug_init( const struct unur_gen *gen );
 static void _unur_dstd_debug_chg_pmfparams( const struct unur_gen *gen );
+static void _unur_dstd_debug_chg_truncated( struct unur_gen *gen );
 #endif
 #ifdef UNUR_ENABLE_INFO
 static void _unur_dstd_info( struct unur_gen *gen, int help );
@@ -35,23 +40,18 @@ static void _unur_dstd_info( struct unur_gen *gen, int help );
 #define PAR       ((struct unur_dstd_par*)par->datap) 
 #define GEN       ((struct unur_dstd_gen*)gen->datap) 
 #define DISTR     gen->distr->data.discr 
-#define BD_LEFT   domain[0]             
-#define BD_RIGHT  domain[1]             
 #define SAMPLE    gen->sample.discr     
+#define CDF(x)    _unur_discr_CDF((x),(gen->distr))   
 struct unur_par *
 unur_dstd_new( const struct unur_distr *distr )
 { 
   struct unur_par *par;
-  _unur_check_NULL( GENTYPE,distr,NULL );
+  _unur_check_NULL(GENTYPE,distr,NULL);
   if (distr->type != UNUR_DISTR_DISCR) {
     _unur_error(GENTYPE,UNUR_ERR_DISTR_INVALID,""); return NULL; }
   COOKIE_CHECK(distr,CK_DISTR_DISCR,NULL);
-  if (!(distr->id & UNUR_DISTR_STD) ) {
-    _unur_error(GENTYPE,UNUR_ERR_DISTR_INVALID,"standard distribution");
-    return NULL;
-  }
-  if (DISTR_IN.init == NULL) {
-    _unur_error(GENTYPE,UNUR_ERR_DISTR_REQUIRED,"init() for special generators");
+  if (DISTR_IN.init == NULL && DISTR_IN.invcdf == NULL) {
+    _unur_error(GENTYPE,UNUR_ERR_DISTR_REQUIRED,"init() for special generators or inverse CDF");
     return NULL;
   }
   par = _unur_par_new( sizeof(struct unur_dstd_par) );
@@ -75,23 +75,71 @@ unur_dstd_set_variant( struct unur_par *par, unsigned variant )
   _unur_check_par_object( par, DSTD );
   old_variant = par->variant;
   par->variant = variant;
-  if (par->DISTR_IN.init != NULL && par->DISTR_IN.init(par,NULL)==UNUR_SUCCESS ) {
-    par->set |= DSTD_SET_VARIANT;    
-    return UNUR_SUCCESS;
+  if ( (par->DISTR_IN.init == NULL || par->DISTR_IN.init(par,NULL)!=UNUR_SUCCESS) &&
+       _unur_dstd_inversion_init(par,NULL)!=UNUR_SUCCESS ) {
+    _unur_warning(GENTYPE,UNUR_ERR_PAR_VARIANT,"");
+    par->variant = old_variant;
+    return UNUR_ERR_PAR_VARIANT;
   }
-  _unur_warning(GENTYPE,UNUR_ERR_PAR_VARIANT,"");
-  par->variant = old_variant;
-  return UNUR_ERR_PAR_VARIANT;
+  par->set |= DSTD_SET_VARIANT;
+  return UNUR_SUCCESS;
+} 
+int
+unur_dstd_chg_truncated( struct unur_gen *gen, int left, int right )
+{
+  double Umin, Umax;
+  _unur_check_NULL( GENTYPE, gen, UNUR_ERR_NULL );
+  _unur_check_gen_object( gen, DSTD, UNUR_ERR_GEN_INVALID );
+  if ( ! GEN->is_inversion ) { 
+    _unur_warning(gen->genid,UNUR_ERR_GEN_DATA,"truncated domain for non-inversion method");
+    return UNUR_ERR_GEN_DATA;
+  }
+  if (DISTR.cdf == NULL) {
+    _unur_warning(gen->genid,UNUR_ERR_GEN_DATA,"truncated domain, CDF required");
+    return UNUR_ERR_GEN_DATA;
+  }
+  if (left < DISTR.domain[0]) {
+    _unur_warning(NULL,UNUR_ERR_DISTR_SET,"truncated domain too large");
+    left = DISTR.domain[0];
+  }
+  if (right > DISTR.domain[1]) {
+    _unur_warning(NULL,UNUR_ERR_DISTR_SET,"truncated domain too large");
+    right = DISTR.domain[1];
+  }
+  if (left >= right) {
+    _unur_warning(NULL,UNUR_ERR_DISTR_SET,"domain, left >= right");
+    return UNUR_ERR_DISTR_SET;
+  }
+  Umin = (left <= INT_MIN) ? 0. : CDF(left-1);
+  Umax = CDF(right);
+  if (Umin > Umax) {
+    _unur_error(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
+    return UNUR_ERR_SHOULD_NOT_HAPPEN;
+  }
+  if (_unur_FP_equal(Umin,Umax)) {
+    _unur_warning(gen->genid,UNUR_ERR_DISTR_SET,"CDF values very close");
+    if (_unur_iszero(Umin) || _unur_FP_same(Umax,1.)) {
+      _unur_warning(gen->genid,UNUR_ERR_DISTR_SET,"CDF values at boundary points too close");
+      return UNUR_ERR_DISTR_SET;
+    }
+  }
+  DISTR.trunc[0] = left;
+  DISTR.trunc[1] = right;
+  GEN->Umin = Umin;
+  GEN->Umax = Umax;
+  gen->distr->set |= UNUR_DISTR_SET_TRUNCATED;
+  gen->distr->set &= ~UNUR_DISTR_SET_STDDOMAIN;
+#ifdef UNUR_ENABLE_LOGGING
+  if (gen->debug & DSTD_DEBUG_CHG)
+    _unur_dstd_debug_chg_truncated( gen );
+#endif
+  return UNUR_SUCCESS;
 } 
 struct unur_gen *
 _unur_dstd_init( struct unur_par *par )
 { 
   struct unur_gen *gen;
   CHECK_NULL(par,NULL);
-  if (par->DISTR_IN.init == NULL) {
-    _unur_error(GENTYPE,UNUR_ERR_NULL,"");
-    return NULL;
-  }
   if ( par->method != UNUR_METH_DSTD ) {
     _unur_error(GENTYPE,UNUR_ERR_PAR_INVALID,"");
     return NULL;
@@ -100,13 +148,14 @@ _unur_dstd_init( struct unur_par *par )
   gen = _unur_dstd_create(par);
   _unur_par_free(par);
   if (!gen) return NULL;
-  if (_unur_dstd_check_par(gen) != UNUR_SUCCESS) {
-    _unur_dstd_free(gen); return NULL;
-  }
   GEN->is_inversion = FALSE;   
-  if ( DISTR.init(NULL,gen)!=UNUR_SUCCESS ) {
+  if ( (DISTR.init == NULL || DISTR.init(NULL,gen)!=UNUR_SUCCESS) &&
+       _unur_dstd_inversion_init(NULL,gen)!=UNUR_SUCCESS ) {
     _unur_error(GENTYPE,UNUR_ERR_GEN_DATA,"variant for special generator");
     _unur_dstd_free(gen); return NULL; 
+  }
+  if (_unur_dstd_check_par(gen) != UNUR_SUCCESS) {
+    _unur_dstd_free(gen); return NULL;
   }
 #ifdef UNUR_ENABLE_LOGGING
   if (gen->debug) _unur_dstd_debug_init(gen);
@@ -117,13 +166,14 @@ int
 _unur_dstd_reinit( struct unur_gen *gen )
 {
   int rcode;
-  if ( (rcode = _unur_dstd_check_par(gen)) != UNUR_SUCCESS)
-    return rcode;
   GEN->is_inversion = FALSE;   
-  if ( DISTR.init(NULL,gen)!=UNUR_SUCCESS ) {
+  if ( (DISTR.init == NULL || DISTR.init(NULL,gen)!=UNUR_SUCCESS) &&
+       _unur_dstd_inversion_init(NULL,gen)!=UNUR_SUCCESS ) {
     _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"parameters");
     return UNUR_ERR_GEN_DATA;
   }
+  if ( (rcode = _unur_dstd_check_par(gen)) != UNUR_SUCCESS)
+    return rcode;
 #ifdef UNUR_ENABLE_LOGGING
     if (gen->debug & DSTD_DEBUG_REINIT)
       _unur_dstd_debug_chg_pmfparams( gen );
@@ -148,8 +198,8 @@ _unur_dstd_create( struct unur_par *par )
   GEN->n_gen_iparam = 0;
   GEN->is_inversion = FALSE;    
   GEN->sample_routine_name = NULL ;  
-  GEN->Umin        = 0;    
-  GEN->Umax        = 1;    
+  GEN->Umin = 0.;               
+  GEN->Umax = 1.;               
 #ifdef UNUR_ENABLE_INFO
   gen->info = _unur_dstd_info;
 #endif
@@ -159,8 +209,19 @@ int
 _unur_dstd_check_par( struct unur_gen *gen )
 {
   if (!(gen->distr->set & UNUR_DISTR_SET_STDDOMAIN)) {
-    _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"domain changed");
-    return UNUR_ERR_GEN_DATA;
+    gen->distr->set &= UNUR_DISTR_SET_TRUNCATED;
+    DISTR.trunc[0] = DISTR.domain[0];
+    DISTR.trunc[1] = DISTR.domain[1];
+    if ( ! GEN->is_inversion ) {
+      _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"domain changed for non inversion method");
+      return UNUR_ERR_GEN_DATA;
+    }
+    if (DISTR.cdf == NULL) {
+      _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"domain changed, CDF required");
+      return UNUR_ERR_GEN_DATA;
+    }
+    GEN->Umin = (DISTR.trunc[0] <= INT_MIN) ? 0. : CDF(DISTR.trunc[0]-1);
+    GEN->Umax = CDF(DISTR.trunc[1]);
   }
   return UNUR_SUCCESS;
 } 
@@ -197,6 +258,65 @@ _unur_dstd_free( struct unur_gen *gen )
   if (GEN->gen_iparam)  free(GEN->gen_iparam);
   _unur_generic_free(gen);
 } 
+int
+_unur_dstd_sample_inv( struct unur_gen *gen ) 
+{
+  double U;
+  if (!DISTR.invcdf) return INT_MAX;
+  while (_unur_iszero(U = GEN->Umin + _unur_call_urng(gen->urng) * (GEN->Umax-GEN->Umin)));
+  return ((int) DISTR.invcdf(U,gen->distr));
+} 
+int
+unur_dstd_eval_invcdf( const struct unur_gen *gen, double u )
+{
+  int k;
+  _unur_check_NULL( GENTYPE, gen, INT_MAX );
+  if ( gen->method != UNUR_METH_DSTD ) {
+    _unur_error(gen->genid,UNUR_ERR_GEN_INVALID,"");
+    return INT_MAX;
+  }
+  COOKIE_CHECK(gen,CK_DSTD_GEN,INT_MAX);
+  if (!DISTR.invcdf) {
+    _unur_error(gen->genid,UNUR_ERR_NO_QUANTILE,"inversion CDF required");
+    return INT_MAX;
+  } 
+  if ( ! (u>0. && u<1.)) {
+    if ( ! (u>=0. && u<=1.)) {
+      _unur_warning(gen->genid,UNUR_ERR_DOMAIN,"U not in [0,1]");
+    }
+    if (u<=0.) return DISTR.trunc[0];
+    if (u>=1.) return DISTR.trunc[1];
+    return INT_MAX;  
+  }
+  u = GEN->Umin + u * (GEN->Umax - GEN->Umin);
+  k = DISTR.invcdf(u,gen->distr);
+  if (k<DISTR.trunc[0]) k = DISTR.trunc[0];
+  if (k>DISTR.trunc[1]) k = DISTR.trunc[1];
+  return k;
+} 
+int
+_unur_dstd_inversion_init( struct unur_par *par, struct unur_gen *gen )
+{
+  switch ((par) ? par->variant : gen->variant) {
+  case 0:  
+  case UNUR_STDGEN_INVERSION:   
+    if (gen) {
+      if (DISTR.invcdf) {
+	GEN->is_inversion = TRUE;
+	_unur_dstd_set_sampling_routine(gen,_unur_dstd_sample_inv);
+	return UNUR_SUCCESS;
+      }
+    }
+    else {
+      if ((par->distr->data.discr).invcdf) {
+	return UNUR_SUCCESS;
+      }
+    }
+  default: 
+    if (gen) _unur_warning(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
+    return UNUR_FAILURE;
+  }
+} 
 #ifdef UNUR_ENABLE_LOGGING
 void
 _unur_dstd_debug_init( const struct unur_gen *gen )
@@ -232,6 +352,16 @@ _unur_dstd_debug_chg_pmfparams( const struct unur_gen *gen )
   fprintf(LOG,"%s: parameters of distribution changed:\n",gen->genid);
   for( i=0; i<DISTR.n_params; i++ )
       fprintf(LOG,"%s:\tparam[%d] = %g\n",gen->genid,i,DISTR.params[i]);
+} 
+void 
+_unur_dstd_debug_chg_truncated( struct unur_gen *gen )
+{
+  FILE *LOG;
+  CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_DSTD_GEN,RETURN_VOID);
+  LOG = unur_get_stream();
+  fprintf(LOG,"%s: domain of truncated distribution changed:\n",gen->genid);
+  fprintf(LOG,"%s:\tdomain = (%d, %d)\n",gen->genid, DISTR.trunc[0], DISTR.trunc[1]);
+  fprintf(LOG,"%s:\tU in (%g,%g)\n",gen->genid,GEN->Umin,GEN->Umax);
 } 
 #endif   
 #ifdef UNUR_ENABLE_INFO

@@ -40,7 +40,7 @@ _unur_cdf_chi(double x, const UNUR_DISTR *distr)
   register const double *params = DISTR.params;
   if (x <= 0.)
     return 0.;
-  return _unur_sf_incomplete_gamma(x*x/2.,nu/2.);
+  return _unur_SF_incomplete_gamma(x*x/2.,nu/2.);
 } 
 int
 _unur_upd_mode_chi( UNUR_DISTR *distr )
@@ -55,7 +55,7 @@ _unur_upd_mode_chi( UNUR_DISTR *distr )
 int
 _unur_upd_area_chi( UNUR_DISTR *distr )
 {
-  LOGNORMCONSTANT = _unur_sf_ln_gamma(DISTR.nu/2.) + M_LN2 * (DISTR.nu/2. - 1.);
+  LOGNORMCONSTANT = _unur_SF_ln_gamma(DISTR.nu/2.) + M_LN2 * (DISTR.nu/2. - 1.);
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
     DISTR.area = 1.;
     return UNUR_SUCCESS;
@@ -104,7 +104,7 @@ unur_distr_chi( const double *params, int n_params )
     free(distr);
     return NULL;
   }
-  LOGNORMCONSTANT = _unur_sf_ln_gamma(DISTR.nu/2.) + M_LN2 * (DISTR.nu/2. - 1.);
+  LOGNORMCONSTANT = _unur_SF_ln_gamma(DISTR.nu/2.) + M_LN2 * (DISTR.nu/2. - 1.);
   DISTR.mode = (DISTR.nu >= 1.) ? sqrt(DISTR.nu - 1.) : 0.;
   DISTR.area = 1.;
   DISTR.set_params = _unur_set_params_chi;

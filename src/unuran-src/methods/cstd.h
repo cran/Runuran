@@ -8,4 +8,3 @@ UNUR_PAR *unur_cstd_new( const UNUR_DISTR *distribution );
 int unur_cstd_set_variant( UNUR_PAR *parameters, unsigned variant );
 int unur_cstd_chg_truncated( UNUR_GEN *generator, double left, double right );
 double unur_cstd_eval_invcdf( const UNUR_GEN *generator, double u );
-double _unur_cstd_sample_inv( struct unur_gen *gen ); 

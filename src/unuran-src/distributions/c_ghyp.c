@@ -16,13 +16,13 @@ static const char distr_name[] = "ghyp";
 #define mu      params[4]    
 #define DISTR distr->data.cont
 #define NORMCONSTANT (distr->data.cont.norm_constant)
-#ifdef HAVE_BESSEL_K
+#ifdef _unur_SF_bessel_k
 static double _unur_pdf_ghyp( double x, const UNUR_DISTR *distr );
 #endif
 static int _unur_upd_center_ghyp( UNUR_DISTR *distr );
 static double _unur_normconstant_ghyp( const double *params, int n_params );
 static int _unur_set_params_ghyp( UNUR_DISTR *distr, const double *params, int n_params );
-#ifdef HAVE_BESSEL_K
+#ifdef _unur_SF_bessel_k
 double
 _unur_pdf_ghyp(double x, const UNUR_DISTR *distr)
 { 
@@ -31,7 +31,7 @@ _unur_pdf_ghyp(double x, const UNUR_DISTR *distr)
   return ( NORMCONSTANT 
 	   * pow( tmp, 0.5*lambda-0.25 ) 
 	   * exp(beta*(x-mu))
-	   * _unur_sf_bessel_k( alpha * sqrt(tmp), lambda-0.5 ) );
+	   * _unur_SF_bessel_k( alpha * sqrt(tmp), lambda-0.5 ) );
 } 
 #endif
 int
@@ -48,11 +48,11 @@ _unur_upd_center_ghyp( UNUR_DISTR *distr )
 double
 _unur_normconstant_ghyp(const double *params ATTRIBUTE__UNUSED, int n_params ATTRIBUTE__UNUSED)
 { 
-#ifdef HAVE_BESSEL_K
+#ifdef _unur_SF_bessel_k
   double gamm = sqrt(alpha*alpha-beta*beta);
   return ( pow(gamm/delta, lambda ) 
 	   / ( (M_SQRTPI*M_SQRT2) * pow(alpha, lambda-0.5)
-	       * _unur_sf_bessel_k( delta*gamm, lambda ) ) );
+	       * _unur_SF_bessel_k( delta*gamm, lambda ) ) );
 #else
   return 1.;
 #endif
@@ -93,10 +93,10 @@ unur_distr_ghyp( const double *params, int n_params)
   distr = unur_distr_cont_new();
   distr->id = UNUR_DISTR_GHYP;
   distr->name = distr_name;
-#ifdef HAVE_BESSEL_K
+#ifdef _unur_SF_bessel_k
   DISTR.pdf     = _unur_pdf_ghyp;     
 #endif
-#ifdef HAVE_BESSEL_K
+#ifdef _unur_SF_bessel_k
   distr->set = ( UNUR_DISTR_SET_DOMAIN |
 		 UNUR_DISTR_SET_STDDOMAIN |
 		 UNUR_DISTR_SET_CENTER );

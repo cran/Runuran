@@ -14,15 +14,12 @@ _unur_pinv_info( struct unur_gen *gen, int help )
 		      (gen->variant & PINV_VARIANT_PDF) ? "PDF" : "CDF");
   _unur_string_append(info,"   domain    = (%g, %g)\n", DISTR.trunc[0],DISTR.trunc[1]);
   _unur_string_append(info,"   center    = %g", unur_distr_cont_get_center(distr));
-  if ( !(distr->set & UNUR_DISTR_SET_CENTER) ) {
-    if ( distr->set & UNUR_DISTR_SET_MODE )
-      _unur_string_append(info,"  [= mode]\n");
-    else 
-      _unur_string_append(info,"  [default]\n");
-  }
-  else {
-    _unur_string_append(info,"\n");
-  }
+  if (distr->set & UNUR_DISTR_SET_CENTER)
+    _unur_string_append(info, (distr->set & UNUR_DISTR_SET_CENTER_APPROX)
+			? "  [guess]\n" : "\n");
+  else
+    _unur_string_append(info,(distr->set & UNUR_DISTR_SET_MODE )
+			? "  [= mode]\n" : "  [default]\n");
   if (help) {
     if ( !(distr->set & (UNUR_DISTR_SET_CENTER | UNUR_DISTR_SET_MODE )) ) 
       _unur_string_append(info,"\n[ Hint: %s ]\n",
@@ -59,6 +56,8 @@ _unur_pinv_info( struct unur_gen *gen, int help )
   _unur_string_append(info,  "     [ u-resolution = %g ]\n",GEN->u_resolution);
   _unur_string_append(info,"   area below PDF   = %18.17g\n", GEN->area);
   _unur_string_append(info,"   # intervals      = %d\n", GEN->n_ivs);
+  if (gen->variant & PINV_VARIANT_KEEPCDF)
+    _unur_string_append(info,"   # CDF table size = %d\n", _unur_lobatto_size_table(GEN->aCDF));
   _unur_string_append(info,"\n");
   if (help) {
     _unur_string_append(info,"parameters:\n");
@@ -86,6 +85,9 @@ _unur_pinv_info( struct unur_gen *gen, int help )
 			(gen->set & PINV_SET_BOUNDARY) ? "" : "[default]");
     _unur_string_append(info,"   maximum number of interval = %d  %s\n", GEN->max_ivs,
 			(gen->set & PINV_SET_MAX_IVS) ? "" : "[default]");
+    _unur_string_append(info,"   keep table of CDF values = %s  %s\n", 
+			(gen->variant & PINV_VARIANT_KEEPCDF) ? "TRUE" : "FALSE",
+			(gen->set & PINV_SET_KEEPCDF) ? "" : "[default]");
     _unur_string_append(info,"\n");
   }
   if (help) {

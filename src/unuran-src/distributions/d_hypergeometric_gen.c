@@ -24,15 +24,13 @@ _unur_stdgen_hypergeometric_init( struct unur_par *par, struct unur_gen *gen )
   switch ((par) ? par->variant : gen->variant) {
   case 0:  
   case 1:  
-     _unur_dstd_set_sampling_routine( par,gen,_unur_stdgen_sample_hypergeometric_hruec );
+     _unur_dstd_set_sampling_routine(gen, _unur_stdgen_sample_hypergeometric_hruec );
      return hypergeometric_hruec_init( gen );
-  case UNUR_STDGEN_INVERSION:   
   default: 
-    if (gen) _unur_warning(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
     return UNUR_FAILURE;
   }
 } 
-#define flogfak(k) (_unur_sf_ln_factorial(k))
+#define flogfak(k) (_unur_SF_ln_factorial(k))
 #define delta(k) (flogfak(k)+flogfak(Mc-k)+flogfak(nc-k)+flogfak(NMn+k))
 #define N       (GEN->gen_iparam[0])
 #define M       (GEN->gen_iparam[1])

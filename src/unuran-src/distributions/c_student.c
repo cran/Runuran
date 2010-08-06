@@ -15,6 +15,9 @@ static const char distr_name[] = "student";
 static double _unur_pdf_student( double x, const UNUR_DISTR *distr );
 static double _unur_dpdf_student( double x, const UNUR_DISTR *distr );
 static double _unur_cdf_student( double x, const UNUR_DISTR *distr );
+#ifdef _unur_SF_invcdf_student
+static double _unur_invcdf_student( double x, const UNUR_DISTR *distr );
+#endif
 static int _unur_upd_mode_student( UNUR_DISTR *distr );
 static int _unur_upd_area_student( UNUR_DISTR *distr );
 static double _unur_normconstant_student(const double *params, int n_params);
@@ -22,24 +25,39 @@ static int _unur_set_params_student( UNUR_DISTR *distr, const double *params, in
 double
 _unur_pdf_student( double x, const UNUR_DISTR *distr )
 {
-  register const double *params = DISTR.params;
+  const double *params = DISTR.params;
   return pow( (1. + x*x/nu), (-nu-1.)*0.5 ) / NORMCONSTANT;
 }  
 double
 _unur_dpdf_student( double x, const UNUR_DISTR *distr )
 {
-  register const double *params = DISTR.params;
+  const double *params = DISTR.params;
   return ( (-nu-1.)*x/nu * pow( (1. + x*x/nu), (-nu-3.)*0.5 ) / NORMCONSTANT );
 } 
 double
 _unur_cdf_student(double x, const UNUR_DISTR *distr)
 {
+#ifdef _unur_SF_cdf_student
+  return _unur_SF_cdf_student(x,DISTR.nu);
+#else
+  const double *params = DISTR.params;
   double xx;
-  if (_unur_iszero(DISTR.nu)) return 0; 
-  xx=1./(1.+x*x/DISTR.nu);
-  if (x>0) return 1-.5*_unur_sf_incomplete_beta(xx,.5*DISTR.nu,.5)/_unur_sf_incomplete_beta(1.,.5*DISTR.nu,.5);
-  else     return   .5*_unur_sf_incomplete_beta(xx,.5*DISTR.nu,.5)/_unur_sf_incomplete_beta(1.,.5*DISTR.nu,.5);
+  if (_unur_iszero(nu))
+    return 0.; 
+  xx=1./(1.+x*x/nu);
+  if (x>0)
+    return 1-0.5*_unur_SF_incomplete_beta(xx,0.5*nu,0.5)/_unur_SF_incomplete_beta(1.,0.5*nu,0.5);
+  else
+    return   0.5*_unur_SF_incomplete_beta(xx,0.5*nu,0.5)/_unur_SF_incomplete_beta(1.,0.5*nu,0.5);
+#endif
 } 
+#ifdef _unur_SF_invcdf_student
+double
+_unur_invcdf_student(double x, const UNUR_DISTR *distr)
+{
+  return _unur_SF_invcdf_student(x,DISTR.nu);
+} 
+#endif
 int
 _unur_upd_mode_student( UNUR_DISTR *distr )
 {
@@ -65,7 +83,7 @@ _unur_upd_area_student( UNUR_DISTR *distr )
 double
 _unur_normconstant_student( const double *params, int n_params ATTRIBUTE__UNUSED )
 {
-  return( sqrt(M_PI * nu) * exp(_unur_sf_ln_gamma(0.5*nu) - _unur_sf_ln_gamma(0.5*(nu+1.))) );
+  return( sqrt(M_PI * nu) * exp(_unur_SF_ln_gamma(0.5*nu) - _unur_SF_ln_gamma(0.5*(nu+1.))) );
 } 
 int
 _unur_set_params_student( UNUR_DISTR *distr, const double *params, int n_params )
@@ -99,6 +117,9 @@ unur_distr_student( const double *params, int n_params )
   DISTR.pdf  = _unur_pdf_student;  
   DISTR.dpdf = _unur_dpdf_student; 
   DISTR.cdf  = _unur_cdf_student;  
+#ifdef _unur_SF_invcdf_student
+  DISTR.invcdf  = _unur_invcdf_student;  
+#endif
   distr->set = ( UNUR_DISTR_SET_DOMAIN |
 		 UNUR_DISTR_SET_STDDOMAIN |
 		 UNUR_DISTR_SET_PDFAREA |

@@ -14,10 +14,12 @@ static const char distr_name[] = "hypergeometric";
 #define n  params[2]
 #define DISTR distr->data.discr
 #define LOGNORMCONSTANT (distr->data.discr.norm_constant)
-#undef HAVE_CDF
 static double _unur_pmf_hypergeometric( int k, const UNUR_DISTR *distr );
-#ifdef HAVE_CDF
+#ifdef _unur_SF_cdf_hypergeometric
 static double _unur_cdf_hypergeometric( int k, const UNUR_DISTR *distr ); 
+#endif
+#ifdef _unur_SF_invcdf_hypergeometric
+static int    _unur_invcdf_hypergeometric( double u, const UNUR_DISTR *distr ); 
 #endif
 static int _unur_upd_mode_hypergeometric( UNUR_DISTR *distr );
 static int _unur_upd_sum_hypergeometric( UNUR_DISTR *distr );
@@ -29,13 +31,25 @@ _unur_pmf_hypergeometric(int k, const UNUR_DISTR *distr)
   if ( k < _unur_max(0,(n-N+M-0.5)) || k > _unur_min(n,M)+0.5 ) 
     return 0.;
   else
-    return exp( LOGNORMCONSTANT - _unur_sf_ln_factorial(k) - _unur_sf_ln_factorial(M-k) -
-                _unur_sf_ln_factorial(n-k) - _unur_sf_ln_factorial(N-M-n+k) );
+    return exp( LOGNORMCONSTANT - _unur_SF_ln_factorial(k) - _unur_SF_ln_factorial(M-k) -
+                _unur_SF_ln_factorial(n-k) - _unur_SF_ln_factorial(N-M-n+k) );
 } 
-#ifdef HAVE_CDF
+#ifdef _unur_SF_cdf_hypergeometric
 double
 _unur_cdf_hypergeometric(int k, const UNUR_DISTR *distr)
 { 
+  const double *params = DISTR.params;
+  return _unur_SF_cdf_hypergeometric(k,N,M,n);
+} 
+#endif
+#ifdef _unur_SF_invcdf_hypergeometric
+int
+_unur_invcdf_hypergeometric(double u, const UNUR_DISTR *distr)
+{ 
+  const double *params = DISTR.params;
+  double x;
+  x = _unur_SF_invcdf_hypergeometric(u,N,M,n);
+  return ((x>=INT_MAX) ? INT_MAX : ((int) x));
 } 
 #endif
 int
@@ -52,13 +66,13 @@ int
 _unur_upd_sum_hypergeometric( UNUR_DISTR *distr )
 {
   register double *params = DISTR.params;
-  LOGNORMCONSTANT = _unur_sf_ln_factorial(M) + _unur_sf_ln_factorial(N-M) + _unur_sf_ln_factorial(n) +
-    _unur_sf_ln_factorial(N-n) - _unur_sf_ln_factorial(N);
+  LOGNORMCONSTANT = _unur_SF_ln_factorial(M) + _unur_SF_ln_factorial(N-M) + _unur_SF_ln_factorial(n) +
+    _unur_SF_ln_factorial(N-n) - _unur_SF_ln_factorial(N);
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
     DISTR.sum = 1.;
     return UNUR_SUCCESS;
   }
-#ifdef HAVE_CDF
+#ifdef _unur_SF_cdf_hypergeometric
   DISTR.sum = ( _unur_cdf_hypergeometric( DISTR.domain[1],distr) 
 		 - _unur_cdf_hypergeometric( DISTR.domain[0]-1,distr) );
   return UNUR_SUCCESS;
@@ -108,8 +122,11 @@ unur_distr_hypergeometric( const double *params, int n_params )
   distr->name = distr_name;
   DISTR.init = _unur_stdgen_hypergeometric_init;
   DISTR.pmf  = _unur_pmf_hypergeometric;   
-#ifdef HAVE_CDF
+#ifdef _unur_SF_cdf_hypergeometric
   DISTR.cdf  = _unur_cdf_hypergeometric;   
+#endif
+#ifdef _unur_SF_invcdf_hypergeometric
+  DISTR.invcdf = _unur_invcdf_hypergeometric;  
 #endif
   distr->set = ( UNUR_DISTR_SET_DOMAIN |
 		 UNUR_DISTR_SET_STDDOMAIN |

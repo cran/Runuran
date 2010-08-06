@@ -429,7 +429,7 @@ _unur_mvtdr_cone_logH( struct unur_gen *gen, CONE *c )
     if (c->height < 1.e-50) 
       return -INFINITY;
     else
-      logH += log(_unur_sf_incomplete_gamma(c->beta*c->height,(double)GEN->dim));
+      logH += log(_unur_SF_incomplete_gamma(c->beta*c->height,(double)GEN->dim));
   }
   return (_unur_isfinite(logH)) ? logH : INFINITY;
 } 
@@ -500,7 +500,7 @@ _unur_mvtdr_cone_height( struct unur_gen *gen, CONE *c )
   double *domain;
   int i,j,row,ipc,ipr;
   double pc,pr,ratio;
-  double sign;
+  double sgn;
   if (! GEN->has_domain)
     return UNUR_SUCCESS;
   if (DISTR.domainrect == NULL) {
@@ -510,18 +510,18 @@ _unur_mvtdr_cone_height( struct unur_gen *gen, CONE *c )
   domain = DISTR.domainrect;
   AA = _unur_xmalloc( (dim+1)*(dim+1)*sizeof(double) );
   for( i=0, row=0; i<dim; i++ ) {
-    for( j=0, sign=0.; j<dim; j++ ) {
+    for( j=0, sgn=0.; j<dim; j++ ) {
       if( (c->v[j])->coord[i] > 0. ) {
-	sign = +1.; break;
+	sgn = +1.; break;
       }
       if( (c->v[j])->coord[i] < 0. ) {
-	sign = -1.; break;
+	sgn = -1.; break;
       }
     }
-    if (_unur_iszero(sign)) continue;
+    if (_unur_iszero(sgn)) continue;
     for( j=0; j<dim; j++ )
-      A(row,j) = sign * (c->v[j])->coord[i];
-    A(row,dim) = (sign > 0.) ? ur(i) : -(ll(i));
+      A(row,j) = sgn * (c->v[j])->coord[i];
+    A(row,dim) = (sgn > 0.) ? ur(i) : -(ll(i));
     row++;
   }
   for( j=0; j<dim; j++ )
@@ -708,7 +708,6 @@ _unur_mvtdr_tp_search( struct unur_gen *gen ATTRIBUTE__UNUSED, TP_ARG *a )
       a[1].t /= 2.;
     }
   }
-  return UNUR_FAILURE;
 #undef N_STEPS
 } 
 int 

@@ -27,26 +27,24 @@ _unur_stdgen_poisson_init( struct unur_par *par, struct unur_gen *gen )
   case 1:  
     if (gen==NULL) return UNUR_SUCCESS; 
     if (theta < 10.) {
-      _unur_dstd_set_sampling_routine( par,gen,_unur_stdgen_sample_poisson_pdtabl );
+      _unur_dstd_set_sampling_routine(gen, _unur_stdgen_sample_poisson_pdtabl );
       return poisson_pdtabl_init( gen );
     }
     else { 
-      _unur_dstd_set_sampling_routine( par,gen,_unur_stdgen_sample_poisson_pdac );
+      _unur_dstd_set_sampling_routine(gen, _unur_stdgen_sample_poisson_pdac );
       return poisson_pdac_init( gen );
     }
   case 2:  
     if (gen==NULL) return UNUR_SUCCESS; 
     if (theta < 10.) {
-      _unur_dstd_set_sampling_routine( par,gen,_unur_stdgen_sample_poisson_pdtabl );
+      _unur_dstd_set_sampling_routine(gen, _unur_stdgen_sample_poisson_pdtabl );
       return poisson_pdtabl_init( gen );
     }
     else { 
-      _unur_dstd_set_sampling_routine( par,gen,_unur_stdgen_sample_poisson_pprsc );
+      _unur_dstd_set_sampling_routine(gen, _unur_stdgen_sample_poisson_pprsc );
       return poisson_pprsc_init( gen );
     }
-  case UNUR_STDGEN_INVERSION:   
   default: 
-    if (gen) _unur_warning(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
     return UNUR_FAILURE;
   }
 } 
@@ -270,7 +268,7 @@ _unur_stdgen_sample_poisson_pdac( struct unur_gen *gen )
 #undef NORMAL
 inline static double f(int k, double l_nu, double c_pm)
 {
-  return  exp(k * l_nu - _unur_sf_ln_factorial(k) - c_pm);
+  return  exp(k * l_nu - _unur_SF_ln_factorial(k) - c_pm);
 }
 #define m       (GEN->gen_iparam[0])
 #define k2      (GEN->gen_iparam[1])
@@ -324,7 +322,7 @@ poisson_pprsc_init( struct unur_gen *gen )
   ll =  log(r1);                                   
   lr = -log(r5);                                   
   l_theta = log(theta);
-  c_pm = m * l_theta - _unur_sf_ln_factorial(m);
+  c_pm = m * l_theta - _unur_SF_ln_factorial(m);
   f2 = f(k2, l_theta, c_pm);
   f4 = f(k4, l_theta, c_pm);
   f1 = f(k1, l_theta, c_pm);
@@ -401,7 +399,7 @@ _unur_stdgen_sample_poisson_pprsc( struct unur_gen *gen )
 	  return X; 
       }
     }
-    if (log(W) <= X * l_theta - _unur_sf_ln_factorial(X) - c_pm)
+    if (log(W) <= X * l_theta - _unur_SF_ln_factorial(X) - c_pm)
       return X;
   }
 } 

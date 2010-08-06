@@ -60,9 +60,9 @@ _unur_upd_mode_hyperbolic( UNUR_DISTR *distr )
 double
 _unur_normconstant_hyperbolic(const double *params ATTRIBUTE__UNUSED, int n_params ATTRIBUTE__UNUSED)
 { 
-#ifdef HAVE_BESSEL_K
+#ifdef _unur_SF_bessel_k
   double gamm = sqrt(alpha*alpha-beta*beta);
-  return ( gamm / ( 2 * alpha * delta * _unur_sf_bessel_k(delta*gamm, 1) ) );
+  return ( gamm / ( 2 * alpha * delta * _unur_SF_bessel_k(delta*gamm, 1) ) );
 #else
   return 1.;
 #endif

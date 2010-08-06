@@ -104,13 +104,24 @@ uq <- function(unr,U) {
         .Call("Runuran_quantile", unr, U, PACKAGE="Runuran")
 }
 
-## PDF & PMF -- [EXPERIMENTAL] ----------------------------------------------
+## PDF & PMF ----------------------------------------------------------------
 
 ## ud
-ud <- function(distr,x) {
-  if ( ! (is(distr,"unuran.cont") || is(distr,"unuran.discr")) )
-    stop("argument 'distr' must be UNU.RAN distribution object")
-  .Call("Runuran_PDF", distr@distr, x, PACKAGE="Runuran")
+ud <- function(obj,x) {
+  if ( ! (is(obj,"unuran.cont") || is(obj,"unuran.discr") ||
+          is(obj,"unuran") ) )
+    stop("argument 'obj' must be UNU.RAN object")
+  .Call("Runuran_PDF", obj, x, PACKAGE="Runuran")
+}
+
+## CDF ----------------------------------------------------------------------
+
+## up
+up <- function(obj,x) {
+  if ( ! (is(obj,"unuran.cont") || is(obj,"unuran.discr") ||
+          is(obj,"unuran") ) )
+    stop("argument 'obj' must be UNU.RAN object")
+  .Call("Runuran_CDF", obj, x, PACKAGE="Runuran")
 }
 
 ## Packing ------------------------------------------------------------------

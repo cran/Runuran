@@ -25,7 +25,8 @@ static struct unur_gen *_unur_cstd_create( struct unur_par *par );
 static int _unur_cstd_check_par( struct unur_gen *gen );
 static struct unur_gen *_unur_cstd_clone( const struct unur_gen *gen );
 static void _unur_cstd_free( struct unur_gen *gen);
-static int _unur_cstd_generic_init( struct unur_par *par, struct unur_gen *gen );
+static double _unur_cstd_sample_inv( struct unur_gen *gen ); 
+static int _unur_cstd_inversion_init( struct unur_par *par, struct unur_gen *gen );
 #ifdef UNUR_ENABLE_LOGGING
 static void _unur_cstd_debug_init( struct unur_gen *gen );
 static void _unur_cstd_debug_chg_pdfparams( struct unur_gen *gen );
@@ -73,14 +74,14 @@ unur_cstd_set_variant( struct unur_par *par, unsigned variant )
   _unur_check_par_object( par, CSTD );
   old_variant = par->variant;
   par->variant = variant;
-  if ( (par->DISTR_IN.init != NULL && par->DISTR_IN.init(par,NULL)==UNUR_SUCCESS) ||
-       _unur_cstd_generic_init(par,NULL)==UNUR_SUCCESS ) {
-    par->set |= CSTD_SET_VARIANT;    
-    return UNUR_SUCCESS;
+  if ( (par->DISTR_IN.init == NULL || par->DISTR_IN.init(par,NULL)!=UNUR_SUCCESS) &&
+       _unur_cstd_inversion_init(par,NULL)!=UNUR_SUCCESS ) {
+    _unur_warning(GENTYPE,UNUR_ERR_PAR_VARIANT,"");
+    par->variant = old_variant;
+    return UNUR_ERR_PAR_VARIANT;
   }
-  _unur_warning(GENTYPE,UNUR_ERR_PAR_VARIANT,"");
-  par->variant = old_variant;
-  return UNUR_ERR_PAR_VARIANT;
+  par->set |= CSTD_SET_VARIANT;
+  return UNUR_SUCCESS;
 } 
 int 
 unur_cstd_chg_truncated( struct unur_gen *gen, double left, double right )
@@ -146,17 +147,9 @@ _unur_cstd_init( struct unur_par *par )
   gen = _unur_cstd_create(par);
   _unur_par_free(par);
   if (!gen) return NULL;
-  if (DISTR.init == NULL) {
-    if (DISTR.invcdf) {
-      DISTR.init = _unur_cstd_generic_init;
-    }
-    else {
-      _unur_error(GENTYPE,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
-      _unur_cstd_free(gen); return NULL; 
-    }
-  }
   GEN->is_inversion = FALSE;   
-  if ( DISTR.init(NULL,gen)!=UNUR_SUCCESS ) {
+  if ( (DISTR.init == NULL || DISTR.init(NULL,gen)!=UNUR_SUCCESS) &&
+       _unur_cstd_inversion_init(NULL,gen)!=UNUR_SUCCESS ) {
     _unur_error(GENTYPE,UNUR_ERR_GEN_DATA,"variant for special generator");
     _unur_cstd_free(gen); return NULL; 
   }
@@ -173,7 +166,8 @@ _unur_cstd_reinit( struct unur_gen *gen )
 {
   int rcode;
   GEN->is_inversion = FALSE;   
-  if ( DISTR.init(NULL,gen)!=UNUR_SUCCESS ) {
+  if ( (DISTR.init == NULL || DISTR.init(NULL,gen)!=UNUR_SUCCESS) &&
+       _unur_cstd_inversion_init(NULL,gen)!=UNUR_SUCCESS ) {
     _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"parameters");
     return UNUR_ERR_GEN_DATA;
   }
@@ -201,8 +195,8 @@ _unur_cstd_create( struct unur_par *par )
   GEN->n_gen_param = 0;         
   GEN->is_inversion = FALSE;    
   GEN->sample_routine_name = NULL ;  
-  GEN->Umin        = 0;    
-  GEN->Umax        = 1;    
+  GEN->Umin = 0.;               
+  GEN->Umax = 1.;               
 #ifdef UNUR_ENABLE_INFO
   gen->info = _unur_cstd_info;
 #endif
@@ -259,11 +253,10 @@ _unur_cstd_free( struct unur_gen *gen )
 double
 _unur_cstd_sample_inv( struct unur_gen *gen ) 
 {
-  double U,X;
+  double U;
   if (!DISTR.invcdf) return INFINITY;
   while (_unur_iszero(U = GEN->Umin + _unur_call_urng(gen->urng) * (GEN->Umax-GEN->Umin)));
-  X = DISTR.invcdf(U,gen->distr);
-  return X;
+  return (DISTR.invcdf(U,gen->distr));
 } 
 double
 unur_cstd_eval_invcdf( const struct unur_gen *gen, double u )
@@ -283,8 +276,8 @@ unur_cstd_eval_invcdf( const struct unur_gen *gen, double u )
     if ( ! (u>=0. && u<=1.)) {
       _unur_warning(gen->genid,UNUR_ERR_DOMAIN,"U not in [0,1]");
     }
-    if (u<=0.) return DISTR.domain[0];
-    if (u>=1.) return DISTR.domain[1];
+    if (u<=0.) return DISTR.trunc[0];
+    if (u>=1.) return DISTR.trunc[1];
     return u;  
   }
   u = GEN->Umin + u * (GEN->Umax - GEN->Umin);
@@ -294,7 +287,7 @@ unur_cstd_eval_invcdf( const struct unur_gen *gen, double u )
   return x;
 } 
 int
-_unur_cstd_generic_init( struct unur_par *par, struct unur_gen *gen )
+_unur_cstd_inversion_init( struct unur_par *par, struct unur_gen *gen )
 {
   switch ((par) ? par->variant : gen->variant) {
   case 0:  
@@ -302,13 +295,12 @@ _unur_cstd_generic_init( struct unur_par *par, struct unur_gen *gen )
     if (gen) {
       if (DISTR.invcdf) {
 	GEN->is_inversion = TRUE;
-	_unur_cstd_set_sampling_routine(par,gen,_unur_cstd_sample_inv);
+	_unur_cstd_set_sampling_routine(gen,_unur_cstd_sample_inv);
 	return UNUR_SUCCESS;
       }
     }
     else {
       if ((par->distr->data.cont).invcdf) {
-	_unur_cstd_set_sampling_routine(par,gen,_unur_cstd_sample_inv);
 	return UNUR_SUCCESS;
       }
     }

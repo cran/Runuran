@@ -13,10 +13,12 @@ static const char distr_name[] = "negativebinomial";
 #define r  params[1]
 #define DISTR distr->data.discr
 #define LOGNORMCONSTANT (distr->data.discr.norm_constant)
-#undef HAVE_CDF
 static double _unur_pmf_negativebinomial( int k, const UNUR_DISTR *distr );
-#ifdef HAVE_CDF
+#ifdef _unur_SF_cdf_negativebinomial
 static double _unur_cdf_negativebinomial( int k, const UNUR_DISTR *distr ); 
+#endif
+#ifdef _unur_SF_invcdf_negativebinomial
+static int    _unur_invcdf_negativebinomial( double u, const UNUR_DISTR *distr ); 
 #endif
 static int _unur_upd_mode_negativebinomial( UNUR_DISTR *distr );
 static int _unur_upd_sum_negativebinomial( UNUR_DISTR *distr );
@@ -24,22 +26,32 @@ static int _unur_set_params_negativebinomial( UNUR_DISTR *distr, const double *p
 double
 _unur_pmf_negativebinomial(int k, const UNUR_DISTR *distr)
 { 
-  register const double *params = DISTR.params;
+  const double *params = DISTR.params;
   if (k<0)
     return 0.;
   else
     return exp( k*log(1-p) 
-		+ _unur_sf_ln_gamma(k+r) - _unur_sf_ln_gamma(k+1.) - LOGNORMCONSTANT ) ;
+		+ _unur_SF_ln_gamma(k+r) - _unur_SF_ln_gamma(k+1.) - LOGNORMCONSTANT ) ;
 } 
-#ifdef HAVE_CDF
+#ifdef _unur_SF_cdf_negativebinomial
 double
 _unur_cdf_negativebinomial(int k, const UNUR_DISTR *distr)
 { 
-  register const double *params = DISTR.params;
+  const double *params = DISTR.params;
   if (k<0)
     return 0.;
   else
-    return 1.;  
+    return _unur_SF_cdf_negativebinomial(k,r,p);
+} 
+#endif
+#ifdef _unur_SF_invcdf_negativebinomial
+int
+_unur_invcdf_negativebinomial(double u, const UNUR_DISTR *distr)
+{ 
+  const double *params = DISTR.params;
+  double x;
+  x = _unur_SF_invcdf_negativebinomial(u,r,p);
+  return ((x>=INT_MAX) ? INT_MAX : ((int) x));
 } 
 #endif
 int
@@ -60,12 +72,12 @@ _unur_upd_mode_negativebinomial( UNUR_DISTR *distr )
 int
 _unur_upd_sum_negativebinomial( UNUR_DISTR *distr )
 {
-  LOGNORMCONSTANT = - DISTR.r * log(DISTR.p) + _unur_sf_ln_gamma(DISTR.r);
+  LOGNORMCONSTANT = - DISTR.r * log(DISTR.p) + _unur_SF_ln_gamma(DISTR.r);
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
     DISTR.sum = 1.;
     return UNUR_SUCCESS;
   }
-#ifdef HAVE_CDF
+#ifdef _unur_SF_cdf_negativebinomial
   DISTR.sum = ( _unur_cdf_negativebinomial( DISTR.domain[1],distr) 
 		 - _unur_cdf_negativebinomial( DISTR.domain[0]-1,distr) );
   return UNUR_SUCCESS;
@@ -103,8 +115,11 @@ unur_distr_negativebinomial( const double *params, int n_params )
   distr->id = UNUR_DISTR_NEGATIVEBINOMIAL;
   distr->name = distr_name;
   DISTR.pmf  = _unur_pmf_negativebinomial;   
-#ifdef HAVE_CDF
+#ifdef _unur_SF_cdf_negativebinomial
   DISTR.cdf  = _unur_cdf_negativebinomial;   
+#endif
+#ifdef _unur_SF_invcdf_negativebinomial
+  DISTR.invcdf = _unur_invcdf_negativebinomial;  
 #endif
   distr->set = ( UNUR_DISTR_SET_DOMAIN |
 		 UNUR_DISTR_SET_STDDOMAIN |

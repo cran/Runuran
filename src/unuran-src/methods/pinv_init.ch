@@ -44,7 +44,8 @@ _unur_pinv_init( struct unur_par *par )
 #endif
     _unur_pinv_free(gen); return NULL;
   }
-  _unur_lobatto_free(&(GEN->aCDF));
+  if (! (gen->variant & PINV_VARIANT_KEEPCDF))
+    _unur_lobatto_free(&(GEN->aCDF));
   _unur_pinv_make_guide_table(gen);
 #ifdef UNUR_ENABLE_LOGGING
   if (gen->debug) _unur_pinv_debug_init(gen,TRUE);
@@ -144,13 +145,14 @@ _unur_pinv_check_par( struct unur_gen *gen )
     DISTR.center = _unur_max(DISTR.center,GEN->dleft);
     DISTR.center = _unur_min(DISTR.center,GEN->dright);
   }
-  if (gen->variant & PINV_VARIANT_PDF) {
-    if (PDF(DISTR.center)<=0.) {
-      _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,
-		  "PDF(center) <= 0.");
-      return UNUR_ERR_GEN_CONDITION;
-    }
+  if ( (gen->variant & PINV_VARIANT_PDF ) &&
+       (_unur_distr_cont_find_center(gen->distr) != UNUR_SUCCESS) ) {
+    _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,
+		"PDF(center) <= 0.");
+    return UNUR_ERR_GEN_CONDITION;
   }
+  if (! (gen->variant & PINV_VARIANT_PDF))
+    gen->variant &= ~PINV_VARIANT_KEEPCDF;
   return UNUR_SUCCESS;
 } 
 struct unur_gen *

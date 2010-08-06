@@ -13,6 +13,7 @@ static const char distr_name[] = "geometric";
 #define DISTR distr->data.discr
 static double _unur_pmf_geometric( int k, const UNUR_DISTR *distr );
 static double _unur_cdf_geometric( int k, const UNUR_DISTR *distr ); 
+static int    _unur_invcdf_geometric( double u, const UNUR_DISTR *distr ); 
 static int _unur_upd_mode_geometric( UNUR_DISTR *distr );
 static int _unur_upd_sum_geometric( UNUR_DISTR *distr );
 static int _unur_set_params_geometric( UNUR_DISTR *distr, const double *params, int n_params );
@@ -25,6 +26,15 @@ double
 _unur_cdf_geometric(int k, const UNUR_DISTR *distr)
 { 
   return ((k<0) ? 0. : (1. - pow(1. - DISTR.p, k+1.)) );
+} 
+int
+_unur_invcdf_geometric(double u, const UNUR_DISTR *distr)
+{ 
+  double x;
+  if (_unur_isone(DISTR.p))
+    return 0;
+  x = ceil(log1p(-u) / log1p(-DISTR.p) - 1.);
+  return ((x>=INT_MAX) ? INT_MAX : ((int) x));
 } 
 int
 _unur_upd_mode_geometric( UNUR_DISTR *distr )
@@ -73,9 +83,9 @@ unur_distr_geometric( const double *params, int n_params )
   distr = unur_distr_discr_new();
   distr->id = UNUR_DISTR_GEOMETRIC;
   distr->name = distr_name;
-  DISTR.init = _unur_stdgen_geometric_init;
-  DISTR.pmf  = _unur_pmf_geometric;   
-  DISTR.cdf  = _unur_cdf_geometric;   
+  DISTR.pmf     = _unur_pmf_geometric;    
+  DISTR.cdf     = _unur_cdf_geometric;    
+  DISTR.invcdf  = _unur_invcdf_geometric; 
   distr->set = ( UNUR_DISTR_SET_DOMAIN |
 		 UNUR_DISTR_SET_STDDOMAIN |
 		 UNUR_DISTR_SET_MODE | 

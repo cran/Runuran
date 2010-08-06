@@ -96,7 +96,7 @@ _unur_test_chi2_discr( struct unur_gen *gen,
     j = _unur_sample_discr(gen);
     if (verbose >= 3) fprintf(out,"i = %d\n",j);
     j -= DISTR.domain[0];
-    if (j < n_pv)
+    if (j >= 0 && j < n_pv) 
       ++observed[j];
   }
   if (verbose >= 1) {

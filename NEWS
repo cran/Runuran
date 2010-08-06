@@ -1,4 +1,21 @@
 
+Version 0.15.0: 2010-08-06
+
+	- new function up() for computing distribution function
+	  for a unuran object.
+
+	- ud(): first argument has been renamed from 'distr' to 'obj'.
+	  argument 'obj' can also be a generator object.
+
+	- pinv.new(): when no 'center' is provided by the user, or
+	  when the PDF vanishes or is not finite for the given 'center',
+	  then the method tries to "guess" an appropriate
+	  point for the 'center'.
+
+        - special functions (like gamma function) are now taken from
+	  the Rmath library.
+
+
 Version 0.14.0: 2010-04-29
 
 	- new argument 'smooth' for function pinv.new().

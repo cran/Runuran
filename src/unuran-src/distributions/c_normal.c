@@ -62,14 +62,14 @@ _unur_cdf_normal( double x, const UNUR_DISTR *distr )
   register const double *params = DISTR.params;
   if (DISTR.n_params > 0)
     x = (x - mu) / sigma;
-  return _unur_sf_cdfnormal(x);
+  return _unur_SF_cdf_normal(x);
 } 
 double
 _unur_invcdf_normal( double u, const UNUR_DISTR *distr ) 
 {
   register const double *params = DISTR.params;
   double X;
-  X = _unur_sf_inv_cdfnormal(u);
+  X = _unur_SF_invcdf_normal(u);
   return ((DISTR.n_params==0) ? X : mu + sigma * X );
 } 
 int

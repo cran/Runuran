@@ -158,6 +158,43 @@ _unur_lobatto_eval_diff (struct unur_lobatto_table *Itable, double x, double h, 
 #undef clear_fx
 } 
 double
+_unur_lobatto_eval_CDF (struct unur_lobatto_table *Itable, double x)
+{
+  struct unur_lobatto_nodes *values;
+  int n_values;          
+  double area;           
+  double xr;             
+  double cdf;            
+  int cur;               
+  CHECK_NULL(Itable,INFINITY);
+  if (x <= Itable->bleft)  return 0.;
+  if (x >= Itable->bright) return 1.;
+  values = Itable->values;
+  n_values = Itable->n_values;
+  area = Itable->integral;
+  if (area <= 0.) {
+    _unur_error(Itable->gen->genid,UNUR_ERR_NAN,"area below PDF 0.");
+    return INFINITY;
+  }
+  cdf = 0;
+  xr = Itable->bleft;
+  for (cdf=0, cur=0; cur < n_values && x > values[cur].x; cur++) {
+    cdf += values[cur].u;
+    xr = values[cur].x;
+  }
+  if (cur >= n_values) {
+    cdf += _unur_lobatto5_adaptive(Itable->funct, Itable->gen, xr, x-xr,
+				   Itable->tol, Itable->uerror, NULL);
+  }
+  else {
+    cdf += _unur_lobatto5_simple(Itable->funct, Itable->gen, xr, x-xr, NULL);
+  }
+  cdf /= area;
+  cdf = _unur_max(0., cdf);
+  cdf = _unur_min(1., cdf);
+  return cdf;
+} 
+double
 _unur_lobatto_integral (struct unur_lobatto_table *Itable)
 {
   CHECK_NULL(Itable,INFINITY);
@@ -248,4 +285,8 @@ _unur_lobatto_debug_table (struct unur_lobatto_table *Itable, const struct unur_
     fprintf(LOG,"%s:  [%3d] x = %g, u = %g\n",gen->genid,
 	    n, Itable->values[n].x, Itable->values[n].u );
   }
+} 
+int _unur_lobatto_size_table (struct unur_lobatto_table *Itable)
+{
+  return (Itable->n_values - 1);
 } 
