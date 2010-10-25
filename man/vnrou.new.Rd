@@ -1,6 +1,4 @@
 \name{vnrou.new}
-\docType{function}
-
 \alias{vnrou.new}
 
 \title{UNU.RAN generator based on Multivariate Naive Ratio-Of-Uniforms method (VNROU)}

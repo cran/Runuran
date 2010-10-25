@@ -106,13 +106,9 @@ _unur_set_params_triangular( UNUR_DISTR *distr, const double *params, int n_para
     return UNUR_ERR_DISTR_DOMAIN;
   }
   DISTR.H = 0.5;   
-  switch (n_params) {
-  case 1:
+  if (n_params == 1)
     DISTR.H = H;
-  default:
-    n_params = 1;           
-  }
-  DISTR.n_params = n_params;
+  DISTR.n_params = 1;
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
     DISTR.domain[0] = 0.;        
     DISTR.domain[1] = 1.;        

@@ -1,5 +1,4 @@
 \name{dari.new}
-\docType{function}
 
 \alias{dari.new}
 \alias{darid.new}

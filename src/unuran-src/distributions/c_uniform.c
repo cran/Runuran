@@ -104,14 +104,11 @@ _unur_set_params_uniform( UNUR_DISTR *distr, const double *params, int n_params 
   }
   DISTR.a = 0.;
   DISTR.b = 1.;
-  switch (n_params) {
-  case 2:
+  if (n_params == 2) {
     DISTR.a = a;
     DISTR.b = b;
-  default:
-    n_params = 2;
   }
-  DISTR.n_params = n_params;
+  DISTR.n_params = 2;
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
     DISTR.domain[0] = DISTR.a;      
     DISTR.domain[1] = DISTR.b;      

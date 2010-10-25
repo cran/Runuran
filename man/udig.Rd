@@ -1,6 +1,4 @@
 \name{udig}
-\docType{function}
-
 \alias{udig}
 
 \title{UNU.RAN object for Inverse Gaussian distribution}

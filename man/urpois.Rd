@@ -1,6 +1,4 @@
 \name{urpois}
-\docType{function}
-
 \alias{urpois}
 
 \title{UNU.RAN Poisson random variate generator}

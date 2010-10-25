@@ -1,6 +1,4 @@
 \name{udhyper}
-\docType{function}
-
 \alias{udhyper}
 
 \title{UNU.RAN object for Hypergeometric distribution}

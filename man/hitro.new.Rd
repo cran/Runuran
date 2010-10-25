@@ -1,6 +1,4 @@
 \name{hitro.new}
-\docType{function}
-
 \alias{hitro.new}
 
 \title{UNU.RAN generator based on Hit-and-Run sampler (HITRO)}

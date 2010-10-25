@@ -1,6 +1,4 @@
 \name{urchi}
-\docType{function}
-
 \alias{urchi}
 
 \title{UNU.RAN Chi random variate generator}

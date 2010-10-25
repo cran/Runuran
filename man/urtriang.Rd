@@ -1,6 +1,4 @@
 \name{urtriang}
-\docType{function}
-
 \alias{urtriang}
 
 \title{UNU.RAN Triangular random variate generator}

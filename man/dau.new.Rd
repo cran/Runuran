@@ -1,5 +1,4 @@
 \name{dau.new}
-\docType{function}
 
 \alias{dau.new}
 \alias{daud.new}

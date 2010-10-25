@@ -1,6 +1,4 @@
 \name{udchisq}
-\docType{function}
-
 \alias{udchisq}
 
 \title{UNU.RAN object for Chi-Squared distribution}

@@ -1,6 +1,4 @@
 \name{udnbinom}
-\docType{function}
-
 \alias{udnbinom}
 
 \title{UNU.RAN object for Negative Binomial distribution}

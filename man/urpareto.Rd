@@ -1,6 +1,4 @@
 \name{urpareto}
-\docType{function}
-
 \alias{urpareto}
 
 \title{UNU.RAN Pareto random variate generator}

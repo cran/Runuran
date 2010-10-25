@@ -1,6 +1,4 @@
 \name{urt}
-\docType{function}
-
 \alias{urt}
 
 \title{UNU.RAN Student t random variate generator}

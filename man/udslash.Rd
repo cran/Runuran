@@ -1,6 +1,4 @@
 \name{udslash}
-\docType{function}
-
 \alias{udslash}
 
 \title{UNU.RAN object for Slash distribution}

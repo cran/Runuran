@@ -1,6 +1,4 @@
 \name{udgig}
-\docType{function}
-
 \alias{udgig}
 
 \title{UNU.RAN object for Generalized Inverse Gaussian distribution}

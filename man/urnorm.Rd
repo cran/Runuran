@@ -1,6 +1,4 @@
 \name{urnorm}
-\docType{function}
-
 \alias{urnorm}
 
 \title{UNU.RAN Normal random variate generator}

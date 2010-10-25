@@ -183,6 +183,7 @@ unur_test_count_pdf( struct unur_gen *gen, int samplesize, int verbosity, FILE *
       fprintf(out,"\tlogPDF:  %7d  (%g)\n",counter_logpdf,((double)counter_logpdf)/((double) samplesize));
       fprintf(out,"\tdlogPDF: %7d  (%g)\n",counter_dlogpdf,((double)counter_dlogpdf)/((double) samplesize));
       fprintf(out,"\tpdlogPDF:%7d  (%g)\n",counter_dlogpdf,((double)counter_dlogpdf)/((double) samplesize));
+      break;
     case UNUR_DISTR_DISCR:
       fprintf(out,"\tPMF:     %7d  (%g)\n",counter_pmf,((double)counter_pmf)/((double) samplesize));
       fprintf(out,"\tCDF:     %7d  (%g)\n",counter_cdf,((double)counter_cdf)/((double) samplesize));

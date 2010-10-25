@@ -162,7 +162,7 @@ _unur_tabl_get_intervals_from_slopes( struct unur_par *par, struct unur_gen *gen
   CHECK_NULL(par,UNUR_ERR_NULL);  COOKIE_CHECK(par,CK_TABL_PAR,UNUR_ERR_COOKIE);
   CHECK_NULL(gen,UNUR_ERR_NULL);  COOKIE_CHECK(gen,CK_TABL_GEN,UNUR_ERR_COOKIE);
   GEN->n_ivs = 0;
-  iv = NULL;
+  iv = GEN->iv = NULL;
   GEN->bleft = INFINITY;
   GEN->bright = -INFINITY;
   for ( i=0; i < 2*PAR->n_slopes; i+=2 ) {
@@ -230,7 +230,7 @@ _unur_tabl_get_intervals_from_cpoints( struct unur_par *par, struct unur_gen *ge
   CHECK_NULL(par,UNUR_ERR_NULL);  COOKIE_CHECK(par,CK_TABL_PAR,UNUR_ERR_COOKIE);
   CHECK_NULL(gen,UNUR_ERR_NULL);  COOKIE_CHECK(gen,CK_TABL_GEN,UNUR_ERR_COOKIE);
   GEN->n_ivs = 0;
-  iv = NULL;
+  iv = GEN->iv = NULL;
   sr = GEN->bleft;
   fr = PDF(sr);
   for (i=0; i<=PAR->n_cpoints; i++) {

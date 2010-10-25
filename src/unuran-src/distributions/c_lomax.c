@@ -89,13 +89,9 @@ _unur_set_params_lomax( UNUR_DISTR *distr, const double *params, int n_params )
   }
   DISTR.a = a;
   DISTR.C = 1.; 
-  switch (n_params) {
-  case 2:
+  if (n_params == 2)
     DISTR.C = C;
-  default:
-    n_params = 2;
-  }
-  DISTR.n_params = n_params;
+  DISTR.n_params = 2;
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
     DISTR.domain[0] = 0;               
     DISTR.domain[1] = INFINITY;        

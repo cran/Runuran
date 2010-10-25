@@ -1,6 +1,4 @@
 \name{udlnorm}
-\docType{function}
-
 \alias{udlnorm}
 
 \title{UNU.RAN object for Log Normal distribution}

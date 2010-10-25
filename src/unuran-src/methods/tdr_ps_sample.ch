@@ -182,7 +182,7 @@ _unur_tdr_ps_eval_invcdfhat( const struct unur_gen *gen, double U,
   if (fx != NULL) {
     *fx = PDF(X);
   }
-  if (sqx != NULL) {
+  if (sqx != NULL && hx != NULL) {
     *sqx = *hx * iv->sq;
   }
   if (ivl) *ivl = iv;

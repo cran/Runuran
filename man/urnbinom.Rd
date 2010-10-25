@@ -1,6 +1,4 @@
 \name{urnbinom}
-\docType{function}
-
 \alias{urnbinom}
 
 \title{UNU.RAN Negative Binomial random variate generator}

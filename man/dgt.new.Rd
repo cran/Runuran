@@ -1,5 +1,4 @@
 \name{dgt.new}
-\docType{function}
 
 \alias{dgt.new}
 \alias{dgtd.new}

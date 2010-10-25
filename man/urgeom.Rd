@@ -1,6 +1,4 @@
 \name{urgeom}
-\docType{function}
-
 \alias{urgeom}
 
 \title{UNU.RAN Geometric random variate generator}

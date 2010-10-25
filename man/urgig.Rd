@@ -1,6 +1,4 @@
 \name{urgig}
-\docType{function}
-
 \alias{urgig}
 
 \title{UNU.RAN Generalized Inverse Gaussian Distribution variate generator}

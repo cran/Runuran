@@ -49,7 +49,7 @@ _unur_string_appendtext ( struct unur_string *string, const char *text )
     string->allocated += MEMBLOCKSIZE;
     string->text = _unur_xrealloc( string->text, (size_t)string->allocated );
   }
-  strcpy( string->text+string->length, text );
+  strncpy( string->text+string->length, text, len+1 );
   string->length += len;
   return UNUR_SUCCESS;
 } 

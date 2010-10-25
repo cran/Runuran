@@ -1,6 +1,4 @@
 \name{urlogarithmic}
-\docType{function}
-
 \alias{urlogarithmic}
 
 \title{UNU.RAN Logarithmic random variate generator}

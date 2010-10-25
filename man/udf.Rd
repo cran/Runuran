@@ -1,6 +1,4 @@
 \name{udf}
-\docType{function}
-
 \alias{udf}
 
 \title{UNU.RAN object for F distribution}

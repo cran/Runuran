@@ -81,13 +81,9 @@ _unur_set_params_zipf( UNUR_DISTR *distr, const double *params, int n_params )
   }
   DISTR.rho = rho;
   DISTR.tau = 0.;
-  switch (n_params) {
-  case 2:
+  if (n_params == 2)
     DISTR.tau = tau;
-  default:
-    n_params = 2;
-  }
-  DISTR.n_params = n_params;
+  DISTR.n_params = 2;
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
     DISTR.domain[0] = 1;           
     DISTR.domain[1] = INT_MAX;     

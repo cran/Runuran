@@ -1,6 +1,4 @@
 \name{udexp}
-\docType{function}
-
 \alias{udexp}
 
 \title{UNU.RAN object for Exponential distribution}

@@ -1,6 +1,4 @@
 \name{urexp}
-\docType{function}
-
 \alias{urexp}
 
 \title{UNU.RAN Exponential random variate generator}

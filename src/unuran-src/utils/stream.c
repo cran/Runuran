@@ -131,10 +131,12 @@ _unur_read_data( const char *filename, int no_of_entries, double **ar )
       if (chktoline == toline) {
 	_unur_error("read_data",UNUR_ERR_GEN_DATA,"data file not valid");
 	free(data);
+	fclose(fp);
 	return 0;    
       }  
     } 
   }    
+  fclose(fp);
   data = _unur_xrealloc( data, (i+1) * sizeof(double) );
   *ar = data;
   return n_data;

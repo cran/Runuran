@@ -1,6 +1,4 @@
 \name{unuran.new}
-\docType{function}
-
 \alias{unuran.new}
 
 \title{Create a UNU.RAN object}

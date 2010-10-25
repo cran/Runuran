@@ -1,6 +1,4 @@
 \name{urlomax}
-\docType{function}
-
 \alias{urlomax}
 
 \title{UNU.RAN Lomax random variate generator}

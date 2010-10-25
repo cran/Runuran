@@ -1,6 +1,4 @@
 \name{urrayleigh}
-\docType{function}
-
 \alias{urrayleigh}
 
 \title{UNU.RAN Rayleigh random variate generator}

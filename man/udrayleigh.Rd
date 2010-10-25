@@ -1,6 +1,4 @@
 \name{udrayleigh}
-\docType{function}
-
 \alias{udrayleigh}
 
 \title{UNU.RAN object for Rayleigh distribution}

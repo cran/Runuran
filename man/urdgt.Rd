@@ -1,5 +1,4 @@
 \name{urdgt}
-\docType{function}
 
 \alias{urdgt}
 \alias{urdau}

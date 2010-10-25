@@ -1,6 +1,4 @@
 \name{udlomax}
-\docType{function}
-
 \alias{udlomax}
 
 \title{UNU.RAN object for Lomax distribution}

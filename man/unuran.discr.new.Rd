@@ -1,6 +1,4 @@
 \name{unuran.discr.new}
-\docType{function}
-
 \alias{unuran.discr.new}
 
 \title{Create a UNU.RAN discrete univariate distribution object}

@@ -40,7 +40,7 @@ _unur_logpdf_multiexponential( const double *x, UNUR_DISTR *distr )
   sum=0.;
   sigma = DISTR.param_vecs[INDEX_SIGMA];
   theta = DISTR.param_vecs[INDEX_THETA];
-  if ( sigma || theta ) {
+  if ( sigma==NULL || theta==NULL ) {
     for (i=0; i<dim; i++) { 
       dx = (i==0) ? ((x[i]<0)? INFINITY: x[i]) : ((x[i]<x[i-1])? INFINITY: x[i]-x[i-1]);  
       sum -= (dim-i) * dx;  
@@ -111,7 +111,8 @@ int
 _unur_upd_mode_multiexponential( UNUR_DISTR *distr )
 {
   int i;
-  if (DISTR.mode == NULL) _unur_xmalloc( distr->dim * sizeof(double) );
+  if (DISTR.mode == NULL) 
+    DISTR.mode = _unur_xmalloc( distr->dim * sizeof(double) );
   for (i=0; i<distr->dim; i++)  DISTR.mode[i]=0.;
   return UNUR_SUCCESS;
 } 

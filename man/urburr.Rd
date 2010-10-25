@@ -1,6 +1,4 @@
 \name{urburr}
-\docType{function}
-
 \alias{urburr}
 
 \title{UNU.RAN Burr random variate generator}

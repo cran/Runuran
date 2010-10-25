@@ -1,6 +1,4 @@
 \name{uq}
-\docType{function}
-
 \alias{uq}
 
 \title{Quantile function for "unuran" object}

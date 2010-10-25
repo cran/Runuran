@@ -1,6 +1,4 @@
 \name{udlogis}
-\docType{function}
-
 \alias{udlogis}
 
 \title{UNU.RAN object for Logistic distribution}

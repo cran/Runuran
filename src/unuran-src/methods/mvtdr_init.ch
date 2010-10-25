@@ -106,6 +106,7 @@ _unur_mvtdr_clone( const struct unur_gen *gen )
   if (CLONE->S==NULL || CLONE->g==NULL || CLONE->tp_coord==NULL || 
       CLONE->tp_mcoord==NULL || CLONE->tp_Tgrad==NULL || vtindex==NULL) {
     _unur_error(gen->genid,UNUR_ERR_MALLOC,"");
+    if (vtindex) free (vtindex);
     _unur_mvtdr_free(clone); return NULL;
   }
   if (GEN->S) memcpy( CLONE->S, GEN->S, size );

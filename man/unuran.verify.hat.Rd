@@ -1,6 +1,4 @@
 \name{unuran.verify.hat}
-\docType{function}
-
 \alias{unuran.verify.hat}
 
 \title{Verify hat and squeezes in a "unuran" generator object}

@@ -47,11 +47,11 @@ int _unur_matrix_eigensystem(int dim, const double *M, double *values, double *v
      &wk[0], &wk[dim], &wk[2*dim], &wk[3*dim], &wk[4*dim], in);
   _unur_eigensystem_back(dim, A, codiag, vectors);
 free_memory:
-  if (A) free(A);
-  if (diag) free(diag);
-  if (codiag) free(codiag);
-  if (wk) free(wk);
-  if (in) free(in);
+  free(A);
+  free(diag);
+  free(codiag);
+  free(wk);
+  free(in);
   return ret; 
 } 
 int 

@@ -9,12 +9,19 @@ _unur_FunctDefinition (struct parser_data *pdata)
   int              token; 
   CHECK_NULL(pdata,NULL);  COOKIE_CHECK(pdata,CK_FSTR_PDATA,NULL);
   left = _unur_DefFunctDesignator(pdata);
-  if (pdata->perrno) return NULL;
+  if (pdata->perrno) {
+    _unur_fstr_free(left); return NULL;
+  }
   if ( _unur_fstr_next_token(pdata,&token,&symb) != UNUR_SUCCESS ||
-       strcmp(symb,"=") != 0 )
+       strcmp(symb,"=") != 0 ) {
+    _unur_fstr_free(left);
     return _unur_fstr_error_parse(pdata,ERR_EXPECT_EQUAL,__LINE__); 
+  }
   right = _unur_Expression(pdata);
-  if (pdata->perrno) return NULL;
+  if (pdata->perrno) {
+    _unur_fstr_free(left); _unur_fstr_free(right);
+    return NULL;
+  }
   node = _unur_fstr_create_node(symb,0.,token,left,right); 
   return node; 
 } 
@@ -33,10 +40,15 @@ _unur_DefFunctDesignator (struct parser_data *pdata)
        symb[0] != '(' )
     return _unur_fstr_error_parse(pdata,ERR_EXPECT_OPEN_P,__LINE__); 
   params = _unur_DefParameterlist(pdata,&n_params);
-  if (pdata->perrno) return NULL;
+  if (pdata->perrno) {
+    _unur_fstr_free(params);
+    return NULL;
+  }
   if ( _unur_fstr_next_token(pdata,&token,&symb) != UNUR_SUCCESS ||
-       symb[0] != ')' )
+       symb[0] != ')' ) {
+    _unur_fstr_free(params);
     return _unur_fstr_error_parse(pdata,ERR_EXPECT_CLOSE_P,__LINE__); 
+  }
   node = _unur_fstr_create_node(fsymb,0.,funct,NULL,params); 
   return node;
 } 
@@ -54,10 +66,12 @@ _unur_DefParameterlist(struct parser_data *pdata, int *n_params)
   *n_params = 1;
   while ( _unur_fstr_next_token(pdata,&token,&symb) != UNUR_SUCCESS ||
 	  symb[0] == ',' ) {
-    left = node; 
     if ( _unur_fstr_next_token(pdata,&token,&symb) != UNUR_SUCCESS ||
-	 symbol[token].type != S_UIDENT )
+	 symbol[token].type != S_UIDENT ) {
+      _unur_fstr_free(node);
       return _unur_fstr_error_parse(pdata,ERR_EXPECT_VAR,__LINE__);
+    }
+    left = node; 
     right = _unur_fstr_create_node(symb,0.,token,NULL,NULL); 
     (*n_params)++; 
     node = _unur_fstr_create_node(",",0.,s_comma,left,right); 
@@ -73,11 +87,16 @@ _unur_Expression (struct parser_data *pdata)
   int              token;
   CHECK_NULL(pdata,NULL);  COOKIE_CHECK(pdata,CK_FSTR_PDATA,NULL);
   left = _unur_SimpleExpression(pdata);
-  if (pdata->perrno) return NULL; 
+  if (pdata->perrno) {
+    _unur_fstr_free(left); return NULL; 
+  }
   if ( _unur_fstr_next_token(pdata,&token,&symb) == UNUR_SUCCESS &&
        symbol[token].type == S_REL_OP ) {
     right = _unur_SimpleExpression(pdata);
-    if (pdata->perrno) return NULL; 
+    if (pdata->perrno) {
+      _unur_fstr_free(left); _unur_fstr_free(right);
+      return NULL;
+    } 
     node = _unur_fstr_create_node(symb,0.,token,left,right); 
   }
   else {
@@ -94,12 +113,17 @@ _unur_SimpleExpression (struct parser_data *pdata)
   int              token;
   CHECK_NULL(pdata,NULL);  COOKIE_CHECK(pdata,CK_FSTR_PDATA,NULL);
   node = _unur_STerm(pdata);
-  if (pdata->perrno) return NULL;
+  if (pdata->perrno) {
+    _unur_fstr_free(node); return NULL;
+  }
   while ( _unur_fstr_next_token(pdata,&token,&symb) == UNUR_SUCCESS &&
 	  symbol[token].type == S_ADD_OP) {
     left = node; 
     right = _unur_Term(pdata);
-    if (pdata->perrno) return NULL; 
+    if (pdata->perrno) {
+      _unur_fstr_free(left); _unur_fstr_free(right);
+      return NULL;
+    }
     node = _unur_fstr_create_node(symb,0.,token,left,right); 
   }
   --(pdata->tno);
@@ -117,7 +141,10 @@ _unur_STerm (struct parser_data *pdata)
   if ( symb[0] == '-' ) {
     left = _unur_fstr_create_node(NULL,0.,s_uconst,NULL,NULL); 
     right = _unur_Term(pdata);
-    if (pdata->perrno) return NULL; 
+    if (pdata->perrno) {
+      _unur_fstr_free(left); _unur_fstr_free(right);
+      return NULL; 
+    }
     node = _unur_fstr_create_node(symb,0.,token,left,right); 
   }
   else {
@@ -125,8 +152,10 @@ _unur_STerm (struct parser_data *pdata)
       --(pdata->tno);
     }
     node = _unur_Term(pdata);
-    if (pdata->perrno) return NULL; 
-  } 
+    if (pdata->perrno) {
+      _unur_fstr_free(node); return NULL; 
+    }
+  }
   return node; 
 }  
 struct ftreenode *
@@ -137,12 +166,17 @@ _unur_Term (struct parser_data *pdata)
   int              token;
   CHECK_NULL(pdata,NULL);  COOKIE_CHECK(pdata,CK_FSTR_PDATA,NULL);
   node = _unur_Factor(pdata);
-  if (pdata->perrno) return NULL;
+  if (pdata->perrno) {
+    _unur_fstr_free(node); return NULL;
+  }
   while ( _unur_fstr_next_token(pdata,&token,&symb) == UNUR_SUCCESS &&
 	  symbol[token].type == S_MUL_OP ) {
      left = node; 
      right = _unur_Factor(pdata);
-     if (pdata->perrno) return NULL;
+     if (pdata->perrno) {
+       _unur_fstr_free(left); _unur_fstr_free(right);
+       return NULL;
+     }
      node = _unur_fstr_create_node(symb,0.,token,left,right); 
   }
   --(pdata->tno);
@@ -156,11 +190,16 @@ _unur_Factor (struct parser_data *pdata)
   int              token;
   CHECK_NULL(pdata,NULL);  COOKIE_CHECK(pdata,CK_FSTR_PDATA,NULL);
   left = _unur_Bas_Exp(pdata);
-  if (pdata->perrno) return NULL;
+  if (pdata->perrno) {
+    _unur_fstr_free(left); return NULL;
+  }
   if ( _unur_fstr_next_token(pdata,&token,&symb) == UNUR_SUCCESS &&
        symb[0] == '^' ) {
     right = _unur_Bas_Exp(pdata);
-    if (pdata->perrno) return NULL;
+    if (pdata->perrno) {
+      _unur_fstr_free(left); _unur_fstr_free(right);
+      return NULL;
+    }
     node = _unur_fstr_create_node(symb,0.,token,left,right); 
   }
   else {
@@ -186,11 +225,15 @@ _unur_Bas_Exp (struct parser_data *pdata)
   else if( symbol[token].type == S_SFUNCT ) {
     --(pdata->tno);
     node = _unur_FunctDesignator(pdata);
-    if (pdata->perrno) return NULL;
+    if (pdata->perrno) {
+      _unur_fstr_free(node); return NULL;
+    }
   }
   else if( symb[0] == '(' ) {
     node = _unur_Expression(pdata); 
-    if (pdata->perrno) return NULL;
+    if (pdata->perrno) {
+      _unur_fstr_free(node); return NULL;
+    }
     if ( _unur_fstr_next_token(pdata,&token,&symb) != UNUR_SUCCESS ||
 	 symb[0] != ')' )
       return _unur_fstr_error_parse(pdata,ERR_EXPECT_CLOSE_P,__LINE__);
@@ -217,10 +260,14 @@ _unur_FunctDesignator (struct parser_data *pdata)
        symb[0] != '(' )
     return _unur_fstr_error_parse(pdata,ERR_EXPECT_OPEN_P,__LINE__);
   params = _unur_ActualParameterlist(pdata,n_params);
-  if (pdata->perrno) return NULL;
+  if (pdata->perrno) {
+    _unur_fstr_free(params); return NULL;
+  }
   if ( _unur_fstr_next_token(pdata,&token,&symb) != UNUR_SUCCESS ||
-       symb[0] != ')' )
+       symb[0] != ')' ) {
+    _unur_fstr_free(params);
     return _unur_fstr_error_parse(pdata,ERR_EXPECT_CLOSE_P,__LINE__);
+  }
   node = _unur_fstr_create_node(fsymb,0.,funct,NULL,params); 
   return node; 
 } 
@@ -233,21 +280,30 @@ _unur_ActualParameterlist (struct parser_data *pdata, int n_params)
   int              c_params;   
   CHECK_NULL(pdata,NULL);  COOKIE_CHECK(pdata,CK_FSTR_PDATA,NULL);
   node = _unur_Expression(pdata);
-  if (pdata->perrno) return NULL;
+  if (pdata->perrno) {
+    _unur_fstr_free(node); return NULL;
+  }
   c_params = 1; 
   while ( _unur_fstr_next_token(pdata,&token,&symb) != UNUR_SUCCESS ||
 	  symb[0] == ',' ) {
     c_params++; 
-    if (c_params > n_params)
+    if (c_params > n_params) {
+      _unur_fstr_free(node);
       return _unur_fstr_error_parse(pdata,ERR_INVALID_N_PARAMS,__LINE__);
+    }
     left = node; 
     right = _unur_Expression(pdata);
-    if (pdata->perrno) return NULL;
+    if (pdata->perrno) {
+      _unur_fstr_free(left); _unur_fstr_free(right);
+      return NULL;
+    }
     node = _unur_fstr_create_node(",",0.,s_comma,left,right); 
   }
   --(pdata->tno);
-  if (c_params < n_params)
+  if (c_params < n_params) {
+    _unur_fstr_free(node);
     return _unur_fstr_error_parse(pdata,ERR_INVALID_N_PARAMS,__LINE__);
+  }
   return node; 
 } 
 struct ftreenode *
@@ -278,20 +334,20 @@ _unur_fstr_simplification (const char *symb, int token,
     right->type  = S_UCONST;
     right->left  = NULL; 
     right->right = NULL;
-    if (left) free(left);
+    _unur_fstr_free(left);
     return right; 
   } 
   if ( (l_0 && s=='+' ) || (l_1 && s=='*') ) { 
     CHECK_NULL(left,NULL);  COOKIE_CHECK(left,CK_FSTR_TNODE,NULL);
     CHECK_NULL(right,NULL); COOKIE_CHECK(right,CK_FSTR_TNODE,NULL);
-    free(left);
+    _unur_fstr_free(left);
     return right;
   } 
   if ( (r_0 && (s=='+' || s=='-')) ||
        (r_1 && (s=='*' || s=='/' || s=='^')) ) {
     CHECK_NULL(left,NULL);  COOKIE_CHECK(left,CK_FSTR_TNODE,NULL);
     CHECK_NULL(right,NULL); COOKIE_CHECK(right,CK_FSTR_TNODE,NULL);
-    free(right);
+    _unur_fstr_free(right);
     return left;
   }
   and = (strcmp(symb,"and")==0);
@@ -326,7 +382,7 @@ _unur_fstr_simplification (const char *symb, int token,
 	 strcmp(left->symbol,right->symbol)== 0 ) ) {
     CHECK_NULL(left,NULL);  COOKIE_CHECK(left,CK_FSTR_TNODE,NULL);
     CHECK_NULL(right,NULL); COOKIE_CHECK(right,CK_FSTR_TNODE,NULL);
-    free(left);
+    _unur_fstr_free(left);
     right->token = s_uconst;
     right->symbol= symbol[s_uconst].name; 
     right->val   = 1.;
@@ -460,7 +516,10 @@ _unur_fstr_error_parse ( struct parser_data *pdata, int perrno, int line )
   _unur_string_append( reason, "%s: ", _unur_fstr_error_code(perrno) );
   for (i=0; i<pdata->tno-1; i++)
     _unur_string_append( reason, "%s ", pdata->tpos[i]);
-  _unur_string_append( reason, " -->%s<--  ", pdata->tpos[i]);
+  if (i<pdata->n_tokens)
+    _unur_string_append( reason, " -->%s<--  ", pdata->tpos[i]);
+  else
+    _unur_string_append( reason, " <--  ");
   for (i++; i<pdata->n_tokens; i++)
     _unur_string_append( reason, "%s ",pdata->tpos[i]);
   _unur_error_x( GENTYPE, __FILE__, line, "error", UNUR_ERR_FSTR_SYNTAX,reason->text);

@@ -1,6 +1,4 @@
 \name{udchi}
-\docType{function}
-
 \alias{udchi}
 
 \title{UNU.RAN object for Chi distribution}

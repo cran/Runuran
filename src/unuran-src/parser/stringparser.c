@@ -353,8 +353,13 @@ _unur_str_distr( char *str_distr )
       else {
 	if (*key != 'd') {
 	  _unur_error(GENTYPE,UNUR_ERR_STR_SYNTAX,"key for distribution does not start with 'd'"); 
+	  _unur_distr_free(distr);   
 	  return NULL;
 	}
+      }
+      if (distr != NULL) {
+	_unur_error(GENTYPE,UNUR_ERR_SHOULD_NOT_HAPPEN,""); 
+	_unur_distr_free(distr);
       }
       distr = _unur_str_distr_new(value);
       if (distr == NULL) {
@@ -1005,7 +1010,7 @@ _unur_parse_ilist( char *liststr, int **iarray )
         token  = strtok(NULL, ",)") ) {
     if (n_iarray >= n_alloc) {
       n_alloc += 100;
-      iarr = _unur_xrealloc( iarr, n_alloc * sizeof(double) );
+      iarr = _unur_xrealloc( iarr, n_alloc * sizeof(int) );
     }
     iarr[n_iarray++] = _unur_atoi(token);
   } 

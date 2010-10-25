@@ -1,6 +1,4 @@
 \name{urbinom}
-\docType{function}
-
 \alias{urbinom}
 
 \title{UNU.RAN Binomial random variate generator}

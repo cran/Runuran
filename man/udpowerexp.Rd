@@ -1,6 +1,4 @@
 \name{udpowerexp}
-\docType{function}
-
 \alias{udpowerexp}
 
 \title{UNU.RAN object for Powerexponential distribution}

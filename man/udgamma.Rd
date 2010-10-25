@@ -1,6 +1,4 @@
 \name{udgamma}
-\docType{function}
-
 \alias{udgamma}
 
 \title{UNU.RAN object for Gamma distribution}

@@ -1,6 +1,4 @@
 \name{unuran.cmv.new}
-\docType{function}
-
 \alias{unuran.cmv.new}
 
 \title{Create a UNU.RAN continuous multivariate distribution object}

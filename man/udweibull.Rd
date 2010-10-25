@@ -1,6 +1,4 @@
 \name{udweibull}
-\docType{function}
-
 \alias{udweibull}
 
 \title{UNU.RAN object for Weibull distribution}

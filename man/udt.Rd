@@ -1,6 +1,4 @@
 \name{udt}
-\docType{function}
-
 \alias{udt}
 
 \title{UNU.RAN object for Student t distribution}

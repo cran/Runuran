@@ -1,6 +1,4 @@
 \name{udcauchy}
-\docType{function}
-
 \alias{udcauchy}
 
 \title{UNU.RAN object for Cauchy distribution}

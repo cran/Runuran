@@ -1,6 +1,4 @@
 \name{urf}
-\docType{function}
-
 \alias{urf}
 
 \title{UNU.RAN F random variate generator}

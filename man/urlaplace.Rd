@@ -1,6 +1,4 @@
 \name{urlaplace}
-\docType{function}
-
 \alias{urlaplace}
 
 \title{UNU.RAN Laplace random variate generator}

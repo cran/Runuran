@@ -39,7 +39,10 @@ _unur_logpdf_multistudent( const double *x, UNUR_DISTR *distr )
   double xx; 
   double cx; 
   dim = distr->dim;
-  if (DISTR.mean == NULL && DISTR.covar == NULL) {
+  if (DISTR.mean == NULL) {
+    if (DISTR.covar != NULL) {
+      _unur_warning(distr->name,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
+    }
     xx=0.;
     for (i=0; i<dim; i++) { xx += x[i]*x[i]; }
     return ( - (dim+DISTR.nu)/2. * log(1+xx/DISTR.nu) + LOGNORMCONSTANT);  
@@ -135,7 +138,8 @@ _unur_set_params_multistudent( UNUR_DISTR *distr, double df )
 int
 _unur_upd_mode_multistudent( UNUR_DISTR *distr )
 {
-  if (DISTR.mode == NULL) _unur_xmalloc( distr->dim * sizeof(double) );
+  if (DISTR.mode == NULL)
+    DISTR.mode = _unur_xmalloc( distr->dim * sizeof(double) );
   memcpy( DISTR.mode, DISTR.mean, distr->dim * sizeof(double) );
   return UNUR_SUCCESS;
 } 

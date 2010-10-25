@@ -1,6 +1,4 @@
 \name{urhyper}
-\docType{function}
-
 \alias{urhyper}
 
 \title{UNU.RAN Hypergeometric random variate generator}

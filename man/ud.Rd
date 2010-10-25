@@ -1,6 +1,4 @@
 \name{ud}
-\docType{function}
-
 \alias{ud}
 
 \title{Density function for "unuran" object}

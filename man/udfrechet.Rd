@@ -1,6 +1,4 @@
 \name{udfrechet}
-\docType{function}
-
 \alias{udfrechet}
 
 \title{UNU.RAN object for Frechet distribution}

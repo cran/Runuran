@@ -1,6 +1,4 @@
 \name{udghyp}
-\docType{function}
-
 \alias{udghyp}
 
 \title{UNU.RAN object for Generalized Hyperbolic distribution}

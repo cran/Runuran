@@ -1,5 +1,4 @@
 \name{tdr.new}
-\docType{function}
 
 \alias{tdr.new}
 \alias{tdrd.new}

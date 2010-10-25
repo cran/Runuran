@@ -55,6 +55,7 @@ _unur_tdr_gw_starting_intervals( struct unur_gen *gen )
       }
       else {
 	_unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"PDF not T-concave!");
+	free(iv_new);
 	return UNUR_ERR_GEN_CONDITION;
       }
     }

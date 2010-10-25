@@ -1,6 +1,4 @@
 \name{urweibull}
-\docType{function}
-
 \alias{urweibull}
 
 \title{UNU.RAN Weibull random variate generator}

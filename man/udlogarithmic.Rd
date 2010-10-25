@@ -1,6 +1,4 @@
 \name{udlogarithmic}
-\docType{function}
-
 \alias{udlogarithmic}
 
 \title{UNU.RAN object for Logarithmic distribution}

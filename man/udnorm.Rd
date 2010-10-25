@@ -1,6 +1,4 @@
 \name{udnorm}
-\docType{function}
-
 \alias{udnorm}
 
 \title{UNU.RAN object for Normal distribution}

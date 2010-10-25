@@ -16,7 +16,7 @@ _unur_fstr_parser_init ( const char *fstr )
   pdata->len_fstr = strlen(pdata->fstr);
   if (pdata->len_fstr <= 0) {
     _unur_error(GENTYPE,UNUR_ERR_STR,"empty string"); 
-    if (pdata->fstr) free (pdata->fstr);
+    free (pdata->fstr);
     free(pdata);
     return NULL;
   }
@@ -239,7 +239,7 @@ _unur_fstr_error_scan (const struct parser_data *pdata, const char *symb, int li
   _unur_string_append( reason, "unknown symbol '%s': ", symb );
   for (c=pdata->fstr; c < pdata->fstr+pdata->lastpos; c++) 
     _unur_string_append( reason, "%c", *c );
-  _unur_string_append( reason, "    %s", pdata->fstr + pdata->lastpos);
+  _unur_string_append( reason, "    --> %s", pdata->fstr + pdata->lastpos);
   _unur_error_x( GENTYPE, __FILE__, line, "error", UNUR_ERR_FSTR_SYNTAX,reason->text);
   _unur_string_free( reason );
 } 

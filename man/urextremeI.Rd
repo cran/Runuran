@@ -1,6 +1,4 @@
 \name{urextremeI}
-\docType{function}
-
 \alias{urextremeI}
 
 \title{UNU.RAN Extreme value type I (Gumbel-type) random variate generator}

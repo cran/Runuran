@@ -1,6 +1,4 @@
 \name{urbeta}
-\docType{function}
-
 \alias{urbeta}
 
 \title{UNU.RAN Beta random variate generator}

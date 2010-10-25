@@ -1,6 +1,4 @@
 \name{udpois}
-\docType{function}
-
 \alias{udpois}
 
 \title{UNU.RAN object for Poisson distribution}

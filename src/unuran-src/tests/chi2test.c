@@ -389,8 +389,6 @@ _unur_test_chi2_cvemp ( struct unur_gen *gen,
   double pval, pval_min;         
   int i, j;                      
   CHECK_NULL(gen,-1.);
-  distr_normal = unur_distr_normal( NULL, 0 );
-  cdf = distr_normal->data.cont.cdf;
   if (n_intervals <= 2)
     n_intervals = CHI2_INTERVALS_DEFAULT;
   if( samplesize <= 0 ) samplesize = CHI2_DEFAULT_SAMPLESIZE;
@@ -400,6 +398,8 @@ _unur_test_chi2_cvemp ( struct unur_gen *gen,
     _unur_error(test_name,UNUR_ERR_GENERIC,"distribution dimension < 1 ?");
     return -1.;
   }
+  distr_normal = unur_distr_normal( NULL, 0 );
+  cdf = distr_normal->data.cont.cdf;
   X   = _unur_xmalloc( dim * sizeof(double));
   U   = _unur_xmalloc( dim * sizeof(double));
   bm  = _unur_xmalloc( dim * n_intervals * sizeof(int)); 
@@ -429,9 +429,9 @@ _unur_test_chi2_cvemp ( struct unur_gen *gen,
     fprintf(out,"  Minimal p-value * number_of_tests = %g:\n\n",pval_min * dim);
   }
   _unur_distr_free(distr_normal);
-  if (X)  free(X);
-  if (U)  free(U);
-  if (bm) free(bm);
+  free(X);
+  free(U);
+  free(bm);
   return pval_min * dim;
 #undef idx
 #undef DISTR

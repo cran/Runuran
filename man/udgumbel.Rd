@@ -1,6 +1,4 @@
 \name{udgumbel}
-\docType{function}
-
 \alias{udgumbel}
 
 \title{UNU.RAN object for Gumbel distribution}

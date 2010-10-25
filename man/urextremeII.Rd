@@ -1,6 +1,4 @@
 \name{urextremeII}
-\docType{function}
-
 \alias{urextremeII}
 
 \title{UNU.RAN Extreme value type II (Frechet-type) random variate generator}

@@ -1,4 +1,11 @@
 
+Version 0.16.0: 2010-10-25
+
+	- fixed Rd files
+
+	- bug fixes
+
+
 Version 0.15.0: 2010-08-06
 
 	- new function up() for computing distribution function

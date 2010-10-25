@@ -1,6 +1,4 @@
 \name{urplanck}
-\docType{function}
-
 \alias{urplanck}
 
 \title{UNU.RAN Planck random variate generator}

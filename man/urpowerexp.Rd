@@ -1,6 +1,4 @@
 \name{urpowerexp}
-\docType{function}
-
 \alias{urpowerexp}
 
 \title{UNU.RAN Powerexponential random variate generator}

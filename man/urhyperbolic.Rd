@@ -1,6 +1,4 @@
 \name{urhyperbolic}
-\docType{function}
-
 \alias{urhyperbolic}
 
 \title{UNU.RAN Hyperbolic random variate generator}

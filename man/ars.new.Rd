@@ -1,5 +1,4 @@
 \name{ars.new}
-\docType{function}
 
 \alias{ars.new}
 \alias{arsd.new}

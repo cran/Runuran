@@ -1,6 +1,4 @@
 \name{urlogis}
-\docType{function}
-
 \alias{urlogis}
 
 \title{UNU.RAN Logistic random variate generator}

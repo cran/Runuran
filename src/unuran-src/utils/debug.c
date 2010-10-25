@@ -40,8 +40,14 @@ _unur_make_genid( const char *gentype )
 {
   static int count = 0;   
   char *genid;
-  genid = _unur_xmalloc(sizeof(char)*(strlen(gentype) + 6));
+  size_t len;
+  len = strlen(gentype);
+  genid = _unur_xmalloc(sizeof(char)*(len+5));
   ++count; count %= 1000;      
-  sprintf(genid,"%s.%03d",gentype,count);
+#if HAVE_DECL_SNPRINTF
+  snprintf(genid, len+5, "%s.%03d", gentype, count);
+#else
+  sprintf(genid, "%s.%03d", gentype, count);
+#endif
   return genid;
 } 

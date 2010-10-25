@@ -1,6 +1,4 @@
 \name{udlaplace}
-\docType{function}
-
 \alias{udlaplace}
 
 \title{UNU.RAN object for Laplace distribution}

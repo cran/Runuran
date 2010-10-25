@@ -53,7 +53,7 @@ unur_distr_condi_new( const struct unur_distr *distr, const double *pos, const d
   memset( ar, 0, distr->dim * sizeof(double) );
   if ( (unur_distr_cont_set_pdfparams_vec( condi, iXARG, ar, distr->dim ) != UNUR_SUCCESS) ||
        (unur_distr_cont_set_pdfparams_vec( condi, iGRADF, ar, distr->dim ) != UNUR_SUCCESS) ) {
-    _unur_distr_free(condi); return NULL; 
+    _unur_distr_free(condi); free(ar); return NULL; 
   }
   free(ar);
   if (DISTR.pdf) {

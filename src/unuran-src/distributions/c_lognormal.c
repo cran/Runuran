@@ -85,13 +85,9 @@ _unur_set_params_lognormal( UNUR_DISTR *distr, const double *params, int n_param
   DISTR.zeta = zeta;
   DISTR.sigma = sigma;
   DISTR.theta = 0.;        
-  switch (n_params) {
-  case 3:
+  if (n_params == 3)
     DISTR.theta = theta;
-  default:
-    n_params = 3;
-  }
-  DISTR.n_params = n_params;
+  DISTR.n_params = 3;
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
     DISTR.domain[0] = DISTR.theta;     
     DISTR.domain[1] = INFINITY;        

@@ -1,6 +1,4 @@
 \name{udhyperbolic}
-\docType{function}
-
 \alias{udhyperbolic}
 
 \title{UNU.RAN object for Hyperbolic distribution}

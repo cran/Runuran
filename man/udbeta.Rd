@@ -1,6 +1,4 @@
 \name{udbeta}
-\docType{function}
-
 \alias{udbeta}
 
 \title{UNU.RAN object for Beta distribution}

@@ -56,6 +56,7 @@ unur_test_timing( struct unur_par *par,
   *time_setup = _unur_get_time();
   if (!gen) {
     free (time_gen);
+    if (vec) free(vec);
     return NULL;
   }
   samplesize = 10;
@@ -77,6 +78,8 @@ unur_test_timing( struct unur_par *par,
       break;
     default: 
       _unur_error(test_name,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
+      free(time_gen);
+      if (vec) free(vec);
       return NULL;
     }
     time_gen[log10_samples] = _unur_get_time();

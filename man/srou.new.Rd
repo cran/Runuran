@@ -1,5 +1,4 @@
 \name{srou.new}
-\docType{function}
 
 \alias{srou.new}
 \alias{sroud.new}

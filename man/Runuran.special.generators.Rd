@@ -1,5 +1,4 @@
 \name{Runuran.special.generators}
-\docType{package}
 
 \alias{Runuran.special.generators}
 \alias{SpecialGenerator}

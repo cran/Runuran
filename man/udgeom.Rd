@@ -1,6 +1,4 @@
 \name{udgeom}
-\docType{function}
-
 \alias{udgeom}
 
 \title{UNU.RAN object for Geometric distribution}

@@ -70,6 +70,7 @@ _unur_tdr_ps_starting_intervals( struct unur_gen *gen )
       if (fx <= 0.) {
 	if (iv->next->fx > 0.) {
 	  _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"PDF not T-concave!");
+	  free(iv_new);
 	  return UNUR_ERR_GEN_CONDITION;
 	}
 	free(iv->next);
@@ -92,6 +93,7 @@ _unur_tdr_ps_starting_intervals( struct unur_gen *gen )
       if (fx <= 0.) {
 	if (iv->fx > 0.) {
 	  _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"PDF not T-concave!");
+	  free(iv_new);
 	  return UNUR_ERR_GEN_CONDITION;
 	}
 	iv_new->next = iv->next;

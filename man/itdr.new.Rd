@@ -1,5 +1,4 @@
 \name{itdr.new}
-\docType{function}
 
 \alias{itdr.new}
 \alias{itdrd.new}

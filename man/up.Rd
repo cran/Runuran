@@ -1,6 +1,4 @@
 \name{up}
-\docType{function}
-
 \alias{up}
 
 \title{Distribution function for "unuran" object}

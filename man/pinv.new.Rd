@@ -1,5 +1,4 @@
 \name{pinv.new}
-\docType{function}
 
 \alias{pinv.new}
 \alias{pinvd.new}

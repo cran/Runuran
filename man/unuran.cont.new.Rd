@@ -1,6 +1,4 @@
 \name{unuran.cont.new}
-\docType{function}
-
 \alias{unuran.cont.new}
 
 \title{Create a UNU.RAN continuous univariate distribution object}

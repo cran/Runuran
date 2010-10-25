@@ -1,6 +1,4 @@
 \name{Runuran.distributions}
-\docType{package}
-
 \alias{Runuran.distributions}
 
 \title{UNU.RAN distribution objects}

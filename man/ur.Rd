@@ -1,5 +1,4 @@
 \name{ur}
-\docType{function}
 
 \alias{ur}
 \alias{unuran.sample}

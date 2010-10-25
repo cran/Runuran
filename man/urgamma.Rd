@@ -1,6 +1,4 @@
 \name{urgamma}
-\docType{function}
-
 \alias{urgamma}
 
 \title{UNU.RAN Gamma random variate generator}

@@ -1,6 +1,4 @@
 \name{unuran.details}
-\docType{function}
-
 \alias{unuran.details}
 
 \title{Information on a given "unuran" generator object}

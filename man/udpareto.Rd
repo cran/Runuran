@@ -1,6 +1,4 @@
 \name{udpareto}
-\docType{function}
-
 \alias{udpareto}
 
 \title{UNU.RAN object for Pareto distribution}

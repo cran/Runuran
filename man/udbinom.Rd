@@ -1,6 +1,4 @@
 \name{udbinom}
-\docType{function}
-
 \alias{udbinom}
 
 \title{UNU.RAN object for Binomial distribution}

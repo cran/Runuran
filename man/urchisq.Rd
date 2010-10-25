@@ -1,6 +1,4 @@
 \name{urchisq}
-\docType{function}
-
 \alias{urchisq}
 
 \title{UNU.RAN Chi-Squared random variate generator}

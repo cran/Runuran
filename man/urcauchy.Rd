@@ -1,6 +1,4 @@
 \name{urcauchy}
-\docType{function}
-
 \alias{urcauchy}
 
 \title{UNU.RAN Cauchy random variate generator}

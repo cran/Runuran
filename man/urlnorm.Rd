@@ -1,6 +1,4 @@
 \name{urlnorm}
-\docType{function}
-
 \alias{urlnorm}
 
 \title{UNU.RAN Log-Normal random variate generator}

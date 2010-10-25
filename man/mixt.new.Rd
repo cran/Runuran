@@ -1,6 +1,4 @@
 \name{mixt.new}
-\docType{function}
-
 \alias{mixt.new}
 
 \title{UNU.RAN generator for finite mixture of distributions}
