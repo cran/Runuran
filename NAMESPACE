@@ -17,6 +17,7 @@ export(unuran.new)
 export(unuran.sample)
 export(unuran.details)
 export(unuran.verify.hat)
+export(unuran.is.inversion)
 
 exportPattern("\\.new$")
 exportPattern("^ur")

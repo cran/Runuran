@@ -100,6 +100,7 @@ Runuran_init (SEXP sexp_obj, SEXP sexp_distr, SEXP sexp_method)
   SEXP sexp_gen;
   struct unur_gen *gen;
   const char *method;
+  SEXP sexp_is_inversion;
 
   /* check argument */
   if (!sexp_method || TYPEOF(sexp_method) != STRSXP)
@@ -136,6 +137,11 @@ Runuran_init (SEXP sexp_obj, SEXP sexp_distr, SEXP sexp_method)
     errorcall_return(R_NilValue,"[UNU.RAN - error] cannot create UNU.RAN object");
   }
 
+  /* set slot 'inversion' to true when 'gen' implements an inversion method. */
+  PROTECT(sexp_is_inversion = NEW_LOGICAL(1));
+  LOGICAL_POINTER(sexp_is_inversion)[0] = _unur_gen_is_inversion(gen);
+  SET_SLOT(sexp_obj, install("inversion"), sexp_is_inversion);
+
   /* make R external pointer and store pointer to structure */
   PROTECT(sexp_gen = R_MakeExternalPtr(gen, _Runuran_tag(), sexp_obj));
   
@@ -143,7 +149,7 @@ Runuran_init (SEXP sexp_obj, SEXP sexp_distr, SEXP sexp_method)
   R_RegisterCFinalizer(sexp_gen, _Runuran_free);
 
   /* return pointer to R */
-  UNPROTECT(1);
+  UNPROTECT(2);
   return (sexp_gen);
 
 } /* end of Runuran_init() */
@@ -320,6 +326,7 @@ Runuran_quantile (SEXP sexp_unur, SEXP sexp_U)
      /*   (approximate) quantiles for given 'U' values                       */
      /*----------------------------------------------------------------------*/
 {
+  SEXP sexp_is_inversion;
   SEXP sexp_gen;
   SEXP sexp_data;
   struct unur_gen *gen;
@@ -331,6 +338,13 @@ Runuran_quantile (SEXP sexp_unur, SEXP sexp_U)
   /* check type of U */
   if (TYPEOF(sexp_U)!=REALSXP)
     error("[UNU.RAN - error] argument invalid: 'U' must be number or vector");
+
+  /* check whether UNU.RAN object implements inversion method */
+  sexp_is_inversion = GET_SLOT(sexp_unur, install("inversion"));
+  if ( ! LOGICAL_POINTER(sexp_is_inversion)[0]) {
+    error("[UNU.RAN - error] invalid UNU.RAN object: inversion method required!\n\
+\tUse methods 'HINV', 'NINV', 'PINV'; or 'DGT'");
+  }
 
   /* Extract pointer to UNU.RAN generator */
   sexp_gen = GET_SLOT(sexp_unur, install("unur"));
@@ -374,12 +388,6 @@ _Runuran_quantile_unur (struct unur_gen *gen, SEXP sexp_U)
   /* Extract U */
   U = NUMERIC_POINTER(sexp_U);
   n = length(sexp_U);
-
-  /* check whether UNU.RAN object implements inversion method */
-  if (! _unur_gen_is_inversion(gen)) {
-    error("[UNU.RAN - error] invalid UNU.RAN object: inversion method required!\n\
-\tUse methods 'HINV', 'NINV', 'PINV'; or 'DGT'");
-  }
 
   /* evaluate inverse CDF */
   PROTECT(sexp_res = NEW_NUMERIC(n));

@@ -1,4 +1,16 @@
 
+Version 0.17.0: 2011-01-26
+
+	- new function unuran.is.inversion():
+	  test whether the generator object implements an inversion
+	  method.
+
+	- internal: 
+
+	  * S4 class "unuran" has new slot "inversion" for
+            storing information about type of generation method
+
+
 Version 0.16.0: 2010-10-25
 
 	- fixed Rd files

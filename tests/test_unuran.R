@@ -53,6 +53,9 @@ print(unuran.details(unr,show=FALSE,return.list=TRUE))
 unuran.details(unr,show=FALSE,return.list=FALSE)
 print(unuran.details(unr,show=FALSE,return.list=FALSE))
 
+## Test object properties
+unuran.is.inversion(unr)
+
 ## Draw samples
 unuran.sample(unr)
 unuran.sample(unr,10)
@@ -62,6 +65,7 @@ ur(unr,10)
 
 ## Run a chi-square GoF test
 chisq.test( hist(pnorm(x),plot=FALSE,breaks=breaks)$density )
+
 
 ## Create an object
 unr <- unuran.new("normal()")
@@ -76,11 +80,12 @@ pval <- chisq.test( hist(pnorm(x),plot=FALSE,breaks=breaks)$density )$p.value
 if (pval < alpha) stop("chisq test FAILED!  p-value=",signif(pval))
 
 ## another example (for testing print)
-unr <- new("unuran", "normal()", "arou")
+unr <- new("unuran", "normal()", "pinv")
 unr
 print(unr)
 unuran.details(unr)
 print(unuran.details(unr,show=TRUE,return.list=TRUE))
+unuran.is.inversion(unr)
 
 ## remove (so that valgrind does not see lost memory from UNU.RAN)
 rm(unr)

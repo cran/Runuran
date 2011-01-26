@@ -26,7 +26,8 @@ setClass( "unuran",
                         dom        = "numeric",       # domain of distribution
                         distr      = "unuran.distr",  # pointer to S4 distribution object
                         distr.str  = "character",     # distribution
-                        method.str = "character"      # generation method
+                        method.str = "character",     # generation method
+                        inversion  = "logical"        # inversion method ?
                         ),
          ## defaults for slots
          prototype = list(
@@ -35,7 +36,8 @@ setClass( "unuran",
            dom        = NULL,
            distr      = NULL,
            distr.str  = character(),
-           method.str = "auto"
+           method.str = "auto",
+           inversion  = FALSE
            ),
          ## misc
          sealed = TRUE
@@ -92,7 +94,7 @@ ur <- function(unr,n=1) {
         .Call("Runuran_sample", unr, n, PACKAGE="Runuran")
 }
 
-## unuran.sample: deprecated name or ur()
+## unuran.sample: deprecated name for ur()
 unuran.sample <- function(unr,n=1) { 
         .Call("Runuran_sample", unr, n, PACKAGE="Runuran")
 }
@@ -191,11 +193,12 @@ setReplaceMethod("unuran.packed", "unuran",
 ## print strings of UNU.RAN object
 setMethod( "print", "unuran",
           function(x, ...) {
-                  cat("\nObject is UNU.RAN object:\n")
-                  cat("\tmethod: ",x@method.str,"\n")
-                  cat("\tdistr:  ",x@distr.str,"\n\n")
-                  cat(.Call("Runuran_print", x, FALSE, PACKAGE="Runuran"))
-                  cat("")
+            cat("\nObject is UNU.RAN object:\n")
+            cat("\tmethod:   ",x@method.str,"\n")
+            cat("\tdistr:    ",x@distr.str,"\n")
+            cat("\tinversion:",x@inversion,"\n\n")
+            cat(.Call("Runuran_print", x, FALSE, PACKAGE="Runuran"))
+            cat("")
 } )
 
 setMethod( "show", "unuran",
@@ -206,8 +209,9 @@ setMethod( "show", "unuran",
 unuran.details <- function(unr, show=TRUE, return.list=FALSE, debug=FALSE) {
   if (isTRUE(show)) {
     cat("\nObject is UNU.RAN object:\n")
-    cat("\tmethod: ",unr@method.str,"\n")
-    cat("\tdistr:  ",unr@distr.str,"\n\n")
+    cat("\tmethod:   ",unr@method.str,"\n")
+    cat("\tdistr:    ",unr@distr.str,"\n")
+    cat("\tinversion:",unr@inversion,"\n\n")
     info <- .Call("Runuran_print", unr, TRUE, PACKAGE="Runuran")
     cat(info)
   }
@@ -262,7 +266,7 @@ mixt.new <- function (prob, comp, inversion=FALSE) {
 }
 
 
-## Check --------------------------------------------------------------------
+## Check hat function -------------------------------------------------------
 
 ## verify hat and squeeze of a rejection method.
 ## it counts the number of violations, i.e.,
@@ -311,6 +315,22 @@ unuran.verify.hat <- function (unr, n=1e5, show = TRUE) {
 
   ## return ratio
   invisible(ratio)
+}
+
+
+## Test for inversion method ------------------------------------------------
+
+## Test whether given unuran object implements an (approximate) inversion
+## method.
+
+unuran.is.inversion <- function (unr) {
+
+  ## check arguments
+  if (! is(unr,"unuran"))
+    stop ("invalid argument 'unr'");
+
+  ## return result
+  unr@inversion
 }
 
 ## End ----------------------------------------------------------------------

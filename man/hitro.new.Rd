@@ -14,7 +14,7 @@
 
 \usage{
 hitro.new(dim=1, pdf, ll=NULL, ur=NULL, mode=NULL, center=NULL,
-          thinning=1, burnin = 0, \dots)
+          thinning=1, burnin=0, \dots)
 }
 \arguments{
   \item{dim}{number of dimensions of the distribution. (integer)}
@@ -29,7 +29,7 @@ hitro.new(dim=1, pdf, ll=NULL, ur=NULL, mode=NULL, center=NULL,
     \code{mode} is used. If the \code{mode} is not given
     either, the origin is used. (numeric vector)}
   \item{thinning}{thinning factor. (positive integer)}
-  \item{burnin}{lenght of burin-in phase. (positive integer)}
+  \item{burnin}{length of burnin-in phase. (positive integer)}
   \item{\dots}{(optional) arguments for \code{pdf}}
 }
 
