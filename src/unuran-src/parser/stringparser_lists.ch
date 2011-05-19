@@ -6,11 +6,15 @@ _unur_str_distr_new( char *distribution )
 {
   struct unur_distr *distr = NULL;    
   char distr_unknown;
+#ifdef UNUR_ENABLE_LOGGING
   char *name;                         
+#endif
   char *params;                       
   double *darray = NULL;              
   int n_darray = 0;                   
+#ifdef UNUR_ENABLE_LOGGING
   name = distribution;
+#endif
   params = strchr(distribution,'(');
   if (params != NULL) {
     *params = '\0';                   

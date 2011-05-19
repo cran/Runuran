@@ -40,6 +40,7 @@
 /* structure for storing pointers to R objects                               */
 struct Runuran_distr_discr {
   SEXP env;                 /* R environment                                 */
+  SEXP cdf;                 /* CDF of distribution                           */
   SEXP pmf;                 /* PMF of distribution                           */
 };
 
@@ -57,6 +58,9 @@ struct Runuran_distr_cmv {
 
 /*---------------------------------------------------------------------------*/
 /*  Discrete Distributions (DISCR)                                           */
+
+static double _Runuran_discr_eval_cdf( int k, const struct unur_distr *distr );
+/* Evaluate CDF function.                                                    */
 
 static double _Runuran_discr_eval_pmf( int k, const struct unur_distr *distr );
 /* Evaluate PMF function.                                                    */
@@ -90,7 +94,7 @@ static double _Runuran_cmv_eval_pdf( const double *x, struct unur_distr *distr )
 
 SEXP
 Runuran_discr_init (SEXP sexp_obj, SEXP sexp_env,
-		    SEXP sexp_pv, SEXP sexp_pmf,
+		    SEXP sexp_cdf, SEXP sexp_pv, SEXP sexp_pmf,
 		    SEXP sexp_mode, SEXP sexp_domain,
 		    SEXP sexp_sum, SEXP sexp_name)
      /*----------------------------------------------------------------------*/
@@ -99,6 +103,7 @@ Runuran_discr_init (SEXP sexp_obj, SEXP sexp_env,
      /* Parameters:                                                          */
      /*   obj    ... S4 class that contains unuran distribution object       */ 
      /*   env    ... R environment                                           */
+     /*   cdf    ... CDF of distribution                                     */
      /*   pv     ... PV of distribution                                      */
      /*   pmf    ... PMF of distribution                                     */
      /*   mode   ... mode of distribution                                    */
@@ -146,10 +151,14 @@ Runuran_discr_init (SEXP sexp_obj, SEXP sexp_env,
   /* store pointers to R objects */
   Rdistr = Calloc(1,struct Runuran_distr_discr);
   Rdistr->env = sexp_env;
+  Rdistr->cdf = sexp_cdf;
   Rdistr->pmf = sexp_pmf;
 
   /* set function pointers */
   error |= unur_distr_set_extobj(distr, Rdistr);
+  if (!isNull(sexp_cdf)) {
+    error |= unur_distr_discr_set_cdf(distr, _Runuran_discr_eval_cdf);
+  }
   if (!isNull(sexp_pmf)) {
     error |= unur_distr_discr_set_pmf(distr, _Runuran_discr_eval_pmf);
   }
@@ -188,6 +197,27 @@ Runuran_discr_init (SEXP sexp_obj, SEXP sexp_env,
   return (sexp_distr);
 
 } /* end of Runuran_discr_init() */
+
+/*---------------------------------------------------------------------------*/
+
+double
+_Runuran_discr_eval_cdf( int k, const struct unur_distr *distr )
+     /*----------------------------------------------------------------------*/
+     /* Evaluate CDF function.                                               */
+     /*----------------------------------------------------------------------*/
+{
+  const struct Runuran_distr_discr *Rdistr;
+  SEXP R_fcall, arg;
+  double y;
+
+  Rdistr = unur_distr_get_extobj(distr);
+  PROTECT(arg = NEW_NUMERIC(1));
+  NUMERIC_POINTER(arg)[0] = (double)k;
+  PROTECT(R_fcall = lang2(Rdistr->cdf, arg));
+  y = REAL(eval(R_fcall, Rdistr->env))[0];
+  UNPROTECT(2);
+  return y;
+} /* end of _Runuran_discr_eval_cdf() */
 
 /*---------------------------------------------------------------------------*/
 

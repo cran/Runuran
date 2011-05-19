@@ -537,10 +537,9 @@ _unur_arou_get_starting_cpoints( struct unur_par *par, struct unur_gen *gen )
   struct unur_arou_segment *seg, *seg_new;
   double left_angle, right_angle, diff_angle, angle;
   double x, x_last, fx, fx_last;
-  int i, use_center, is_center, is_increasing;
+  int i, use_center, is_increasing;  
   CHECK_NULL(par,UNUR_ERR_NULL);  COOKIE_CHECK(par,CK_AROU_PAR,UNUR_ERR_COOKIE);
   CHECK_NULL(gen,UNUR_ERR_NULL);  COOKIE_CHECK(gen,CK_AROU_GEN,UNUR_ERR_COOKIE);
-  is_center = FALSE;
   use_center = (gen->variant & AROU_VARFLAG_USECENTER) ? TRUE : FALSE;
   GEN->n_segs = 0;
   if (!PAR->starting_cpoints) {
@@ -579,7 +578,6 @@ _unur_arou_get_starting_cpoints( struct unur_par *par, struct unur_gen *gen )
     }
     if (use_center && x >= GEN->center) {
       use_center = FALSE;   
-      is_center = TRUE;     
       if (x>GEN->center) {
 	x = GEN->center;   
 	--i;              
@@ -587,8 +585,6 @@ _unur_arou_get_starting_cpoints( struct unur_par *par, struct unur_gen *gen )
 	  angle -= diff_angle; 
       }
     }
-    else
-      is_center = FALSE;
     fx = (x >= INFINITY) ? 0. : PDF(x);
     if (!is_increasing && fx > fx_last) {
       _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"PDF not unimodal");

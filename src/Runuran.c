@@ -516,7 +516,10 @@ Runuran_PDF (SEXP sexp_obj, SEXP sexp_x)
 
     case UNUR_DISTR_DISCR:
       /* discrete univariate distribution  --> evaluate PMF */
-      NUMERIC_POINTER(sexp_res)[i] = unur_distr_discr_eval_pmf ((int) x[i], distr);
+      if (x[i] < INT_MIN || x[i] > INT_MAX) 
+	NUMERIC_POINTER(sexp_res)[i] = 0.;
+      else
+	NUMERIC_POINTER(sexp_res)[i] = unur_distr_discr_eval_pmf ((int) x[i], distr);
       break;
       
     default:
@@ -617,7 +620,12 @@ Runuran_CDF (SEXP sexp_obj, SEXP sexp_x)
 
     case UNUR_DISTR_DISCR:
       /* discrete univariate distribution */
-      NUMERIC_POINTER(sexp_res)[i] = unur_distr_discr_eval_cdf ((int) x[i], distr);
+      if (x[i] < INT_MIN) 
+	NUMERIC_POINTER(sexp_res)[i] = 0.;
+      else if (x[i] > INT_MAX) 
+	NUMERIC_POINTER(sexp_res)[i] = 1.;
+      else
+	NUMERIC_POINTER(sexp_res)[i] = unur_distr_discr_eval_cdf ((int) x[i], distr);
       break;
 
     default:

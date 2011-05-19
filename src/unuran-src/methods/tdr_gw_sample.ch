@@ -93,7 +93,9 @@ _unur_tdr_gw_sample_check( struct unur_gen *gen )
   double U, V;                 
   double X;                    
   double fx, sqx, hx;          
+#ifdef UNUR_ENABLE_LOGGING
   int error = 0;               
+#endif
   CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,INFINITY);
   if (GEN->iv == NULL) {
     _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"empty generator object");
@@ -105,15 +107,21 @@ _unur_tdr_gw_sample_check( struct unur_gen *gen )
     X = _unur_tdr_gw_eval_invcdfhat( gen, U, &hx, &fx, &sqx, &iv, &pt );
     if (X < DISTR.BD_LEFT || X > DISTR.BD_RIGHT) {
       _unur_warning(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"generated point out of domain");
+#ifdef UNUR_ENABLE_LOGGING
       error = 1;
+#endif
     }
     if (_unur_FP_greater(fx,hx)) {
       _unur_warning(gen->genid,UNUR_ERR_GEN_CONDITION,"PDF > hat. Not T-concave!");
+#ifdef UNUR_ENABLE_LOGGING
       error = 1;
+#endif
     }
     if (_unur_FP_less(fx,sqx)) {
       _unur_warning(gen->genid,UNUR_ERR_GEN_CONDITION,"PDF < squeeze. Not T-concave!");
+#ifdef UNUR_ENABLE_LOGGING
       error = 1;
+#endif
     }
 #ifdef UNUR_ENABLE_LOGGING
     if (error && (gen->debug & TDR_DEBUG_SAMPLE)) 

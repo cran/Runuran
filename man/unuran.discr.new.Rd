@@ -12,23 +12,24 @@
 }
 
 \usage{
-unuran.discr.new(pv=NULL, pmf=NULL, lb=NA, ub=NA,
+unuran.discr.new(cdf=NULL, pv=NULL, pmf=NULL, lb=NA, ub=NA,
                  mode=NA, sum=NA, name=NA)
 }
 
 \arguments{
-    \item{pv}{probability vector. (numeric vector)}
-    \item{pmf}{probability mass function. (\R function)}
-    \item{mode}{mode of distribution. (numeric, integer)}
-    \item{lb}{lower bound of domain;
-      use \code{-Inf} if unbounded from left. (numeric, integer)}
-    \item{ub}{upper bound of domain;
-      use \code{Inf} if unbounded from right;
-      when \code{pmf} is not given, the default \code{ub=Inf} is
-      used. (numeric, integer)}
-    \item{sum}{sum over \code{pv} / \code{pmf}; used for computing
-      normalization constants if required. (numeric)}
-    \item{name}{name of distribution. (string)}
+  \item{cdf}{cumulative distribution function. (\R function)}
+  \item{pv}{probability vector. (numeric vector)}
+  \item{pmf}{probability mass function. (\R function)}
+  \item{mode}{mode of distribution. (numeric, integer)}
+  \item{lb}{lower bound of domain;
+    use \code{-Inf} if unbounded from left. (numeric, integer)}
+  \item{ub}{upper bound of domain;
+    use \code{Inf} if unbounded from right;
+    when \code{pmf} is not given, the default \code{ub=Inf} is
+    used. (numeric, integer)}
+  \item{sum}{sum over \code{pv} / \code{pmf}; used for computing
+    normalization constants if required. (numeric)}
+  \item{name}{name of distribution. (string)}
 }
 
 \details{

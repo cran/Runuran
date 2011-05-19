@@ -110,7 +110,7 @@ SEXP Runuran_cont_init (SEXP sexp_obj, SEXP sexp_env,
 /*---------------------------------------------------------------------------*/
 
 SEXP Runuran_discr_init (SEXP sexp_obj, SEXP sexp_env,
-			 SEXP sexp_pv, SEXP sexp_pmf,
+			 SEXP sexp_cdf, SEXP sexp_pv, SEXP sexp_pmf,
 			 SEXP sexp_mode, SEXP sexp_domain,
 			 SEXP sexp_sum, SEXP sexp_name);
 /*---------------------------------------------------------------------------*/

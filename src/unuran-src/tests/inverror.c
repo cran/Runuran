@@ -136,7 +136,6 @@ uerror_discr( const UNUR_GEN *gen,
 		int verbosity, FILE *out )
 {
 #define DISTR   gen->distr->data.discr
-  double CDFmin, CDFmax;     
   int (*quantile)(const UNUR_GEN *, double);  
   double U;                  
   int K;                     
@@ -161,8 +160,6 @@ uerror_discr( const UNUR_GEN *gen,
     _unur_error(test_name,UNUR_ERR_GENERIC,"CDF required");
     return -2.;
   }
-  CDFmin = (DISTR.trunc[0] <= INT_MIN) ? 0. : _unur_discr_CDF((DISTR.trunc[0]),(gen->distr));
-  CDFmax = _unur_discr_CDF((DISTR.trunc[1]),(gen->distr));
   umax = 0.;
   usum = 0.;
   for(j=0;j<samplesize;j++) {

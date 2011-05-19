@@ -20,10 +20,11 @@
 \details{
   Create a new instance of a \code{unuran.discr} object using
 
-  \code{new ("unuran.discr", pv=NULL, pmf=NULL, lb=NA, ub=NA,
+  \code{new ("unuran.discr", cdf=NULL, pv=NULL, pmf=NULL, lb=NA, ub=NA,
              mode=NA, sum=NA, name=NA)}.
 
   \describe{
+    \item{cdf}{cumulative distribution function. (\R function)}
     \item{pv}{probability vector. (numeric vector)}
     \item{pmf}{probability mass function. (\R function)}
     \item{lb}{lower bound of domain;

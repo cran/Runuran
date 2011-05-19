@@ -185,13 +185,22 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
   /* we use macros to get an overview of used keywords and */
   /* to minimize the risk of typos.                        */
 
+  /* set method */
 #define METHOD(string)       add_string(&list,"method",(string))
 
+  /* set kind (type) of generation method */
 #define KIND_AR              add_string(&list,"type","ar")
 #define KIND_INV             add_string(&list,"type","inv")
 #define KIND_IAR             add_string(&list,"type","iar")
 #define KIND_MCMC            add_string(&list,"type","mcmc")
 #define KIND_OTHER           add_string(&list,"type","other")
+
+  /* set class (type) of distribution */
+  /* Remark we currently to not distinguish between "cont" and "cemp" */
+#define CLASS_CEMP           add_string(&list,"distr.class","cont")
+#define CLASS_CONT           add_string(&list,"distr.class","cont")
+#define CLASS_CVEC           add_string(&list,"distr.class","cmv")
+#define CLASS_DISCR          add_string(&list,"distr.class","discr")
 
   /* rejection method */
 #define REJECTIONCONST(num)  add_numeric(&list,"rejection.constant",(num))
@@ -220,7 +229,7 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
     /* ..................................................................... */
   case UNUR_METH_DARI:
 #define GEN ((struct unur_dari_gen*)gen->datap)
-    METHOD("DARI"); KIND_AR;
+    METHOD("DARI"); KIND_AR; CLASS_DISCR;
     REJECTIONCONST ((gen->distr->set & UNUR_DISTR_SET_PMFSUM)
 		   ? GEN->vt/DISTR.sum : NA_REAL);
     AREA_HAT (GEN->vt);
@@ -228,27 +237,27 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
     break;
     /* ..................................................................... */
   case UNUR_METH_DAU:
-    METHOD("DAU"); KIND_OTHER; 
+    METHOD("DAU"); KIND_OTHER; CLASS_DISCR;
     break;
     /* ..................................................................... */
   case UNUR_METH_DGT:
-    METHOD("DGT"); KIND_INV;
+    METHOD("DGT"); KIND_INV; CLASS_DISCR;
     break;
     /* ..................................................................... */
   case UNUR_METH_DSROU:
 #define GEN ((struct unur_dsrou_gen*)gen->datap)
-    METHOD("DSROU"); KIND_AR;
+    METHOD("DSROU"); KIND_AR; CLASS_DISCR;
     REJECTIONCONST (2.*(-GEN->al+GEN->ar) / DISTR.sum);
     AREA_HAT (2.*(-GEN->al+GEN->ar));
 #undef GEN
     break;
     /* ..................................................................... */
   case UNUR_METH_DSS:
-    METHOD("DSS"); KIND_INV;
+    METHOD("DSS"); KIND_INV; CLASS_DISCR;
     break;
     /* ..................................................................... */
   case UNUR_METH_DSTD:
-    METHOD("DSTD"); KIND_OTHER;
+    METHOD("DSTD"); KIND_OTHER; CLASS_DISCR;
     break;
     /* ..................................................................... */
     
@@ -264,7 +273,7 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
     /* ..................................................................... */
   case UNUR_METH_AROU:
 #define GEN ((struct unur_arou_gen*)gen->datap)
-    METHOD("AROU"); KIND_AR; 
+    METHOD("AROU"); KIND_AR; CLASS_CONT;
     REJECTIONCONST ((gen->distr->set & UNUR_DISTR_SET_PDFAREA) 
 		   ? 2.*GEN->Atotal/DISTR.area : NA_REAL);
     AREA_HAT (2.*GEN->Atotal);
@@ -275,7 +284,7 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
     /* ..................................................................... */
   case UNUR_METH_ARS:
 #define GEN ((struct unur_ars_gen*)gen->datap)
-    METHOD("ARS"); KIND_IAR; 
+    METHOD("ARS"); KIND_IAR; CLASS_CONT;
     REJECTIONCONST ((gen->distr->set & UNUR_DISTR_SET_PDFAREA) 
 		   ? GEN->Atotal*exp(GEN->logAmax)/DISTR.area : NA_REAL);
     AREA_HAT (GEN->Atotal*exp(GEN->logAmax));
@@ -284,32 +293,32 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
     break;
     /* ..................................................................... */
   case UNUR_METH_CSTD:
-    METHOD("CSTD"); KIND_OTHER;
+    METHOD("CSTD"); KIND_OTHER; CLASS_CONT;
     break;
     /* ..................................................................... */
   case UNUR_METH_HINV:
 #define GEN ((struct unur_hinv_gen*)gen->datap)
-    METHOD("HINV"); KIND_INV;
+    METHOD("HINV"); KIND_INV; CLASS_CONT;
     TRUNC(GEN->bleft,GEN->bright);
     NINTS (GEN->N-1);
 #undef GEN
     break;
     /* ..................................................................... */
   case UNUR_METH_HRB:
-    METHOD("HRB"); KIND_OTHER;
+    METHOD("HRB"); KIND_OTHER; CLASS_CONT;
     break;
     /* ..................................................................... */
   case UNUR_METH_HRD:
-    METHOD("HRD"); KIND_OTHER;
+    METHOD("HRD"); KIND_OTHER; CLASS_CONT;
     break;
     /* ..................................................................... */
   case UNUR_METH_HRI:
-    METHOD("HRI"); KIND_OTHER;
+    METHOD("HRI"); KIND_OTHER; CLASS_CONT;
     break;
     /* ..................................................................... */
   case UNUR_METH_ITDR:
 #define GEN ((struct unur_itdr_gen*)gen->datap)
-    METHOD("ITDR"); KIND_AR; 
+    METHOD("ITDR"); KIND_AR; CLASS_CONT;
     REJECTIONCONST ((gen->distr->set & UNUR_DISTR_SET_PDFAREA) 
 		    ? GEN->Atot/DISTR.area : NA_REAL);
     AREA_HAT (GEN->Atot);
@@ -317,12 +326,12 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
     break;
     /* ..................................................................... */
   case UNUR_METH_NINV:
-    METHOD("NINV"); KIND_INV;
+    METHOD("NINV"); KIND_INV; CLASS_CONT;
     break;
     /* ..................................................................... */
   case UNUR_METH_NROU:
 #define GEN ((struct unur_nrou_gen*)gen->datap)
-    METHOD("NROU"); KIND_AR;
+    METHOD("NROU"); KIND_AR; CLASS_CONT;
     REJECTIONCONST ((gen->distr->set & UNUR_DISTR_SET_PDFAREA) 
 		   ? 2.*(GEN->umax - GEN->umin)*GEN->vmax / DISTR.area : NA_REAL);
     AREA_HAT (2.*(GEN->umax - GEN->umin) * GEN->vmax);
@@ -331,7 +340,7 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
     /* ..................................................................... */
   case UNUR_METH_PINV:
 #define GEN ((struct unur_pinv_gen*)gen->datap)
-    METHOD("PINV"); KIND_INV; 
+    METHOD("PINV"); KIND_INV; CLASS_CONT;
     TRUNC(GEN->bleft,GEN->bright);
     AREA_PDF(GEN->area);
     NINTS (GEN->n_ivs);
@@ -378,7 +387,7 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
   case UNUR_METH_SROU:
 #define GEN ((struct unur_srou_gen*)gen->datap)
 #define SROU_VARFLAG_MIRROR   0x008u   /* use mirror principle */
-    METHOD("SROU"); KIND_AR;
+    METHOD("SROU"); KIND_AR; CLASS_CONT;
     if (!_unur_isone(GEN->r)) {
       REJECTIONCONST (NA_REAL);
       AREA_HAT (NA_REAL);
@@ -392,7 +401,7 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
     break;
     /* ..................................................................... */
   case UNUR_METH_SSR:
-    METHOD("SSR"); KIND_AR;
+    METHOD("SSR"); KIND_AR; CLASS_CONT;
     REJECTIONCONST (NA_REAL);
     AREA_HAT (NA_REAL);
     break;
@@ -400,7 +409,7 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
   case UNUR_METH_TABL:
 #define GEN ((struct unur_tabl_gen*)gen->datap)
 #define TABL_VARIANT_IA   0x0001u   /* use immediate acceptance */
-    METHOD("TABL"); KIND_AR;
+    METHOD("TABL"); KIND_AR; CLASS_CONT;
     if (gen->variant&TABL_VARIANT_IA) {KIND_AR;} else {KIND_IAR;}
     REJECTIONCONST ((gen->distr->set & UNUR_DISTR_SET_PDFAREA) 
 		    ? GEN->Atotal/DISTR.area : NA_REAL);
@@ -417,6 +426,7 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
 #define TDR_VARMASK_VARIANT  0x00f0u   /* indicates which variant  */
     METHOD("TDR");
     if ((gen->variant & TDR_VARMASK_VARIANT) == TDR_VARIANT_IA) {KIND_AR;} else {KIND_IAR;}
+    CLASS_CONT;
     REJECTIONCONST ((gen->distr->set & UNUR_DISTR_SET_PDFAREA) 
 		    ? GEN->Atotal/DISTR.area : NA_REAL);
     AREA_HAT (GEN->Atotal);
@@ -428,7 +438,7 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
     break;
     /* ..................................................................... */
   case UNUR_METH_UTDR:
-    METHOD("UTDR"); KIND_AR;
+    METHOD("UTDR"); KIND_AR; CLASS_CONT;
     REJECTIONCONST (NA_REAL);
     AREA_HAT (NA_REAL);
     break;
@@ -436,7 +446,7 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
 
   case UNUR_METH_MIXT:
 #define GEN ((struct unur_mixt_gen*)gen->datap)
-    METHOD("MIXT"); KIND_OTHER;
+    METHOD("MIXT"); KIND_OTHER; CLASS_CONT;
 #undef GEN
     break;
     /* ..................................................................... */
@@ -450,19 +460,19 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
 
     /* ..................................................................... */
   case UNUR_METH_EMPK:
-    METHOD("EMPK"); KIND_OTHER;
+    METHOD("EMPK"); KIND_OTHER; CLASS_CEMP;
     break;
     /* ..................................................................... */
   case UNUR_METH_EMPL:
-    METHOD("EMPL"); KIND_INV;
+    METHOD("EMPL"); KIND_INV; CLASS_CEMP;
     break;
     /* ..................................................................... */
   case UNUR_METH_HIST:
-    METHOD("HIST"); KIND_INV;
+    METHOD("HIST"); KIND_INV; CLASS_CEMP;
     break;
     /* ..................................................................... */
   case UNUR_METH_VEMPK:
-    METHOD("VEMPK"); KIND_OTHER;
+    METHOD("VEMPK"); KIND_OTHER; CLASS_CEMP;
     break;
     /* ..................................................................... */
 
@@ -473,23 +483,23 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
 
     /* ..................................................................... */
   case UNUR_METH_GIBBS:
-    METHOD("GIBBS"); KIND_MCMC;
+    METHOD("GIBBS"); KIND_MCMC; CLASS_CVEC;
     break;
     /* ..................................................................... */
   case UNUR_METH_HITRO:
-    METHOD("HITRO"); KIND_MCMC;
+    METHOD("HITRO"); KIND_MCMC; CLASS_CVEC;
     break;
     /* ..................................................................... */
   case UNUR_METH_MVSTD:
-    METHOD("MVSTD"); KIND_OTHER;
+    METHOD("MVSTD"); KIND_OTHER; CLASS_CVEC;
     break;
     /* ..................................................................... */
   case UNUR_METH_MVTDR:
-    METHOD("MVTDR"); KIND_AR;
+    METHOD("MVTDR"); KIND_AR; CLASS_CVEC;
     break;
     /* ..................................................................... */
   case UNUR_METH_VNROU:
-    METHOD("VNROU"); KIND_AR;
+    METHOD("VNROU"); KIND_AR; CLASS_CVEC;
     break;
     /* ..................................................................... */
 
@@ -503,7 +513,7 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
 
     /* ..................................................................... */
   case UNUR_METH_UNIF:
-    METHOD("UNIF"); KIND_INV;
+    METHOD("UNIF"); KIND_INV; CLASS_CONT;
     break;
     /* ..................................................................... */
 

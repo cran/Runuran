@@ -40,7 +40,7 @@ unuran.details(unr, show=TRUE, return.list=FALSE, debug=FALSE)
     \item{\code{method}}{string that contains the name of the generation
       method.}
     \item{\code{type}}{one of the following strings that describes the
-    type of the generation method:
+      type of the generation method:
       \describe{
 	\item{\code{"inv"}}{inversion method}
 	\item{\code{"ar"}}{acceptance-rejection method}
@@ -48,6 +48,14 @@ unuran.details(unr, show=TRUE, return.list=FALSE, debug=FALSE)
 	  used for the proposal distribution}
 	\item{\code{"mcmc"}}{Markov chain Monte Carlo sampler}
 	\item{\code{"other"}}{none of the above methods}
+      }
+    }
+    \item{\code{distr.class}}{one of the following strings that
+      describes the class of the distribution:
+      \describe{
+	\item{\code{"cont"}}{univariate continuous distribution}
+	\item{\code{"discr"}}{univariate discrete distribution}
+	\item{\code{"cont"}}{multivariate continuous distribution}
       }
     }
   }

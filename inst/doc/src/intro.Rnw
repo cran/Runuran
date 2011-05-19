@@ -14,15 +14,15 @@ UNU.RAN implements so called \emph{universal} (\emph{automatic} or
 \emph{black-box}) generators. 
 In order to use UNU.RAN one must supply some data about the target
 distribution, usually the density, probability vector or cumulative
-distribution function and (optinonally) some other information (such
-as the mode of the distibrubtion). These are then used to draw random
+distribution function and (optionally) some other information (such
+as the mode of the distribution). These are then used to draw random
 samples.
 \Runuran\ functions provide both a simplified interface to this
 library for common distributions as well access to the full power of
 this library.
 
 \Runuran\ functions are alternatives to standard built-in functions in
-\R\ which are faster or are suitable for particalur applications.
+\R\ which are faster or are suitable for particular applications.
 \Runuran\ is the package you are looking for if you need
 \begin{itemize}
 \item
@@ -35,7 +35,7 @@ this library.
   random samples for special applications like variate reduction
   techniques, QMC or copula methods;
 \item 
-  simuilate random variates from some unusual distribution
+  simulate random variates from some unusual distribution
   that you just found in a paper or derived from your statistical model;
 \item 
   to find out properties of various generation methods (such as speed,

@@ -373,7 +373,6 @@ _unur_pinv_cut_CDF( struct unur_gen *gen, double dom, double x0, double ul, doub
   double x;         
   double xs, xl;    
   double fx;        
-  double fs, fl;    
   double f0, fdom;  
   double dx;        
   if (_unur_FP_same(x0,dom))
@@ -413,11 +412,12 @@ _unur_pinv_cut_CDF( struct unur_gen *gen, double dom, double x0, double ul, doub
     return INFINITY;
   }
   if (x0 > dom) {
-    xs = dom; fs = fdom;
-    xl = x0; fl = f0; }
+    xs = dom;
+    xl = x0;
+  }
   else {
-    xs = x0; fs = f0;
-    xl = dom; fl = fdom;
+    xs = x0;
+    xl = dom;
   }    
   x = x0;
   while (!_unur_FP_same(xs,xl)) {
@@ -427,10 +427,10 @@ _unur_pinv_cut_CDF( struct unur_gen *gen, double dom, double x0, double ul, doub
       return x;
     }
     if (fx < ul) {
-      xs = x; fs = fx;
+      xs = x;
     }
     else {
-      xl = x; fl = fx;
+      xl = x;
     }
   }
   return x;

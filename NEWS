@@ -1,4 +1,20 @@
 
+Version 0.18.0: 2011-05-19
+
+	- unuran.discr.new(): new argument 'cdf' for adding
+	  CDF to user-defined discrete distribution.
+
+	- unuran.details(return.list=TRUE,...): 
+	  returned list contains the new field "distr.class" that
+	  contains the type (class) of distribution:
+	  "cont", "discr" or "cmv". 
+
+	- added more checks in various functions that verify given
+          arguments.
+
+	- removed some obselete lines of C code.
+
+
 Version 0.17.0: 2011-01-26
 
 	- new function unuran.is.inversion():

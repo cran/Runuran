@@ -124,7 +124,7 @@ _unur_ninv_bracket( const struct unur_gen *gen, double u,
 { 
   int i;                 
   double x1, x2, xtmp;   
-  double f1, f2, ftmp;   
+  double f1, f2;         
   double step;           
   int step_count;        
   if (GEN->table_on) {
@@ -160,7 +160,7 @@ _unur_ninv_bracket( const struct unur_gen *gen, double u,
     f2 =  GEN->CDFs[1];
   }
   if ( x1 >= x2 ) { 
-    xtmp = x1; ftmp = f1;
+    xtmp = x1;
     x1   = x2; f1   = f2;
     x2 = xtmp + fabs(xtmp)*DBL_EPSILON;
     f2 = CDF(x2); 

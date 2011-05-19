@@ -114,7 +114,7 @@ object.
 \item 
   \code{ur(gen,n)} draws a pseudo-random sample of size \code{n}.
 \item 
-  \code{uq(gen,u)} computes quantiles (inverse CDF's) for the $u$ values
+  \code{uq(gen,u)} computes quantiles (inverse CDFs) for the $u$ values
   given in vector \code{u}.
   However, this requires that the method (\code{gen}) we are using implements 
   an inversion method like PINV or DGT.

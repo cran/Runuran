@@ -151,11 +151,11 @@ precision goal is reached:
 \item[checking $u$-error]
   The u-error must be slightly smaller than the given u-resolution:
   \[ |U-F(G^{-1}(U))| < 0.9\cdot \mbox{$u$-resolution}\;. \]
-  There is no necessity to consinder the relative $u$-error as we have
+  There is no necessity to consider the relative $u$-error as we have
   $0 < U < 1$.
 
 \item[checking $x$-error]
-  We combine absoute and relative $x$-error and use the criterion
+  We combine absolute and relative $x$-error and use the criterion
   \[
   |F^{-1}(U)-G^{-1}(U)| < 
   \mbox{$x$-resolution} \cdot (|G^{-1}(U)| + \mbox{$x$-resolution})\;
@@ -165,12 +165,12 @@ precision goal is reached:
 \paragraph{Remark.}
 
 It should be noted here that the criterion based on the $u$-error is
-too stringent whereever the CDF is extremely steep (and thus the
+too stringent where the CDF is extremely steep (and thus the
 PDF has a pole or a high and narrow peak). This is in particular a
 problem for distributions with a pole (e.g., the gamma distribution
 with shape parameter less than 0.5).
 On the other hand using a criterion based on the $x$-error causes
-problems whereever the CDF is extremly flat. This is in particular
+problems where the CDF is extremely flat. This is in particular
 the case in the (far) tails of heavy-tailed distributions (e.g.,
 for the Cauchy distribution).
 
@@ -181,7 +181,7 @@ for the Cauchy distribution).
 
 The acceptance-rejection method has been suggested by John von Neumann
 in 1951 \citep{Neumann:1951a}.
-Since then it has proven to be the most flexible and most efficient 
+Since then it has been proven to be the most flexible and most efficient 
 method to generate variates from continuous distributions. 
 
 We explain the rejection principle first for the density
@@ -346,7 +346,7 @@ to prove that:
   squeeze and the area below the hat) used in some of the UNU.RAN
   methods is easy to compute. It is useful as its reciprocal is an
   upper bound for the expected number of trials of the rejection
-  algoritm. The expected number of evaluations of the density is
+  algorithm. The expected number of evaluations of the density is
   bounded by $(1/\mbox{\texttt{sqhratio}})-1$.
 \end{itemize}
 
@@ -366,7 +366,7 @@ and return it as random variate of the full distribution.
 
 Composition can be combined with rejection. Thus it is possible to
 decompose the domain of the distribution into subintervals and to
-construct hat and squeeze functions seperatly in every
+construct hat and squeeze functions separately in every
 subinterval. The area below the hat must be determined in every
 subinterval. Then the Composition rejection algorithm contains the
 following steps:
@@ -374,7 +374,7 @@ following steps:
 \begin{enumerate}[1.]
 \item
   Generate the index $J$ of the subinterval as the
-  realisation of a discrete random variate with probabilities
+  realization of a discrete random variate with probabilities
   proportional to the area below the hat.
 \item
   Generate a random variate $X$ proportional to the hat in
@@ -518,7 +518,7 @@ If a point $(U,V)$ is uniformly distributed in the set
 \[
 \mathcal{A}_f= \{(u,v)\colon 0 < v \leq (f(u/v^r+\mu))^{1/(r+1)}\}
 \]
-for some real number $r>0$, then $X=U/V^r+\mu$ has the denity $f(x)$.
+for some real number $r>0$, then $X=U/V^r+\mu$ has the density $f(x)$.
 The minimal bounding rectangle of this region is given by 
 $(u^-,u^+)\times (0,v^+)$ where
 \begin{eqnarray*}
