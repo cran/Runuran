@@ -1,16 +1,14 @@
-/* Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
 #include <methods/cstd.h>
 #include <methods/cstd_struct.h>
-#include <specfunct/unur_specfunct_source.h>
 #include "unur_distributions_source.h"
 inline static int powerexponential_epd_init( struct unur_gen *gen );
 #define PAR       ((struct unur_cstd_par*)par->datap) 
 #define GEN       ((struct unur_cstd_gen*)gen->datap) 
 #define DISTR     gen->distr->data.cont 
-#define MAX_gen_params  2      
 #define uniform()  _unur_call_urng(gen->urng) 
 #define tau    (DISTR.params[0])        
 int 
@@ -32,6 +30,7 @@ _unur_stdgen_powerexponential_init( struct unur_par *par, struct unur_gen *gen )
     return UNUR_FAILURE;
   }
 } 
+#define GEN_N_PARAMS (2)
 #define s    GEN->gen_param[0]
 #define sm1  GEN->gen_param[1]
 inline static int
@@ -39,9 +38,9 @@ powerexponential_epd_init( struct unur_gen *gen )
 {
   CHECK_NULL(gen,UNUR_ERR_NULL);
   COOKIE_CHECK(gen,CK_CSTD_GEN,UNUR_ERR_COOKIE);
-  if (GEN->gen_param == NULL) {
-    GEN->n_gen_param = MAX_gen_params;
-    GEN->gen_param = _unur_xmalloc(GEN->n_gen_param * sizeof(double));
+  if (GEN->gen_param == NULL || GEN->n_gen_param != GEN_N_PARAMS) {
+    GEN->n_gen_param = GEN_N_PARAMS;
+    GEN->gen_param = _unur_xrealloc(GEN->gen_param, GEN->n_gen_param * sizeof(double));
   }
   s = 1. / tau;
   sm1 = 1. - s;
@@ -69,5 +68,6 @@ _unur_stdgen_sample_powerexponential_epd( struct unur_gen *gen )
     X = -X;
   return X;
 } 
+#undef GEN_N_PARAMS
 #undef s
 #undef sm1

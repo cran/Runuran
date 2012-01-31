@@ -1,10 +1,13 @@
-/* Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
 #include <time.h>
 #include <stdarg.h>
 #include <ctype.h>
+#ifdef R_UNURAN
+#include <R_ext/Error.h>
+#endif
 #ifndef UNUR_LOG_FILE
 #  define UNUR_LOG_FILE "unuran.log"
 #endif
@@ -66,7 +69,7 @@ _unur_logfile_open( void )
 {
   static FILE* LOG = NULL;
   if (LOG) return LOG;  
-#ifdef UNUR_ENABLE_LOGGING
+#if defined(UNUR_ENABLE_LOGGING)
   LOG = fopen(UNUR_LOG_FILE,"w");
   if (!LOG) {
     fprintf(stderr,"Warning: cannot open logfile %s !\n",UNUR_LOG_FILE);
@@ -81,6 +84,9 @@ _unur_logfile_open( void )
       fprintf(LOG,"%s",ctime(&started));
   }
   fprintf(LOG,"\n=======================================================\n\n");
+#elif defined(R_UNURAN)
+  LOG = fopen(UNUR_LOG_FILE,"w");
+  if (!LOG) { error("Cannot open LOG file."); }
 #else
   LOG = stderr;
 #endif

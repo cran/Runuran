@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -15,6 +15,7 @@
 #ifdef UNUR_ENABLE_INFO
 #  include <tests/unuran_tests.h>
 #endif
+#define CSTD_DEBUG_GEN       0x00000005u   
 #define CSTD_DEBUG_REINIT    0x00000010u   
 #define CSTD_DEBUG_CHG       0x00001000u   
 #define CSTD_SET_VARIANT          0x01u
@@ -314,6 +315,7 @@ void
 _unur_cstd_debug_init( struct unur_gen *gen )
 {
   FILE *LOG;
+  int i;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_CSTD_GEN,RETURN_VOID);
   LOG = unur_get_stream();
   fprintf(LOG,"%s:\n",gen->genid);
@@ -329,10 +331,23 @@ _unur_cstd_debug_init( struct unur_gen *gen )
   if (GEN->is_inversion)
     fprintf(LOG,"   (Inversion)");
   fprintf(LOG,"\n%s:\n",gen->genid);
+  if (gen->debug & CSTD_DEBUG_GEN) {
+    fprintf(LOG,"%s: precomputed constants for routine: ",gen->genid);
+    if (GEN->gen_param) {
+      fprintf(LOG,"%d\n",GEN->n_gen_param);
+      for (i=0; i < GEN->n_gen_param; i++)
+	fprintf(LOG,"%s:\t[%d] = %g\n",gen->genid,i,GEN->gen_param[i]);
+    }
+    else {
+      fprintf(LOG,"none\n");
+    }
+    fprintf(LOG,"%s:\n",gen->genid);
+  }
   if (!(gen->distr->set & UNUR_DISTR_SET_STDDOMAIN)) {
     fprintf(LOG,"%s: domain has been changed. U in (%g,%g)\n",gen->genid,GEN->Umin,GEN->Umax);
     fprintf(LOG,"%s:\n",gen->genid);
   }
+  fflush(LOG);
 } 
 void 
 _unur_cstd_debug_chg_pdfparams( struct unur_gen *gen )
@@ -364,6 +379,7 @@ _unur_cstd_info( struct unur_gen *gen, int help )
 {
   struct unur_string *info = gen->infostr;
   int samplesize = 10000;
+  int i;
   _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
   _unur_string_append(info,"distribution:\n");
   _unur_distr_info_typename(gen);
@@ -381,6 +397,18 @@ _unur_cstd_info( struct unur_gen *gen, int help )
     _unur_string_append(info,"parameters:\n");
     _unur_string_append(info,"   variant = %d  %s\n", gen->variant,
 			(gen->set & CSTD_SET_VARIANT) ? "" : "[default]");
+    _unur_string_append(info,"\n");
+  }
+  if (help) {
+    _unur_string_append(info,"table of precomputed constants: ");
+    if (GEN->gen_param) {
+      _unur_string_append(info,"%d\n",GEN->n_gen_param);
+      for (i=0; i < GEN->n_gen_param; i++)
+	_unur_string_append(info,"   [%d] = %g\n",i,GEN->gen_param[i]);
+    }
+    else  {
+      _unur_string_append(info,"none\n");
+    }
     _unur_string_append(info,"\n");
   }
 } 

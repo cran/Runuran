@@ -1,17 +1,14 @@
-/* Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
 #include <methods/cstd.h>   
 #include <methods/dstd_struct.h>
-#include <specfunct/unur_specfunct_source.h>
 #include "unur_distributions_source.h"
 #define PAR       ((struct unur_dstd_par*)par->datap) 
 #define GEN       ((struct unur_dstd_gen*)gen->datap) 
 #define DISTR     gen->distr->data.discr 
 #define uniform()  _unur_call_urng(gen->urng) 
-#define MAX_gen_params  (8)   
-#define MAX_gen_iparams (9)   
 #define par_N  (DISTR.params[0])
 #define par_M  (DISTR.params[1])
 #define par_n  (DISTR.params[2])
@@ -32,6 +29,8 @@ _unur_stdgen_hypergeometric_init( struct unur_par *par, struct unur_gen *gen )
 } 
 #define flogfak(k) (_unur_SF_ln_factorial(k))
 #define delta(k) (flogfak(k)+flogfak(Mc-k)+flogfak(nc-k)+flogfak(NMn+k))
+#define GEN_N_IPARAMS (9)
+#define GEN_N_PARAMS  (8)
 #define N       (GEN->gen_iparam[0])
 #define M       (GEN->gen_iparam[1])
 #define n       (GEN->gen_iparam[2])
@@ -56,11 +55,13 @@ hypergeometric_hruec_init( struct unur_gen *gen )
   double x,p,q,c,my;
   CHECK_NULL(gen,UNUR_ERR_NULL);
   COOKIE_CHECK(gen,CK_DSTD_GEN,UNUR_ERR_COOKIE);
-  if (GEN->gen_param == NULL) {
-    GEN->n_gen_param = MAX_gen_params;
-    GEN->gen_param = _unur_xmalloc(GEN->n_gen_param * sizeof(double));
-    GEN->n_gen_iparam = MAX_gen_iparams;
-    GEN->gen_iparam = _unur_xmalloc(GEN->n_gen_iparam * sizeof(int));
+  if (GEN->gen_param == NULL || GEN->n_gen_param != GEN_N_PARAMS) {
+    GEN->n_gen_param = GEN_N_PARAMS;
+    GEN->gen_param = _unur_xrealloc(GEN->gen_param, GEN->n_gen_param * sizeof(double));
+  }
+  if (GEN->gen_iparam == NULL || GEN->n_gen_iparam != GEN_N_IPARAMS) {
+    GEN->n_gen_iparam = GEN_N_IPARAMS;
+    GEN->gen_iparam = _unur_xrealloc(GEN->gen_iparam, GEN->n_gen_iparam * sizeof(int));
   }
   N = (int) par_N;
   M = (int) par_M;
@@ -82,6 +83,7 @@ hypergeometric_hruec_init( struct unur_gen *gen )
     c = my + 10.0*sqrt(my*q*(1.0-np/Np));
     b = _unur_min(bh,(int)c);                   
     p0 = exp(flogfak(N-Mc)+flogfak(N-nc)-flogfak(NMn)-flogfak(N));
+    h = a = g = 0.;
   }
   else {
     a = my+0.5;
@@ -93,6 +95,7 @@ hypergeometric_hruec_init( struct unur_gen *gen )
     if((np-k1)*(p-(double)k1/Np)*x*x > (k1+1)*(q-(np-k1-1.0)/Np))
       k1++;
     h = (a-k1)*exp(0.5*(g-delta(k1))+M_LN2);    
+    p0 = 0.;
   }
   return UNUR_SUCCESS;
 } 
@@ -149,6 +152,8 @@ _unur_stdgen_sample_hypergeometric_hruec( struct unur_gen *gen )
   }
   return (h_util(N,M,n,k));
 } 
+#undef GEN_N_IPARAMS
+#undef GEN_N_PARAMS
 #undef N
 #undef M
 #undef n

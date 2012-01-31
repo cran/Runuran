@@ -1,11 +1,10 @@
-/* Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 struct unur_gen *
 _unur_pinv_init( struct unur_par *par )
 { 
   struct unur_gen *gen;
-  double lfc;
   _unur_check_NULL( GENTYPE,par,NULL );
   if ( par->method != UNUR_METH_PINV ) {
     _unur_error(GENTYPE,UNUR_ERR_PAR_INVALID,"");
@@ -16,18 +15,6 @@ _unur_pinv_init( struct unur_par *par )
   if (!gen) return NULL;
   if (_unur_pinv_check_par(gen) != UNUR_SUCCESS) {
     _unur_pinv_free(gen); return NULL;
-  }
-  if (DISTR.logpdf != NULL && (gen->variant & PINV_VARIANT_PDF) ) {
-    lfc = UNUR_INFINITY;
-    if ( (gen->distr->set & UNUR_DISTR_SET_MODE) &&
-	 !_unur_FP_less(DISTR.mode,DISTR.domain[0]) &&
-	 !_unur_FP_greater(DISTR.mode,DISTR.domain[1]) ) {
-      lfc = (DISTR.logpdf)(DISTR.mode,gen->distr);
-    }
-    if (!_unur_isfinite(lfc))
-      lfc = (DISTR.logpdf)(DISTR.center,gen->distr);
-    if (lfc < -3.)
-      GEN->logPDFconstant = lfc;
   }
 #ifdef UNUR_ENABLE_LOGGING
   if (gen->debug) _unur_pinv_debug_init_start(gen);
@@ -81,7 +68,6 @@ _unur_pinv_create( struct unur_par *par )
   GEN->guide_size = 0; 
   GEN->guide = NULL;
   GEN->area = DISTR.area; 
-  GEN->logPDFconstant = 0.;   
   GEN->aCDF = NULL;           
   GEN->iv = _unur_xmalloc(GEN->max_ivs * sizeof(struct unur_pinv_interval) );
 #ifdef UNUR_ENABLE_INFO
@@ -228,8 +214,9 @@ _unur_pinv_eval_PDF (double x, struct unur_gen *gen)
   double fx, dx;
   int i;
   for (i=1; i<=2; i++) {
-    if (DISTR.logpdf != NULL)
-      fx = exp((DISTR.logpdf)(x,distr) - GEN->logPDFconstant);
+    if (DISTR.logpdf != NULL) {
+      fx = exp((DISTR.logpdf)(x,distr));
+    }
     else
       fx = (DISTR.pdf)(x,distr);
     if (fx >= INFINITY) {

@@ -35,10 +35,6 @@
 
 #include "Runuran.h"
 
-/* internal header files for UNU.RAN */
-#include <unur_source.h>
-#include <methods/unur_methods_source.h>
-
 /*---------------------------------------------------------------------------*/
 /* run tests                                                                 */
 
@@ -90,7 +86,7 @@ Runuran_verify_hat (SEXP sexp_unur, SEXP sexp_n)
 
 #define METHOD(meth)  chg_verify = unur_##meth##_chg_verify; break;
 
-  switch (gen->method) {
+  switch (unur_get_method(gen)) {
 
     /* continuous univariate distributions */
   case UNUR_METH_AROU:   METHOD(arou);

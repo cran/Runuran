@@ -1,17 +1,15 @@
-/* Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
 #include <methods/cstd.h>   
 #include <methods/dstd_struct.h>
-#include <specfunct/unur_specfunct_source.h>
 #include "unur_distributions_source.h"
 inline static int logarithmic_lsk_init( struct unur_gen *gen );
 #define PAR       ((struct unur_dstd_par*)par->datap) 
 #define GEN       ((struct unur_dstd_gen*)gen->datap) 
 #define DISTR     gen->distr->data.discr 
 #define uniform()  _unur_call_urng(gen->urng) 
-#define MAX_gen_params  2      
 #define theta  (DISTR.params[0])    
 int 
 _unur_stdgen_logarithmic_init( struct unur_par *par, struct unur_gen *gen )
@@ -25,6 +23,7 @@ _unur_stdgen_logarithmic_init( struct unur_par *par, struct unur_gen *gen )
     return UNUR_FAILURE;
   }
 } 
+#define GEN_N_PARAMS  (2)
 #define t   (GEN->gen_param[0])
 #define h   (GEN->gen_param[1])
 #define theta_limit  0.97
@@ -33,13 +32,14 @@ logarithmic_lsk_init( struct unur_gen *gen )
 {
   CHECK_NULL(gen,UNUR_ERR_NULL);
   COOKIE_CHECK(gen,CK_DSTD_GEN,UNUR_ERR_COOKIE);
-  if (GEN->gen_param == NULL) {
-    GEN->n_gen_param = MAX_gen_params;
-    GEN->gen_param = _unur_xmalloc(GEN->n_gen_param * sizeof(double));
+  if (GEN->gen_param == NULL || GEN->n_gen_param != GEN_N_PARAMS) {
+    GEN->n_gen_param = GEN_N_PARAMS;
+    GEN->gen_param = _unur_xrealloc(GEN->gen_param, GEN->n_gen_param * sizeof(double));
+    t = 0.; h = 0.;  
   }
-  if (theta < theta_limit) 
+  if (theta < theta_limit)
     t = -theta / log(1.0 - theta);
-  else 
+  else
     h=log(1.0 - theta);
   return UNUR_SUCCESS;
 } 
@@ -73,6 +73,7 @@ _unur_stdgen_sample_logarithmic_lsk( struct unur_gen *gen )
     return ((U > q) ? 1 : 2);
   }
 } 
+#undef GEN_N_PARAMS
 #undef t
 #undef h
 #undef theta_limit

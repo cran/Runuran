@@ -1,10 +1,9 @@
-/* Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
 #include <methods/cstd.h>
 #include <methods/cstd_struct.h>
-#include <specfunct/unur_specfunct_source.h>
 #include "unur_distributions_source.h"
 inline static int normal_bm_init( struct unur_gen *gen );
 inline static int normal_pol_init( struct unur_gen *gen );
@@ -12,7 +11,6 @@ inline static int normal_pol_init( struct unur_gen *gen );
 #define GEN       ((struct unur_cstd_gen*)gen->datap) 
 #define DISTR     gen->distr->data.cont 
 #define uniform()  _unur_call_urng(gen->urng) 
-#define MAX_gen_params  1      
 #define mu    (DISTR.params[0])   
 #define sigma (DISTR.params[1])   
 int 
@@ -48,6 +46,7 @@ _unur_stdgen_normal_init( struct unur_par *par, struct unur_gen *gen )
     return UNUR_FAILURE;
   }
 } 
+#define GEN_N_PARAMS (1)
 #define Xstore  GEN->gen_param[0]
 #define flag    GEN->flag
 int
@@ -55,9 +54,9 @@ normal_bm_init( struct unur_gen *gen )
 {
   CHECK_NULL(gen,UNUR_ERR_NULL);
   COOKIE_CHECK(gen,CK_CSTD_GEN,UNUR_ERR_COOKIE);
-  if (GEN->gen_param == NULL) {
-    GEN->n_gen_param = MAX_gen_params;
-    GEN->gen_param = _unur_xmalloc(GEN->n_gen_param * sizeof(double));
+  if (GEN->gen_param == NULL || GEN->n_gen_param != GEN_N_PARAMS) {
+    GEN->n_gen_param = GEN_N_PARAMS;
+    GEN->gen_param = _unur_xrealloc(GEN->gen_param, GEN->n_gen_param * sizeof(double));
   }
   Xstore = 0.;
   flag = 1;
@@ -81,8 +80,10 @@ _unur_stdgen_sample_normal_bm( struct unur_gen *gen )
   } while(0);
   return ((DISTR.n_params==0) ? X : mu + sigma * X );
 } 
+#undef GEN_N_PARAMS
 #undef Xstore
 #undef flag
+#define GEN_N_PARAMS (1)
 #define Xstore  GEN->gen_param[0]
 #define flag    GEN->flag
 int
@@ -90,9 +91,9 @@ normal_pol_init( struct unur_gen *gen )
 {
   CHECK_NULL(gen,UNUR_ERR_NULL);
   COOKIE_CHECK(gen,CK_CSTD_GEN,UNUR_ERR_COOKIE);
-  if (GEN->gen_param == NULL) {
-    GEN->n_gen_param = MAX_gen_params;
-    GEN->gen_param = _unur_xmalloc(GEN->n_gen_param * sizeof(double));
+  if (GEN->gen_param == NULL || GEN->n_gen_param != GEN_N_PARAMS) {
+    GEN->n_gen_param = GEN_N_PARAMS;
+    GEN->gen_param = _unur_xrealloc(GEN->gen_param, GEN->n_gen_param * sizeof(double));
   }
   Xstore = 0.;
   flag = 1;
@@ -122,6 +123,7 @@ _unur_stdgen_sample_normal_pol( struct unur_gen *gen )
   } while(0);
   return ((DISTR.n_params==0) ? X : mu + sigma * X );
 } 
+#undef GEN_N_PARAMS
 #undef Xstore
 #undef flag
 double

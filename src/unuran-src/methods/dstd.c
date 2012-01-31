@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -16,6 +16,7 @@
 #ifdef UNUR_ENABLE_INFO
 #  include <tests/unuran_tests.h>
 #endif
+#define DSTD_DEBUG_GEN       0x00000005u   
 #define DSTD_DEBUG_REINIT    0x00000010u   
 #define DSTD_DEBUG_CHG       0x00001000u   
 #define DSTD_SET_VARIANT          0x01u
@@ -322,6 +323,7 @@ void
 _unur_dstd_debug_init( const struct unur_gen *gen )
 {
   FILE *LOG;
+  int i;
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_DSTD_GEN,RETURN_VOID);
   LOG = unur_get_stream();
   fprintf(LOG,"%s:\n",gen->genid);
@@ -337,10 +339,32 @@ _unur_dstd_debug_init( const struct unur_gen *gen )
   if (GEN->is_inversion)
     fprintf(LOG,"   (Inversion)");
   fprintf(LOG,"\n%s:\n",gen->genid);
+  if (gen->debug & DSTD_DEBUG_GEN) {
+    fprintf(LOG,"%s: precomputed double constants for routine: ",gen->genid);
+    if (GEN->gen_param) {
+      fprintf(LOG,"%d\n",GEN->n_gen_param);
+      for (i=0; i < GEN->n_gen_param; i++)
+     	fprintf(LOG,"%s:\t[%d] = %g\n",gen->genid,i,GEN->gen_param[i]);
+    }
+    else {
+      fprintf(LOG,"none\n");
+    }
+    fprintf(LOG,"%s: precomputed integer constants for routine: ",gen->genid);
+    if (GEN->gen_iparam) {
+      fprintf(LOG,"%d\n",GEN->n_gen_iparam);
+      for (i=0; i < GEN->n_gen_iparam; i++)
+   	fprintf(LOG,"%s:\t[%d] = %d\n",gen->genid,i,GEN->gen_iparam[i]);
+    }
+    else {
+      fprintf(LOG,"none\n");
+    }
+    fprintf(LOG,"%s:\n",gen->genid);
+  }
   if (!(gen->distr->set & UNUR_DISTR_SET_STDDOMAIN)) {
     fprintf(LOG,"%s: domain has been changed. U in (%g,%g)\n",gen->genid,GEN->Umin,GEN->Umax);
     fprintf(LOG,"%s:\n",gen->genid);
   }
+  fflush(LOG);
 } 
 void 
 _unur_dstd_debug_chg_pmfparams( const struct unur_gen *gen )
@@ -370,6 +394,7 @@ _unur_dstd_info( struct unur_gen *gen, int help )
 {
   struct unur_string *info = gen->infostr;
   int samplesize = 10000;
+  int i;
   _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
   _unur_string_append(info,"distribution:\n");
   _unur_distr_info_typename(gen);
@@ -387,6 +412,27 @@ _unur_dstd_info( struct unur_gen *gen, int help )
     _unur_string_append(info,"parameters:\n");
     _unur_string_append(info,"   variant = %d  %s\n", gen->variant,
 			(gen->set & DSTD_SET_VARIANT) ? "" : "[default]");
+    _unur_string_append(info,"\n");
+  }
+  if (help) {
+    _unur_string_append(info,"table of precomputed double constants: ");
+    if (GEN->gen_param) {
+      _unur_string_append(info,"%d\n",GEN->n_gen_param);
+      for (i=0; i < GEN->n_gen_param; i++)
+  	_unur_string_append(info,"   [%d] = %g\n",i,GEN->gen_param[i]);
+    }
+    else  {
+      _unur_string_append(info,"none\n");
+    }
+    _unur_string_append(info,"table of precomputed integer constants: ");
+    if (GEN->gen_iparam) {
+      _unur_string_append(info,"%d\n",GEN->n_gen_iparam);
+      for (i=0; i < GEN->n_gen_iparam; i++)
+  	_unur_string_append(info,"   [%d] = %d\n",i,GEN->gen_iparam[i]);
+    }
+    else  {
+      _unur_string_append(info,"none\n");
+    }
     _unur_string_append(info,"\n");
   }
 } 

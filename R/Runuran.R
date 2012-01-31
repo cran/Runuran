@@ -109,11 +109,11 @@ uq <- function(unr,U) {
 ## PDF & PMF ----------------------------------------------------------------
 
 ## ud
-ud <- function(obj,x) {
+ud <- function(obj,x,islog=FALSE) {
   if ( ! (is(obj,"unuran.cont") || is(obj,"unuran.discr") ||
           is(obj,"unuran") ) )
     stop("argument 'obj' must be UNU.RAN object")
-  .Call("Runuran_PDF", obj, x, PACKAGE="Runuran")
+  .Call("Runuran_PDF", obj, x, islog, PACKAGE="Runuran")
 }
 
 ## CDF ----------------------------------------------------------------------

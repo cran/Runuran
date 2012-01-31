@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -108,9 +108,9 @@ unur_quantile ( struct unur_gen *gen, double U )
   return UNUR_INFINITY;
 } 
 int
-_unur_gen_is_inversion ( struct unur_gen *gen )
+unur_gen_is_inversion ( const struct unur_gen *gen )
 {
-  CHECK_NULL(gen,FALSE);
+  if (gen==NULL) return FALSE;
   switch (gen->method) {
   case UNUR_METH_HINV:
   case UNUR_METH_NINV:
@@ -184,20 +184,22 @@ unur_gen_info( struct unur_gen *gen, int help )
 int
 unur_get_dimension( const struct unur_gen *gen )
 {
-  CHECK_NULL(gen,0);
-  return (gen->distr->dim);
+  return ((gen) ? gen->distr->dim : 0);
 } 
 const char *
 unur_get_genid( const struct unur_gen *gen )
 {
-  CHECK_NULL(gen,NULL);
-  return gen->genid;
+  return ((gen) ? gen->genid : NULL);
+} 
+unsigned int
+unur_get_method( const struct unur_gen *gen )
+{
+  return ((gen) ? gen->method : 0U);
 } 
 struct unur_distr *
 unur_get_distr( const struct unur_gen *gen )
 {
-  CHECK_NULL(gen,NULL);
-  return gen->distr;
+  return ((gen) ? gen->distr : NULL);
 } 
 int 
 unur_set_use_distr_privatecopy( struct unur_par *par, int use_privatecopy )

@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 int
@@ -190,7 +190,7 @@ _unur_pinv_newton_create (struct unur_gen *gen, struct unur_pinv_interval *iv,
 	? (zi[i]-zi[i-1]) / (ui[i]-ui[i-2])
 	: (zi[1]-zi[0]) / ui[1];
     else
-      zi[i] = -0.5 * dPDF(xval[i]) * pow(zi[i],3);
+      zi[i] = (DISTR.dpdf != NULL) ? (-0.5 * dPDF(xval[i]) * pow(zi[i],3)) : INFINITY;
   }
   for(k=2; k<GEN->order; k++) {
     for(i=GEN->order-1; i>k; i--) {

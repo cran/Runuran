@@ -31,7 +31,7 @@
   Currently generators for the following distributions are implemented.
   
   %% -- begin: list of distributions --
-  Continuous Univariate Distributions (24):
+  Continuous Univariate Distributions (26):
 
   \tabular{lcl}{ 
     \emph{Function} \tab \tab \emph{Distribution} \cr
@@ -52,12 +52,14 @@
     \code{\link{udlnorm}} \tab \ldots \tab Log Normal \cr
     \code{\link{udlogis}} \tab \ldots \tab Logistic \cr
     \code{\link{udlomax}} \tab \ldots \tab Lomax (Pareto of second kind) \cr
+    \code{\link{udmeixner}} \tab \ldots \tab Meixner \cr
     \code{\link{udnorm}} \tab \ldots \tab Normal (Gaussian) \cr
     \code{\link{udpareto}} \tab \ldots \tab Pareto (of first kind) \cr
     \code{\link{udpowerexp}} \tab \ldots \tab Powerexponential (Subbotin) \cr
     \code{\link{udrayleigh}} \tab \ldots \tab Rayleigh \cr
     \code{\link{udslash}} \tab \ldots \tab Slash \cr
     \code{\link{udt}} \tab \ldots \tab t (Student) \cr
+    \code{\link{udvg}} \tab \ldots \tab Variance Gamma \cr
     \code{\link{udweibull}} \tab \ldots \tab Weibull (Extreme value type III) \cr
   }
 

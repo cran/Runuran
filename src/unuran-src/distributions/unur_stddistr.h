@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #ifndef UNUR_STDDISTR_H_SEEN
@@ -28,6 +28,7 @@ enum {
   UNUR_DISTR_LOGISTIC         = 0x00000d01u,  
   UNUR_DISTR_LOGNORMAL        = 0x00000e01u,  
   UNUR_DISTR_LOMAX            = 0x00000f01u,  
+  UNUR_DISTR_MEIXNER          = 0x00002601u,  
   UNUR_DISTR_NORMAL           = 0x00001001u,  
    UNUR_DISTR_GAUSSIAN        = 0x00001001u,  
   UNUR_DISTR_PARETO           = 0x00001101u,  
@@ -38,6 +39,7 @@ enum {
   UNUR_DISTR_TRIANGULAR       = 0x00001601u,  
   UNUR_DISTR_UNIFORM          = 0x00002001u,  
    UNUR_DISTR_BOXCAR          = 0x00002001u,  
+  UNUR_DISTR_VG               = 0x00002501u,  
   UNUR_DISTR_WEIBULL          = 0x00001801u,  
   UNUR_DISTR_BURR_I           = 0x0000b001u,  
   UNUR_DISTR_BURR_II          = 0x0000b101u,  

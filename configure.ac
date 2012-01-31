@@ -75,6 +75,11 @@ AH_BOTTOM([#if !HAVE_DECL_LOG1P
 #define log1p _unur_log1p
 #endif])
 
+AC_CHECK_DECLS(hypot,,,[#include <math.h>])
+AH_BOTTOM([#if !HAVE_DECL_HYPOT
+#define hypot _unur_hypot
+#endif])
+
 AC_CHECK_DECLS([getopt, vsnprintf])
 
 dnl Check for C99 functions */

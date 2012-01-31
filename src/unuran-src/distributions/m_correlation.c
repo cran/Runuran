@@ -1,11 +1,10 @@
-/* Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
 #include <distr/distr_source.h>
 #include <distr/distr.h>
 #include <distr/matr.h>
-#include <specfunct/unur_specfunct_source.h>
 #include "unur_distributions.h"
 #include "unur_distributions_source.h"
 #include "unur_stddistr.h"

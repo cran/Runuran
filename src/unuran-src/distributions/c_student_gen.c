@@ -1,16 +1,14 @@
-/* Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
 #include <methods/cstd.h>
 #include <methods/cstd_struct.h>
-#include <specfunct/unur_specfunct_source.h>
 #include "unur_distributions_source.h"
 inline static int student_trouo_init( struct unur_gen *gen );
 #define PAR       ((struct unur_cstd_par*)par->datap) 
 #define GEN       ((struct unur_cstd_gen*)gen->datap) 
 #define DISTR     gen->distr->data.cont 
-#define MAX_gen_params  6      
 #define uniform()  _unur_call_urng(gen->urng) 
 #define nu (DISTR.params[0])    
 int 
@@ -45,6 +43,7 @@ _unur_stdgen_sample_student_tpol( struct unur_gen *gen )
   } while (w > 1.);
   return(u * sqrt( nu * ( exp(- 2. / nu * log(w)) - 1.) / w));
 } 
+#define GEN_N_PARAMS (6)
 #define c       (GEN->gen_param[0])
 #define e       (GEN->gen_param[1])
 #define p       (GEN->gen_param[2])
@@ -56,9 +55,9 @@ student_trouo_init( struct unur_gen *gen )
 {
   CHECK_NULL(gen,UNUR_ERR_NULL);
   COOKIE_CHECK(gen,CK_CSTD_GEN,UNUR_ERR_COOKIE);
-  if (GEN->gen_param == NULL) {
-    GEN->n_gen_param = MAX_gen_params;
-    GEN->gen_param = _unur_xmalloc(GEN->n_gen_param * sizeof(double));
+  if (GEN->gen_param == NULL || GEN->n_gen_param != GEN_N_PARAMS) {
+    GEN->n_gen_param = GEN_N_PARAMS;
+    GEN->gen_param = _unur_xrealloc(GEN->gen_param, GEN->n_gen_param * sizeof(double));
   }
   if (nu < 1.) {
     _unur_error(NULL,UNUR_ERR_GEN_CONDITION,"");
@@ -93,6 +92,7 @@ _unur_stdgen_sample_student_trouo( struct unur_gen *gen )
   }
   return tru;
 } 
+#undef GEN_N_PARAMS
 #undef c
 #undef e
 #undef p

@@ -8,6 +8,10 @@
    don't. */
 #undef HAVE_DECL_HUGE_VAL
 
+/* Define to 1 if you have the declaration of `hypot', and to 0 if you don't.
+   */
+#undef HAVE_DECL_HYPOT
+
 /* Define to 1 if you have the declaration of `INFINITY', and to 0 if you
    don't. */
 #undef HAVE_DECL_INFINITY
@@ -150,4 +154,8 @@
 
 #if !HAVE_DECL_LOG1P
 #define log1p _unur_log1p
+#endif
+
+#if !HAVE_DECL_HYPOT
+#define hypot _unur_hypot
 #endif

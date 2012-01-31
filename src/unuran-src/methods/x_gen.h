@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 UNUR_GEN *unur_init( UNUR_PAR *parameters );
@@ -12,6 +12,8 @@ void  unur_free( UNUR_GEN *generator );
 const char *unur_gen_info( UNUR_GEN *generator, int help );
 int unur_get_dimension( const UNUR_GEN *generator );
 const char *unur_get_genid( const UNUR_GEN *generator );
+unsigned int unur_get_method( const UNUR_GEN *generator );
+int unur_gen_is_inversion ( const UNUR_GEN *gen );
 UNUR_DISTR *unur_get_distr( const UNUR_GEN *generator );
 int unur_set_use_distr_privatecopy( UNUR_PAR *parameters, int use_privatecopy );
 UNUR_GEN *unur_gen_clone( const UNUR_GEN *gen );

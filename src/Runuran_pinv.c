@@ -37,7 +37,6 @@
 
 /* internal header files for UNU.RAN */
 #include <unur_source.h>
-#include <methods/unur_methods_source.h>
 #include <methods/pinv_struct.h>
 
 /*---------------------------------------------------------------------------*/

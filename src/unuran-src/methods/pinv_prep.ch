@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 int
@@ -131,13 +131,15 @@ _unur_pinv_approx_pdfarea (struct unur_gen *gen )
     tol = PINV_UERROR_AREA_APPROX * GEN->area;
     DISTR.center = _unur_max(DISTR.center, GEN->bleft);
     DISTR.center = _unur_min(DISTR.center, GEN->bright);
-    GEN->area  = 
+    GEN->area = 
       _unur_lobatto_adaptive(_unur_pinv_eval_PDF, gen,
-			     GEN->bleft, DISTR.center - GEN->bleft, tol, NULL)
-      + _unur_lobatto_adaptive(_unur_pinv_eval_PDF, gen,
+			     GEN->bleft, DISTR.center - GEN->bleft, tol, NULL);
+    if (_unur_isfinite(GEN->area))
+      GEN->area += 
+	_unur_lobatto_adaptive(_unur_pinv_eval_PDF, gen,
 			       DISTR.center, GEN->bright - DISTR.center, tol, NULL);
     if ( !_unur_isfinite(GEN->area) || _unur_iszero(GEN->area) ) {
-      _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"cannot estimate area below PDF");
+      _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"cannot approximate area below PDF");
       res = UNUR_FAILURE;
       break;
     }
@@ -163,7 +165,7 @@ _unur_pinv_pdfarea (struct unur_gen *gen)
 				 tol, NULL, PINV_MAX_LOBATTO_IVS);
   GEN->area = _unur_lobatto_integral(GEN->aCDF);
   if ( !_unur_isfinite(GEN->area) || _unur_iszero(GEN->area) ) {
-    _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"cannot estimate area below PDF");
+    _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"cannot compute area below PDF");
     return UNUR_FAILURE;
   }
 #ifdef UNUR_ENABLE_LOGGING
@@ -279,8 +281,7 @@ _unur_pinv_cut( struct unur_gen *gen, double w, double dw, double crit )
       xnew = x + fx/(lc*df) * ( pow(crit*fabs(df)*(lc+1.)/(fx*fx),lc/(lc+1.)) - 1.);
     }
     if (! _unur_isfinite(xnew)) {
-      _unur_error(gen->genid,UNUR_ERR_NAN,"numerical problems with cut-off point");
-      return INFINITY;
+      xnew = (dw > 0) ? _unur_arcmean(x,GEN->dright) : _unur_arcmean(x,GEN->dleft);
     }
     if (xnew < GEN->dleft || xnew > GEN->dright) {
       if ( (dw > 0 && xnew < GEN->dleft) ||

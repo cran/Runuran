@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #ifndef UNURAN_DISTRIBUTIONS_H_SEEN
@@ -23,6 +23,7 @@ UNUR_DISTR *unur_distr_laplace(const double *params, int n_params);
 UNUR_DISTR *unur_distr_logistic(const double *params, int n_params);
 UNUR_DISTR *unur_distr_lognormal(const double *params, int n_params);
 UNUR_DISTR *unur_distr_lomax(const double *params, int n_params);
+UNUR_DISTR *unur_distr_meixner(const double *params, int n_params);
 UNUR_DISTR *unur_distr_normal( const double *params, int n_params );
 UNUR_DISTR *unur_distr_pareto( const double *params, int n_params );
 UNUR_DISTR *unur_distr_powerexponential(const double *params, int n_params);
@@ -31,6 +32,7 @@ UNUR_DISTR *unur_distr_slash(const double *params, int n_params);
 UNUR_DISTR *unur_distr_student(const double *params, int n_params);
 UNUR_DISTR *unur_distr_triangular(const double *params, int n_params);
 UNUR_DISTR *unur_distr_uniform(const double *params, int n_params);
+UNUR_DISTR *unur_distr_vg(const double *params, int n_params);
 UNUR_DISTR *unur_distr_weibull(const double *params, int n_params);
 UNUR_DISTR *unur_distr_multinormal(int dim, const double *mean, const double *covar);
 UNUR_DISTR *unur_distr_multicauchy(int dim, const double *mean, const double *covar);

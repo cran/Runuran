@@ -98,6 +98,10 @@ _Runuran_get_std_cont( const char *distribution, const double *params, int n_par
     DISTRIBUTION (lognormal);
     break;
 
+  case 'm':
+    DISTRIBUTION (meixner);
+    break;
+
   case 'n':
     DISTRIBUTION (normal);
     break;
@@ -118,6 +122,10 @@ _Runuran_get_std_cont( const char *distribution, const double *params, int n_par
 
   case 't':
     DISTRIBUTION (triangular);
+    break;
+
+  case 'v':
+    DISTRIBUTION (vg);
     break;
 
   case 'w':

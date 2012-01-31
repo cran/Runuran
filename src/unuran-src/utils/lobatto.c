@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -15,7 +15,8 @@ static double
 _unur_lobatto5_recursion (UNUR_LOBATTO_FUNCT funct, struct unur_gen *gen,
 			  double x, double h, double tol, UNUR_LOBATTO_ERROR uerror,
 			  double int1, double fl, double fr, double fc,
-			  int *W_accuracy, struct unur_lobatto_table *Itable);
+			  int *W_accuracy, int *n_calls,
+			  struct unur_lobatto_table *Itable);
 static int
 _unur_lobatto_table_append (struct unur_lobatto_table *Itable, double x, double u);
 static void
@@ -23,6 +24,7 @@ _unur_lobatto_table_resize (struct unur_lobatto_table *Itable);
 #define FKT(x)  (funct((x),gen))      
 #define W1 (0.17267316464601146)   
 #define W2 (1.-W1)
+#define LOBATTO_MAX_CALLS (1000000)
 double
 _unur_lobatto5_simple (UNUR_LOBATTO_FUNCT funct, struct unur_gen *gen,
 		       double x, double h, double *fx)
@@ -51,7 +53,8 @@ _unur_lobatto5_adaptive (UNUR_LOBATTO_FUNCT funct, struct unur_gen *gen,
 {
   double fl, fc, fr;  
   double int1, int2;  
-  int W_accuracy = FALSE; 
+  int W_accuracy = 0; 
+  int n_calls = 0;    
   if (_unur_iszero(h))
     return 0.;
   if (!_unur_isfinite(x+h)) {
@@ -62,22 +65,32 @@ _unur_lobatto5_adaptive (UNUR_LOBATTO_FUNCT funct, struct unur_gen *gen,
   fc = FKT(x+h/2.);
   fr = FKT(x+h);
   int1 = (9*(fl+fr)+49.*(FKT(x+h*W1)+FKT(x+h*W2))+64*fc)*h/180.;
-  int2 = _unur_lobatto5_recursion(funct,gen,x,h,tol,uerror,int1,fl,fc,fr,&W_accuracy,Itable);
-  if (W_accuracy)
-    _unur_warning(gen->genid,UNUR_ERR_ROUNDOFF,
-		  "numeric integration did not reach full accuracy");
+  int2 = _unur_lobatto5_recursion(funct,gen,x,h,tol,uerror,int1,fl,fc,fr,&W_accuracy,&n_calls,Itable);
+  if (W_accuracy) {
+    if (W_accuracy == 1)
+      _unur_warning(gen->genid,UNUR_ERR_ROUNDOFF,
+		    "numeric integration did not reach full accuracy");
+    else
+      _unur_error(gen->genid,UNUR_ERR_ROUNDOFF,
+		  "adaptive numeric integration aborted (too many function calls)");
+  }
   return int2;
 } 
 double
 _unur_lobatto5_recursion (UNUR_LOBATTO_FUNCT funct, struct unur_gen *gen,
 			  double x, double h, double tol, UNUR_LOBATTO_ERROR uerror,
 			  double int1, double fl, double fc, double fr,
-			  int *W_accuracy, struct unur_lobatto_table *Itable)
+			  int *W_accuracy, int *n_calls,
+			  struct unur_lobatto_table *Itable)
 {
   double flc, frc;    
   double int2;        
   double intl, intr;  
   double ierror;      
+  if (++(*n_calls) > LOBATTO_MAX_CALLS) {
+    *W_accuracy = 2;
+    return INFINITY;
+  }
   flc = FKT(x+h/4);
   frc = FKT(x+3*h/4);
   intl = (9*(fl+fc)+49.*(FKT(x+h*W1*0.5)+FKT(x+h*W2*0.5))+64*flc)*h/360.;
@@ -89,13 +102,13 @@ _unur_lobatto5_recursion (UNUR_LOBATTO_FUNCT funct, struct unur_gen *gen,
     ierror = fabs(int1-int2);
   if (ierror >= tol) {
     if (_unur_FP_equal(x+h/2.,x)) {
-      *W_accuracy = TRUE;
+      *W_accuracy = 1;
     }
     else {
       int2  = _unur_lobatto5_recursion(funct,gen,x,h/2,tol/1.,uerror,
-				      intl,fl,flc,fc, W_accuracy,Itable);
+				       intl,fl,flc,fc, W_accuracy,n_calls, Itable);
       int2 += _unur_lobatto5_recursion(funct,gen,x+h/2,h/2,tol/1.,uerror,
-				       intr,fc,frc,fr, W_accuracy,Itable);
+				       intr,fc,frc,fr, W_accuracy,n_calls, Itable);
       return int2;
     }
   }

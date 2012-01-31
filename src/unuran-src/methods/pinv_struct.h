@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 struct unur_pinv_par { 
@@ -39,6 +39,5 @@ struct unur_pinv_gen {
   int sleft;               
   int sright;              
   double area;              
-  double logPDFconstant;   
   struct unur_lobatto_table *aCDF; 
 };

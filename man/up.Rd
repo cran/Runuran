@@ -28,14 +28,32 @@ up(obj, x)
 \details{
   The routine evaluates the cumulative distribution function of a
   distribution stored in a UNU.RAN distribution object or UNU.RAN
-  generator object. If the CDF is not available in the object, then
-  \code{obj} must be a generator object that implements method
-  \sQuote{PINV}. In this case an approximate value for the CDF is
-  returned. The approximation error is about one tenth of the requested
-  \code{uresolution} for method \sQuote{PINV}. 
-  
-  If a generator object is given that implements method PINV but also
-  contain the CDF, the value of the (exact) CDF is returned. 
+  generator object.
+
+  For the computation of the CDF the following alternatives are tried
+  (in the given order):
+  \enumerate{
+    \item The CDF is available in object \code{obj}: the function is
+    evaluated and the result is returned.
+
+    \strong{Important:}
+    In this case routine \code{up} just evaluates the CDF but ignores
+    the boundaries of the domain of the distribution, i.e., it does not
+    return \code{0} and \code{1}, resp., outside the domain unless the
+    implementation of the CDF handles this case correctly.
+    This behavior is in particular important when \pkg{Runuran}
+    built-in distributions are truncated by explicitly setting the
+    domain boundaries.
+
+    \item Object \code{obj} is a generator object that implements method
+    \sQuote{PINV}:
+    In this case an approximate value for the CDF is returned. The
+    approximation error is about one tenth of the requested
+    \code{uresolution} for method \sQuote{PINV}.
+
+    \item Neither the CDF nor its approximation is available in object
+    \code{obj}: \code{NA} is returned and a warning is thrown.
+  }
 }
 
 \note{

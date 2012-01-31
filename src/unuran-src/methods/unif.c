@@ -1,7 +1,8 @@
-/* Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
+#include <distr/distr.h>
 #include <urng/urng.h>
 #include "unur_methods_source.h"
 #include "x_gen_source.h"
@@ -22,12 +23,17 @@ static void _unur_unif_info( struct unur_gen *gen, int help );
 #define SAMPLE  gen->sample.cont
 #define _unur_unif_getSAMPLE(gen)  ( _unur_unif_sample )
 struct unur_par *
-unur_unif_new( const struct unur_distr *dummy ATTRIBUTE__UNUSED )
+unur_unif_new( const struct unur_distr *distr_dummy )
 { 
   struct unur_par *par;
+  if (distr_dummy != NULL) {
+    if (distr_dummy->type != UNUR_DISTR_CONT) {
+      _unur_error(GENTYPE,UNUR_ERR_DISTR_INVALID,""); return NULL; }
+    COOKIE_CHECK(distr_dummy,CK_DISTR_CONT,NULL);
+  }
   par = _unur_par_new( sizeof(struct unur_unif_par) );
   COOKIE_SET(par,CK_UNIF_PAR);
-  par->distr = NULL;
+  par->distr    = distr_dummy;     
   par->method   = UNUR_METH_UNIF;  
   par->variant  = 0u;              
   par->set      = 0u;                  

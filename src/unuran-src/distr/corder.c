@@ -1,8 +1,7 @@
-/* Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
-#include <specfunct/unur_specfunct_source.h>
 #include <distributions/unur_stddistr.h>
 #include "distr.h"
 #include "cont.h"

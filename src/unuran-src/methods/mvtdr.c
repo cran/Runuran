@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -9,7 +9,6 @@
 #include <distributions/unur_distributions.h>
 #include <utils/fmax_source.h>
 #include <utils/matrix_source.h>
-#include <specfunct/unur_specfunct_source.h>
 #include <urng/urng.h>
 #include "unur_methods_source.h"
 #include "x_gen.h"

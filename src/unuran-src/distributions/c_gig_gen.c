@@ -1,17 +1,15 @@
-/* Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
 #include <methods/cstd.h>
 #include <methods/cstd_struct.h>
-#include <specfunct/unur_specfunct_source.h>
 #include "unur_distributions_source.h"
 inline static int gig_gigru_init( struct unur_gen *gen );
 #define PAR       ((struct unur_cstd_par*)par->datap) 
 #define GEN       ((struct unur_cstd_gen*)gen->datap) 
 #define DISTR     gen->distr->data.cont 
 #define uniform()  _unur_call_urng(gen->urng) 
-#define MAX_gen_params 10      
 #define theta  (DISTR.params[0])    
 #define omega  (DISTR.params[1])    
 #define eta    (DISTR.params[2])    
@@ -31,6 +29,7 @@ _unur_stdgen_gig_init( struct unur_par *par, struct unur_gen *gen )
     return UNUR_FAILURE;
   }
 } 
+#define GEN_N_PARAMS (10)
 #define m       (GEN->gen_param[0])
 #define linvmax (GEN->gen_param[1])
 #define vminus  (GEN->gen_param[2])
@@ -49,9 +48,9 @@ gig_gigru_init( struct unur_gen *gen )
   double r,s,t,p,q,xeta,fi,fak,yy1,yy2,max,invy1,invy2,vplus,hm1,xm,ym;
   CHECK_NULL(gen,UNUR_ERR_NULL);
   COOKIE_CHECK(gen,CK_CSTD_GEN,UNUR_ERR_COOKIE);
-  if (GEN->gen_param == NULL) {
-    GEN->n_gen_param = MAX_gen_params;
-    GEN->gen_param = _unur_xmalloc(GEN->n_gen_param * sizeof(double));
+  if (GEN->gen_param == NULL || GEN->n_gen_param != GEN_N_PARAMS) {
+    GEN->n_gen_param = GEN_N_PARAMS;
+    GEN->gen_param = _unur_xrealloc(GEN->gen_param, GEN->n_gen_param * sizeof(double));
   }
   if (theta <= 0) {
     _unur_error(NULL,UNUR_ERR_GEN_CONDITION,"");
@@ -69,6 +68,7 @@ gig_gigru_init( struct unur_gen *gen )
     s = xm*ym;
     a = exp(-0.5*theta*log(s) + 0.5*log(xm/ym) - e*(r - ym - 1.0/ym));
     c = -d * log(xm) - e * r;
+    hm12 = b2 = vdiff = vminus = linvmax = m = 0.;
   }
   else {
     hm1 = theta - 1.;
@@ -94,6 +94,7 @@ gig_gigru_init( struct unur_gen *gen )
     vminus = -exp(linvmax + log(-invy2) + hm12 * log(invy2 + m)
 		  - b2*(invy2 + m + 1./(invy2 + m)));
     vdiff = vplus - vminus;
+    c = e = d = a = 0.;
   }
   return UNUR_SUCCESS;
 } 
@@ -124,6 +125,7 @@ _unur_stdgen_sample_gig_gigru( struct unur_gen *gen )
   }
   return ((DISTR.n_params==2) ? X : eta * X );
 } 
+#undef GEN_N_PARAMS
 #undef m
 #undef linvmax
 #undef vminus

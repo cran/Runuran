@@ -166,7 +166,7 @@ library("Runuran")
 
 %% --------------------------------------------------------------------------
 
-\SweaveInput{src/title.tex}
+\SweaveInput{inputs/title.tex}
 
 \renewcommand{\contentsname}{Table of Contents}
 \setcounter{tocdepth}{1}
@@ -176,26 +176,26 @@ library("Runuran")
 % ---------------------------------------------------------------------------
 
 \clearpage
-\SweaveInput{src/intro.Rnw}
+\SweaveInput{inputs/intro.Rnw}
 
 \clearpage
-\SweaveInput{src/specialgenerators.Rnw}
+\SweaveInput{inputs/specialgenerators.Rnw}
 \clearpage
-\SweaveInput{src/universal.Rnw}
+\SweaveInput{inputs/universal.Rnw}
 \clearpage
-\SweaveInput{src/distributions.Rnw}
+\SweaveInput{inputs/distributions.Rnw}
 \clearpage
-\SweaveInput{src/advanced.Rnw}
+\SweaveInput{inputs/advanced.Rnw}
 
 % ---------------------------------------------------------------------------
 \appendix
 
 \clearpage
-\SweaveInput{src/arvag.Rnw}
+\SweaveInput{inputs/arvag.Rnw}
 \clearpage
-\SweaveInput{src/pitfalls.Rnw}
+\SweaveInput{inputs/pitfalls.Rnw}
 \clearpage
-\SweaveInput{src/glossary.tex}
+\SweaveInput{inputs/glossary.tex}
 
 % ---------------------------------------------------------------------------
 

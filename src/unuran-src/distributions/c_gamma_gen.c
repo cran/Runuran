@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -6,7 +6,6 @@
 #include <methods/cstd_struct.h>
 #include <methods/x_gen_source.h>
 #include <distr/distr_source.h>
-#include <specfunct/unur_specfunct_source.h>
 #include "unur_distributions_source.h"
 #include "unur_distributions.h"
 inline static int gamma_gll_init( struct unur_gen *gen );
@@ -15,7 +14,6 @@ inline static int gamma_gd_init( struct unur_gen *gen );
 #define PAR       ((struct unur_cstd_par*)par->datap) 
 #define GEN       ((struct unur_cstd_gen*)gen->datap) 
 #define DISTR     gen->distr->data.cont 
-#define MAX_gen_params  8      
 #define uniform()  _unur_call_urng(gen->urng) 
 #define alpha (DISTR.params[0])   
 #define beta  (DISTR.params[1])   
@@ -42,6 +40,7 @@ _unur_stdgen_gamma_init( struct unur_par *par, struct unur_gen *gen )
     return UNUR_FAILURE;
   }
 } 
+#define GEN_N_PARAMS (3)
 #define aa  GEN->gen_param[0]
 #define bb  GEN->gen_param[1]
 #define cc  GEN->gen_param[2]
@@ -50,9 +49,9 @@ gamma_gll_init( struct unur_gen *gen )
 {
   CHECK_NULL(gen,UNUR_ERR_NULL);
   COOKIE_CHECK(gen,CK_CSTD_GEN,UNUR_ERR_COOKIE);
-  if (GEN->gen_param == NULL) {
-    GEN->n_gen_param = MAX_gen_params;
-    GEN->gen_param = _unur_xmalloc(GEN->n_gen_param * sizeof(double));
+  if (GEN->gen_param == NULL || GEN->n_gen_param != GEN_N_PARAMS) {
+    GEN->n_gen_param = GEN_N_PARAMS;
+    GEN->gen_param = _unur_xrealloc(GEN->gen_param, GEN->n_gen_param * sizeof(double));
   }
   aa = (alpha > 1.0) ? sqrt(alpha + alpha - 1.0) : alpha;
   bb = alpha - 1.386294361;
@@ -78,18 +77,20 @@ _unur_stdgen_sample_gamma_gll( struct unur_gen *gen )
   }
   return ((DISTR.n_params==1) ? X : gamma + beta * X );
 } 
+#undef GEN_N_PARAMS
 #undef aa
 #undef bb
 #undef cc
+#define GEN_N_PARAMS (1)
 #define b   GEN->gen_param[0]
 inline static int
 gamma_gs_init( struct unur_gen *gen )
 {
   CHECK_NULL(gen,UNUR_ERR_NULL);
   COOKIE_CHECK(gen,CK_CSTD_GEN,UNUR_ERR_COOKIE);
-  if (GEN->gen_param == NULL) {
-    GEN->n_gen_param = MAX_gen_params;
-    GEN->gen_param = _unur_xmalloc(GEN->n_gen_param * sizeof(double));
+  if (GEN->gen_param == NULL || GEN->n_gen_param != GEN_N_PARAMS) {
+    GEN->n_gen_param = GEN_N_PARAMS;
+    GEN->gen_param = _unur_xrealloc(GEN->gen_param, GEN->n_gen_param * sizeof(double));
   }
   b = 1. + 0.36788794412 * alpha;       
   return UNUR_SUCCESS;
@@ -115,7 +116,9 @@ _unur_stdgen_sample_gamma_gs( struct unur_gen *gen )
   }
   return ((DISTR.n_params==1) ? X : gamma + beta * X );
 } 
+#undef GEN_N_PARAMS
 #undef b
+#define GEN_N_PARAMS (8)
 #define ss   GEN->gen_param[0]
 #define s    GEN->gen_param[1]
 #define d    GEN->gen_param[2]
@@ -155,9 +158,9 @@ gamma_gd_init( struct unur_gen *gen )
 {
   CHECK_NULL(gen,UNUR_ERR_NULL);
   COOKIE_CHECK(gen,CK_CSTD_GEN,UNUR_ERR_COOKIE);
-  if (GEN->gen_param == NULL) {
-    GEN->n_gen_param = MAX_gen_params;
-    GEN->gen_param = _unur_xmalloc(GEN->n_gen_param * sizeof(double));
+  if (GEN->gen_param == NULL || GEN->n_gen_param != GEN_N_PARAMS) {
+    GEN->n_gen_param = GEN_N_PARAMS;
+    GEN->gen_param = _unur_xrealloc(GEN->gen_param, GEN->n_gen_param * sizeof(double));
   }
   ss = alpha - 0.5;
   s = sqrt(ss);
@@ -249,6 +252,7 @@ _unur_stdgen_sample_gamma_gd( struct unur_gen *gen )
   } while (0);
   return ((DISTR.n_params==1) ? X : gamma + beta * X );
 } 
+#undef GEN_N_PARAMS
 #undef ss
 #undef s 
 #undef d 

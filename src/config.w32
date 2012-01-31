@@ -4,6 +4,10 @@
    */
 #define HAVE_DECL_GETOPT 1
 
+/* Define to 1 if you have the declaration of `hypot', and to 0 if you don't.
+   */
+#define HAVE_DECL_HYPOT 1
+
 /* Define to 1 if you have the declaration of `HUGE_VAL', and to 0 if you
    don't. */
 #define HAVE_DECL_HUGE_VAL 1
@@ -27,6 +31,10 @@
 /* Define to 1 if you have the declaration of `log1p', and to 0 if you don't.
    */
 #define HAVE_DECL_LOG1P 1
+
+/* Define to 1 if you have the declaration of `snprintf', and to 0 if you
+   don't. */
+#define HAVE_DECL_SNPRINTF 1
 
 /* Define to 1 if you have the declaration of `vsnprintf', and to 0 if you
    don't. */
@@ -144,4 +152,8 @@
 
 #if !HAVE_DECL_LOG1P
 #define log1p _unur_log1p
+#endif
+
+#if !HAVE_DECL_HYPOT
+#define hypot _unur_hypot
 #endif

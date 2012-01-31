@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #ifndef UNUR_DISTRIBUTIONS_SOURCE_H_SEEN
@@ -9,6 +9,7 @@ double _unur_stdgen_sample_beta_bc( UNUR_GEN *generator );
 double _unur_stdgen_sample_beta_b00( UNUR_GEN *generator );
 double _unur_stdgen_sample_beta_b01( UNUR_GEN *generator );
 double _unur_stdgen_sample_beta_b1prs( UNUR_GEN *generator );
+double _unur_stdgen_sample_beta_binv( UNUR_GEN *generator );
 int _unur_stdgen_burr_init( UNUR_PAR *parameters, UNUR_GEN *generator );
 int _unur_stdgen_cauchy_init( UNUR_PAR *parameters, UNUR_GEN *generator );
 int _unur_stdgen_chi_init( UNUR_PAR *parameters, UNUR_GEN *generator );

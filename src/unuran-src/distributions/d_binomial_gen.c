@@ -1,10 +1,9 @@
-/* Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
 #include <methods/cstd.h>   
 #include <methods/dstd_struct.h>
-#include <specfunct/unur_specfunct_source.h>
 #include "unur_distributions_source.h"
 inline static int binomial_bruec_init( struct unur_gen *gen );
 static int _unur_stdgen_sample_binomial_bruec( struct unur_gen *gen );
@@ -12,8 +11,6 @@ static int _unur_stdgen_sample_binomial_bruec( struct unur_gen *gen );
 #define GEN       ((struct unur_dstd_gen*)gen->datap) 
 #define DISTR     gen->distr->data.discr 
 #define uniform()  _unur_call_urng(gen->urng) 
-#define MAX_gen_params  (11)   
-#define MAX_gen_iparams  (3)   
 #define par_n  (DISTR.params[0])
 #define par_p  (DISTR.params[1])
 int 
@@ -30,20 +27,22 @@ _unur_stdgen_binomial_init( struct unur_par *par, struct unur_gen *gen )
   }
 } 
 #define flogfak(k) _unur_SF_ln_factorial(k)
+#define GEN_N_IPARAMS (3)
+#define GEN_N_PARAMS  (10)
 #define p       (DISTR.params[1])
 #define n       (GEN->gen_iparam[0])
 #define b       (GEN->gen_iparam[1])
 #define m       (GEN->gen_iparam[2])
 #define par     (GEN->gen_param[0])
 #define q1      (GEN->gen_param[1])
-#define np      (GEN->gen_param[3])
-#define a       (GEN->gen_param[4])
-#define h       (GEN->gen_param[5])
-#define g       (GEN->gen_param[6])
-#define r       (GEN->gen_param[7])
-#define t       (GEN->gen_param[8])
-#define r1      (GEN->gen_param[9])
-#define p0      (GEN->gen_param[10])
+#define np      (GEN->gen_param[2])
+#define a       (GEN->gen_param[3])
+#define h       (GEN->gen_param[4])
+#define g       (GEN->gen_param[5])
+#define r       (GEN->gen_param[6])
+#define t       (GEN->gen_param[7])
+#define r1      (GEN->gen_param[8])
+#define p0      (GEN->gen_param[9])
 int
 binomial_bruec_init( struct unur_gen *gen )
 {
@@ -51,11 +50,13 @@ binomial_bruec_init( struct unur_gen *gen )
   double c,x; 
   CHECK_NULL(gen,UNUR_ERR_NULL);
   COOKIE_CHECK(gen,CK_DSTD_GEN,UNUR_ERR_COOKIE);
-  if (GEN->gen_param == NULL) {
-    GEN->n_gen_param = MAX_gen_params;
-    GEN->gen_param = _unur_xmalloc(GEN->n_gen_param * sizeof(double));
-    GEN->n_gen_iparam = MAX_gen_iparams;
-    GEN->gen_iparam = _unur_xmalloc(GEN->n_gen_iparam * sizeof(int));
+  if (GEN->gen_param == NULL || GEN->n_gen_param != GEN_N_PARAMS) {
+    GEN->n_gen_param = GEN_N_PARAMS;
+    GEN->gen_param = _unur_xrealloc(GEN->gen_param, GEN->n_gen_param * sizeof(double));
+  }
+  if (GEN->gen_iparam == NULL || GEN->n_gen_iparam != GEN_N_IPARAMS) {
+    GEN->n_gen_iparam = GEN_N_IPARAMS;
+    GEN->gen_iparam = _unur_xrealloc(GEN->gen_iparam, GEN->n_gen_iparam * sizeof(int));
   }
   n = (int) par_n;
   par = _unur_min(p, 1.-p);
@@ -65,6 +66,8 @@ binomial_bruec_init( struct unur_gen *gen )
     p0 = exp(n*log(q1));                     
     bh = (int)(np + 10.0*sqrt(np*q1));
     b = _unur_min(n,bh);                     
+    m = 0;
+    r1 = t = r = g = h = a = 0.;
   }
   else {                                     
     m = (int)(np + par);                     
@@ -81,6 +84,7 @@ binomial_bruec_init( struct unur_gen *gen )
     if((n-k1)*par*x*x > (k1+1)*q1)
       k1++;                                  
     h = (a-k1) * exp(.5*((k1-m)*r1+g-flogfak(k1)-flogfak(n-k1))+M_LN2);
+    p0 = 0.;
   }
   return UNUR_SUCCESS;
 } 
@@ -138,6 +142,8 @@ _unur_stdgen_sample_binomial_bruec( struct unur_gen *gen )
   }
   return((p > 0.5) ? n-k : k);
 } 
+#undef GEN_N_IPARAMS
+#undef GEN_N_PARAMS
 #undef p
 #undef n
 #undef m

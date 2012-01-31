@@ -11,7 +11,7 @@
  *                                                                           *
  *****************************************************************************
  *                                                                           *
- *   Copyright (c) 2007-2009 Wolfgang Hoermann and Josef Leydold             *
+ *   Copyright (c) 2007-2011 Wolfgang Hoermann and Josef Leydold             *
  *   Dept. for Statistics, University of Economics, Vienna, Austria          *
  *                                                                           *
  *   This program is free software; you can redistribute it and/or modify    *
@@ -34,11 +34,10 @@
 /*---------------------------------------------------------------------------*/
 
 #include "Runuran.h"
+#include "Runuran_ext.h"
 
 /* internal header files for UNU.RAN */
 #include <unur_source.h>
-#include <methods/unur_methods_source.h>
-#include <methods/x_gen_source.h>
 
 /*---------------------------------------------------------------------------*/
 
@@ -139,7 +138,7 @@ Runuran_init (SEXP sexp_obj, SEXP sexp_distr, SEXP sexp_method)
 
   /* set slot 'inversion' to true when 'gen' implements an inversion method. */
   PROTECT(sexp_is_inversion = NEW_LOGICAL(1));
-  LOGICAL_POINTER(sexp_is_inversion)[0] = _unur_gen_is_inversion(gen);
+  LOGICAL_POINTER(sexp_is_inversion)[0] = unur_gen_is_inversion(gen);
   SET_SLOT(sexp_obj, install("inversion"), sexp_is_inversion);
 
   /* make R external pointer and store pointer to structure */
@@ -440,16 +439,17 @@ _Runuran_quantile_data (SEXP sexp_data, SEXP sexp_U, SEXP sexp_unur)
 /*---------------------------------------------------------------------------*/
 
 SEXP
-Runuran_PDF (SEXP sexp_obj, SEXP sexp_x)
+Runuran_PDF (SEXP sexp_obj, SEXP sexp_x, SEXP sexp_islog)
      /*----------------------------------------------------------------------*/
      /* Evaluate PDF or PMF for UNU.RAN distribution or generator object.    */
      /*                                                                      */
      /* Parameters:                                                          */
-     /*   obj ... 'Runuran' object (distribution or generator, S4 class)     */ 
-     /*   x   ... x-value (numeric array)                                    */
+     /*   obj   ... 'Runuran' object (distribution or generator, S4 class)   */ 
+     /*   x     ... x-value (numeric array)                                  */
+     /*   islog ... boolean: if TRUE then the log-density is return          */
      /*                                                                      */
      /* Return:                                                              */
-     /*   PDF in UNU.RAN object for given 'x' values                         */
+     /*   PDF or log-PDF in UNU.RAN object for given 'x' values              */
      /*----------------------------------------------------------------------*/
 {
   SEXP sexp_distr;                 /* S4 class containing distribution object */
@@ -459,6 +459,8 @@ Runuran_PDF (SEXP sexp_obj, SEXP sexp_x)
   struct unur_gen *gen = NULL;     /* UNU.RAN generator object */
   const char *class;               /* class name of 'obj' */ 
   double *x;                       /* pointer to array arguments for PDF */
+  int islog;                       /* whether we retur the log-density */
+  int funct_missing = FALSE;
   int n = 1;
   int i;
 
@@ -487,21 +489,42 @@ Runuran_PDF (SEXP sexp_obj, SEXP sexp_x)
     error("[UNU.RAN - error] invalid UNU.RAN object");
   }
 
-  /* check objects */
-  if (distr->type == UNUR_DISTR_CONT && distr->data.cont.pdf == NULL)
-      error("[UNU.RAN - error] UNU.RAN object does not contain PDF");
-  if (distr->type == UNUR_DISTR_DISCR && distr->data.discr.pmf == NULL)
-      error("[UNU.RAN - error] UNU.RAN object does not contain PMF");
-
   /* extract x */
   x = REAL(AS_NUMERIC(sexp_x));
   n = length(sexp_x);
+
+  /* whether we have to return the log-density */
+  islog = LOGICAL(sexp_islog)[0];
+
+  /* check object for required functions */
+  funct_missing = FALSE;
+  if (distr->type == UNUR_DISTR_CONT) {
+    if ( (islog  && distr->data.cont.logpdf == NULL) ||
+	 (!islog && distr->data.cont.pdf == NULL) ) {
+      funct_missing = TRUE;
+      warning("[UNU.RAN - error] UNU.RAN object does not contain (log)PDF");
+    }
+  }
+  if (distr->type == UNUR_DISTR_DISCR) {
+    if ( (islog)   /* not implemented yet */
+	 || distr->data.discr.pmf == NULL) {
+      funct_missing = TRUE;
+      warning("[UNU.RAN - error] UNU.RAN object does not contain (log)PMF");
+    }
+  }
 
   /* allocate memory for result */
   PROTECT(sexp_res = NEW_NUMERIC(n));
 
   /* evaluate CDF */
   for (i=0; i<n; i++) {
+
+    if (funct_missing) {
+      /* function not implemented */
+      NUMERIC_POINTER(sexp_res)[i] = NA_REAL;
+      continue;
+    }
+
     if (ISNAN(x[i])) {
       /* if NA or NaN is given then we simply return the same value */
       NUMERIC_POINTER(sexp_res)[i] = x[i];
@@ -511,7 +534,9 @@ Runuran_PDF (SEXP sexp_obj, SEXP sexp_x)
     switch (unur_distr_get_type(distr)) {
     case UNUR_DISTR_CONT:
       /* univariate continuous distribution  --> evaluate PDF */
-      NUMERIC_POINTER(sexp_res)[i] = unur_distr_cont_eval_pdf(x[i], distr);
+      NUMERIC_POINTER(sexp_res)[i] = (islog)
+	? unur_distr_cont_eval_logpdf(x[i], distr)
+	: unur_distr_cont_eval_pdf(x[i], distr);
       break;
 
     case UNUR_DISTR_DISCR:
@@ -520,8 +545,9 @@ Runuran_PDF (SEXP sexp_obj, SEXP sexp_x)
 	NUMERIC_POINTER(sexp_res)[i] = 0.;
       else
 	NUMERIC_POINTER(sexp_res)[i] = unur_distr_discr_eval_pmf ((int) x[i], distr);
+      /* remark: logPMF yet not implemented */
       break;
-      
+
     default:
       error("[UNU.RAN - error] invalid distribution type");
     }
@@ -787,7 +813,7 @@ Runuran_pack (SEXP sexp_unur)
   }
 
   /* call packing subroutine for given generator object */
-  switch (gen->method) {
+  switch (unur_get_method(gen)) {
   case UNUR_METH_PINV:
     _Runuran_pack_pinv(gen, sexp_unur);
     break;
@@ -825,6 +851,10 @@ R_init_Runuran (DllInfo *info  ATTRIBUTE__UNUSED)
   /* Set R built-in generator as default URNG */
   unur_set_default_urng( unur_urng_new( _Runuran_R_unif_rand, NULL) );
   unur_set_default_urng_aux( unur_urng_new( _Runuran_R_unif_rand, NULL) );
+
+  /* Declare some C routines to be callable from other packages */ 
+  R_RegisterCCallable("Runuran", "cont_init",   (DL_FUNC) Runuran_ext_cont_init);
+  R_RegisterCCallable("Runuran", "cont_params", (DL_FUNC) unur_distr_cont_get_pdfparams);
 
   /* Register native routines */ 
   /* Not implemented yet */ 

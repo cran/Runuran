@@ -140,7 +140,7 @@ udgamma <- function (shape,scale=1,lb=0,ub=Inf) {
 udghyp <- function (lambda,alpha,beta,delta,mu, lb=-Inf,ub=Inf) {
   if (missing (lambda) || missing (alpha) || missing (beta)
       || missing (delta) || missing (mu))
-    stop ("argument 'lambda', 'alpha', 'beta', 'delta', or 'lambda' missing")
+    stop ("argument 'lambda', 'alpha', 'beta', 'delta', or 'mu' missing")
   distr <- new ("unuran.cont",empty=TRUE)
   distr@distr <-.Call("Runuran_std_cont", distr, "ghyp", c(lambda,alpha,beta,delta,mu),
                       c(lb,ub), PACKAGE="Runuran")
@@ -160,6 +160,14 @@ udgig <- function (theta,psi,chi, lb=0,ub=Inf) {
     stop ("argument 'theta', 'psi' or 'chi' missing")
   distr <- new ("unuran.cont",empty=TRUE)
   distr@distr <-.Call("Runuran_std_cont", distr, "gig2", c(theta,psi,chi), c(lb,ub), PACKAGE="Runuran")
+  distr
+}
+
+udgiga <- function (theta,omega,eta=1, lb=0,ub=Inf) {
+  if (missing (theta) || missing (omega) )
+    stop ("argument 'theta' or 'omega' missing")
+  distr <- new ("unuran.cont",empty=TRUE)
+  distr@distr <-.Call("Runuran_std_cont", distr, "gig", c(theta,omega,eta), c(lb,ub), PACKAGE="Runuran")
   distr
 }
 
@@ -246,6 +254,16 @@ udlomax <- function (shape,scale=1,lb=0,ub=Inf) {
     stop ("argument 'shape' missing")
   distr <- new ("unuran.cont",empty=TRUE)
   distr@distr <-.Call("Runuran_std_cont", distr, "lomax", c(shape,scale), c(lb,ub), PACKAGE="Runuran")
+  distr
+}
+
+## -- Meixner distribution --------------------------------------------------
+udmeixner <- function (alpha,beta,delta,mu, lb=-Inf,ub=Inf) {
+  if (missing (alpha) || missing (beta) || missing (delta) || missing (mu))
+    stop ("argument 'alpha', 'beta', 'delta', or 'mu' missing")
+  distr <- new ("unuran.cont",empty=TRUE)
+  distr@distr <-.Call("Runuran_std_cont", distr, "meixner", c(alpha,beta,delta,mu),
+                      c(lb,ub), PACKAGE="Runuran")
   distr
 }
 
@@ -355,6 +373,16 @@ urtriang <- function (n,a,m,b,lb=a,ub=b) {
 #  distr
 #}
 ## TODO
+
+## -- Variance gamma distribution -------------------------------------------
+udvg <- function (lambda, alpha, beta, mu, lb=-Inf, ub=Inf) {
+  if (missing (lambda) || missing (alpha) || missing (beta) || missing (mu))
+    stop ("argument 'lambda', 'alpha', 'beta', or 'mu' missing")
+  distr <- new ("unuran.cont",empty=TRUE)
+  distr@distr <-.Call("Runuran_std_cont", distr, "vg", c(lambda,alpha,beta,mu),
+                      c(lb,ub), PACKAGE="Runuran")
+  distr
+}
 
 ## -- Weibull distribution - (replacement for rweibull) ---------------------
 urweibull <- function (n,shape,scale=1,lb=0,ub=Inf) {

@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #ifndef UNUR_SOURCE_H_SEEN
@@ -28,9 +28,6 @@
 #endif
 #include <unur_typedefs.h>
 #include <unur_struct.h>
-#if !HAVE_DECL_LOG1P
-#  include <specfunct/unur_specfunct_source.h> 
-#endif
 #include <urng/urng_source.h>
 #include <unur_cookies.h>
 #include <utils/debug.h>
@@ -45,6 +42,7 @@
 #include <utils/umath.h>
 #include <utils/umath_source.h>
 #include <utils/unur_math_source.h>
+#include <specfunct/unur_specfunct_source.h> 
 #include <utils/vector_source.h>
 #include <utils/string_source.h>
 #include <utils/umalloc_source.h>
