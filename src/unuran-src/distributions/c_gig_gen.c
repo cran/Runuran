@@ -102,8 +102,8 @@ double
 _unur_stdgen_sample_gig_gigru( struct unur_gen *gen )
 {
   double U,V,X,Z;
-  CHECK_NULL(gen,INFINITY);
-  COOKIE_CHECK(gen,CK_CSTD_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);
+  COOKIE_CHECK(gen,CK_CSTD_GEN,UNUR_INFINITY);
   if (theta<=1. && omega<=1.) {
     do {
       U = uniform();                                        

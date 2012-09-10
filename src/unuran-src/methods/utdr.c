@@ -279,7 +279,7 @@ double
 _unur_utdr_sample( struct unur_gen *gen )
 { 
   double u,v,x,help,linx;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_UTDR_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_UTDR_GEN,UNUR_INFINITY);
   while (1) {
     u = _unur_call_urng(gen->urng) * GEN->volcompl;
     if (u <= GEN->voll) {
@@ -319,7 +319,7 @@ double
 _unur_utdr_sample_check( struct unur_gen *gen )
 { 
   double u,v,x,help,linx,pdfx,squeezex;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_UTDR_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_UTDR_GEN,UNUR_INFINITY);
   while (1) {
     u = _unur_call_urng(gen->urng) * GEN->volcompl;
     if (u <= GEN->voll) {
@@ -443,7 +443,7 @@ _unur_utdr_hat( struct unur_gen *gen )
 	 dl = ttly - GEN->al * GEN->ttlx;
 	 GEN->voll = -1./(GEN->al * GEN->hm);
 	 GEN->col = GEN->voll;
-	 if (GEN->il > -INFINITY)
+	 if (GEN->il > -UNUR_INFINITY)
 	   GEN->voll += 1./(GEN->al * (GEN->al * GEN->il + dl));
        }
      }
@@ -494,7 +494,7 @@ _unur_utdr_hat( struct unur_gen *gen )
 	    dr = ttry - GEN->ar * GEN->ttrx;
 	    volr = 1./(GEN->ar * GEN->hm);
 	    GEN->cor = volr;
-	    if (GEN->ir<INFINITY)
+	    if (GEN->ir < UNUR_INFINITY)
 	      volr -= 1./(GEN->ar * (GEN->ar * GEN->ir + dr));
 	  }
 	}

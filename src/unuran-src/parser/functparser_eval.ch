@@ -4,10 +4,11 @@
 double
 _unur_fstr_eval_tree (const struct ftreenode *root, double x)
 {  
-  CHECK_NULL(root,INFINITY);   COOKIE_CHECK(root,CK_FSTR_TNODE,INFINITY);
+  CHECK_NULL(root,UNUR_INFINITY);
+  COOKIE_CHECK(root,CK_FSTR_TNODE,UNUR_INFINITY);
   return _unur_fstr_eval_node( root, x );
 } 
-#define CHECK_INF(x)    if(_unur_FP_is_infinity((x))) return INFINITY;
+#define CHECK_INF(x)    if(_unur_FP_is_infinity((x))) return UNUR_INFINITY;
 #define CHECK_INFS(l,r) do { CHECK_INF((l)); CHECK_INF((r)); } while(0)
 #define NODE_ARGS  double l ATTRIBUTE__UNUSED, double r ATTRIBUTE__UNUSED
 double v_dummy  (NODE_ARGS) { return 0.; }
@@ -25,13 +26,13 @@ double v_div    (NODE_ARGS) { return (l / r); }
 double v_power  (NODE_ARGS) { return pow(l,r); }
 double v_mod    (NODE_ARGS) { return (double)((int)l % (int)r); }
 double v_exp    (NODE_ARGS) { return exp(r); }
-double v_log    (NODE_ARGS) { return (r<=0.) ? INFINITY : log(r); }
+double v_log    (NODE_ARGS) { return (r<=0.) ? UNUR_INFINITY : log(r); }
 double v_sin    (NODE_ARGS) { CHECK_INF(r); return sin(r); }
 double v_cos    (NODE_ARGS) { CHECK_INF(r); return cos(r); }
 double v_tan    (NODE_ARGS) { CHECK_INF(r); return tan(r); }
 double v_sec    (NODE_ARGS) { double cosr; CHECK_INF(r); cosr=cos(r); 
-                                               return _unur_iszero(cosr) ? INFINITY : 1./cosr; }
-double v_sqrt   (NODE_ARGS) { return (r<0.) ? INFINITY : sqrt(r); }
+                                               return _unur_iszero(cosr) ? UNUR_INFINITY : 1./cosr; }
+double v_sqrt   (NODE_ARGS) { return (r<0.) ? UNUR_INFINITY : sqrt(r); }
 double v_abs    (NODE_ARGS) { return fabs(r); }
 double v_sgn    (NODE_ARGS) { return ((r<0.) ? -1. : ((r>0.) ? 1. : 0.)); }
 #undef CHECK_INF
@@ -41,7 +42,8 @@ double
 _unur_fstr_eval_node (const struct ftreenode *node, double x)
 {
   double val_l, val_r;
-  CHECK_NULL(node,INFINITY);   COOKIE_CHECK(node,CK_FSTR_TNODE,INFINITY);
+  CHECK_NULL(node,UNUR_INFINITY);
+  COOKIE_CHECK(node,CK_FSTR_TNODE,UNUR_INFINITY);
   switch (node->type) {
   case S_UCONST:
   case S_SCONST:

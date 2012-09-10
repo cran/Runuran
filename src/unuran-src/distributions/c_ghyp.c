@@ -59,7 +59,7 @@ _unur_logpdf_ghyp(double x, const UNUR_DISTR *distr)
       }
     }
     else {
-      res = -INFINITY;
+      res = -UNUR_INFINITY;
     }
   } while(0);
   return res;
@@ -114,8 +114,8 @@ _unur_set_params_ghyp( UNUR_DISTR *distr, const double *params, int n_params )
   DISTR.mu = mu;
   DISTR.n_params = n_params;
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
-    DISTR.domain[0] = -INFINITY;   
-    DISTR.domain[1] = INFINITY;    
+    DISTR.domain[0] = -UNUR_INFINITY;   
+    DISTR.domain[1] = UNUR_INFINITY;    
   }
   return UNUR_SUCCESS;
 } 
@@ -143,7 +143,7 @@ unur_distr_ghyp( const double *params, int n_params)
     return NULL;
   }
 #ifdef _unur_SF_bessel_k
-  LOGNORMCONSTANT = _unur_normconstant_ghyp(params,n_params);
+  LOGNORMCONSTANT = _unur_normconstant_ghyp(DISTR.params,DISTR.n_params);
 #else
   LOGNORMCONSTANT = 0.;
 #endif

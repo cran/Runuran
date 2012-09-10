@@ -48,8 +48,8 @@ _unur_set_params_slash( UNUR_DISTR *distr, const double *params ATTRIBUTE__UNUSE
     _unur_warning(distr_name,UNUR_ERR_DISTR_NPARAMS,"too many");
   DISTR.n_params = 0;
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
-    DISTR.domain[0] = -INFINITY;       
-    DISTR.domain[1] = INFINITY;        
+    DISTR.domain[0] = -UNUR_INFINITY;       
+    DISTR.domain[1] = UNUR_INFINITY;        
   }
   return UNUR_SUCCESS;
 } 

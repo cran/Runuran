@@ -74,8 +74,8 @@ _unur_set_params_meixner( UNUR_DISTR *distr, const double *params, int n_params 
   DISTR.mu = mu;
   DISTR.n_params = n_params;
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
-    DISTR.domain[0] = -INFINITY;   
-    DISTR.domain[1] = INFINITY;    
+    DISTR.domain[0] = -UNUR_INFINITY;   
+    DISTR.domain[1] = UNUR_INFINITY;    
   }
   return UNUR_SUCCESS;
 } 
@@ -96,7 +96,7 @@ unur_distr_meixner( const double *params, int n_params)
     free(distr);
     return NULL;
   }
-  LOGNORMCONSTANT = _unur_lognormconstant_meixner(params,n_params);
+  LOGNORMCONSTANT = _unur_lognormconstant_meixner(DISTR.params,DISTR.n_params);
   if (_unur_upd_center_meixner(distr)!=UNUR_SUCCESS) {
     free(distr);
     return NULL;

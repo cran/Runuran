@@ -32,7 +32,7 @@ _unur_pdf_F(double x, const UNUR_DISTR *distr)
     return 0.;
   else if (_unur_iszero(x)) {
     if (nua < 2.)
-      return INFINITY;
+      return UNUR_INFINITY;
     else if (_unur_isfsame(nua,2.))
       return exp(-LOGNORMCONSTANT);
     else
@@ -46,14 +46,14 @@ _unur_logpdf_F(double x, const UNUR_DISTR *distr)
 { 
   register const double *params = DISTR.params;
   if (x < 0.)
-    return -INFINITY;
+    return -UNUR_INFINITY;
   else if (_unur_iszero(x)) {
     if (nua < 2.)
-      return INFINITY;
+      return UNUR_INFINITY;
     else if (_unur_isfsame(nub,2.))
       return -LOGNORMCONSTANT;
     else
-      return -INFINITY;
+      return -UNUR_INFINITY;
   }
   else 
     return ((nua/2. - 1.)*log(x) - 0.5*(nua + nub)*log(1. + x * nua / nub) - LOGNORMCONSTANT);
@@ -66,7 +66,7 @@ _unur_dpdf_F(double x, const UNUR_DISTR *distr)
     return 0.;
   else if (_unur_iszero(x)) {
     if (nua < 2.)
-      return -INFINITY;
+      return -UNUR_INFINITY;
     else if (_unur_isfsame(nub,2.))
       return -(2.+nub)/nub * exp(-LOGNORMCONSTANT);
     else
@@ -83,11 +83,11 @@ _unur_dlogpdf_F(double x, const UNUR_DISTR *distr)
     return 0.;
   else if (_unur_iszero(x)) {
     if (nua < 2.)
-      return -INFINITY;
+      return -UNUR_INFINITY;
     else if (_unur_isfsame(nub,2.))
       return -(2.+nub)/nub;
     else
-      return INFINITY;
+      return UNUR_INFINITY;
   }
   else
     return ((nua/2.-1.)/x - nua*(nua+nub)/(2.*nub)/(1.+x*nua/nub));
@@ -162,8 +162,8 @@ _unur_set_params_F( UNUR_DISTR *distr, const double *params, int n_params )
   DISTR.nub = nub;
   DISTR.n_params = n_params;
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
-    DISTR.domain[0] = 0.;          
-    DISTR.domain[1] = INFINITY;    
+    DISTR.domain[0] = 0.;            
+    DISTR.domain[1] = UNUR_INFINITY; 
   }
   return UNUR_SUCCESS;
 } 

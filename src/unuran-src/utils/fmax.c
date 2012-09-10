@@ -96,7 +96,7 @@ _unur_util_find_max( struct unur_funct_generic fs,
     }
   }
   if( _unur_FP_same(fx[1], 0.0) )
-     return INFINITY; 
+     return UNUR_INFINITY; 
   if ( unbound_left ){
     x[2] = x[1];       fx[2] = fx[1];
     x[1] = x[2] - 1.0; fx[1] = fs.f(x[1], fs.params);
@@ -138,7 +138,7 @@ _unur_util_find_max( struct unur_funct_generic fs,
   if (!(_unur_FP_is_infinity( max )) ){
   }
   else {
-    return INFINITY; 
+    return UNUR_INFINITY; 
   }
   return max; 
 #undef MAX_SRCH
@@ -160,10 +160,10 @@ _unur_util_brent(
   double fv;                            
   double fw;                            
   const double r = (3.-sqrt(5.0))/2;    
-  CHECK_NULL(fs.f,INFINITY);
+  CHECK_NULL(fs.f, UNUR_INFINITY);
   if ( tol < 0. || b <= a || c <= a || b <= c) {
     _unur_error("CMAX",UNUR_ERR_SHOULD_NOT_HAPPEN,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   v = c;  fv = f(v);                    
   x = v;  w = v;
@@ -227,7 +227,7 @@ _unur_util_brent(
       }
     }                   
   }                
-  return INFINITY;
+  return UNUR_INFINITY;
 #undef f
 #undef MAXIT
 #undef SQRT_EPSILON

@@ -89,8 +89,8 @@ _unur_set_params_hyperbolic( UNUR_DISTR *distr, const double *params, int n_para
   DISTR.delta = delta;
   DISTR.n_params = n_params;
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
-    DISTR.domain[0] = -INFINITY;   
-    DISTR.domain[1] = INFINITY;    
+    DISTR.domain[0] = -UNUR_INFINITY;   
+    DISTR.domain[1] = UNUR_INFINITY;    
   }
   return UNUR_SUCCESS;
 } 
@@ -113,7 +113,7 @@ unur_distr_hyperbolic( const double *params, int n_params )
     free(distr);
     return NULL;
   }
-  NORMCONSTANT = _unur_normconstant_hyperbolic(params,n_params);
+  NORMCONSTANT = _unur_normconstant_hyperbolic(DISTR.params,DISTR.n_params);
   _unur_upd_mode_hyperbolic(distr);
   DISTR.set_params = _unur_set_params_hyperbolic;
   DISTR.upd_mode  = _unur_upd_mode_hyperbolic; 

@@ -377,7 +377,7 @@ _unur_tdr_starting_cpoints( struct unur_gen *gen )
     fx_last = fx;
   }
   iv->Asqueeze = iv->Ahat = iv->Ahatr = iv->sq = 0.;
-  iv->Acum = INFINITY;
+  iv->Acum = UNUR_INFINITY;
   iv->ip = iv->x;
   iv->fip = iv->fx;
   iv->next = NULL;         
@@ -449,8 +449,8 @@ _unur_tdr_interval_new( struct unur_gen *gen, double x, double fx, int is_mode )
   iv->x = x;              
   iv->fx = fx;            
   if (fx<=0.) {           
-    iv->Tfx = -INFINITY;  
-    iv->dTfx = INFINITY;  
+    iv->Tfx = -UNUR_INFINITY;  
+    iv->dTfx = UNUR_INFINITY;  
     return iv;
   }
   switch( gen->variant & TDR_VARMASK_T ) {
@@ -490,8 +490,8 @@ _unur_tdr_interval_new( struct unur_gen *gen, double x, double fx, int is_mode )
   case TDR_VAR_T_POW:
     break;
   }
-  if ( !(iv->dTfx > -INFINITY))
-    iv->dTfx = INFINITY;
+  if ( !(iv->dTfx > -UNUR_INFINITY))
+    iv->dTfx = UNUR_INFINITY;
   return iv;
 } 
 int
@@ -510,12 +510,12 @@ _unur_tdr_tangent_intersection_point( struct unur_gen *gen, struct unur_tdr_inte
   if ( _unur_FP_less( iv->dTfx, iv->next->dTfx ) ) {
     if ( fabs(iv->dTfx) < DBL_EPSILON * fabs(iv->next->dTfx) ) {
       *ipt = iv->x;        
-      iv->dTfx = INFINITY;
+      iv->dTfx = UNUR_INFINITY;
       return UNUR_SUCCESS; 
     }
     else if ( fabs(iv->next->dTfx) < DBL_EPSILON * fabs(iv->dTfx) ) {
       *ipt = iv->next->x;   
-      iv->next->dTfx = INFINITY;
+      iv->next->dTfx = UNUR_INFINITY;
       return UNUR_SUCCESS; 
     }
     else {
@@ -537,16 +537,16 @@ double
 _unur_tdr_interval_area( struct unur_gen *gen, struct unur_tdr_interval *iv, double slope, double x )
 {
   double area = 0.;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,INFINITY);
-  CHECK_NULL(iv,INFINITY);   COOKIE_CHECK(iv,CK_TDR_IV,INFINITY); 
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,UNUR_INFINITY);
+  CHECK_NULL(iv,UNUR_INFINITY);   COOKIE_CHECK(iv,CK_TDR_IV,UNUR_INFINITY); 
   if (_unur_FP_is_infinity(iv->x) || _unur_FP_is_minus_infinity(iv->x))
     return 0.;
   if (_unur_FP_same(x, iv->x))
     return 0.;
   if ( _unur_FP_is_infinity(slope)    ||
        (_unur_FP_is_minus_infinity(x) && slope<=0.) ||
-       (_unur_FP_is_infinity(x)       && slope>=0.)  )   
-    return INFINITY;
+       (_unur_FP_is_infinity(x)       && slope>=0.)  ) 
+    return UNUR_INFINITY;
   switch( gen->variant & TDR_VARMASK_T ) {
   case TDR_VAR_T_LOG:   
     if (!_unur_iszero(slope)) {                         
@@ -571,7 +571,7 @@ _unur_tdr_interval_area( struct unur_gen *gen, struct unur_tdr_interval *iv, dou
     }
     else { 
       if (_unur_FP_is_infinity(x) || _unur_FP_is_minus_infinity(x))
-	return INFINITY;
+	return UNUR_INFINITY;
       else
 	area = iv->fx * (x - iv->x);
     }
@@ -583,14 +583,14 @@ _unur_tdr_interval_area( struct unur_gen *gen, struct unur_tdr_interval *iv, dou
       else {
 	double hx = iv->Tfx + slope * (x - iv->x);
 	if (hx>=0.)
-	  return INFINITY; 
+	  return UNUR_INFINITY; 
 	else
 	  area = (x - iv->x) / ( iv->Tfx * hx );
       }
     }
     else { 
       if (_unur_FP_is_infinity(x) || _unur_FP_is_minus_infinity(x))
-	return INFINITY;
+	return UNUR_INFINITY;
       else
 	area = iv->fx * (x - iv->x);
     }
@@ -605,16 +605,16 @@ _unur_tdr_interval_xxarea( struct unur_gen *gen, struct unur_tdr_interval *iv, d
 {
   double ev = 0.;
   double hx,u;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,INFINITY);
-  CHECK_NULL(iv,INFINITY);   COOKIE_CHECK(iv,CK_TDR_IV,INFINITY); 
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,UNUR_INFINITY);
+  CHECK_NULL(iv,UNUR_INFINITY);   COOKIE_CHECK(iv,CK_TDR_IV,UNUR_INFINITY); 
   if (_unur_FP_is_infinity(iv->x) || _unur_FP_is_minus_infinity(iv->x))
     return 0.;
   if (_unur_FP_same(x, iv->x))
     return 0.;
   if ( _unur_FP_is_infinity(slope)    ||
        (_unur_FP_is_minus_infinity(x) && slope<=0.) ||
-       (_unur_FP_is_infinity(x)       && slope>=0.)  )   
-    return INFINITY;
+       (_unur_FP_is_infinity(x)       && slope>=0.)  ) 
+    return UNUR_INFINITY;
   switch( gen->variant & TDR_VARMASK_T ) {
   case TDR_VAR_T_LOG:    
     if (_unur_FP_is_infinity(x) || _unur_FP_is_minus_infinity(x)) {
@@ -637,10 +637,10 @@ _unur_tdr_interval_xxarea( struct unur_gen *gen, struct unur_tdr_interval *iv, d
     break;
   case TDR_VAR_T_SQRT:    
     if (_unur_FP_is_infinity(x) || _unur_FP_is_minus_infinity(x))
-      return INFINITY;
+      return UNUR_INFINITY;
     hx = iv->Tfx + slope * (x - iv->x);
     if (hx >= 0.)
-      return INFINITY; 
+      return UNUR_INFINITY; 
     u = (x-iv->x) * slope / iv->Tfx;
     if (fabs(u) > 1.e-6) {
       ev = ( iv->x / (slope * iv->Tfx) - x / (slope * hx)
@@ -663,10 +663,10 @@ _unur_tdr_interval_xxarea( struct unur_gen *gen, struct unur_tdr_interval *iv, d
 double
 _unur_tdr_eval_intervalhat( struct unur_gen *gen, struct unur_tdr_interval *iv, double x )
 {
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,INFINITY);
-  CHECK_NULL(iv,INFINITY);   COOKIE_CHECK(iv,CK_TDR_IV,INFINITY); 
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,UNUR_INFINITY);
+  CHECK_NULL(iv,UNUR_INFINITY);   COOKIE_CHECK(iv,CK_TDR_IV,UNUR_INFINITY); 
   if ( _unur_FP_is_minus_infinity(iv->Tfx) || _unur_FP_is_infinity(iv->dTfx) )
-    return INFINITY;
+    return UNUR_INFINITY;
   if ( _unur_FP_is_infinity(x) || _unur_FP_is_minus_infinity(x) ||
        _unur_FP_is_infinity(iv->x) || _unur_FP_is_minus_infinity(iv->x) )
     return 0.;
@@ -676,13 +676,13 @@ _unur_tdr_eval_intervalhat( struct unur_gen *gen, struct unur_tdr_interval *iv, 
   case TDR_VAR_T_SQRT:
     {
       double hx = iv->Tfx + iv->dTfx * (x - iv->x);
-      return ((hx<0.) ? 1./(hx*hx) : INFINITY);
+      return ((hx<0.) ? 1./(hx*hx) : UNUR_INFINITY);
     }
   case TDR_VAR_T_POW:
-    return INFINITY;
+    return UNUR_INFINITY;
   default:
     _unur_error(GENTYPE,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
 } 
 int

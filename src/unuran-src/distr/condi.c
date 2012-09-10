@@ -98,8 +98,8 @@ unur_distr_condi_set_condition( struct unur_distr *condi, const double *pos, con
       CONDI.trunc[1] = CONDI.domain[1] = domain[2*k+1];
     }
     else {
-      CONDI.trunc[0] = CONDI.domain[0] = -INFINITY;
-      CONDI.trunc[1] = CONDI.domain[1] = INFINITY;
+      CONDI.trunc[0] = CONDI.domain[0] = -UNUR_INFINITY;
+      CONDI.trunc[1] = CONDI.domain[1] = UNUR_INFINITY;
     }
   }
   condi->set &= ~UNUR_DISTR_SET_MODE; 

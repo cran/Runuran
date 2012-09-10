@@ -60,7 +60,7 @@ unur_distr_cvec_new( int dim )
   DISTR.norm_constant = 1.;        
   DISTR.mode       = NULL;         
   DISTR.center     = NULL;         
-  DISTR.volume     = INFINITY;     
+  DISTR.volume     = UNUR_INFINITY;
   return distr;
 } 
 struct unur_distr *
@@ -229,11 +229,11 @@ unur_distr_cvec_get_pdpdf( const struct unur_distr *distr )
 double
 unur_distr_cvec_eval_pdf( const double *x, struct unur_distr *distr )
 {
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, CVEC, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, CVEC, UNUR_INFINITY );
   if (DISTR.pdf == NULL) {
     _unur_error(distr->name,UNUR_ERR_DISTR_DATA,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   return _unur_cvec_PDF(x,distr);
 } 
@@ -251,15 +251,15 @@ unur_distr_cvec_eval_dpdf( double *result, const double *x, struct unur_distr *d
 double
 unur_distr_cvec_eval_pdpdf( const double *x, int coord, struct unur_distr *distr )
 {
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, CVEC, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, CVEC, UNUR_INFINITY );
   if (DISTR.pdpdf == NULL) {
     _unur_error(distr->name,UNUR_ERR_DISTR_DATA,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   if (coord < 0 || coord >= distr->dim) {
     _unur_error(distr->name,UNUR_ERR_DISTR_DOMAIN,"invalid coordinate");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   return _unur_cvec_pdPDF(x,coord,distr);
 } 
@@ -283,7 +283,7 @@ _unur_distr_cvec_eval_pdf_from_logpdf( const double *x, struct unur_distr *distr
 {
   if (DISTR.logpdf == NULL) {
     _unur_error(distr->name,UNUR_ERR_DISTR_DATA,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   return exp(_unur_cvec_logPDF(x,distr));
 } 
@@ -339,14 +339,14 @@ _unur_distr_cvec_eval_pdpdf_from_pdlogpdf( const double *x, int coord, struct un
   double fx;
   if (DISTR.logpdf == NULL || DISTR.pdlogpdf == NULL) {
     _unur_error(distr->name,UNUR_ERR_DISTR_DATA,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   if (coord < 0 || coord >= distr->dim) {
     _unur_error(distr->name,UNUR_ERR_DISTR_DOMAIN,"invalid coordinate");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   fx = exp(unur_distr_cvec_eval_logpdf( x, distr ));
-  if (!_unur_isfinite(fx)) return INFINITY;
+  if (!_unur_isfinite(fx)) return UNUR_INFINITY;
   return fx * _unur_cvec_pdlogPDF(x,coord,distr);
 } 
 UNUR_FUNCT_CVEC *
@@ -373,11 +373,11 @@ unur_distr_cvec_get_pdlogpdf( const struct unur_distr *distr )
 double
 unur_distr_cvec_eval_logpdf( const double *x, struct unur_distr *distr )
 {
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, CVEC, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, CVEC, UNUR_INFINITY );
   if (DISTR.logpdf == NULL) {
     _unur_error(distr->name,UNUR_ERR_DISTR_DATA,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   return _unur_cvec_logPDF(x,distr);
 } 
@@ -395,15 +395,15 @@ unur_distr_cvec_eval_dlogpdf( double *result, const double *x, struct unur_distr
 double
 unur_distr_cvec_eval_pdlogpdf( const double *x, int coord, struct unur_distr *distr )
 {
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, CVEC, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, CVEC, UNUR_INFINITY );
   if (DISTR.pdlogpdf == NULL) {
     _unur_error(distr->name,UNUR_ERR_DISTR_DATA,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   if (coord < 0 || coord >= distr->dim) {
     _unur_error(distr->name,UNUR_ERR_DISTR_DOMAIN,"invalid coordinate");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   return _unur_cvec_pdlogPDF(x,coord,distr);
 } 
@@ -1030,12 +1030,12 @@ unur_distr_cvec_upd_pdfvol( struct unur_distr *distr )
 double
 unur_distr_cvec_get_pdfvol( struct unur_distr *distr )
 {
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, CVEC, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, CVEC, UNUR_INFINITY );
   if ( !(distr->set & UNUR_DISTR_SET_PDFVOLUME) ) {
     if (DISTR.upd_volume == NULL) {
       _unur_error(distr->name,UNUR_ERR_DISTR_GET,"volume");
-      return INFINITY;
+      return UNUR_INFINITY;
     }
     else {
       unur_distr_cvec_upd_pdfvol( distr );
@@ -1075,7 +1075,7 @@ _unur_cvec_logPDF(const double *x, struct unur_distr *distr)
 {
   if ( (distr->set & UNUR_DISTR_SET_DOMAINBOUNDED) &&
        !_unur_distr_cvec_is_indomain(x, distr) )
-    return -INFINITY;
+    return -UNUR_INFINITY;
   return (*(distr->data.cvec.logpdf)) (x,distr);
 }
 int

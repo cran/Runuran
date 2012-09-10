@@ -103,8 +103,8 @@ _unur_unif_free( struct unur_gen *gen )
 double
 _unur_unif_sample( struct unur_gen *gen )
 { 
-  CHECK_NULL(gen,INFINITY);
-  COOKIE_CHECK(gen,CK_UNIF_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);
+  COOKIE_CHECK(gen,CK_UNIF_GEN,UNUR_INFINITY);
   return _unur_call_urng(gen->urng);
 } 
 #ifdef UNUR_ENABLE_LOGGING

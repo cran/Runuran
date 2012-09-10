@@ -276,7 +276,7 @@ double
 _unur_ssr_sample( struct unur_gen *gen )
 { 
   double U,V,X,xx,y;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_SSR_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_SSR_GEN,UNUR_INFINITY);
   while (1) {
     while ( _unur_iszero(U = GEN->Aleft + _unur_call_urng(gen->urng) * GEN->Ain) );
     if (U < GEN->al) {        
@@ -309,7 +309,7 @@ double
 _unur_ssr_sample_check( struct unur_gen *gen )
 { 
   double U,V,X,xx,fx,y;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_SSR_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_SSR_GEN,UNUR_INFINITY);
   while (1) {
     while ( _unur_iszero(U = GEN->Aleft + _unur_call_urng(gen->urng) * GEN->Ain) );
     if (U < GEN->al) {        
@@ -374,12 +374,12 @@ _unur_ssr_hat( struct unur_gen *gen )
     GEN->A  = 2 * DISTR.area;
     GEN->al = (DISTR.BD_LEFT  < DISTR.mode) ? (GEN->Fmode * DISTR.area) : 0.;
     GEN->ar = (DISTR.BD_RIGHT > DISTR.mode) ? (GEN->al + DISTR.area) : GEN->A;
-    if ( (DISTR.BD_LEFT > -INFINITY) &&
+    if ( (DISTR.BD_LEFT > -UNUR_INFINITY) &&
 	 (DISTR.BD_LEFT < DISTR.mode) )
       GEN->Aleft = GEN->vl * GEN->vl / (DISTR.mode - DISTR.BD_LEFT);
     else
       GEN->Aleft = 0.;
-    if ( (DISTR.BD_RIGHT < INFINITY) &&
+    if ( (DISTR.BD_RIGHT < UNUR_INFINITY) &&
 	 (DISTR.BD_RIGHT > DISTR.mode) )
       GEN->Ain = GEN->A - GEN->vr * GEN->vr / (DISTR.BD_RIGHT - DISTR.mode);
     else
@@ -394,7 +394,7 @@ _unur_ssr_hat( struct unur_gen *gen )
     GEN->A  = 4 * DISTR.area;
     GEN->al = DISTR.area;
     GEN->ar = 3 * DISTR.area;
-    if (DISTR.BD_LEFT > -INFINITY) {
+    if (DISTR.BD_LEFT > -UNUR_INFINITY) {
       left = DISTR.BD_LEFT - DISTR.mode;
       GEN->Aleft = (GEN->xl > left) 
 	? (GEN->vl * GEN->vl / (-left)) 
@@ -402,7 +402,7 @@ _unur_ssr_hat( struct unur_gen *gen )
     }
     else 
       GEN->Aleft = 0.;
-    if (DISTR.BD_RIGHT < INFINITY) {
+    if (DISTR.BD_RIGHT < UNUR_INFINITY) {
       right = DISTR.BD_RIGHT - DISTR.mode;
       GEN->Ain = (GEN->xr < right) 
 	? (GEN->A - GEN->vr * GEN->vr / right)

@@ -153,8 +153,8 @@ _unur_hri_create( struct unur_par *par )
 int
 _unur_hri_check_par( struct unur_gen *gen )
 {
-  if (DISTR.domain[0] < 0.)       DISTR.domain[0] = 0.;
-  if (DISTR.domain[1] < INFINITY) DISTR.domain[1] = INFINITY;
+  if (DISTR.domain[0] < 0.)            DISTR.domain[0] = 0.;
+  if (DISTR.domain[1] < UNUR_INFINITY) DISTR.domain[1] = UNUR_INFINITY;
   GEN->left_border = DISTR.domain[0];
   if (gen->set & HRI_SET_P0) {
     if (GEN->p0 <= GEN->left_border) {
@@ -201,7 +201,7 @@ _unur_hri_sample( struct unur_gen *gen )
   double lambda0, p1, lambda1;
   int i0 = 0;
   int i1 = 0;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_HRI_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_HRI_GEN,UNUR_INFINITY);
   lambda0 = GEN->hrp0;
   X = GEN->left_border;
   for(i0=1;;i0++) {
@@ -214,7 +214,7 @@ _unur_hri_sample( struct unur_gen *gen )
       break;
     if (i0>HRI_EMERGENCY_BREAK) {
       _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"abort computation");
-      return INFINITY;
+      return UNUR_INFINITY;
     }
   }
   if (X <= GEN->p0)
@@ -235,7 +235,7 @@ _unur_hri_sample( struct unur_gen *gen )
       break;
     if (i1>HRI_EMERGENCY_BREAK) {
       _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"abort computation");
-      return INFINITY;
+      return UNUR_INFINITY;
     }
   }
   return ((X <= p1) ? X : p1);
@@ -247,7 +247,7 @@ _unur_hri_sample_check( struct unur_gen *gen )
   double lambda0, p1, lambda1;
   int i0 = 0;
   int i1 = 0;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_HRI_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_HRI_GEN,UNUR_INFINITY);
   lambda0 = GEN->hrp0;
   X = GEN->left_border;
   for(i0=1;;i0++) {
@@ -264,7 +264,7 @@ _unur_hri_sample_check( struct unur_gen *gen )
       break;
     if (i0>HRI_EMERGENCY_BREAK) {
       _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"abort computation");
-      return INFINITY;
+      return UNUR_INFINITY;
     }
   }
   if (X <= GEN->p0) {
@@ -299,7 +299,7 @@ _unur_hri_sample_check( struct unur_gen *gen )
       break;
     if (i1>HRI_EMERGENCY_BREAK) {
       _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"abort computation");
-      return INFINITY;
+      return UNUR_INFINITY;
     }
   }
 #ifdef UNUR_ENABLE_LOGGING

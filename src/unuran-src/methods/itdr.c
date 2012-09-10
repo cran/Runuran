@@ -101,9 +101,9 @@ unur_itdr_new( const struct unur_distr *distr )
   par = _unur_par_new( sizeof(struct unur_itdr_par) );
   COOKIE_SET(par,CK_ITDR_PAR);
   par->distr    = distr;          
-  PAR->xi = INFINITY;       
-  PAR->cp = INFINITY;       
-  PAR->ct = INFINITY;       
+  PAR->xi = UNUR_INFINITY;        
+  PAR->cp = UNUR_INFINITY;        
+  PAR->ct = UNUR_INFINITY;        
   par->method   = UNUR_METH_ITDR;     
   par->variant  = 0u;                 
   par->set      = 0u;                 
@@ -158,26 +158,26 @@ unur_itdr_set_ct( struct unur_par *par, double ct )
 } 
 double unur_itdr_get_xi( struct unur_gen *gen )
 {
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
-  _unur_check_gen_object( gen, ITDR, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
+  _unur_check_gen_object( gen, ITDR, UNUR_INFINITY );
   return GEN->xi;
 } 
 double unur_itdr_get_cp( struct unur_gen *gen )
 {
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
-  _unur_check_gen_object( gen, ITDR, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
+  _unur_check_gen_object( gen, ITDR, UNUR_INFINITY );
   return GEN->cp;
 } 
 double unur_itdr_get_ct( struct unur_gen *gen )
 {
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
-  _unur_check_gen_object( gen, ITDR, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
+  _unur_check_gen_object( gen, ITDR, UNUR_INFINITY );
   return GEN->ct;
 } 
 double unur_itdr_get_area( struct unur_gen *gen )
 {
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
-  _unur_check_gen_object( gen, ITDR, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
+  _unur_check_gen_object( gen, ITDR, UNUR_INFINITY );
   return GEN->Atot;
 } 
 int
@@ -261,21 +261,21 @@ _unur_itdr_create( struct unur_par *par )
   GEN->xi = PAR->xi;       
   GEN->cp = PAR->cp;       
   GEN->ct = PAR->ct;       
-  GEN->bx = INFINITY;      
-  GEN->xp = INFINITY;      
-  GEN->xt = INFINITY;      
-  GEN->alphap = INFINITY;  
-  GEN->betap = INFINITY;
-  GEN->Tfxt = INFINITY;    
-  GEN->dTfxt = INFINITY;   
-  GEN->by = INFINITY;      
-  GEN->Ap = INFINITY;           
-  GEN->Ac = INFINITY;           
-  GEN->At = INFINITY;           
-  GEN->Atot = INFINITY;    
-  GEN->sy = 0.;            
-  GEN->sign = 1.;          
-  GEN->bd_right = INFINITY; 
+  GEN->bx = UNUR_INFINITY;      
+  GEN->xp = UNUR_INFINITY;      
+  GEN->xt = UNUR_INFINITY;      
+  GEN->alphap = UNUR_INFINITY;  
+  GEN->betap = UNUR_INFINITY;
+  GEN->Tfxt = UNUR_INFINITY;    
+  GEN->dTfxt = UNUR_INFINITY;   
+  GEN->by = UNUR_INFINITY;      
+  GEN->Ap = UNUR_INFINITY;           
+  GEN->Ac = UNUR_INFINITY;           
+  GEN->At = UNUR_INFINITY;           
+  GEN->Atot = UNUR_INFINITY;    
+  GEN->sy = 0.;                 
+  GEN->sign = 1.;               
+  GEN->bd_right = UNUR_INFINITY;
 #ifdef UNUR_ENABLE_INFO
   gen->info = _unur_itdr_info;
 #endif
@@ -334,7 +334,7 @@ double
 _unur_itdr_sample( struct unur_gen *gen )
 {
   double U, V, X, Y;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_ITDR_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_ITDR_GEN,UNUR_INFINITY);
   while (1) {
     U = _unur_call_urng(gen->urng) * GEN->Atot;
     if (U < GEN->Ap) {
@@ -391,7 +391,7 @@ _unur_itdr_sample_check( struct unur_gen *gen )
 #define hp(x)  ( (T(GEN->cp,(x)) - GEN->alphap) / GEN->betap )
   double U, V, X, Y;
   double fx, hx, sqx;  
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_ITDR_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_ITDR_GEN,UNUR_INFINITY);
   while (1) {
     U = _unur_call_urng(gen->urng) * GEN->Atot;
     if (U < GEN->Ap) {
@@ -486,7 +486,7 @@ _unur_itdr_get_hat_pole( struct unur_gen *gen )
   double cp, xp;
   double pdf_bx;
   double near_pole, ilc_near_pole, pdf_near_pole, logpdf_near_pole;
-  double ilc_bx = -INFINITY;
+  double ilc_bx = -UNUR_INFINITY;
   if (gen->set & ITDR_SET_CP) {
     cp = GEN->cp;
   }
@@ -509,7 +509,7 @@ _unur_itdr_get_hat_pole( struct unur_gen *gen )
   pdf_bx = PDF(GEN->bx);
   near_pole = fabs(GEN->pole)*DBL_EPSILON;
   if (near_pole < 1.e-100) near_pole = 1.e-100;
-  pdf_near_pole = logpdf_near_pole = INFINITY;
+  pdf_near_pole = logpdf_near_pole = UNUR_INFINITY;
   while (1) {
     if (DISTR.logpdf) {
       logpdf_near_pole = logPDF(near_pole);
@@ -545,7 +545,7 @@ _unur_itdr_get_hat_pole( struct unur_gen *gen )
       GEN->cp = cp = 0.9*cp-0.1;
       if (cp < ilc_bx) {
 	GEN->cp = cp = ilc_bx; 
-	ilc_bx = -INFINITY;
+	ilc_bx = -UNUR_INFINITY;
       }
       if (cp < -0.999) {
 	_unur_error(gen->genid,UNUR_ERR_DISTR_PROP,"cannot compute hat for pole: cp");
@@ -687,12 +687,12 @@ _unur_itdr_find_xt( struct unur_gen *gen, double b )
                  : (((x)-b)*dPDF(x) + PDF(x)) )
   double xl, xu;  
   double xn;      
-  if (b < 0.) return INFINITY;
+  if (b < 0.) return UNUR_INFINITY;
   xl = b + _unur_max(1., (fabs(GEN->pole)+b)*UNUR_SQRT_DBL_EPSILON);
   if (xl > GEN->bd_right) xl = GEN->bd_right;
   while (!_unur_isfinite(FKT(xl)) || _unur_iszero(PDF(xl)) ) {
     xl = 0.5*(xl + b);
-    if (!_unur_isfinite(xl) || _unur_FP_same(xl,b)) return INFINITY;
+    if (!_unur_isfinite(xl) || _unur_FP_same(xl,b)) return UNUR_INFINITY;
   }
   xu = xl;
   if (_unur_FP_greater(xu,GEN->bd_right)) return GEN->bd_right;
@@ -701,7 +701,7 @@ _unur_itdr_find_xt( struct unur_gen *gen, double b )
       xl = xu;
       xu += xu - b;
       if (!_unur_isfinite(xu) || xu < (1.+2.*DBL_EPSILON)*xl)
-	return INFINITY;
+	return UNUR_INFINITY;
       if (xu >= GEN->bd_right) 
 	return GEN->bd_right;
     } while(FKT(xu) > 0.);
@@ -710,7 +710,7 @@ _unur_itdr_find_xt( struct unur_gen *gen, double b )
     do {
       xu = xl;
       xl = 0.5*(xl + b);
-      if (!_unur_isfinite(xl)) return INFINITY;
+      if (!_unur_isfinite(xl)) return UNUR_INFINITY;
     } while(FKT(xl) < 0.);
   }
   while(xu > (1.+RESOLUTION_XI)*xl) {

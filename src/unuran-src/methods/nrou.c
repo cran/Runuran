@@ -241,7 +241,7 @@ double
 _unur_nrou_sample( struct unur_gen *gen )
 { 
   double U,V,X;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_NROU_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_NROU_GEN,UNUR_INFINITY);
   while (1) {
     while ( _unur_iszero(V = _unur_call_urng(gen->urng)) );
     V *= GEN->vmax;
@@ -266,7 +266,7 @@ double
 _unur_nrou_sample_check( struct unur_gen *gen )
 { 
   double U,V,X,fx,sfx,xfx;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_NROU_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_NROU_GEN,UNUR_INFINITY);
   while (1) {
     while ( _unur_iszero(V = _unur_call_urng(gen->urng)) );
     V *= GEN->vmax;

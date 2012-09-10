@@ -36,7 +36,7 @@ setClass( "unuran",
            dom        = NULL,
            distr      = NULL,
            distr.str  = character(),
-           method.str = "auto",
+           method.str = character(),
            inversion  = FALSE
            ),
          ## misc
@@ -46,14 +46,21 @@ setClass( "unuran",
 ## Initialize ---------------------------------------------------------------
 
 setMethod( "initialize", "unuran",  
-          function(.Object, distr=NULL, method="auto") {
+          function(.Object, distr, method="auto") {
 
                   ## Check entries
-                  if (is.null(distr)) {
-                          stop("no distribution given", call.=FALSE) }
+                  if (missing(distr)) {
+                          stop("no distribution given", call.=FALSE)
+                  }
                   if (!is.character(method)) {
-                          stop("'method' must be a character string", call.=FALSE) }
+                          stop("'method' must be a character string", call.=FALSE)
+                  }
 
+                  ## Create an empty object if distr equals NULL
+                  if (is.null(distr)) {
+                          return(.Object)
+                  }
+                  
                   ## Store informations 
                   .Object@distr.str <- ifelse(is.character(distr), distr, "[S4 class]")
                   .Object@method.str <- method
@@ -142,9 +149,8 @@ up <- function(obj,x) {
 ##    'dom'  ... contains domain of distribution
 ##
 ## Otherwise, if 'unur' points to '(nil)' and 'data' is still set to NULL
-## then the Runuran object is broken.
-## (This happens in particular when an unpacked Runuran object is saved in
-## a workspace and restored in a new R session.)
+## then the Runuran object is assumed to be 'empty'.
+## (This happens if an unuran object is created with distr=NULL.)
 ##
 ## It should not happen that both 'unur' and 'data' contain non-NULL objects.
 ##
@@ -244,25 +250,21 @@ mixt.new <- function (prob, comp, inversion=FALSE) {
     }
   }
   
-  ## Create empty "unuran" object
-  ## Unfortunately we cannot use new(), since then method 'initialize'
-  ## is called which does not work at all in for this task.
-  ## Thus the following is copied from function new().
-  ClassDef <- getClass("unuran", where = topenv(parent.frame()))
-  .Object <- .Call("R_do_new_object", ClassDef, PACKAGE = "base")
-
+  ## Create empty "unuran" object.
+  obj <- new("unuran",distr=NULL)
+             
   ## Store informations 
-  .Object@distr.str <- "mixture of distributions"
-  .Object@method.str <- "mixt"
+  obj@distr.str <- "mixture of distributions"
+  obj@method.str <- "mixt"
 
   ## Create UNU.RAN object
-  .Object@unur <- .Call("Runuran_mixt", .Object, prob, comp, inversion, PACKAGE="Runuran")
-  if (is.null(.Object@unur)) {
+  obj@unur <- .Call("Runuran_mixt", obj, prob, comp, inversion, PACKAGE="Runuran")
+  if (is.null(obj@unur)) {
     stop("Cannot create UNU.RAN object", call.=FALSE)
   }
 
   ## Return new UNU.RAN object
-  .Object
+  obj
 }
 
 

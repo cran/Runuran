@@ -133,8 +133,8 @@ _unur_hrd_create( struct unur_par *par )
 int
 _unur_hrd_check_par( struct unur_gen *gen )
 {
-  if (DISTR.domain[0] < 0.)       DISTR.domain[0] = 0.;
-  if (DISTR.domain[1] < INFINITY) DISTR.domain[1] = INFINITY;
+  if (DISTR.domain[0] < 0.)            DISTR.domain[0] = 0.;
+  if (DISTR.domain[1] < UNUR_INFINITY) DISTR.domain[1] = UNUR_INFINITY;
   GEN->left_border = DISTR.domain[0];
   GEN->upper_bound = HR(GEN->left_border);
   if (GEN->upper_bound <= 0. || _unur_FP_is_infinity(GEN->upper_bound)) {
@@ -170,7 +170,7 @@ _unur_hrd_sample( struct unur_gen *gen )
 { 
   double U,V,E,X,hrx;
   double lambda;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_HRD_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_HRD_GEN,UNUR_INFINITY);
   lambda = GEN->upper_bound;
   X = GEN->left_border;
   for(;;) {
@@ -185,7 +185,7 @@ _unur_hrd_sample( struct unur_gen *gen )
       lambda = hrx;   
     else {
       _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"HR not valid");
-      return INFINITY;
+      return UNUR_INFINITY;
     } 
   }
 } 
@@ -195,7 +195,7 @@ _unur_hrd_sample_check( struct unur_gen *gen )
   double U,V,E,X,hrx;
   double lambda;
   int i;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_HRD_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_HRD_GEN,UNUR_INFINITY);
   lambda = GEN->upper_bound;
   X = GEN->left_border;
   for(i=1;;i++) {
@@ -217,7 +217,7 @@ _unur_hrd_sample_check( struct unur_gen *gen )
       lambda = hrx;   
     else {
       _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"HR not valid");
-      return INFINITY;
+      return UNUR_INFINITY;
     } 
   }
 } 

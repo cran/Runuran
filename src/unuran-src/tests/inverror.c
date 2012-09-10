@@ -100,8 +100,10 @@ uerror_cont( const UNUR_GEN *gen,
     _unur_error(test_name,UNUR_ERR_GENERIC,"CDF required");
     return -2.;
   }
-  CDFmin = (DISTR.trunc[0] > -INFINITY) ? _unur_cont_CDF((DISTR.trunc[0]),(gen->distr)) : 0.;
-  CDFmax = (DISTR.trunc[1] < INFINITY)  ? _unur_cont_CDF((DISTR.trunc[1]),(gen->distr)) : 1.;
+  CDFmin = ((DISTR.trunc[0] > -UNUR_INFINITY) 
+	    ? _unur_cont_CDF((DISTR.trunc[0]),(gen->distr)) : 0.);
+  CDFmax = ((DISTR.trunc[1] < UNUR_INFINITY)
+	    ? _unur_cont_CDF((DISTR.trunc[1]),(gen->distr)) : 1.);
   umax = 0.;
   usum = 0.;
   for(j=0;j<samplesize;j++) {

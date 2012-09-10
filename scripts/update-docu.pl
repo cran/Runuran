@@ -6,7 +6,7 @@
 # The script updates version and date in
 #   DESCRIPTION
 #   man/Runuran-package.Rd
-#   inst/doc/src/version.tex
+#   inst/doc/inputs/version.tex
 # ---------------------------------------------------------------------------
 
 use strict;
@@ -14,7 +14,7 @@ use Getopt::Std;
 
 # --- Constants -------------------------------------------------------------
 
-my $vignette_file = "./inst/doc/src/version.tex";
+my $vignette_file = "./inst/doc/inputs/version.tex";
 my $package_Rd_file = "./man/Runuran-package.Rd";
 
 # --- Usage -----------------------------------------------------------------

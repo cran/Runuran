@@ -104,12 +104,12 @@ _unur_pdf_corder( double x, const struct unur_distr *os )
   double Fx;    
   double fx;    
   double p,q;   
-  _unur_check_NULL( NULL, os, INFINITY );
-  _unur_check_distr_object( os, CONT, INFINITY );
-  CHECK_NULL( os->base, INFINITY );
-  _unur_check_distr_object( os->base, CONT, INFINITY );
-  CHECK_NULL( os->base->data.cont.cdf, INFINITY );
-  CHECK_NULL( os->base->data.cont.pdf, INFINITY );
+  _unur_check_NULL( NULL, os, UNUR_INFINITY );
+  _unur_check_distr_object( os, CONT, UNUR_INFINITY );
+  CHECK_NULL( os->base, UNUR_INFINITY );
+  _unur_check_distr_object( os->base, CONT, UNUR_INFINITY );
+  CHECK_NULL( os->base->data.cont.cdf, UNUR_INFINITY );
+  CHECK_NULL( os->base->data.cont.pdf, UNUR_INFINITY );
   Fx = (*(os->base->data.cont.cdf)) (x, os->base);
   fx = (*(os->base->data.cont.pdf)) (x, os->base);
   p = OS.params[1];                       
@@ -128,13 +128,13 @@ _unur_dpdf_corder( double x, const struct unur_distr *os )
   double p,q;   
   double dpdf;  
   double lFx, lFy;
-  _unur_check_NULL( NULL, os, INFINITY );
-  _unur_check_distr_object( os, CONT, INFINITY );
-  CHECK_NULL( os->base, INFINITY );
-  _unur_check_distr_object( os->base, CONT, INFINITY );
-  CHECK_NULL( os->base->data.cont.cdf, INFINITY );
-  CHECK_NULL( os->base->data.cont.pdf, INFINITY );
-  CHECK_NULL( os->base->data.cont.dpdf, INFINITY );
+  _unur_check_NULL( NULL, os, UNUR_INFINITY );
+  _unur_check_distr_object( os, CONT, UNUR_INFINITY );
+  CHECK_NULL( os->base, UNUR_INFINITY );
+  _unur_check_distr_object( os->base, CONT, UNUR_INFINITY );
+  CHECK_NULL( os->base->data.cont.cdf, UNUR_INFINITY );
+  CHECK_NULL( os->base->data.cont.pdf, UNUR_INFINITY );
+  CHECK_NULL( os->base->data.cont.dpdf, UNUR_INFINITY );
   Fx = (*(os->base->data.cont.cdf)) (x, os->base);
   fx = (*(os->base->data.cont.pdf)) (x, os->base);
   dfx = (*(os->base->data.cont.dpdf)) (x, os->base);
@@ -154,11 +154,11 @@ _unur_cdf_corder( double x, const struct unur_distr *os )
 {
   double Fx;    
   double p,q;   
-  _unur_check_NULL( NULL, os, INFINITY );
-  _unur_check_distr_object( os, CONT, INFINITY );
-  CHECK_NULL( os->base, INFINITY );
-  _unur_check_distr_object( os->base, CONT, INFINITY );
-  CHECK_NULL( os->base->data.cont.cdf, INFINITY );
+  _unur_check_NULL( NULL, os, UNUR_INFINITY );
+  _unur_check_distr_object( os, CONT, UNUR_INFINITY );
+  CHECK_NULL( os->base, UNUR_INFINITY );
+  _unur_check_distr_object( os->base, CONT, UNUR_INFINITY );
+  CHECK_NULL( os->base->data.cont.cdf, UNUR_INFINITY );
   Fx = (*(os->base->data.cont.cdf)) (x, os->base);
   p = OS.params[1];                       
   q = OS.params[0] - OS.params[1] + 1.;   
@@ -173,8 +173,8 @@ _unur_upd_area_corder( UNUR_DISTR *os )
   if (!(os->set & UNUR_DISTR_SET_STDDOMAIN)) {
     if (OS.cdf == NULL)
       return UNUR_ERR_DISTR_REQUIRED;
-    OS.area  = (OS.domain[1] < INFINITY)  ? _unur_cdf_corder(OS.domain[1],os) : 1.;
-    OS.area -= (OS.domain[0] > -INFINITY) ? _unur_cdf_corder(OS.domain[0],os) : 0.;
+    OS.area  = (OS.domain[1] < UNUR_INFINITY)  ? _unur_cdf_corder(OS.domain[1],os) : 1.;
+    OS.area -= (OS.domain[0] > -UNUR_INFINITY) ? _unur_cdf_corder(OS.domain[0],os) : 0.;
   }
   return (OS.area > 0.) ? UNUR_SUCCESS : UNUR_ERR_DISTR_DATA;
 } 

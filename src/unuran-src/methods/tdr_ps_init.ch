@@ -30,7 +30,7 @@ _unur_tdr_ps_starting_intervals( struct unur_gen *gen )
 	iv_new->ip = iv->x;
 	iv_new->fip = iv->fx;
 	iv->next->Asqueeze = iv->next->Ahat = iv->next->Ahatr = 0.;
-	iv->Acum = INFINITY;
+	iv->Acum = UNUR_INFINITY;
 	iv->next-> sq = 0.;
       }
       else
@@ -49,7 +49,7 @@ _unur_tdr_ps_starting_intervals( struct unur_gen *gen )
       --(GEN->n_ivs);
       if (iv->next==NULL) {
 	iv->Asqueeze = iv->Ahat = iv->Ahatr = iv->sq = 0.;
-	iv->Acum = INFINITY;
+	iv->Acum = UNUR_INFINITY;
       }
       else
 	iv->next->prev = iv;
@@ -61,7 +61,7 @@ _unur_tdr_ps_starting_intervals( struct unur_gen *gen )
       _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"cannot create bounded hat!");
       return UNUR_ERR_GEN_CONDITION;
     }
-    if (iv->Ahatr >= INFINITY) {
+    if (iv->Ahatr >= UNUR_INFINITY) {
       CHECK_NULL(iv->next,0);
       x = _unur_arcmean(iv->x,iv->next->ip);
       fx = PDF(x);

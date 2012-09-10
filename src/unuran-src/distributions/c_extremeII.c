@@ -119,7 +119,7 @@ _unur_set_params_extremeII( UNUR_DISTR *distr, const double *params, int n_param
   DISTR.n_params = n_params;
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
     DISTR.domain[0] = DISTR.zeta;      
-    DISTR.domain[1] = INFINITY;        
+    DISTR.domain[1] = UNUR_INFINITY;   
   }
   return UNUR_SUCCESS;
 } 

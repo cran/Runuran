@@ -35,7 +35,7 @@ _unur_logpdf_exponential( double x, const UNUR_DISTR *distr )
   register const double *params = DISTR.params;
   if (DISTR.n_params > 0)
     x = (x - theta) / sigma;
-  return ( (x<0.) ? -INFINITY : (-x - LOGNORMCONSTANT) );
+  return ( (x<0.) ? -UNUR_INFINITY : (-x - LOGNORMCONSTANT) );
 } 
 double
 _unur_dpdf_exponential( double x, const UNUR_DISTR *distr )
@@ -118,7 +118,7 @@ _unur_set_params_exponential( UNUR_DISTR *distr, const double *params, int n_par
   DISTR.n_params = n_params;
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
     DISTR.domain[0] = DISTR.theta;     
-    DISTR.domain[1] = INFINITY;        
+    DISTR.domain[1] = UNUR_INFINITY;   
   }
   return UNUR_SUCCESS;
 } 

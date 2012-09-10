@@ -124,7 +124,7 @@ unur_pinv_set_boundary( struct unur_par *par, double left, double right )
     return UNUR_ERR_PAR_SET;
   }
   if (! (_unur_isfinite(left) && _unur_isfinite(right)) ) {
-    _unur_warning(GENTYPE,UNUR_ERR_PAR_SET,"domain (+/- INFINITY not allowed)");
+    _unur_warning(GENTYPE,UNUR_ERR_PAR_SET,"domain (+/- UNUR_INFINITY not allowed)");
     return UNUR_ERR_PAR_SET;
   }
   PAR->bleft = left;

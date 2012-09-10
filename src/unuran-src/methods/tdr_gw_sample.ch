@@ -10,10 +10,10 @@ _unur_tdr_gw_sample( struct unur_gen *gen )
   double X;                    
   double fx, sqx, hx;          
   double Tsqx, Thx;            
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,UNUR_INFINITY);
   if (GEN->iv == NULL) {
     _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"empty generator object");
-    return INFINITY;
+    return UNUR_INFINITY;
   } 
   urng = gen->urng;
   while (1) {
@@ -64,7 +64,7 @@ _unur_tdr_gw_sample( struct unur_gen *gen )
       V = _unur_call_urng(urng) * hx;  
       if (V <= iv->fx && V <= iv->next->fx)
 	return X;
-      Tsqx = (iv->Asqueeze > 0.) ? (iv->Tfx + iv->sq * (X - iv->x)) : -INFINITY;  
+      Tsqx = (iv->Asqueeze > 0.) ? (iv->Tfx + iv->sq * (X - iv->x)) : -UNUR_INFINITY;  
       sqx = (iv->Asqueeze > 0.) ? 1./(Tsqx*Tsqx) : 0.;
       if (V <= sqx)
 	return X;
@@ -72,7 +72,7 @@ _unur_tdr_gw_sample( struct unur_gen *gen )
     case TDR_VAR_T_POW:
     default:
       _unur_error(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
-      return INFINITY;
+      return UNUR_INFINITY;
     } 
     fx = PDF(X);
     if (GEN->n_ivs < GEN->max_ivs) {
@@ -96,10 +96,10 @@ _unur_tdr_gw_sample_check( struct unur_gen *gen )
 #ifdef UNUR_ENABLE_LOGGING
   int error = 0;               
 #endif
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,UNUR_INFINITY);
   if (GEN->iv == NULL) {
     _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"empty generator object");
-    return INFINITY;
+    return UNUR_INFINITY;
   } 
   urng = gen->urng;
   while (1) {
@@ -189,7 +189,7 @@ _unur_tdr_gw_eval_invcdfhat( const struct unur_gen *gen, double U,
   case TDR_VAR_T_POW:
   default:
     _unur_error(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
-    X = INFINITY;
+    X = UNUR_INFINITY;
   } 
   if (hx != NULL) {
     switch (gen->variant & TDR_VARMASK_T) {
@@ -203,7 +203,7 @@ _unur_tdr_gw_eval_invcdfhat( const struct unur_gen *gen, double U,
     case TDR_VAR_T_POW:
     default:
       _unur_error(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
-      *hx = INFINITY;
+      *hx = UNUR_INFINITY;
     }
   }
   if (fx != NULL) {

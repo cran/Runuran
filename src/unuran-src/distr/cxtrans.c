@@ -228,9 +228,9 @@ double
 _unur_cdf_cxtrans( double x, const struct unur_distr *cxt )
 {
   double alpha, s, mu;
-  CHECK_NULL( cxt, INFINITY );
-  CHECK_NULL( cxt->base, INFINITY );
-  CHECK_NULL( cxt->base->data.cont.cdf, INFINITY );
+  CHECK_NULL( cxt, UNUR_INFINITY );
+  CHECK_NULL( cxt->base, UNUR_INFINITY );
+  CHECK_NULL( cxt->base->data.cont.cdf, UNUR_INFINITY );
   alpha = CXT.ALPHA;
   s = CXT.SIGMA;
   mu = CXT.MU;
@@ -244,21 +244,21 @@ _unur_cdf_cxtrans( double x, const struct unur_distr *cxt )
     return CDF(s*POW(x)+mu);
   }
   _unur_error(distr_name,UNUR_ERR_SHOULD_NOT_HAPPEN,""); 
-  return INFINITY;
+  return UNUR_INFINITY;
 } 
 double
 _unur_pdf_cxtrans( double x, const struct unur_distr *cxt )
 {
   double alpha, s, mu;
-  CHECK_NULL( cxt, INFINITY );
-  CHECK_NULL( cxt->base, INFINITY );
-  CHECK_NULL( cxt->base->data.cont.pdf, INFINITY );
+  CHECK_NULL( cxt, UNUR_INFINITY );
+  CHECK_NULL( cxt->base, UNUR_INFINITY );
+  CHECK_NULL( cxt->base->data.cont.pdf, UNUR_INFINITY );
   alpha = CXT.ALPHA;
   s = CXT.SIGMA;
   mu = CXT.MU;
   if (_unur_isinf(alpha)==1) {
     if (x<=0.) 
-      return -INFINITY;
+      return -UNUR_INFINITY;
     else {
       double fx = PDF(s*log(x)+mu);
       return (_unur_isfinite(fx) ? fx * s/x : _unur_pdf_at_pole(cxt));
@@ -294,22 +294,22 @@ _unur_pdf_cxtrans( double x, const struct unur_distr *cxt )
     }
   }
   _unur_error(distr_name,UNUR_ERR_SHOULD_NOT_HAPPEN,""); 
-  return INFINITY;
+  return UNUR_INFINITY;
 } 
 double
 _unur_logpdf_cxtrans( double x, const struct unur_distr *cxt )
 {
   double alpha, s, logs, mu;
-  CHECK_NULL( cxt, INFINITY );
-  CHECK_NULL( cxt->base, INFINITY );
-  CHECK_NULL( cxt->base->data.cont.logpdf, INFINITY );
+  CHECK_NULL( cxt, UNUR_INFINITY );
+  CHECK_NULL( cxt->base, UNUR_INFINITY );
+  CHECK_NULL( cxt->base->data.cont.logpdf, UNUR_INFINITY );
   alpha = CXT.ALPHA;
   s = CXT.SIGMA;
   mu = CXT.MU;
   logs = log(CXT.SIGMA);
   if (_unur_isinf(alpha)==1) {
     if (x<=0.) 
-      return -INFINITY;
+      return -UNUR_INFINITY;
     else {
       double logx = log(x);
       double logfx = logPDF(s*logx+mu);
@@ -319,7 +319,7 @@ _unur_logpdf_cxtrans( double x, const struct unur_distr *cxt )
   if (_unur_iszero(alpha)) {
     double ex = s * exp(x) + mu;
     if (! _unur_isfinite(ex)) {
-      return -INFINITY;
+      return -UNUR_INFINITY;
     }
     else {
       double logfx = logPDF(ex);
@@ -333,29 +333,29 @@ _unur_logpdf_cxtrans( double x, const struct unur_distr *cxt )
   if (alpha > 0.) {
     double phix = s * POW(x) + mu;
     if (! _unur_isfinite(phix)) {
-      return -INFINITY;
+      return -UNUR_INFINITY;
     }
     else {
       double logfx = logPDF(phix);
       if (_unur_isfinite(logfx) && (!_unur_iszero(x) || alpha < 1.)) {
 	double logfcx =  logfx + logs + dlogPOW(x);
-	return (_unur_isfinite(logfcx) ? logfcx : -INFINITY);
+	return (_unur_isfinite(logfcx) ? logfcx : -UNUR_INFINITY);
       }
       else 
 	return CXT.logPDFPOLE;
     }
   }
   _unur_error(distr_name,UNUR_ERR_SHOULD_NOT_HAPPEN,""); 
-  return INFINITY;
+  return UNUR_INFINITY;
 } 
 double
 _unur_dpdf_cxtrans( double x, const struct unur_distr *cxt )
 {
   double alpha, s, mu;
-  CHECK_NULL( cxt, INFINITY );
-  CHECK_NULL( cxt->base, INFINITY );
-  CHECK_NULL( cxt->base->data.cont.pdf, INFINITY );
-  CHECK_NULL( cxt->base->data.cont.dpdf, INFINITY );
+  CHECK_NULL( cxt, UNUR_INFINITY );
+  CHECK_NULL( cxt->base, UNUR_INFINITY );
+  CHECK_NULL( cxt->base->data.cont.pdf, UNUR_INFINITY );
+  CHECK_NULL( cxt->base->data.cont.dpdf, UNUR_INFINITY );
   alpha = CXT.ALPHA;
   s = CXT.SIGMA;
   mu = CXT.MU;
@@ -379,7 +379,7 @@ _unur_dpdf_cxtrans( double x, const struct unur_distr *cxt )
       double dfx = dPDF(ex);
       double dfcx = s * (dfx * s*ex*ex + fx * ex);
       if (! _unur_isfinite(fx) ) return _unur_dpdf_at_pole(cxt);
-      if (! _unur_isfinite(dfcx) ) return (dfx>0 ? INFINITY : -INFINITY);
+      if (! _unur_isfinite(dfcx) ) return (dfx>0 ? UNUR_INFINITY : -UNUR_INFINITY);
       return dfcx;
     }
   }
@@ -407,22 +407,22 @@ _unur_dpdf_cxtrans( double x, const struct unur_distr *cxt )
     }
   }
   _unur_error(distr_name,UNUR_ERR_SHOULD_NOT_HAPPEN,""); 
-  return INFINITY;
+  return UNUR_INFINITY;
 } 
 double
 _unur_dlogpdf_cxtrans( double x, const struct unur_distr *cxt )
 {
   double alpha, s, mu;
-  CHECK_NULL( cxt, INFINITY );
-  CHECK_NULL( cxt->base, INFINITY );
-  CHECK_NULL( cxt->base->data.cont.logpdf, INFINITY );
-  CHECK_NULL( cxt->base->data.cont.dlogpdf, INFINITY );
+  CHECK_NULL( cxt, UNUR_INFINITY );
+  CHECK_NULL( cxt->base, UNUR_INFINITY );
+  CHECK_NULL( cxt->base->data.cont.logpdf, UNUR_INFINITY );
+  CHECK_NULL( cxt->base->data.cont.dlogpdf, UNUR_INFINITY );
   alpha = CXT.ALPHA;
   s = CXT.SIGMA;
   mu = CXT.MU;
   if (_unur_isinf(alpha)==1) {
     if (x<=0.) 
-      return -INFINITY;
+      return -UNUR_INFINITY;
     else {
       double logx = s*log(x)+mu;
       double logfx = logPDF(logx);
@@ -433,7 +433,7 @@ _unur_dlogpdf_cxtrans( double x, const struct unur_distr *cxt )
   if (_unur_iszero(alpha)) {
     double ex = s*exp(x)+mu;
     if (! _unur_isfinite(ex)) {
-      return (x>1. ? -INFINITY : INFINITY);
+      return (x>1. ? -UNUR_INFINITY : UNUR_INFINITY);
     }
     else {
       double logfx = logPDF(ex);
@@ -448,14 +448,14 @@ _unur_dlogpdf_cxtrans( double x, const struct unur_distr *cxt )
   if (alpha > 0.) {
     double phix = s*POW(x)+mu;
     if (! _unur_isfinite(phix)) {
-      return ((x>1. || (x>-1. && x < 0.)) ? -INFINITY : INFINITY);
+      return ((x>1. || (x>-1. && x < 0.)) ? -UNUR_INFINITY : UNUR_INFINITY);
     }
     else {
       double logfx = logPDF(phix);
       if (_unur_isfinite(logfx) && (!_unur_iszero(x) || alpha <= 1.)) {
 	double dlogfcx = ((x>=0.)?1.:-1.) * (dlogPDF(phix) * s*dPOW(x) + (1./alpha-1.)/x);
 	if (! _unur_isfinite(dlogfcx)) {
-	  return ((x>1. || (x>-1. && x < 0.)) ? -INFINITY : INFINITY);
+	  return ((x>1. || (x>-1. && x < 0.)) ? -UNUR_INFINITY : UNUR_INFINITY);
 	}
 	return dlogfcx;
       }
@@ -464,7 +464,7 @@ _unur_dlogpdf_cxtrans( double x, const struct unur_distr *cxt )
     }
   }
   _unur_error(distr_name,UNUR_ERR_SHOULD_NOT_HAPPEN,""); 
-  return INFINITY;
+  return UNUR_INFINITY;
 } 
 double 
 _unur_pdf_at_pole( const struct unur_distr *cxt )

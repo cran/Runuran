@@ -7,7 +7,7 @@ _unur_tabl_rh_sample( struct unur_gen *gen )
   UNUR_URNG *urng;             
   struct unur_tabl_interval *iv;
   double U,X,fx,V;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_TABL_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_TABL_GEN,UNUR_INFINITY);
   urng = gen->urng;
   while(1) {
     U = GEN->Umin + _unur_call_urng(urng) * (GEN->Umax - GEN->Umin);
@@ -15,7 +15,7 @@ _unur_tabl_rh_sample( struct unur_gen *gen )
     U *= GEN->Atotal;
     while (iv->Acum < U)
       iv = iv->next;
-    COOKIE_CHECK(iv,CK_TABL_IV,INFINITY);
+    COOKIE_CHECK(iv,CK_TABL_IV,UNUR_INFINITY);
     U = (iv->xmax >= iv->xmin) ? (iv->Acum - U) : (U - iv->Acum + iv->Ahat);
     X = iv->xmax + U * (iv->xmin - iv->xmax)/iv->Ahat;
     V = _unur_call_urng(urng) * iv->fmax;  
@@ -38,7 +38,7 @@ _unur_tabl_rh_sample_check( struct unur_gen *gen )
   UNUR_URNG *urng;             
   struct unur_tabl_interval *iv;
   double U,X,fx,V;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_TABL_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_TABL_GEN,UNUR_INFINITY);
   urng = gen->urng;
   while(1) {
     U = GEN->Umin + _unur_call_urng(urng) * (GEN->Umax - GEN->Umin);
@@ -46,7 +46,7 @@ _unur_tabl_rh_sample_check( struct unur_gen *gen )
     U *= GEN->Atotal;
     while (iv->Acum < U)
       iv = iv->next;
-    COOKIE_CHECK(iv,CK_TABL_IV,INFINITY);
+    COOKIE_CHECK(iv,CK_TABL_IV,UNUR_INFINITY);
     U = (iv->xmax >= iv->xmin) ? (iv->Acum - U) : (U - iv->Acum + iv->Ahat);
     X = iv->xmax + U * (iv->xmin - iv->xmax)/iv->Ahat;
     V = _unur_call_urng(urng) * iv->fmax;  
@@ -72,14 +72,14 @@ _unur_tabl_ia_sample( struct unur_gen *gen )
 { 
   struct unur_tabl_interval *iv;
   double U,X,fx;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_TABL_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_TABL_GEN,UNUR_INFINITY);
   while(1) {
     U = _unur_call_urng(gen->urng);
     iv =  GEN->guide[(int) (U * GEN->guide_size)];
     U *= GEN->Atotal;
     while (iv->Acum < U)
       iv = iv->next;
-    COOKIE_CHECK(iv,CK_TABL_IV,INFINITY);
+    COOKIE_CHECK(iv,CK_TABL_IV,UNUR_INFINITY);
     U = (iv->xmax <= iv->xmin) ? (iv->Acum - U) : (iv->Ahat + U - iv->Acum);
     if( U < iv->Asqueeze ) {
       return( iv->xmax + (iv->Asqueeze-U) * (iv->xmin - iv->xmax)/iv->Asqueeze );
@@ -103,14 +103,14 @@ _unur_tabl_ia_sample_check( struct unur_gen *gen )
 { 
   struct unur_tabl_interval *iv;
   double U,X,fx;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_TABL_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_TABL_GEN,UNUR_INFINITY);
   while(1) {
     U = _unur_call_urng(gen->urng);
     iv =  GEN->guide[(int) (U * GEN->guide_size)];
     U *= GEN->Atotal;
     while (iv->Acum < U)
       iv = iv->next;
-    COOKIE_CHECK(iv,CK_TABL_IV,INFINITY);
+    COOKIE_CHECK(iv,CK_TABL_IV,UNUR_INFINITY);
     U = (iv->xmax <= iv->xmin) ? (iv->Acum - U) : (iv->Ahat + U - iv->Acum);
     if( U <= iv->Asqueeze ) {
       X = iv->xmax + (iv->Asqueeze-U) * (iv->xmin - iv->xmax)/iv->Asqueeze;

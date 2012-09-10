@@ -119,8 +119,8 @@ _unur_set_params_normal( UNUR_DISTR *distr, const double *params, int n_params )
   }
   DISTR.n_params = n_params;
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
-    DISTR.domain[0] = -INFINITY;       
-    DISTR.domain[1] = INFINITY;        
+    DISTR.domain[0] = -UNUR_INFINITY;       
+    DISTR.domain[1] = UNUR_INFINITY;        
   }
   return UNUR_SUCCESS;
 } 

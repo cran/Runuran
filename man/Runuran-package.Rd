@@ -17,8 +17,8 @@
   \tabular{ll}{
     Package: \tab Runuran       \cr
     Type:    \tab Package       \cr
-    Version: \tab 0.19.0        \cr
-    Date:    \tab 2012-01-31    \cr
+    Version: \tab 0.20.0        \cr
+    Date:    \tab 2012-09-10    \cr
     License: \tab GPL 2 or later\cr
   }
   \pkg{Runuran} provides an interface to the UNU.RAN library for

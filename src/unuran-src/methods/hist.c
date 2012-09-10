@@ -137,7 +137,7 @@ _unur_hist_sample( struct unur_gen *gen )
 { 
   double U;
   int J;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_HIST_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_HIST_GEN,UNUR_INFINITY);
   U = _unur_call_urng(gen->urng);
   J = GEN->guide_table[(int)(U * GEN->n_hist)];
   U *= GEN->sum;

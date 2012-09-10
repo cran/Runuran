@@ -71,8 +71,8 @@ unur_mvtdr_get_ncones( const struct unur_gen *gen )
 double
 unur_mvtdr_get_hatvol( const struct unur_gen *gen )
 {
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
-  _unur_check_gen_object( gen, MVTDR, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
+  _unur_check_gen_object( gen, MVTDR, UNUR_INFINITY );
   return GEN->Htot;
 } 
 int

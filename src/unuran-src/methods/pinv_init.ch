@@ -60,8 +60,8 @@ _unur_pinv_create( struct unur_par *par )
   GEN->max_ivs = PAR->max_ivs;           
   GEN->bleft = GEN->bleft_par;
   GEN->bright = GEN->bright_par;
-  GEN->dleft = -INFINITY;
-  GEN->dright = INFINITY;
+  GEN->dleft = -UNUR_INFINITY;
+  GEN->dright = UNUR_INFINITY;
   GEN->Umax = 1.;
   GEN->iv = NULL;
   GEN->n_ivs = -1;        
@@ -219,7 +219,7 @@ _unur_pinv_eval_PDF (double x, struct unur_gen *gen)
     }
     else
       fx = (DISTR.pdf)(x,distr);
-    if (fx >= INFINITY) {
+    if (fx >= UNUR_INFINITY) {
       dx = 2.*fabs(x)*DBL_EPSILON;
       dx = _unur_max(dx,2.*DBL_MIN);
       x += ((x - GEN->bleft) < (GEN->bright - x)) ? dx : -dx; 

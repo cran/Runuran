@@ -169,7 +169,7 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
 
   /* slot 'data' should not be pesent */
   sexp_data = GET_SLOT(sexp_unur, install("data"));
-  if (TYPEOF(sexp_data)!=NILSXP) {
+  if (! isNull(sexp_data)) {
     Rprintf("Object is PACKED !\n\n");
     return R_NilValue;
   }
@@ -177,11 +177,11 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
   /* Extract pointer to UNU.RAN generator */
   sexp_gen = GET_SLOT(sexp_unur, install("unur"));
   CHECK_UNUR_PTR(sexp_gen);
-  gen = R_ExternalPtrAddr(sexp_gen);
-  if (gen == NULL) {
-    errorcall_return(R_NilValue,"[UNU.RAN - error] broken UNU.RAN object");
+  if (isNull(sexp_gen) || 
+      ((gen=R_ExternalPtrAddr(sexp_gen)) == NULL) ) {
+    warningcall_immediate(R_NilValue,"[UNU.RAN - warning] empty UNU.RAN object");
+    return R_NilValue;
   }
-
 
   /* we use macros to get an overview of used keywords and */
   /* to minimize the risk of typos.                        */

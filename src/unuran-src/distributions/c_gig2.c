@@ -39,7 +39,7 @@ _unur_logpdf_gig2(double x, const UNUR_DISTR *distr)
 { 
   register const double *params = DISTR.params;
   if (x <= 0.)
-    return -INFINITY;
+    return -UNUR_INFINITY;
   return ( (theta-1.) * log(x) - 0.5 * (chi/x + psi*x) + log(NORMCONSTANT) );
 } 
 double
@@ -127,8 +127,8 @@ _unur_set_params_gig2( UNUR_DISTR *distr, const double *params, int n_params )
   DISTR.chi = chi;
   DISTR.n_params = n_params;
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
-    DISTR.domain[0] = 0.;          
-    DISTR.domain[1] = INFINITY;    
+    DISTR.domain[0] = 0.;             
+    DISTR.domain[1] = UNUR_INFINITY;  
   }
   return UNUR_SUCCESS;
 } 
@@ -153,7 +153,7 @@ unur_distr_gig2( const double *params, int n_params )
     free(distr);
     return NULL;
   }
-  NORMCONSTANT = _unur_normconstant_gig2(params,n_params);
+  NORMCONSTANT = _unur_normconstant_gig2(DISTR.params,DISTR.n_params);
   _unur_upd_mode_gig2(distr);
   DISTR.set_params = _unur_set_params_gig2;
   DISTR.upd_mode  = _unur_upd_mode_gig2; 

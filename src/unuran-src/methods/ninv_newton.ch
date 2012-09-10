@@ -18,10 +18,10 @@ _unur_ninv_newton( const struct unur_gen *gen, double U )
   int flat_count;     
   double rel_u_resolution; 
   int x_goal, u_goal; 
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_NINV_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_NINV_GEN,UNUR_INFINITY);
   rel_u_resolution = ( (GEN->u_resolution > 0.) ? 
                        (GEN->Umax - GEN->Umin) * GEN->u_resolution :
-                       INFINITY );
+                       UNUR_INFINITY );
   if (GEN->table_on) {
     if ( _unur_FP_same(GEN->CDFmin,GEN->CDFmax) ) {
       i = GEN->table_size/2;

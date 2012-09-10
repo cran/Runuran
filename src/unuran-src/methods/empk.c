@@ -347,7 +347,7 @@ _unur_empk_sample( struct unur_gen *gen )
 { 
   double U,K,X;
   int j;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_EMPK_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_EMPK_GEN,UNUR_INFINITY);
   U = _unur_call_urng(gen->urng) * GEN->n_observ;
   j = (int) (U);
   K = unur_sample_cont( GEN->kerngen );

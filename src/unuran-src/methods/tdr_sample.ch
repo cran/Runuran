@@ -8,15 +8,15 @@ double
 unur_tdr_eval_invcdfhat( const struct unur_gen *gen, double u,
 			 double *hx, double *fx, double *sqx )
 { 
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
   if ( gen->method != UNUR_METH_TDR ) {
     _unur_error(gen->genid,UNUR_ERR_GEN_INVALID,"");
-    return INFINITY; 
+    return UNUR_INFINITY; 
   }
-  COOKIE_CHECK(gen,CK_TDR_GEN,INFINITY);
+  COOKIE_CHECK(gen,CK_TDR_GEN,UNUR_INFINITY);
   if (GEN->iv == NULL) {
     _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"empty generator object");
-    return INFINITY;
+    return UNUR_INFINITY;
   } 
   if ( u<0. || u>1.) {
     _unur_warning(gen->genid,UNUR_ERR_DOMAIN,"argument u not in [0,1]");
@@ -31,6 +31,6 @@ unur_tdr_eval_invcdfhat( const struct unur_gen *gen, double u,
     return _unur_tdr_ps_eval_invcdfhat(gen,u,hx,fx,sqx,NULL);
   default:
     _unur_error(GENTYPE,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
 } 

@@ -17,10 +17,10 @@ _unur_ninv_regula( const struct unur_gen *gen, double u )
   int i;                 
   double min_step_size;  
   double rel_u_resolution; 
-  CHECK_NULL(gen, INFINITY);  COOKIE_CHECK(gen, CK_NINV_GEN, INFINITY);
+  CHECK_NULL(gen, UNUR_INFINITY);  COOKIE_CHECK(gen, CK_NINV_GEN, UNUR_INFINITY);
   rel_u_resolution = ( (GEN->u_resolution > 0.) ? 
 		       (GEN->Umax - GEN->Umin) * GEN->u_resolution :
-		       INFINITY );
+		       UNUR_INFINITY );
   if ( _unur_ninv_bracket( gen, u, &x1, &f1, &x2, &f2 ) 
        != UNUR_SUCCESS )
     return x2;
@@ -84,10 +84,10 @@ _unur_ninv_bisect( const struct unur_gen *gen, double u )
   double f1, f2, fmid;     
   int i;                   
   double rel_u_resolution; 
-  CHECK_NULL(gen, INFINITY);  COOKIE_CHECK(gen, CK_NINV_GEN, INFINITY);
+  CHECK_NULL(gen, UNUR_INFINITY);  COOKIE_CHECK(gen, CK_NINV_GEN, UNUR_INFINITY);
   rel_u_resolution = ( (GEN->u_resolution > 0.) ?
 		       (GEN->Umax - GEN->Umin) * GEN->u_resolution :
-		       INFINITY );
+		       UNUR_INFINITY );
   if ( _unur_ninv_bracket( gen, u, &x1, &f1, &x2, &f2 )
        != UNUR_SUCCESS )
     return x2;

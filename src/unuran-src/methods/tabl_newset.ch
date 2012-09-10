@@ -120,22 +120,22 @@ unur_tabl_set_max_sqhratio( struct unur_par *par, double max_ratio )
 double
 unur_tabl_get_sqhratio( const struct unur_gen *gen )
 {
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
-  _unur_check_gen_object( gen, TABL, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
+  _unur_check_gen_object( gen, TABL, UNUR_INFINITY );
   return (GEN->Asqueeze / GEN->Atotal);
 } 
 double
 unur_tabl_get_hatarea( const struct unur_gen *gen )
 {
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
-  _unur_check_gen_object( gen, TABL, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
+  _unur_check_gen_object( gen, TABL, UNUR_INFINITY );
   return GEN->Atotal;
 } 
 double
 unur_tabl_get_squeezearea( const struct unur_gen *gen )
 {
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
-  _unur_check_gen_object( gen, TABL, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
+  _unur_check_gen_object( gen, TABL, UNUR_INFINITY );
   return GEN->Asqueeze;
 } 
 int
@@ -221,7 +221,7 @@ unur_tabl_set_slopes( struct unur_par *par, const double *slopes, int n_slopes )
     _unur_error(GENTYPE,UNUR_ERR_PAR_SET,"number of slopes <= 0");
     return UNUR_ERR_PAR_SET;
   }
-  lmax = -INFINITY;
+  lmax = -UNUR_INFINITY;
   for( i=0; i<n_slopes; i++ ) {
     rmin = _unur_min(slopes[2*i],slopes[2*i+1]);
     rmax = _unur_max(slopes[2*i],slopes[2*i+1]);
@@ -262,8 +262,8 @@ unur_tabl_set_boundary( struct unur_par *par, double left, double right )
     _unur_warning(GENTYPE,UNUR_ERR_PAR_SET,"domain");
     return UNUR_ERR_PAR_SET;
   }
-  if (left <= -INFINITY || right >= INFINITY) {
-    _unur_warning(GENTYPE,UNUR_ERR_PAR_SET,"domain (+/- INFINITY not allowed)");
+  if (left <= -UNUR_INFINITY || right >= UNUR_INFINITY) {
+    _unur_warning(GENTYPE,UNUR_ERR_PAR_SET,"domain (+/- UNUR_INFINITY not allowed)");
     return UNUR_ERR_PAR_SET;
   }
   PAR->bleft = left;
@@ -355,11 +355,11 @@ _unur_tabl_eval_cdfhat( struct unur_gen *gen, double x )
   struct unur_tabl_interval *iv;
   double Aint = 0.;
   double cdf;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_TABL_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_TABL_GEN,UNUR_INFINITY);
   if (x <= DISTR.domain[0]) return 0.;
   if (x >= DISTR.domain[1]) return 1.;
   for (iv = GEN->iv; iv->next!=NULL; iv=iv->next) {
-    COOKIE_CHECK(iv,CK_TABL_IV,INFINITY); 
+    COOKIE_CHECK(iv,CK_TABL_IV,UNUR_INFINITY); 
     if (x<iv->xmin || x<iv->xmax) break;
     Aint = iv->Acum; 
     if (iv->next == NULL) 

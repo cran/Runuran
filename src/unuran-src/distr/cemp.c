@@ -27,8 +27,8 @@ unur_distr_cemp_new( void )
   DISTR.n_hist    = 0;          
   DISTR.hist_prob = NULL;       
   DISTR.hist_bins = NULL;       
-  DISTR.hmin      = -INFINITY;  
-  DISTR.hmax      = INFINITY;          
+  DISTR.hmin      = -UNUR_INFINITY; 
+  DISTR.hmax      = UNUR_INFINITY;         
   DISTR.hist_bins = NULL;       
   return distr;
 } 

@@ -209,13 +209,15 @@ SEXP _Runuran_distr_tag(void);
 
 /*---------------------------------------------------------------------------*/
 /* Check pointer to R UNU.RAN generator object.                              */
-#ifdef RUNURAN_DEBUG
-#define CHECK_UNUR_PTR(s) do { \
+#define ALLWAYS_CHECK_UNUR_PTR(s) do { \
     if (TYPEOF(s) != EXTPTRSXP || R_ExternalPtrTag(s) != _Runuran_tag()) \
-      error("[UNU.RAN - error] invalid UNU.RAN object");		\
+      error("[UNU.RAN - error] invalid UNU.RAN object");		 \
   } while (0)
+
+#ifdef RUNURAN_DEBUG
+#define CHECK_UNUR_PTR(s) ALLWAYS_CHECK_UNUR_PTR(s)
 #else
-#define CHECK_UNUR_PTR(s)  do {} while(0)
+#define CHECK_UNUR_PTR(s) do {} while(0)
 #endif
 
 /*---------------------------------------------------------------------------*/

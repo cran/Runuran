@@ -296,8 +296,8 @@ unur_ars_set_pedantic( struct unur_par *par, int pedantic )
 double
 unur_ars_get_loghatarea( const struct unur_gen *gen )
 {
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
-  _unur_check_gen_object( gen, ARS, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
+  _unur_check_gen_object( gen, ARS, UNUR_INFINITY );
   return log(GEN->Atotal) + GEN->logAmax;
 } 
 struct unur_gen *
@@ -513,10 +513,10 @@ _unur_ars_sample( struct unur_gen *gen )
   double logfx, logsqx, loghx;      
   double x0, logfx0, dlogfx0, fx0;  
   int n_trials;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_ARS_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_ARS_GEN,UNUR_INFINITY);
   if (GEN->iv == NULL) {
     _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"empty generator object");
-    return INFINITY;
+    return UNUR_INFINITY;
   } 
   for (n_trials=0; n_trials<GEN->max_iter; ++n_trials) {
     U = _unur_call_urng(gen->urng);
@@ -578,10 +578,10 @@ _unur_ars_sample_check( struct unur_gen *gen )
   double logfx, logsqx, loghx;      
   double x0, logfx0, dlogfx0, fx0;  
   int n_trials;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_ARS_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_ARS_GEN,UNUR_INFINITY);
   if (GEN->iv == NULL) {
     _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"empty generator object");
-    return INFINITY;
+    return UNUR_INFINITY;
   } 
   for (n_trials=0; n_trials<GEN->max_iter; ++n_trials) {
     U = _unur_call_urng(gen->urng);
@@ -649,18 +649,18 @@ unur_ars_eval_invcdfhat( const struct unur_gen *gen, double U )
   struct unur_ars_interval *iv, *cp;
   double X;                         
   double x0, logfx0, dlogfx0, fx0;  
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
   if ( gen->method != UNUR_METH_ARS ) {
     _unur_error(gen->genid,UNUR_ERR_GEN_INVALID,"");
-    return INFINITY; 
+    return UNUR_INFINITY; 
   }
-  COOKIE_CHECK(gen,CK_ARS_GEN,INFINITY);
+  COOKIE_CHECK(gen,CK_ARS_GEN,UNUR_INFINITY);
   if ( U<0. || U>1.) {
     _unur_warning(gen->genid,UNUR_ERR_DOMAIN,"argument u not in [0,1]");
   }
   if (GEN->iv == NULL) {
     _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"empty generator object");
-    return INFINITY;
+    return UNUR_INFINITY;
   } 
   if (U<=0.) return DISTR.domain[0];
   if (U>=1.) return DISTR.domain[1];
@@ -730,7 +730,7 @@ _unur_ars_starting_cpoints( struct unur_gen *gen )
     diff_angle = angle = 0.;   
   x = DISTR.BD_LEFT;
   is_increasing = TRUE;
-  logfx = logfx_last = _unur_isfinite(x) ? logPDF(x) : -INFINITY;
+  logfx = logfx_last = _unur_isfinite(x) ? logPDF(x) : -UNUR_INFINITY;
   iv = GEN->iv = _unur_ars_interval_new( gen, x, logfx );
   if (iv == NULL) return UNUR_ERR_GEN_DATA;  
   for( i=0; i<=GEN->n_starting_cpoints; i++ ) {
@@ -750,7 +750,7 @@ _unur_ars_starting_cpoints( struct unur_gen *gen )
     else {
       x = DISTR.BD_RIGHT;
     }
-    logfx = _unur_isfinite(x) ? logPDF(x) : -INFINITY;
+    logfx = _unur_isfinite(x) ? logPDF(x) : -UNUR_INFINITY;
     if (!is_increasing && logfx > logfx_last * (1.+DBL_EPSILON)) {
       _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"PDF not unimodal!");
       return UNUR_ERR_GEN_CONDITION;
@@ -772,9 +772,9 @@ _unur_ars_starting_cpoints( struct unur_gen *gen )
       is_increasing = FALSE;
     logfx_last = logfx;
   }
-  iv->logAhat = -INFINITY;
+  iv->logAhat = -UNUR_INFINITY;
   iv->Ahatr_fract = iv->sq = 0.;
-  iv->Acum = INFINITY;
+  iv->Acum = UNUR_INFINITY;
 #ifdef DEBUG_STORE_IP 
   iv->ip = iv->x;
 #endif
@@ -802,9 +802,9 @@ _unur_ars_starting_intervals( struct unur_gen *gen )
       free(iv_tmp);
       --(GEN->n_ivs);
       if (iv->next==NULL) {
-	iv->logAhat = -INFINITY;
+	iv->logAhat = -UNUR_INFINITY;
 	iv->Ahatr_fract = iv->sq = 0.;
-	iv->Acum = INFINITY;
+	iv->Acum = UNUR_INFINITY;
       }
       continue;
     default:     
@@ -849,7 +849,7 @@ _unur_ars_interval_new( struct unur_gen *gen, double x, double logfx )
 {
   struct unur_ars_interval *iv;
   CHECK_NULL(gen,NULL);  COOKIE_CHECK(gen,CK_ARS_GEN,NULL);
-  if (!(logfx < INFINITY)) {
+  if (!(logfx < UNUR_INFINITY)) {
     _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"logPDF(x) overflow");
     return NULL;
   }
@@ -857,7 +857,7 @@ _unur_ars_interval_new( struct unur_gen *gen, double x, double logfx )
   iv->next = NULL; 
   ++(GEN->n_ivs);   
   COOKIE_SET(iv,CK_ARS_IV);
-  iv->logAhat = -INFINITY;
+  iv->logAhat = -UNUR_INFINITY;
   iv->Acum = iv->Ahatr_fract = 0.;
   iv->sq = 0.;
 #ifdef DEBUG_STORE_IP 
@@ -865,9 +865,9 @@ _unur_ars_interval_new( struct unur_gen *gen, double x, double logfx )
 #endif
   iv->x = x;              
   iv->logfx = logfx;      
-  iv->dlogfx = _unur_isfinite(logfx) ? dlogPDF(x) : INFINITY;
-  if ( !(iv->dlogfx > -INFINITY))
-    iv->dlogfx = INFINITY;
+  iv->dlogfx = _unur_isfinite(logfx) ? dlogPDF(x) : UNUR_INFINITY;
+  if ( !(iv->dlogfx > -UNUR_INFINITY))
+    iv->dlogfx = UNUR_INFINITY;
   return iv;
 } 
 int
@@ -889,17 +889,17 @@ _unur_ars_interval_parameter( struct unur_gen *gen, struct unur_ars_interval *iv
     iv->sq = (iv->next->logfx - iv->logfx) / (iv->next->x - iv->x);
     if ( ( (iv->sq > iv->dlogfx      && (!_unur_FP_approx(iv->sq,iv->dlogfx)) ) ||
 	   (iv->sq < iv->next->dlogfx && (!_unur_FP_approx(iv->sq,iv->next->dlogfx)) ) )
-	 && iv->next->dlogfx < INFINITY ) {   
+	 && iv->next->dlogfx < UNUR_INFINITY ) {   
       _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"Squeeze too steep/flat. PDF not T-concave!");
       return UNUR_ERR_GEN_CONDITION;
     }
   }
   else {  
-    iv->sq = -INFINITY;
+    iv->sq = -UNUR_INFINITY;
   }
   logAhatl = _unur_ars_interval_logarea( gen, iv, iv->dlogfx, ip);
   logAhatr = _unur_ars_interval_logarea( gen, iv->next, iv->next->dlogfx, ip);
-  if (! (logAhatl < INFINITY && logAhatr < INFINITY) )
+  if (! (logAhatl < UNUR_INFINITY && logAhatr < UNUR_INFINITY) )
     return UNUR_ERR_INF;
   iv->logAhat = (logAhatl > logAhatr) 
     ? logAhatl+log(1+exp(logAhatr-logAhatl)) 
@@ -989,12 +989,12 @@ _unur_ars_tangent_intersection_point( struct unur_gen *gen, struct unur_ars_inte
   if ( _unur_FP_less( iv->dlogfx, iv->next->dlogfx ) ) {
     if ( fabs(iv->dlogfx) < DBL_EPSILON * fabs(iv->next->dlogfx) ) {
       *ipt = iv->x;        
-      iv->dlogfx = INFINITY;
+      iv->dlogfx = UNUR_INFINITY;
       return UNUR_SUCCESS;
     }
     else if ( fabs(iv->next->dlogfx) < DBL_EPSILON * fabs(iv->dlogfx) ) {
       *ipt = iv->next->x;   
-      iv->next->dlogfx = INFINITY;
+      iv->next->dlogfx = UNUR_INFINITY;
       return UNUR_SUCCESS;
     }
     else {
@@ -1023,20 +1023,20 @@ _unur_ars_interval_logarea( struct unur_gen *gen ATTRIBUTE__UNUSED,
   double x0, logfx0;
   double logxdiff;
   double t, logt;
-  CHECK_NULL(iv,INFINITY);   COOKIE_CHECK(iv,CK_ARS_IV,INFINITY); 
+  CHECK_NULL(iv,UNUR_INFINITY);   COOKIE_CHECK(iv,CK_ARS_IV,UNUR_INFINITY); 
   if (_unur_FP_same(x, iv->x))
-    return -INFINITY;
+    return -UNUR_INFINITY;
   if (!_unur_isfinite(iv->x)) 
-    return INFINITY;
+    return UNUR_INFINITY;
   if ( !_unur_isfinite(slope)    ||
        (_unur_FP_is_minus_infinity(x) && slope<=0.) ||
-       (_unur_FP_is_infinity(x)       && slope>=0.)  )   
-    return INFINITY;
+       (_unur_FP_is_infinity(x)       && slope>=0.)  ) 
+    return UNUR_INFINITY;
   x0 = iv->x;
   logfx0 = iv->logfx;
   logxdiff = log(fabs(x - x0));
   if (_unur_iszero(slope))
-    return (_unur_isfinite(x) ? logfx0 + logxdiff : INFINITY);
+    return (_unur_isfinite(x) ? logfx0 + logxdiff : UNUR_INFINITY);
   if (!_unur_isfinite(x))
     return (logfx0 - log(fabs(slope)));
   t = slope * (x - x0);
@@ -1056,7 +1056,7 @@ _unur_ars_make_area_table( struct unur_gen *gen )
   struct unur_ars_interval *iv;
   double Acum;
   CHECK_NULL(gen,UNUR_ERR_NULL);  COOKIE_CHECK(gen,CK_ARS_GEN,UNUR_ERR_COOKIE);
-  GEN->logAmax = -INFINITY;
+  GEN->logAmax = -UNUR_INFINITY;
   for (iv = GEN->iv; iv != NULL; iv = iv->next ) {
     COOKIE_CHECK(iv,CK_ARS_IV,UNUR_ERR_COOKIE);
     if (GEN->logAmax < iv->logAhat)

@@ -185,15 +185,17 @@ Runuran_sample (SEXP sexp_unur, SEXP sexp_n)
 
   /* Extract pointer to UNU.RAN generator */
   sexp_gen = GET_SLOT(sexp_unur, install("unur"));
-  CHECK_UNUR_PTR(sexp_gen);
-  gen = R_ExternalPtrAddr(sexp_gen);
-  if (gen != NULL) {
-    return _Runuran_sample_unur(gen,n);
+  if (! isNull(sexp_gen)) {
+    CHECK_UNUR_PTR(sexp_gen);
+    gen = R_ExternalPtrAddr(sexp_gen);
+    if (gen != NULL) {
+      return _Runuran_sample_unur(gen,n);
+    }
   }
 
   /* Extract data list */
   sexp_data = GET_SLOT(sexp_unur, install("data"));
-  if (TYPEOF(sexp_data)!=NILSXP) {
+  if (! isNull(sexp_data)) {
     return _Runuran_sample_data(sexp_data,n);
   }
 
@@ -347,15 +349,17 @@ Runuran_quantile (SEXP sexp_unur, SEXP sexp_U)
 
   /* Extract pointer to UNU.RAN generator */
   sexp_gen = GET_SLOT(sexp_unur, install("unur"));
-  CHECK_UNUR_PTR(sexp_gen);
-  gen = R_ExternalPtrAddr(sexp_gen);
-  if (gen != NULL) {
-    return _Runuran_quantile_unur(gen,sexp_U);
+  if (! isNull(sexp_gen)) {
+    CHECK_UNUR_PTR(sexp_gen);
+    gen = R_ExternalPtrAddr(sexp_gen);
+    if (gen != NULL) {
+      return _Runuran_quantile_unur(gen,sexp_U);
+    }
   }
 
   /* Extract data list */
   sexp_data = GET_SLOT(sexp_unur, install("data"));
-  if (TYPEOF(sexp_data)!=NILSXP) {
+  if (! isNull(sexp_data)) {
     return _Runuran_quantile_data(sexp_data,sexp_U,sexp_unur);
   }
 
@@ -477,16 +481,26 @@ Runuran_PDF (SEXP sexp_obj, SEXP sexp_x, SEXP sexp_islog)
   else if (!strcmp(class,"unuran")) {
     /* generator object */
     sexp_gen = GET_SLOT(sexp_obj, install("unur"));
-    CHECK_UNUR_PTR(sexp_gen);
-    gen = R_ExternalPtrAddr(sexp_gen);
-    if (gen==NULL) {
-      /* the generator object is packed */
-      error("[UNU.RAN - error] cannot compute PDF for packed UNU.RAN object");
+    if (! isNull(sexp_gen)) {
+      CHECK_UNUR_PTR(sexp_gen);
+      gen = R_ExternalPtrAddr(sexp_gen);
+      if (gen!=NULL) {
+	distr = unur_get_distr(gen);
+      }
     }
-    distr = unur_get_distr(gen);
+    if (distr==NULL) {
+      SEXP sexp_data = GET_SLOT(sexp_obj, install("data"));
+      if (! isNull(sexp_data)) {
+	/* the generator object is packed */
+	error("[UNU.RAN - error] cannot compute PDF for packed UNU.RAN object");
+      }
+      else {
+	error("[UNU.RAN - error] broken UNU.RAN object");
+      }
+    }
   }
   else {
-    error("[UNU.RAN - error] invalid UNU.RAN object");
+    error("[UNU.RAN - error] broken UNU.RAN object");
   }
 
   /* extract x */
@@ -597,16 +611,26 @@ Runuran_CDF (SEXP sexp_obj, SEXP sexp_x)
   else if (!strcmp(class,"unuran")) {
     /* generator object */
     sexp_gen = GET_SLOT(sexp_obj, install("unur"));
-    CHECK_UNUR_PTR(sexp_gen);
-    gen = R_ExternalPtrAddr(sexp_gen);
-    if (gen==NULL) {
-      /* the generator object is packed */
-      error("[UNU.RAN - error] cannot compute CDF for packed UNU.RAN object");
+    if (! isNull(sexp_gen)) {
+      CHECK_UNUR_PTR(sexp_gen);
+      gen = R_ExternalPtrAddr(sexp_gen);
+      if (gen!=NULL) {
+	distr = unur_get_distr(gen);
+      }
     }
-    distr = unur_get_distr(gen);
+    if (distr==NULL) {
+      SEXP sexp_data = GET_SLOT(sexp_obj, install("data"));
+      if (! isNull(sexp_data)) {
+	/* the generator object is packed */
+	error("[UNU.RAN - error] cannot compute CDF for packed UNU.RAN object");
+      }
+      else {
+	error("[UNU.RAN - error] broken UNU.RAN object");
+      }
+    }
   }
   else {
-    error("[UNU.RAN - error] invalid UNU.RAN object");
+    error("[UNU.RAN - error] broken UNU.RAN object");
   }
 
   /* check objects */
@@ -695,14 +719,20 @@ Runuran_print (SEXP sexp_unur, SEXP sexp_help)
 
   /* Extract data list */
   sexp_data = GET_SLOT(sexp_unur, install("data"));
-  if (TYPEOF(sexp_data)!=NILSXP) {
+  if (! isNull(sexp_data)) {
     Rprintf("Object is PACKED !\n\n");
     return R_NilValue;
   }
 
-  /* Extract pointer to UNU.RAN generator */
+  /* Extract slot for UNU.RAN generator */
   sexp_gen = GET_SLOT(sexp_unur, install("unur"));
-  CHECK_UNUR_PTR(sexp_gen);
+  if (isNull(sexp_gen)) {
+    warningcall_immediate(R_NilValue,"[UNU.RAN - warning] empty UNU.RAN object");
+    return R_NilValue;
+  }
+  ALLWAYS_CHECK_UNUR_PTR(sexp_gen);
+
+  /* Extract pointer to UNU.RAN generator */
   gen = R_ExternalPtrAddr(sexp_gen);
   if (gen == NULL) {
     errorcall_return(R_NilValue,"[UNU.RAN - error] broken UNU.RAN object");
@@ -800,15 +830,15 @@ Runuran_pack (SEXP sexp_unur)
 
   /* Extract data list */
   sexp_data = GET_SLOT(sexp_unur, install("data"));
-  if (TYPEOF(sexp_data)!=NILSXP) {
+  if (! isNull(sexp_data)) {
     errorcall_return(R_NilValue,"[UNU.RAN - error] object already packed");
   }
 
   /* Extract pointer to UNU.RAN generator */
   sexp_gen = GET_SLOT(sexp_unur, install("unur"));
   CHECK_UNUR_PTR(sexp_gen);
-  gen = R_ExternalPtrAddr(sexp_gen);
-  if (gen == NULL) {
+  if (isNull(sexp_gen) || 
+      ((gen=R_ExternalPtrAddr(sexp_gen)) == NULL) ) {
     errorcall_return(R_NilValue,"[UNU.RAN - error] broken UNU.RAN object");
   }
 

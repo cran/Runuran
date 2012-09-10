@@ -334,7 +334,7 @@ double
 _unur_srou_sample( struct unur_gen *gen )
 { 
   double U,V,X,x,xx;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_SROU_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_SROU_GEN,UNUR_INFINITY);
   while (1) {
     while ( _unur_iszero(U = _unur_call_urng(gen->urng)) );
     U *= GEN->um;
@@ -359,7 +359,7 @@ double
 _unur_srou_sample_mirror( struct unur_gen *gen )
 { 
   double U,V,X,x,fx,fnx,uu;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_SROU_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_SROU_GEN,UNUR_INFINITY);
   while (1) {
     while ( _unur_iszero(U = _unur_call_urng(gen->urng)) );
     U *= GEN->um * SQRT2;
@@ -380,7 +380,7 @@ double
 _unur_srou_sample_check( struct unur_gen *gen )
 { 
   double U,uu,V,X,x,nx,fx,sfx,fnx,xfx,xfnx,xx;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_SROU_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_SROU_GEN,UNUR_INFINITY);
   if (gen->variant & SROU_VARFLAG_MIRROR) {
     while (1) {
       while ( _unur_iszero(U = _unur_call_urng(gen->urng)) );
@@ -443,7 +443,7 @@ double
 _unur_gsrou_sample( struct unur_gen *gen )
 { 
   double U,Ur,V,W,X,Z;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_SROU_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_SROU_GEN,UNUR_INFINITY);
   while (1) {
     W = GEN->log_ab *_unur_call_urng(gen->urng);
     Z = GEN->vl + _unur_call_urng(gen->urng) * (GEN->vr - GEN->vl);
@@ -463,7 +463,7 @@ _unur_gsrou_sample_check( struct unur_gen *gen )
 { 
   double U,Ur,V,W,X,x,Z;
   double fx,uf,vf,vhl,vhr;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_SROU_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_SROU_GEN,UNUR_INFINITY);
   while (1) {
     W = GEN->log_ab *_unur_call_urng(gen->urng);
     Z = GEN->vl + _unur_call_urng(gen->urng) * (GEN->vr - GEN->vl);

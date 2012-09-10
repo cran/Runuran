@@ -34,8 +34,8 @@ double
 _unur_stdgen_sample_student_tpol( struct unur_gen *gen )
 {
   double u,v,w;
-  CHECK_NULL(gen,INFINITY);
-  COOKIE_CHECK(gen,CK_CSTD_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);
+  COOKIE_CHECK(gen,CK_CSTD_GEN,UNUR_INFINITY);
   do {
     u = 2. * uniform() - 1.;
     v = 2. * uniform() - 1.;
@@ -75,8 +75,8 @@ double
 _unur_stdgen_sample_student_trouo( struct unur_gen *gen )
 {
   double tru,u,v;
-  CHECK_NULL(gen,INFINITY);
-  COOKIE_CHECK(gen,CK_CSTD_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);
+  COOKIE_CHECK(gen,CK_CSTD_GEN,UNUR_INFINITY);
   while (1) {
     u = uniform();
     v = uniform();

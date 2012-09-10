@@ -23,12 +23,12 @@ double
 unur_ninv_eval_approxinvcdf( const struct unur_gen *gen, double u )
 { 
   double x;
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
   if ( gen->method != UNUR_METH_NINV ) {
     _unur_error(gen->genid,UNUR_ERR_GEN_INVALID,"");
-    return INFINITY; 
+    return UNUR_INFINITY; 
   }
-  COOKIE_CHECK(gen,CK_NINV_GEN,INFINITY);
+  COOKIE_CHECK(gen,CK_NINV_GEN,UNUR_INFINITY);
   if ( ! (u>0. && u<1.)) {
     if ( ! (u>=0. && u<=1.)) {
       _unur_warning(gen->genid,UNUR_ERR_DOMAIN,"U not in [0,1]");

@@ -192,22 +192,22 @@ unur_tdr_set_max_sqhratio( struct unur_par *par, double max_ratio )
 double
 unur_tdr_get_sqhratio( const struct unur_gen *gen )
 {
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
-  _unur_check_gen_object( gen, TDR, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
+  _unur_check_gen_object( gen, TDR, UNUR_INFINITY );
   return (GEN->Asqueeze / GEN->Atotal);
 } 
 double
 unur_tdr_get_hatarea( const struct unur_gen *gen )
 {
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
-  _unur_check_gen_object( gen, TDR, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
+  _unur_check_gen_object( gen, TDR, UNUR_INFINITY );
   return GEN->Atotal;
 } 
 double
 unur_tdr_get_squeezearea( const struct unur_gen *gen )
 {
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
-  _unur_check_gen_object( gen, TDR, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
+  _unur_check_gen_object( gen, TDR, UNUR_INFINITY );
   return GEN->Asqueeze;
 } 
 int
@@ -402,13 +402,13 @@ _unur_tdr_eval_cdfhat( struct unur_gen *gen, double x )
   struct unur_tdr_interval *iv;
   double Aint;
   double cdf;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,UNUR_INFINITY);
   if (x <= DISTR.domain[0]) return 0.;
   if (x >= DISTR.domain[1]) return 1.;
   switch (gen->variant & TDR_VARMASK_VARIANT) {
   case TDR_VARIANT_GW:    
     for (iv = GEN->iv; iv->next!=NULL; iv=iv->next) {
-      COOKIE_CHECK(iv,CK_TDR_IV,INFINITY); 
+      COOKIE_CHECK(iv,CK_TDR_IV,UNUR_INFINITY); 
       if (x < iv->next->x) break;
     }
     if (iv->next == NULL)
@@ -433,7 +433,7 @@ _unur_tdr_eval_cdfhat( struct unur_gen *gen, double x )
   case TDR_VARIANT_IA:    
   case TDR_VARIANT_PS:    
     for (iv = GEN->iv; iv->next!=NULL; iv=iv->next) {
-      COOKIE_CHECK(iv,CK_TDR_IV,INFINITY); 
+      COOKIE_CHECK(iv,CK_TDR_IV,UNUR_INFINITY); 
       if (x <= iv->next->ip) break;
     }
     if (iv->next == NULL)
@@ -448,6 +448,6 @@ _unur_tdr_eval_cdfhat( struct unur_gen *gen, double x )
     return ((cdf > 1.) ? 1. : cdf);
   default:
     _unur_error(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
 } 

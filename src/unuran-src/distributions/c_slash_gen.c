@@ -45,8 +45,8 @@ slash_slash_init( struct unur_gen *gen )
 double
 _unur_stdgen_sample_slash_slash( struct unur_gen *gen )
 {
-  CHECK_NULL(gen,INFINITY);
-  COOKIE_CHECK(gen,CK_CSTD_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);
+  COOKIE_CHECK(gen,CK_CSTD_GEN,UNUR_INFINITY);
   return (_unur_sample_cont(NORMAL) / uniform());
 } 
 #undef NORMAL

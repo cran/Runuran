@@ -929,11 +929,7 @@ enum {
 #define MATH_H_SEEN
 #include <math.h>
 #ifndef INFINITY
-#  ifdef HUGE_VAL
-#    define INFINITY  (HUGE_VAL)
-#  else
 extern const double INFINITY;
-#  endif
 #endif
 #define UNUR_INFINITY  (INFINITY)
 #ifndef TRUE

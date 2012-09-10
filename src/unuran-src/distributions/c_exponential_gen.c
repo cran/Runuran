@@ -28,8 +28,8 @@ _unur_stdgen_exponential_init( struct unur_par *par, struct unur_gen *gen )
 double _unur_stdgen_sample_exponential_inv( struct unur_gen *gen )
 {
   double U,X;
-  CHECK_NULL(gen,INFINITY);
-  COOKIE_CHECK(gen,CK_CSTD_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);
+  COOKIE_CHECK(gen,CK_CSTD_GEN,UNUR_INFINITY);
   U = GEN->Umin + uniform() * (GEN->Umax-GEN->Umin);
   X = - log( 1. - U );
   return ((DISTR.n_params==0) ? X : theta + sigma * X);

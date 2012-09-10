@@ -63,7 +63,7 @@ unur_sample_discr( struct unur_gen *gen )
 double
 unur_sample_cont( struct unur_gen *gen )
 {
-  CHECK_NULL(gen,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);
   return (gen->sample.cont(gen));
 } 
 int
@@ -135,14 +135,14 @@ double
 _unur_sample_cont_error( struct unur_gen *gen ATTRIBUTE__UNUSED )
 {
   unur_errno = UNUR_ERR_GEN_CONDITION;
-  return INFINITY;
+  return UNUR_INFINITY;
 } 
 int
 _unur_sample_cvec_error( struct unur_gen *gen, double *vec )
 { 
   int d;
   unur_errno = UNUR_ERR_GEN_CONDITION;
-  for (d=0; d<(gen->distr->dim); d++) vec[d] = INFINITY;
+  for (d=0; d<(gen->distr->dim); d++) vec[d] = UNUR_INFINITY;
   return UNUR_FAILURE;
 } 
 int
@@ -153,7 +153,7 @@ _unur_sample_matr_error( struct unur_gen *gen, double *mat )
   unur_distr_matr_get_dim(gen->distr, &n_rows, &n_cols );
   dim = n_rows * n_cols;
   for (j=0; j<dim; j++)
-    mat[j] = INFINITY;
+    mat[j] = UNUR_INFINITY;
   return UNUR_FAILURE;
 } 
 void

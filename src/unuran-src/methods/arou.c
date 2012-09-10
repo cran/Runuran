@@ -174,22 +174,22 @@ unur_arou_set_max_sqhratio( struct unur_par *par, double max_ratio )
 double
 unur_arou_get_sqhratio( const struct unur_gen *gen )
 {
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
-  _unur_check_gen_object( gen, AROU, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
+  _unur_check_gen_object( gen, AROU, UNUR_INFINITY );
   return (GEN->Asqueeze / GEN->Atotal);
 } 
 double
 unur_arou_get_hatarea( const struct unur_gen *gen )
 {
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
-  _unur_check_gen_object( gen, AROU, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
+  _unur_check_gen_object( gen, AROU, UNUR_INFINITY );
   return GEN->Atotal;
 } 
 double
 unur_arou_get_squeezearea( const struct unur_gen *gen )
 {
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
-  _unur_check_gen_object( gen, AROU, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
+  _unur_check_gen_object( gen, AROU, UNUR_INFINITY );
   return GEN->Asqueeze;
 } 
 int
@@ -418,7 +418,7 @@ _unur_arou_sample( struct unur_gen *gen )
   struct unur_arou_segment *seg;
   int result_split;
   double R,R1,R2,R3,tmp,x,fx,u;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_AROU_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_AROU_GEN,UNUR_INFINITY);
   urng = gen->urng;
   while (1) {
     R = _unur_call_urng(urng);
@@ -427,7 +427,7 @@ _unur_arou_sample( struct unur_gen *gen )
     while (seg->Acum < R) {
       seg = seg->next;
     }
-    COOKIE_CHECK(seg,CK_AROU_SEG,INFINITY);
+    COOKIE_CHECK(seg,CK_AROU_SEG,UNUR_INFINITY);
     R = seg->Acum - R;
     if (R < seg->Ain) {
       return( ( seg->Ain * seg->rtp[0] + R * (seg->ltp[0] - seg->rtp[0]) ) /
@@ -450,7 +450,7 @@ _unur_arou_sample( struct unur_gen *gen )
 	    _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"");
 	    if (gen->variant & AROU_VARFLAG_PEDANTIC) {
 	      SAMPLE = _unur_sample_cont_error;
-	      return INFINITY;
+	      return UNUR_INFINITY;
 	    }
 	  }
 	  else {
@@ -472,7 +472,7 @@ _unur_arou_sample_check( struct unur_gen *gen )
   struct unur_arou_segment *seg;
   int result_split;
   double R,R1,R2,R3,tmp,x,fx,u,sqx,a;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_AROU_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_AROU_GEN,UNUR_INFINITY);
   urng = gen->urng;
   while (1) {
     R = _unur_call_urng(urng);
@@ -481,7 +481,7 @@ _unur_arou_sample_check( struct unur_gen *gen )
     while (seg->Acum < R) {
       seg = seg->next;
     }
-    COOKIE_CHECK(seg,CK_AROU_SEG,INFINITY);
+    COOKIE_CHECK(seg,CK_AROU_SEG,UNUR_INFINITY);
     R = seg->Acum - R;
     if (R < seg->Ain) {
       x = ( ( seg->Ain * seg->rtp[0] + R * (seg->ltp[0] - seg->rtp[0]) ) /
@@ -516,7 +516,7 @@ _unur_arou_sample_check( struct unur_gen *gen )
 	    _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"");
 	    if (gen->variant & AROU_VARFLAG_PEDANTIC) {
 	      SAMPLE = _unur_sample_cont_error;
-	      return INFINITY;
+	      return UNUR_INFINITY;
 	    }
 	  }
 	  else {
@@ -543,15 +543,15 @@ _unur_arou_get_starting_cpoints( struct unur_par *par, struct unur_gen *gen )
   use_center = (gen->variant & AROU_VARFLAG_USECENTER) ? TRUE : FALSE;
   GEN->n_segs = 0;
   if (!PAR->starting_cpoints) {
-    left_angle =  ( DISTR.BD_LEFT  <= -INFINITY ) ? -M_PI/2. : atan(DISTR.BD_LEFT  - GEN->center);  
-    right_angle = ( DISTR.BD_RIGHT >= INFINITY )  ? M_PI/2.  : atan(DISTR.BD_RIGHT - GEN->center);
+    left_angle =  ( DISTR.BD_LEFT  <= -UNUR_INFINITY ) ? -M_PI/2. : atan(DISTR.BD_LEFT  - GEN->center);  
+    right_angle = ( DISTR.BD_RIGHT >= UNUR_INFINITY )  ? M_PI/2.  : atan(DISTR.BD_RIGHT - GEN->center);
     diff_angle = (right_angle-left_angle) / (PAR->n_starting_cpoints + 1);
     angle = left_angle;
   }
   else
     diff_angle = angle = 0.;   
   x = x_last = DISTR.BD_LEFT;
-  fx = fx_last = (x <= -INFINITY) ? 0. : PDF(x);
+  fx = fx_last = (x <= -UNUR_INFINITY) ? 0. : PDF(x);
   seg = GEN->seg = _unur_arou_segment_new( gen, x, fx );
   if (seg == NULL) return UNUR_ERR_GEN_CONDITION;  
   is_increasing = 1; 
@@ -585,7 +585,7 @@ _unur_arou_get_starting_cpoints( struct unur_par *par, struct unur_gen *gen )
 	  angle -= diff_angle; 
       }
     }
-    fx = (x >= INFINITY) ? 0. : PDF(x);
+    fx = (x >= UNUR_INFINITY) ? 0. : PDF(x);
     if (!is_increasing && fx > fx_last) {
       _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"PDF not unimodal");
       return UNUR_ERR_GEN_CONDITION;
@@ -617,7 +617,7 @@ _unur_arou_get_starting_cpoints( struct unur_par *par, struct unur_gen *gen )
     fx_last = fx;
   }
   seg->Ain = seg->Aout = 0.;
-  seg->Acum = INFINITY;
+  seg->Acum = UNUR_INFINITY;
   seg->next = NULL;         
   --(GEN->n_segs);           
   return UNUR_SUCCESS;
@@ -646,7 +646,7 @@ _unur_arou_get_starting_segments( struct unur_gen *gen )
       }
       else { 
 	seg->Ain = seg->Aout = 0.;
-	seg->Acum = INFINITY;
+	seg->Acum = UNUR_INFINITY;
       }
       continue;
     case UNUR_ERR_INF:    
@@ -702,7 +702,7 @@ _unur_arou_segment_new( struct unur_gen *gen, double x, double fx )
   if ( _unur_iszero(fx) ) {
     seg->ltp[0] = 0.;   
     seg->ltp[1] = 0.;
-    if (x <= -INFINITY || x >= INFINITY ) {
+    if (x <= -UNUR_INFINITY || x >= UNUR_INFINITY ) {
       seg->dltp[0] = 0.;   
       seg->dltp[1] = 1.;   
       seg->dltp[2] = 0.;   
@@ -719,7 +719,7 @@ _unur_arou_segment_new( struct unur_gen *gen, double x, double fx )
   seg->ltp[0] = v;
   seg->ltp[1] = u; 
   dfx = dPDF(x);
-  if ( dfx > -INFINITY && dfx < INFINITY ) {
+  if ( dfx > -UNUR_INFINITY && dfx < UNUR_INFINITY ) {
     seg->dltp[0] = -dfx / u;                 
     seg->dltp[1] = 2 * u + dfx * x / u;      
     seg->dltp[2] = seg->dltp[0] * v + seg->dltp[1] * u;
@@ -760,7 +760,7 @@ _unur_arou_segment_parameter( struct unur_gen *gen, struct unur_arou_segment *se
 		    + fabs(seg->dltp[2] - seg->drtp[2]) );
   if (!_unur_iszero(coeff_det) && !_unur_iszero(diff_tangents)) {
     if ( fabs(cramer_det[0]) > det_bound || fabs(cramer_det[1]) > det_bound ) {
-      seg->Aout = INFINITY;
+      seg->Aout = UNUR_INFINITY;
       return UNUR_ERR_INF;
     }
     seg->mid[0] = cramer_det[0] / coeff_det;
@@ -768,7 +768,7 @@ _unur_arou_segment_parameter( struct unur_gen *gen, struct unur_arou_segment *se
     seg->Aout = ( (seg->ltp[0] - seg->mid[0]) * (seg->rtp[1] - seg->mid[1])
 		  - (seg->ltp[1] - seg->mid[1]) * (seg->rtp[0] - seg->mid[0])) / 2.;
     if( seg->mid[1] < 0. ) {
-      seg->Aout = INFINITY;
+      seg->Aout = UNUR_INFINITY;
       return UNUR_ERR_INF;
     }
     if ( seg->Aout > 0. ) {
@@ -790,7 +790,7 @@ _unur_arou_segment_parameter( struct unur_gen *gen, struct unur_arou_segment *se
       }
     }
     if (!(fabs(seg->Aout) < fabs(seg->Ain) * UNUR_EPSILON)) {
-      seg->Aout = INFINITY;
+      seg->Aout = UNUR_INFINITY;
       return UNUR_ERR_INF;
     }
   }
@@ -876,8 +876,8 @@ double
 _unur_arou_compute_x( double v, double u )
 {
   if (!_unur_iszero(u)) return v/u;
-  else if (v<0.)        return -INFINITY;
-  else                  return INFINITY;
+  else if (v<0.)        return -UNUR_INFINITY;
+  else                  return UNUR_INFINITY;
 } 
 int
 _unur_arou_run_dars( struct unur_gen *gen )
@@ -917,7 +917,7 @@ _unur_arou_run_dars( struct unur_gen *gen )
       seg_next = seg->next;
       xl = _unur_arou_compute_x(seg->ltp[0],seg->ltp[1]);
       xr = _unur_arou_compute_x(seg->rtp[0],seg->rtp[1]);
-      if (xl>xr) xl = -INFINITY;   
+      if (xl>xr) xl = -UNUR_INFINITY;   
       if ( _unur_FP_is_minus_infinity(xl)
 	   && _unur_FP_same(seg->dltp[0],-1.) && _unur_iszero(seg->dltp[2]) )
 	xl = seg->dltp[1];
@@ -998,11 +998,11 @@ double
 _unur_arou_segment_arcmean( struct unur_arou_segment *seg )
 {
   double xl, xr;
-  CHECK_NULL(seg,INFINITY);  COOKIE_CHECK(seg,CK_AROU_SEG,INFINITY);
+  CHECK_NULL(seg,UNUR_INFINITY);  COOKIE_CHECK(seg,CK_AROU_SEG,UNUR_INFINITY);
   xl = (seg->ltp[1] > 0.) ? (seg->ltp[0] / seg->ltp[1]) :
-    ( _unur_iszero(seg->dltp[0]) ? -INFINITY : (seg->dltp[1]) );
+    ( _unur_iszero(seg->dltp[0]) ? -UNUR_INFINITY : (seg->dltp[1]) );
   xr = (seg->rtp[1] > 0.) ? (seg->rtp[0] / seg->rtp[1]) :
-    ( _unur_iszero(seg->drtp[0]) ? INFINITY : (seg->drtp[1]) );
+    ( _unur_iszero(seg->drtp[0]) ? UNUR_INFINITY : (seg->drtp[1]) );
   return _unur_arcmean(xl,xr);
 } 
 #ifdef UNUR_ENABLE_LOGGING

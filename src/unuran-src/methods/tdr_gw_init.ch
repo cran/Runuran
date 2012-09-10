@@ -22,7 +22,7 @@ _unur_tdr_gw_starting_intervals( struct unur_gen *gen )
       --(GEN->n_ivs);
       if (iv->next==NULL) {
 	iv->Asqueeze = iv->Ahat = iv->Ahatr = iv->sq = 0.;
-	iv->Acum = INFINITY;
+	iv->Acum = UNUR_INFINITY;
       }
       else
 	iv->next->prev = iv;
@@ -165,13 +165,13 @@ _unur_tdr_gw_interval_parameter( struct unur_gen *gen, struct unur_tdr_interval 
   CHECK_NULL(iv->next,UNUR_ERR_NULL);  COOKIE_CHECK(iv->next,CK_TDR_IV,UNUR_ERR_COOKIE); 
   if ( _unur_tdr_tangent_intersection_point(gen,iv,&(iv->ip))!=UNUR_SUCCESS )
     return UNUR_ERR_GEN_CONDITION;
-  if (iv->Tfx > -INFINITY && iv->next->Tfx > -INFINITY) {
+  if (iv->Tfx > -UNUR_INFINITY && iv->next->Tfx > -UNUR_INFINITY) {
     if (_unur_FP_approx(iv->x, iv->next->x) )
       return UNUR_ERR_SILENT;   
     iv->sq = (iv->next->Tfx - iv->Tfx) / (iv->next->x - iv->x);
     if ( ( (iv->sq > iv->dTfx       && (!_unur_FP_approx(iv->sq,iv->dTfx)) ) || 
 	   (iv->sq < iv->next->dTfx && (!_unur_FP_approx(iv->sq,iv->next->dTfx)) ) )
-	 && iv->next->dTfx < INFINITY ) {
+	 && iv->next->dTfx < UNUR_INFINITY ) {
       if ( !_unur_iszero(iv->sq) && !_unur_iszero(iv->dTfx) && !_unur_iszero(iv->next->dTfx) ) {
       	_unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"Squeeze too steep/flat. PDF not T-concave!");
       	return UNUR_ERR_GEN_CONDITION;

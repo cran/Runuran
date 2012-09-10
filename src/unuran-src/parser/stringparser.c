@@ -1079,9 +1079,9 @@ double
 _unur_atod ( const char *str )
 {
   if ( !strncmp(str,"inf",(size_t)3) )
-    return INFINITY;
+    return UNUR_INFINITY;
   else if ( !strncmp(str,"-inf",(size_t)4) )
-    return -INFINITY;
+    return -UNUR_INFINITY;
   else
     return atof(str);
 } 

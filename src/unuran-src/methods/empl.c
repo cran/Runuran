@@ -123,7 +123,7 @@ _unur_empl_sample( struct unur_gen *gen )
 { 
   double U,X;
   int J;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_EMPL_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_EMPL_GEN,UNUR_INFINITY);
   U = _unur_call_urng(gen->urng) * (GEN->n_observ-1);
   J = (int) (U);
   X = GEN->observ[J] + (U-J)*(GEN->observ[J+1] - GEN->observ[J]);

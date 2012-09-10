@@ -183,7 +183,7 @@ _unur_mixt_sample( struct unur_gen *gen )
 {
   struct unur_gen *comp;
   int J;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_MIXT_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_MIXT_GEN,UNUR_INFINITY);
   J = unur_sample_discr(gen->INDEX);
   comp = gen->COMP[J];
   switch(comp->method & UNUR_MASK_TYPE) {
@@ -200,7 +200,7 @@ _unur_mixt_sample_inv( struct unur_gen *gen )
 {
   double U, recycle;
   int J;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_MIXT_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_MIXT_GEN,UNUR_INFINITY);
   U = _unur_call_urng(gen->urng);
   J =unur_dgt_eval_invcdf_recycle( gen->INDEX, U, &recycle );
   if (_unur_iszero(recycle)) recycle = DBL_MIN;
@@ -212,12 +212,12 @@ unur_mixt_eval_invcdf( const struct unur_gen *gen, double u )
 {
   double recycle;
   int J;
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
   if ( ! (gen->method == UNUR_METH_MIXT && GEN->is_inversion) ) {
     _unur_error(gen->genid,UNUR_ERR_GEN_INVALID,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
-  COOKIE_CHECK(gen,CK_MIXT_GEN,INFINITY);
+  COOKIE_CHECK(gen,CK_MIXT_GEN,UNUR_INFINITY);
   if ( ! (u>0. && u<1.)) {
     if ( ! (u>=0. && u<=1.)) {
       _unur_warning(gen->genid,UNUR_ERR_DOMAIN,"U not in [0,1]");
@@ -252,8 +252,8 @@ _unur_mixt_get_boundary( struct unur_gen *gen )
   double comp_left, comp_right;
   double bd_left, bd_right;
   struct unur_gen *comp;
-  bd_left = INFINITY;
-  bd_right = -INFINITY;
+  bd_left = UNUR_INFINITY;
+  bd_right = -UNUR_INFINITY;
   for (i=0; i<gen->N_COMP; i++) {
     comp = gen->COMP[i];
     CHECK_NULL(comp,UNUR_ERR_NULL);
@@ -267,8 +267,8 @@ _unur_mixt_get_boundary( struct unur_gen *gen )
       comp_right = (double) (comp->distr->data.discr.BD_RIGHT);
       break;
     default:
-      comp_left = -INFINITY;
-      comp_right = INFINITY;
+      comp_left = -UNUR_INFINITY;
+      comp_right = UNUR_INFINITY;
     }
     if ( _unur_FP_less(comp_left,bd_right) )
       overlap = TRUE;

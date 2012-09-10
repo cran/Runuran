@@ -220,7 +220,7 @@ _unur_matrix_determinant ( int dim, const double *A )
   int *p, s, i;
   double *LU;     
   double det;
-  CHECK_NULL(A,  INFINITY);
+  CHECK_NULL(A, UNUR_INFINITY);
   if (dim==1) return A[0];
   p = _unur_xmalloc(dim*sizeof(int));
   LU = _unur_xmalloc(dim*dim*sizeof(double));
@@ -240,11 +240,11 @@ _unur_matrix_qf (int dim, double *x, double *A)
 #define idx(a,b) ((a)*dim+(b))
   int i,j;
   double sum,outersum;
-  CHECK_NULL(x,INFINITY);
-  CHECK_NULL(A,INFINITY);
+  CHECK_NULL(x, UNUR_INFINITY);
+  CHECK_NULL(A, UNUR_INFINITY);
   if (dim<1) {
     _unur_error("matrix",UNUR_ERR_GENERIC,"dimension < 1");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   outersum=0.;
   for(i=0;i<dim;i++){

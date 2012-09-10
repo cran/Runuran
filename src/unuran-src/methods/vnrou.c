@@ -180,8 +180,8 @@ unur_vnrou_get_volumehat( const struct unur_gen *gen )
 {
   double vol;
   int d;
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
-  _unur_check_gen_object( gen, VNROU, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
+  _unur_check_gen_object( gen, VNROU, UNUR_INFINITY );
   vol = GEN->vmax;  
   for (d=0; d<GEN->dim; d++) {
     vol *= (GEN->umax[d]-GEN->umin[d]);

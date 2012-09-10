@@ -67,7 +67,7 @@ _unur_cdf_burr( double x, const UNUR_DISTR *distr )
     return (1. - pow( 1 + pow(x, c), -k ) );
   default:
     _unur_error(distr_name,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
 } 
 double
@@ -113,7 +113,7 @@ _unur_invcdf_burr( double U, const UNUR_DISTR *distr )
   case UNUR_DISTR_BURR_XI:
   default:
     _unur_error(distr_name,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
 } 
 int
@@ -175,8 +175,8 @@ _unur_set_params_burr( UNUR_DISTR *distr, const double *params, int n_params )
   }
   DISTR.n_params = n_params;
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
-    DISTR.domain[0] = -INFINITY;  
-    DISTR.domain[1] = INFINITY;   
+    DISTR.domain[0] = -UNUR_INFINITY;  
+    DISTR.domain[1] = UNUR_INFINITY;   
     switch (distr->id) {
     case UNUR_DISTR_BURR_I:
       DISTR.domain[0] = 0.;       

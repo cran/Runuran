@@ -50,11 +50,11 @@ unur_distr_cont_new( void )
     DISTR.param_vecs[i] = NULL;
   }  
   DISTR.norm_constant = 1.;        
-  DISTR.mode       = INFINITY;     
+  DISTR.mode       = UNUR_INFINITY;
   DISTR.center     = 0.;           
   DISTR.area       = 1.;           
-  DISTR.trunc[0] = DISTR.domain[0] = -INFINITY; 
-  DISTR.trunc[1] = DISTR.domain[1] = INFINITY;  
+  DISTR.trunc[0] = DISTR.domain[0] = -UNUR_INFINITY; 
+  DISTR.trunc[1] = DISTR.domain[1] = UNUR_INFINITY;  
   DISTR.set_params = NULL;         
   DISTR.upd_mode   = _unur_distr_cont_find_mode; 
   DISTR.upd_area   = NULL;         
@@ -175,7 +175,7 @@ _unur_distr_cont_eval_pdf_from_logpdf( double x, const struct unur_distr *distr 
 {
   if (DISTR.logpdf == NULL) {
     _unur_error(distr->name,UNUR_ERR_DISTR_DATA,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   return exp(_unur_cont_logPDF(x,distr));
 } 
@@ -200,7 +200,7 @@ _unur_distr_cont_eval_dpdf_from_dlogpdf( double x, const struct unur_distr *dist
 {
   if (DISTR.logpdf == NULL || DISTR.dlogpdf == NULL) {
     _unur_error(distr->name,UNUR_ERR_DISTR_DATA,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   return exp(_unur_cont_logPDF(x,distr)) * _unur_cont_dlogPDF(x,distr);
 } 
@@ -255,7 +255,7 @@ _unur_distr_cont_eval_cdf_from_logcdf( double x, const struct unur_distr *distr 
 {
   if (DISTR.logcdf == NULL) {
     _unur_error(distr->name,UNUR_ERR_DISTR_DATA,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   return exp(_unur_cont_logCDF(x,distr));
 } 
@@ -407,37 +407,37 @@ unur_distr_cont_set_hrstr( struct unur_distr *distr, const char *hrstr )
 double
 _unur_distr_cont_eval_pdf_tree( double x, const struct unur_distr *distr )
 {
-  return ((DISTR.pdftree) ? _unur_fstr_eval_tree(DISTR.pdftree,x) : INFINITY);
+  return ((DISTR.pdftree) ? _unur_fstr_eval_tree(DISTR.pdftree,x) : UNUR_INFINITY);
 } 
 double
 _unur_distr_cont_eval_logpdf_tree( double x, const struct unur_distr *distr )
 {
-  return ((DISTR.logpdftree) ? _unur_fstr_eval_tree(DISTR.logpdftree,x) : INFINITY);
+  return ((DISTR.logpdftree) ? _unur_fstr_eval_tree(DISTR.logpdftree,x) : UNUR_INFINITY);
 } 
 double
 _unur_distr_cont_eval_dpdf_tree( double x, const struct unur_distr *distr )
 {
-  return ((DISTR.dpdftree) ? _unur_fstr_eval_tree(DISTR.dpdftree,x) : INFINITY);
+  return ((DISTR.dpdftree) ? _unur_fstr_eval_tree(DISTR.dpdftree,x) : UNUR_INFINITY);
 } 
 double
 _unur_distr_cont_eval_dlogpdf_tree( double x, const struct unur_distr *distr )
 {
-  return ((DISTR.dlogpdftree) ? _unur_fstr_eval_tree(DISTR.dlogpdftree,x) : INFINITY);
+  return ((DISTR.dlogpdftree) ? _unur_fstr_eval_tree(DISTR.dlogpdftree,x) : UNUR_INFINITY);
 } 
 double
 _unur_distr_cont_eval_cdf_tree( double x, const struct unur_distr *distr )
 {
-  return ((DISTR.cdftree) ? _unur_fstr_eval_tree(DISTR.cdftree,x) : INFINITY);
+  return ((DISTR.cdftree) ? _unur_fstr_eval_tree(DISTR.cdftree,x) : UNUR_INFINITY);
 } 
 double
 _unur_distr_cont_eval_logcdf_tree( double x, const struct unur_distr *distr )
 {
-  return ((DISTR.logcdftree) ? _unur_fstr_eval_tree(DISTR.logcdftree,x) : INFINITY);
+  return ((DISTR.logcdftree) ? _unur_fstr_eval_tree(DISTR.logcdftree,x) : UNUR_INFINITY);
 } 
 double
 _unur_distr_cont_eval_hr_tree( double x, const struct unur_distr *distr )
 {
-  return ((DISTR.hrtree) ? _unur_fstr_eval_tree(DISTR.hrtree,x) : INFINITY);
+  return ((DISTR.hrtree) ? _unur_fstr_eval_tree(DISTR.hrtree,x) : UNUR_INFINITY);
 } 
 char *
 unur_distr_cont_get_pdfstr( const struct unur_distr *distr )
@@ -554,66 +554,66 @@ unur_distr_cont_get_hr( const struct unur_distr *distr )
 double
 unur_distr_cont_eval_pdf( double x, const struct unur_distr *distr )
 {
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, CONT, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, CONT, UNUR_INFINITY );
   if (DISTR.pdf == NULL) {
     _unur_error(distr->name,UNUR_ERR_DISTR_DATA,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   return _unur_cont_PDF(x,distr);
 } 
 double
 unur_distr_cont_eval_dpdf( double x, const struct unur_distr *distr )
 {
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, CONT, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, CONT, UNUR_INFINITY );
   if (DISTR.dpdf == NULL) {
     _unur_error(distr->name,UNUR_ERR_DISTR_DATA,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   return _unur_cont_dPDF(x,distr);
 } 
 double
 unur_distr_cont_eval_logpdf( double x, const struct unur_distr *distr )
 {
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, CONT, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, CONT, UNUR_INFINITY );
   if (DISTR.logpdf == NULL) {
     _unur_error(distr->name,UNUR_ERR_DISTR_DATA,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   return _unur_cont_logPDF(x,distr);
 } 
 double
 unur_distr_cont_eval_dlogpdf( double x, const struct unur_distr *distr )
 {
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, CONT, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, CONT, UNUR_INFINITY );
   if (DISTR.dlogpdf == NULL) {
     _unur_error(distr->name,UNUR_ERR_DISTR_DATA,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   return _unur_cont_dlogPDF(x,distr);
 } 
 double
 unur_distr_cont_eval_cdf( double x, const struct unur_distr *distr )
 {
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, CONT, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, CONT, UNUR_INFINITY );
   if (DISTR.cdf == NULL) {
     _unur_error(distr->name,UNUR_ERR_DISTR_DATA,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   return _unur_cont_CDF(x,distr);
 } 
 double
 unur_distr_cont_eval_invcdf( double u, const struct unur_distr *distr )
 {
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, CONT, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, CONT, UNUR_INFINITY );
   if (DISTR.invcdf == NULL) {
     _unur_error(distr->name,UNUR_ERR_DISTR_DATA,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   if (u<=0.)
     return DISTR.domain[0];
@@ -625,22 +625,22 @@ unur_distr_cont_eval_invcdf( double u, const struct unur_distr *distr )
 double
 unur_distr_cont_eval_logcdf( double x, const struct unur_distr *distr )
 {
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, CONT, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, CONT, UNUR_INFINITY );
   if (DISTR.logcdf == NULL) {
     _unur_error(distr->name,UNUR_ERR_DISTR_DATA,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   return _unur_cont_logCDF(x,distr);
 } 
 double
 unur_distr_cont_eval_hr( double x, const struct unur_distr *distr )
 {
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, CONT, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, CONT, UNUR_INFINITY );
   if (DISTR.hr == NULL) {
     _unur_error(distr->name,UNUR_ERR_DISTR_DATA,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   return _unur_cont_HR(x,distr);
 } 
@@ -728,6 +728,13 @@ unur_distr_cont_set_domain( struct unur_distr *distr, double left, double right 
     _unur_error(NULL,UNUR_ERR_DISTR_SET,"domain, left >= right");
     return UNUR_ERR_DISTR_SET;
   }
+#if defined(R_UNURAN)
+  if (_unur_FP_same(left, DISTR.domain[0]) &&
+      _unur_FP_same(right, DISTR.domain[1])) {
+    distr->set |= UNUR_DISTR_SET_DOMAIN;
+    return UNUR_SUCCESS;
+  }
+#endif
   if ( distr->set & UNUR_DISTR_SET_MODE ) {
     is_set |= UNUR_DISTR_SET_MODE;
     if ( DISTR.mode < left)       DISTR.mode = left;
@@ -757,8 +764,8 @@ unur_distr_cont_set_domain( struct unur_distr *distr, double left, double right 
 int
 unur_distr_cont_get_domain( const struct unur_distr *distr, double *left, double *right )
 {
-  *left = -INFINITY;
-  *right = INFINITY;
+  *left = -UNUR_INFINITY;
+  *right = UNUR_INFINITY;
   _unur_check_NULL( NULL, distr, UNUR_ERR_NULL );
   _unur_check_distr_object( distr, CONT, UNUR_ERR_DISTR_INVALID );
   *left  = DISTR.domain[0];
@@ -768,8 +775,8 @@ unur_distr_cont_get_domain( const struct unur_distr *distr, double *left, double
 int
 unur_distr_cont_get_truncated( const struct unur_distr *distr, double *left, double *right )
 {
-  *left = -INFINITY;
-  *right = INFINITY;
+  *left = -UNUR_INFINITY;
+  *right = UNUR_INFINITY;
   _unur_check_NULL( NULL, distr, UNUR_ERR_NULL );
   _unur_check_distr_object( distr, CONT, UNUR_ERR_DISTR_INVALID );
   *left  = (distr->set & UNUR_DISTR_SET_TRUNCATED) ? DISTR.trunc[0] : DISTR.domain[0];
@@ -810,17 +817,17 @@ unur_distr_cont_upd_mode( struct unur_distr *distr )
 double
 unur_distr_cont_get_mode( struct unur_distr *distr )
 {
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, CONT, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, CONT, UNUR_INFINITY );
   if ( !(distr->set & UNUR_DISTR_SET_MODE) ) {
     if (DISTR.upd_mode == NULL) {
       _unur_error(distr->name,UNUR_ERR_DISTR_GET,"mode");
-      return INFINITY;
+      return UNUR_INFINITY;
     }
     else {
       if (unur_distr_cont_upd_mode(distr)!=UNUR_SUCCESS) {
 	_unur_error(distr->name,UNUR_ERR_DISTR_GET,"mode");
-	return INFINITY;
+	return UNUR_INFINITY;
       }
     }
   }
@@ -883,12 +890,12 @@ unur_distr_cont_upd_pdfarea( struct unur_distr *distr )
 double
 unur_distr_cont_get_pdfarea( struct unur_distr *distr )
 {
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, CONT, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, CONT, UNUR_INFINITY );
   if ( !(distr->set & UNUR_DISTR_SET_PDFAREA) ) {
     if ( unur_distr_cont_upd_pdfarea(distr) != UNUR_SUCCESS ) {
       _unur_error(distr->name,UNUR_ERR_DISTR_GET,"area");
-      return INFINITY;
+      return UNUR_INFINITY;
     }
   }
   return DISTR.area;

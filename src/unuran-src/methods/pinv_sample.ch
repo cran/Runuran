@@ -5,7 +5,7 @@ double
 _unur_pinv_sample( struct unur_gen *gen )
 { 
   double U,X;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_PINV_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_PINV_GEN,UNUR_INFINITY);
   U = _unur_call_urng(gen->urng);
   X = _unur_pinv_eval_approxinvcdf(gen,U);
   if (X<DISTR.trunc[0]) return DISTR.trunc[0];
@@ -17,7 +17,7 @@ _unur_pinv_eval_approxinvcdf( const struct unur_gen *gen, double u )
 {
   int i;
   double x,un;
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_PINV_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_PINV_GEN,UNUR_INFINITY);
   un = u * GEN->Umax;
   i = GEN->guide[(int)(u * GEN->guide_size)];
   while (GEN->iv[i+1].cdfi < un)
@@ -30,12 +30,12 @@ double
 unur_pinv_eval_approxinvcdf( const struct unur_gen *gen, double u )
 {
   double x;
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
   if ( gen->method != UNUR_METH_PINV ) {
     _unur_error(gen->genid,UNUR_ERR_GEN_INVALID,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
-  COOKIE_CHECK(gen,CK_PINV_GEN,INFINITY);
+  COOKIE_CHECK(gen,CK_PINV_GEN,UNUR_INFINITY);
   if ( ! (u>0. && u<1.)) {
     if ( ! (u>=0. && u<=1.)) {
       _unur_warning(gen->genid,UNUR_ERR_DOMAIN,"U not in [0,1]");
@@ -52,15 +52,15 @@ unur_pinv_eval_approxinvcdf( const struct unur_gen *gen, double u )
 double
 unur_pinv_eval_approxcdf( const struct unur_gen *gen, double x )
 {
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
   if ( gen->method != UNUR_METH_PINV ) {
     _unur_error(gen->genid,UNUR_ERR_GEN_INVALID,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
-  COOKIE_CHECK(gen,CK_PINV_GEN,INFINITY);
+  COOKIE_CHECK(gen,CK_PINV_GEN,UNUR_INFINITY);
   if ( (gen->variant & PINV_VARIANT_PDF) && GEN->aCDF == NULL) {
     _unur_error(gen->genid,UNUR_ERR_GENERIC,"'keepcdf' not set");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   if (x <= DISTR.domain[0]) return 0.;
   if (x >= DISTR.domain[1]) return 1.;

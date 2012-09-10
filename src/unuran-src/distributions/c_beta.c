@@ -37,7 +37,7 @@ _unur_pdf_beta(double x, const UNUR_DISTR *distr)
   if ((_unur_iszero(x) && _unur_isone(p)) || (_unur_isone(x) && _unur_isone(q)))
     return exp(-LOGNORMCONSTANT);
   if ((_unur_iszero(x) && p<1.) || (_unur_isone(x) && q<1.))
-    return INFINITY;
+    return UNUR_INFINITY;
   return 0.;
 } 
 double
@@ -52,8 +52,8 @@ _unur_logpdf_beta(double x, const UNUR_DISTR *distr)
       || (_unur_isone(x) && _unur_isone(q)))
     return (-LOGNORMCONSTANT);
   if ((_unur_iszero(x) && p<1.) || (_unur_isone(x) && q<1.))
-    return INFINITY;
-  return -INFINITY;
+    return UNUR_INFINITY;
+  return -UNUR_INFINITY;
 } 
 double
 _unur_dpdf_beta(double x, const UNUR_DISTR *distr)
@@ -69,13 +69,13 @@ _unur_dpdf_beta(double x, const UNUR_DISTR *distr)
   if (_unur_iszero(x) && _unur_isfsame(p,2.))
     return exp(-LOGNORMCONSTANT)/(b-a);
   if (_unur_iszero(x) && p<2.)
-    return (p>1. ? INFINITY : -INFINITY);
+    return (p>1. ? UNUR_INFINITY : -UNUR_INFINITY);
   if (_unur_isone(x) && _unur_isone(q))
     return (p-1.)*exp(-LOGNORMCONSTANT)/(b-a);
   if (_unur_isone(x) && _unur_isfsame(q,2.))
     return -exp(-LOGNORMCONSTANT)/(b-a);
   if (_unur_isone(x) && q<2.)
-    return (q>1. ? -INFINITY : INFINITY);
+    return (q>1. ? -UNUR_INFINITY : UNUR_INFINITY);
   return 0.;
 } 
 double
@@ -88,17 +88,17 @@ _unur_dlogpdf_beta(double x, const UNUR_DISTR *distr)
   if (x > 0. && x < 1.)
     return (((p-1.)/x - (q-1.)/(1.-x)) / (b-a));
   if (_unur_iszero(x) && p<1.)
-    return -INFINITY;
+    return -UNUR_INFINITY;
   if (_unur_iszero(x) && _unur_isone(p))
     return (-(q-1.)/((1.-x)*(b-a)));
   if (_unur_iszero(x) && p>1.)
-    return INFINITY;
+    return UNUR_INFINITY;
   if (_unur_isone(x) && q<1.)
-    return INFINITY;
+    return UNUR_INFINITY;
   if (_unur_isone(x) && _unur_isone(q))
     return ((p-1.)/(b-a));
   if (_unur_isone(x) && q>1.)
-    return -INFINITY;
+    return -UNUR_INFINITY;
   return 0.;
 } 
 double
@@ -133,7 +133,7 @@ _unur_upd_mode_beta( UNUR_DISTR *distr )
   else if (p > 1. && q > 1.)
     DISTR.mode = (p - 1.) / (p + q - 2.);
   else {
-    DISTR.mode = INFINITY;
+    DISTR.mode = UNUR_INFINITY;
     return UNUR_ERR_DISTR_PROP;
   }
   if (DISTR.n_params > 2)

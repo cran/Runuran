@@ -211,8 +211,8 @@ unur_ninv_chg_truncated( struct unur_gen *gen, double left, double right )
     _unur_warning(NULL,UNUR_ERR_DISTR_SET,"domain, left >= right");
     return UNUR_ERR_DISTR_SET;
   }
-  Umin = (left > -INFINITY) ? CDF(left)  : 0.;
-  Umax = (right < INFINITY) ? CDF(right) : 1.;
+  Umin = (left > -UNUR_INFINITY) ? CDF(left)  : 0.;
+  Umax = (right < UNUR_INFINITY) ? CDF(right) : 1.;
   if (Umin > Umax) {
     _unur_error(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
     return UNUR_ERR_SHOULD_NOT_HAPPEN;

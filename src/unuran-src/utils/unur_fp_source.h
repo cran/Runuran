@@ -27,6 +27,6 @@ int _unur_isfsame (const double x, const double y);
 int _unur_isfinite (const double x);
 int _unur_isnan (const double x);
 int _unur_isinf (const double x);
-#define _unur_FP_is_infinity(a)  ((a) >= INFINITY)
-#define _unur_FP_is_minus_infinity(a)  ((a) <= -INFINITY)
+#define _unur_FP_is_infinity(a)  ((a) >= UNUR_INFINITY)
+#define _unur_FP_is_minus_infinity(a)  ((a) <= -UNUR_INFINITY)
 #endif  

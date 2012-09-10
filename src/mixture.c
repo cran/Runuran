@@ -90,13 +90,13 @@ Runuran_mixt (SEXP sexp_obj, SEXP sexp_prob, SEXP sexp_comp, SEXP sexp_inversion
   for (i=0; i<n_comp; i++) {
     sexp_unur = VECTOR_ELT(sexp_comp, i);
     if (! IS_S4_OBJECT(sexp_unur)) {
-      errorcall_return(R_NilValue,"[UNU.RAN - error] argument 'comp' does not contain UNU.RAN objects");
+      error("[UNU.RAN - error] argument 'comp[%d]' does not contain UNU.RAN objects",i+1);
     }
     sexp_gen = GET_SLOT(sexp_unur, install("unur"));
     CHECK_UNUR_PTR(sexp_gen);
-    comp[i] = R_ExternalPtrAddr(sexp_gen);
-    if (comp[i] == NULL) {
-      errorcall_return(R_NilValue,"[UNU.RAN - error] invalid argument 'comp'. maybe packed?");
+    if (isNull(sexp_gen) || 
+	((comp[i]=R_ExternalPtrAddr(sexp_gen)) == NULL) ) {
+      error("[UNU.RAN - error] invalid argument 'comp[%d]'. maybe packed?",i+1);
     }
   }
 

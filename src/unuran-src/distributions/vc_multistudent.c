@@ -49,7 +49,7 @@ _unur_logpdf_multistudent( const double *x, UNUR_DISTR *distr )
   mean = DISTR.mean;
   covar_inv = unur_distr_cvec_get_covar_inv(distr);
   if (covar_inv==NULL) 
-    return INFINITY;
+    return UNUR_INFINITY;
   xx=0.; 
   for (i=0; i<dim; i++) {
     cx=0.; 
@@ -103,11 +103,11 @@ _unur_pdlogpdf_multistudent( const double *x, int coord, UNUR_DISTR *distr )
   double *mean = DISTR.mean;
   if (coord < 0 || coord >= dim) {
     _unur_warning(distr->name,UNUR_ERR_DISTR_DOMAIN,"invalid coordinate");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   covar_inv = unur_distr_cvec_get_covar_inv(distr);
   if (covar_inv==NULL) 
-    return INFINITY;
+    return UNUR_INFINITY;
   xx=0.; 
   for (i=0; i<dim; i++) {
     cx=0.; 

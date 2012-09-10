@@ -10,10 +10,10 @@ _unur_tdr_ps_sample( struct unur_gen *gen )
   double X;                    
   double fx;                   
   double Thx;                  
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,UNUR_INFINITY);
   if (GEN->iv == NULL) {
     _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"empty generator object");
-    return INFINITY;
+    return UNUR_INFINITY;
   } 
   urng = gen->urng;
   while (1) {
@@ -48,7 +48,7 @@ _unur_tdr_ps_sample( struct unur_gen *gen )
     case TDR_VAR_T_POW:
     default:
       _unur_error(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
-      return INFINITY;
+      return UNUR_INFINITY;
     } 
     V = _unur_call_urng(urng);
     if (V <= iv->sq)
@@ -61,7 +61,7 @@ _unur_tdr_ps_sample( struct unur_gen *gen )
       V *= 1./(Thx*Thx); break;
     case TDR_VAR_T_POW:
     default:
-      return INFINITY;
+      return UNUR_INFINITY;
     } 
     fx = PDF(X);
     if (V <= fx)
@@ -86,10 +86,10 @@ _unur_tdr_ps_sample_check( struct unur_gen *gen )
 #ifdef UNUR_ENABLE_LOGGING
   int error = 0;               
 #endif
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,UNUR_INFINITY);
   if (GEN->iv == NULL) {
     _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"empty generator object");
-    return INFINITY;
+    return UNUR_INFINITY;
   } 
   urng = gen->urng;
   while (1) {
@@ -172,7 +172,7 @@ _unur_tdr_ps_eval_invcdfhat( const struct unur_gen *gen, double U,
   case TDR_VAR_T_POW:
   default:
     _unur_error(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   } 
   if (hx != NULL) 
     switch (gen->variant & TDR_VARMASK_T) {
@@ -185,7 +185,7 @@ _unur_tdr_ps_eval_invcdfhat( const struct unur_gen *gen, double U,
       break;
     case TDR_VAR_T_POW:
     default:
-      *hx = INFINITY;
+      *hx = UNUR_INFINITY;
     } 
   if (fx != NULL) {
     *fx = PDF(X);

@@ -163,8 +163,8 @@ _unur_tabl_get_intervals_from_slopes( struct unur_par *par, struct unur_gen *gen
   CHECK_NULL(gen,UNUR_ERR_NULL);  COOKIE_CHECK(gen,CK_TABL_GEN,UNUR_ERR_COOKIE);
   GEN->n_ivs = 0;
   iv = GEN->iv = NULL;
-  GEN->bleft = INFINITY;
-  GEN->bright = -INFINITY;
+  GEN->bleft = UNUR_INFINITY;
+  GEN->bright = -UNUR_INFINITY;
   for ( i=0; i < 2*PAR->n_slopes; i+=2 ) {
     xmax = PAR->slopes[i];      
     xmin = PAR->slopes[i+1];    

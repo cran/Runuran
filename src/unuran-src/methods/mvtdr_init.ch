@@ -53,7 +53,7 @@ _unur_mvtdr_create( struct unur_par *par )
   if ( (1 << (GEN->dim + GEN->steps_min)) > PAR->max_cones) {
     PAR->max_cones = 1 << (GEN->dim + GEN->steps_min);
   }
-  GEN->max_gamma = INFINITY;            
+  GEN->max_gamma = UNUR_INFINITY;       
   GEN->cone = NULL;
   GEN->last_cone = NULL;
   GEN->n_cone = 0;                      
@@ -337,7 +337,7 @@ _unur_mvtdr_cone_new( struct unur_gen *gen )
     _unur_error(gen->genid,UNUR_ERR_MALLOC,""); return NULL; }
   c->height = UNUR_INFINITY;
   c->tp = -1.;
-  c->Hi = INFINITY;
+  c->Hi = UNUR_INFINITY;
   ++(GEN->n_cone);
   return c;
 } 
@@ -421,18 +421,18 @@ _unur_mvtdr_cone_logH( struct unur_gen *gen, CONE *c )
   case UNUR_SUCCESS:
     break;
   case UNUR_ERR_DISTR_DOMAIN:
-    return -INFINITY;
+    return -UNUR_INFINITY;
   default:
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   logH = c->alpha - GEN->dim * log(c->beta) + c->logai;
   if (_unur_isfinite(c->height)) {
     if (c->height < 1.e-50) 
-      return -INFINITY;
+      return -UNUR_INFINITY;
     else
       logH += log(_unur_SF_incomplete_gamma(c->beta*c->height,(double)GEN->dim));
   }
-  return (_unur_isfinite(logH)) ? logH : INFINITY;
+  return (_unur_isfinite(logH)) ? logH : UNUR_INFINITY;
 } 
 int
 _unur_mvtdr_cone_split( struct unur_gen *gen, CONE *c, int step )
@@ -577,7 +577,7 @@ _unur_mvtdr_max_gamma( struct unur_gen *gen )
   double max, tmp;
   CONE *c;
   if (!GEN->has_domain) {
-    GEN->max_gamma = INFINITY;
+    GEN->max_gamma = UNUR_INFINITY;
   }
   else {
     max = 0.;
@@ -585,7 +585,7 @@ _unur_mvtdr_max_gamma( struct unur_gen *gen )
       tmp = c->height * c->beta;
       max = _unur_max(max, tmp);
     }
-    GEN->max_gamma = (max > 0.) ? max : INFINITY;
+    GEN->max_gamma = (max > 0.) ? max : UNUR_INFINITY;
   }
   return UNUR_SUCCESS;
 } 
@@ -597,7 +597,7 @@ _unur_mvtdr_tp_min (double t, void *p )
   a->logH = _unur_mvtdr_cone_logH (a->gen, a->c);
   switch (_unur_isinf(a->logH)) {
   case -1:
-    a->logH = INFINITY;
+    a->logH = UNUR_INFINITY;
     a->status = MVTDR_CONE_DOMAIN;
     break;
   case 1:

@@ -160,7 +160,7 @@ unur_distr_discr_make_pv( struct unur_distr *distr )
     valid = FALSE;  
     cdf = 0.;       
     cdf_old = 0.;   
-    thresh_cdf = (distr->set & UNUR_DISTR_SET_PMFSUM) ? (1.-1.e-8)*DISTR.sum : INFINITY;
+    thresh_cdf = (distr->set & UNUR_DISTR_SET_PMFSUM) ? (1.-1.e-8)*DISTR.sum : UNUR_INFINITY;
     for (n_alloc = size_alloc; n_alloc <= max_alloc; n_alloc += size_alloc) {
       pv = _unur_xrealloc( pv, n_alloc * sizeof(double) );
       if (DISTR.pmf) {
@@ -208,8 +208,8 @@ unur_distr_discr_get_pv( const struct unur_distr *distr, const double **pv )
 double
 unur_distr_discr_eval_pv( int k, const struct unur_distr *distr )
 {
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, DISCR, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, DISCR, UNUR_INFINITY );
   if (DISTR.pv != NULL) {
     if (k < DISTR.domain[0] || k > DISTR.domain[1])
       return 0.;
@@ -226,7 +226,7 @@ unur_distr_discr_eval_pv( int k, const struct unur_distr *distr )
       return px;
   }
   _unur_error(distr->name,UNUR_ERR_DISTR_DATA,"");
-  return INFINITY;
+  return UNUR_INFINITY;
 } 
 int
 unur_distr_discr_set_pmf( struct unur_distr *distr, UNUR_FUNCT_DISCR *pmf )
@@ -303,22 +303,22 @@ unur_distr_discr_get_invcdf( const struct unur_distr *distr )
 double
 unur_distr_discr_eval_pmf( int k, const struct unur_distr *distr )
 {
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, DISCR, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, DISCR, UNUR_INFINITY );
   if (DISTR.pmf == NULL) {
     _unur_error(distr->name,UNUR_ERR_DISTR_DATA,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   return _unur_discr_PMF(k,distr);
 } 
 double
 unur_distr_discr_eval_cdf( int k, const struct unur_distr *distr )
 {
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, DISCR, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, DISCR, UNUR_INFINITY );
   if (DISTR.cdf == NULL) {
     _unur_error(distr->name,UNUR_ERR_DISTR_DATA,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   return _unur_discr_CDF(k,distr);
 } 
@@ -383,15 +383,15 @@ unur_distr_discr_set_cdfstr( struct unur_distr *distr, const char *cdfstr )
 double
 _unur_distr_discr_eval_pmf_tree( int k, const struct unur_distr *distr )
 {
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, DISCR, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, DISCR, UNUR_INFINITY );
   return ((DISTR.pmftree) ? _unur_fstr_eval_tree(DISTR.pmftree,(double)k) : 0.);
 } 
 double
 _unur_distr_discr_eval_cdf_tree( int k, const struct unur_distr *distr )
 {
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, DISCR, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, DISCR, UNUR_INFINITY );
   return ((DISTR.cdftree) ? _unur_fstr_eval_tree(DISTR.cdftree,(double)k) : 0.);
 } 
 char *
@@ -561,12 +561,12 @@ unur_distr_discr_upd_pmfsum( struct unur_distr *distr )
 double
 unur_distr_discr_get_pmfsum( struct unur_distr *distr )
 {
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, DISCR, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, DISCR, UNUR_INFINITY );
   if ( !(distr->set & UNUR_DISTR_SET_PMFSUM) ) {
     if ( unur_distr_discr_upd_pmfsum(distr) != UNUR_SUCCESS ) {
       _unur_error(distr->name,UNUR_ERR_DISTR_GET,"sum");
-      return INFINITY;
+      return UNUR_INFINITY;
     }
   }
   return DISTR.sum;

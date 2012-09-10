@@ -35,7 +35,7 @@ _unur_logpdf_gig(double x, const UNUR_DISTR *distr)
 { 
   register const double *params = DISTR.params;
   if (x <= 0.)
-    return -INFINITY;
+    return -UNUR_INFINITY;
   return ( LOGNORMCONSTANT + (theta-1.) * log(x) - 0.5 * omega * (x/eta + eta/x) );
 } 
 double
@@ -110,8 +110,8 @@ _unur_set_params_gig( UNUR_DISTR *distr, const double *params, int n_params )
   n_params = 3;
   DISTR.n_params = n_params;
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
-    DISTR.domain[0] = 0.;          
-    DISTR.domain[1] = INFINITY;    
+    DISTR.domain[0] = 0.;             
+    DISTR.domain[1] = UNUR_INFINITY;  
   }
   return UNUR_SUCCESS;
 } 
@@ -139,7 +139,7 @@ unur_distr_gig( const double *params, int n_params )
     return NULL;
   }
 #ifdef _unur_SF_bessel_k
-  LOGNORMCONSTANT = _unur_lognormconstant_gig(params,n_params);
+  LOGNORMCONSTANT = _unur_lognormconstant_gig(DISTR.params,DISTR.n_params);
 #else
   LOGNORMCONSTANT = 0.;
 #endif

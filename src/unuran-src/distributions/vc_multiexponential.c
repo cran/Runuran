@@ -41,13 +41,17 @@ _unur_logpdf_multiexponential( const double *x, UNUR_DISTR *distr )
   theta = DISTR.param_vecs[INDEX_THETA];
   if ( sigma==NULL || theta==NULL ) {
     for (i=0; i<dim; i++) { 
-      dx = (i==0) ? ((x[i]<0)? INFINITY: x[i]) : ((x[i]<x[i-1])? INFINITY: x[i]-x[i-1]);  
+      dx = ((i==0)
+	    ? ((x[i]<0)? UNUR_INFINITY: x[i]) 
+	    : ((x[i]<x[i-1])? UNUR_INFINITY: x[i]-x[i-1]));
       sum -= (dim-i) * dx;  
     }
   }
   else {
     for (i=0; i<dim; i++) {
-      dx = (i==0) ? ((x[i]-theta[i]<0)? INFINITY: x[i]-theta[i]) : (( (x[i]-theta[i]) < (x[i-1]-theta[i-1]) )? INFINITY: x[i]-x[i-1]-theta[i]+theta[i-1]); 
+      dx = ((i==0) 
+	    ? ( (x[i]-theta[i]<0) ? UNUR_INFINITY : x[i]-theta[i])
+	    : (((x[i]-theta[i]) < (x[i-1]-theta[i-1])) ? UNUR_INFINITY : x[i]-x[i-1]-theta[i]+theta[i-1])); 
       dx /= sigma[i];
       sum -= (dim-i) * dx;  
     }

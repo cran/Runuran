@@ -59,7 +59,7 @@ _unur_logpdf_vg(double x, const UNUR_DISTR *distr)
       }
     }
     else {
-      res = -INFINITY;
+      res = -UNUR_INFINITY;
     } 
   } while(0);
   return res;
@@ -108,8 +108,8 @@ _unur_set_params_vg( UNUR_DISTR *distr, const double *params, int n_params )
   DISTR.mu = mu;
   DISTR.n_params = n_params;
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
-    DISTR.domain[0] = -INFINITY;   
-    DISTR.domain[1] = INFINITY;    
+    DISTR.domain[0] = -UNUR_INFINITY;   
+    DISTR.domain[1] = UNUR_INFINITY;    
   }
   return UNUR_SUCCESS;
 } 
@@ -132,7 +132,7 @@ unur_distr_vg( const double *params, int n_params)
     free(distr);
     return NULL;
   }
-  LOGNORMCONSTANT = _unur_lognormconstant_vg(params,n_params);
+  LOGNORMCONSTANT = _unur_lognormconstant_vg(DISTR.params,DISTR.n_params);
   if (_unur_upd_center_vg(distr)!=UNUR_SUCCESS) {
     free(distr);
     return NULL;

@@ -36,7 +36,7 @@ _unur_pdf_gamma( double x, const UNUR_DISTR *distr )
   if (x > 0.)
     return exp( (alpha-1.)*log(x) - x - LOGNORMCONSTANT);
   if (_unur_iszero(x))
-    return (alpha>1. ? 0. : INFINITY);
+    return (alpha>1. ? 0. : UNUR_INFINITY);
   return 0.;
 } 
 double
@@ -50,8 +50,8 @@ _unur_logpdf_gamma( double x, const UNUR_DISTR *distr )
   if (x > 0.)
     return ( (alpha-1.)*log(x) - x - LOGNORMCONSTANT);
   if (_unur_iszero(x))
-    return (alpha>1. ? -INFINITY : INFINITY);
-  return -INFINITY;
+    return (alpha>1. ? -UNUR_INFINITY : UNUR_INFINITY);
+  return -UNUR_INFINITY;
 } 
 double
 _unur_dpdf_gamma( double x, const UNUR_DISTR *distr )
@@ -64,7 +64,7 @@ _unur_dpdf_gamma( double x, const UNUR_DISTR *distr )
   if (x > 0.)
     return ( exp( log(x) * (alpha-2.) - x - LOGNORMCONSTANT) *  ((alpha-1.) -x) / beta ); 
   if (_unur_iszero(x) && alpha < 2.)
-    return (alpha>1. ? INFINITY : -INFINITY);
+    return (alpha>1. ? UNUR_INFINITY : -UNUR_INFINITY);
   return 0.;
 } 
 double
@@ -78,7 +78,7 @@ _unur_dlogpdf_gamma( double x, const UNUR_DISTR *distr )
   if (x > 0.)
     return ((alpha-1.)/x - 1)/beta;
   if (_unur_iszero(x))
-    return (alpha>1. ? INFINITY : -INFINITY);
+    return (alpha>1. ? UNUR_INFINITY : -UNUR_INFINITY);
   return 0.;
 } 
 double
@@ -174,8 +174,8 @@ _unur_set_params_gamma( UNUR_DISTR *distr, const double *params, int n_params )
   }
   DISTR.n_params = n_params;
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
-    DISTR.domain[0] = DISTR.gamma;  
-    DISTR.domain[1] = INFINITY;     
+    DISTR.domain[0] = DISTR.gamma;    
+    DISTR.domain[1] = UNUR_INFINITY;  
   }
   return UNUR_SUCCESS;
 } 

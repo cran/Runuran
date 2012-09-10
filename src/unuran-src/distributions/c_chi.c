@@ -79,8 +79,8 @@ _unur_set_params_chi( UNUR_DISTR *distr, const double *params, int n_params )
   DISTR.nu = nu;
   DISTR.n_params = n_params;
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
-    DISTR.domain[0] = 0.;          
-    DISTR.domain[1] = INFINITY;    
+    DISTR.domain[0] = 0.;            
+    DISTR.domain[1] = UNUR_INFINITY; 
   }
   return UNUR_SUCCESS;
 } 

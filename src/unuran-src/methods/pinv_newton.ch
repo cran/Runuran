@@ -190,7 +190,7 @@ _unur_pinv_newton_create (struct unur_gen *gen, struct unur_pinv_interval *iv,
 	? (zi[i]-zi[i-1]) / (ui[i]-ui[i-2])
 	: (zi[1]-zi[0]) / ui[1];
     else
-      zi[i] = (DISTR.dpdf != NULL) ? (-0.5 * dPDF(xval[i]) * pow(zi[i],3)) : INFINITY;
+      zi[i] = (DISTR.dpdf != NULL) ? (-0.5 * dPDF(xval[i]) * pow(zi[i],3)) : UNUR_INFINITY;
   }
   for(k=2; k<GEN->order; k++) {
     for(i=GEN->order-1; i>k; i--) {
@@ -269,7 +269,7 @@ _unur_pinv_newton_maxerror (struct unur_gen *gen, struct unur_pinv_interval *iv,
     else
       u = ui[i-1] + _unur_pinv_Udiff(gen, xval[i], x+x0-xval[i], NULL);
     if (!_unur_isfinite(u))
-      return INFINITY;
+      return UNUR_INFINITY;
     uerror = fabs(u - testu[i]);
     if (uerror>maxerror) maxerror = uerror;
   }

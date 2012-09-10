@@ -68,6 +68,12 @@ Runuran_verify_hat (SEXP sexp_unur, SEXP sexp_n)
   if (!IS_S4_OBJECT(sexp_unur))
     error("[UNU.RAN - error] argument invalid: 'unr' must be UNU.RAN object");
 
+  /* UNU.RAN must not be packed */
+  if (! isNull( GET_SLOT(sexp_unur, install("data")) ) ) {
+    /* the generator object is packed */
+    error("[UNU.RAN - error] cannot run this function on packed UNU.RAN objects");
+  }
+
   /* Extract and check sample size */
   n = *(INTEGER (AS_INTEGER (sexp_n)));
   if (n<=0) {
@@ -77,8 +83,8 @@ Runuran_verify_hat (SEXP sexp_unur, SEXP sexp_n)
   /* Extract pointer to UNU.RAN generator */
   sexp_gen = GET_SLOT(sexp_unur, install("unur"));
   CHECK_UNUR_PTR(sexp_gen);
-  gen = R_ExternalPtrAddr(sexp_gen);
-  if (gen == NULL) {
+  if (isNull(sexp_gen) || 
+      ((gen=R_ExternalPtrAddr(sexp_gen)) == NULL) ) {
     errorcall_return(R_NilValue,"[UNU.RAN - error] broken UNU.RAN object");
   }
 

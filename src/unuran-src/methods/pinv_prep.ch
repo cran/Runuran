@@ -80,10 +80,10 @@ _unur_pinv_searchborder (struct unur_gen *gen, double x0, double bound,
   fulim = 1.e4 * fllim;
   if (fllim <= 0.) {
     _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"PDF(center) too small");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   xl = x0; 
-  fl = INFINITY;
+  fl = UNUR_INFINITY;
   x = _unur_arcmean(x0,bound);
   while ( (fx=PDF(x)) > fllim ) {
     if (_unur_FP_same(x,bound))
@@ -94,7 +94,7 @@ _unur_pinv_searchborder (struct unur_gen *gen, double x0, double bound,
   xs = x; fs = fx;
   if (fx < 0.) {
     _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"PDF(x) < 0");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   while (!_unur_FP_same(xs,xl)) {
     if (_unur_iszero(fs)) {
@@ -104,7 +104,7 @@ _unur_pinv_searchborder (struct unur_gen *gen, double x0, double bound,
     fx = PDF(x);
     if (fx < 0.) {
       _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"PDF(x) < 0");
-      return INFINITY;
+      return UNUR_INFINITY;
     }
     if (fx < fllim) {
       xs = x; fs = fx;
@@ -254,7 +254,7 @@ _unur_pinv_cut( struct unur_gen *gen, double w, double dw, double crit )
     if (! _unur_isfinite(df)) {
       _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,
 		  "numerical problems with cut-off point, PDF too steep");
-      return INFINITY;
+      return UNUR_INFINITY;
     }
     if (  ((dw>0)?1.:-1.) * df > 0.) {
       _unur_warning(gen->genid,UNUR_ERR_GEN_CONDITION,"PDF increasing towards boundary");
@@ -288,7 +288,7 @@ _unur_pinv_cut( struct unur_gen *gen, double w, double dw, double crit )
     	   (dw < 0 && xnew > GEN->dright) ) {
 	_unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,
 		    "numerical problems with cut-off point, out of domain");
-	return INFINITY;
+	return UNUR_INFINITY;
       }
       else {
 	xnew = (xnew < GEN->dleft) ? GEN->dleft : GEN->dright;
@@ -313,7 +313,7 @@ _unur_pinv_cut_bisect (struct unur_gen *gen, double x0, double x1)
 {
   double x,fx;
   if (! (_unur_isfinite(x0) && _unur_isfinite(x1)) )
-    return INFINITY;
+    return UNUR_INFINITY;
   x = x1;
   fx = PDF(x);
   if (fx > 0.) return x;
@@ -389,7 +389,7 @@ _unur_pinv_cut_CDF( struct unur_gen *gen, double dom, double x0, double ul, doub
       x0 += dx;
       f0 = CDF(x0);
       if (!_unur_isfinite(x0))
-	return INFINITY;
+	return UNUR_INFINITY;
     }
   }
   if (_unur_isone(f0)) {
@@ -398,7 +398,7 @@ _unur_pinv_cut_CDF( struct unur_gen *gen, double dom, double x0, double ul, doub
       x0 -= dx;
       f0 = CDF(x0);
       if (!_unur_isfinite(x0))
-	return INFINITY;
+	return UNUR_INFINITY;
     }
   }
   if ( (f0 < ul && fdom < ul) || (f0 > uu && fdom > uu) ) {
@@ -410,7 +410,7 @@ _unur_pinv_cut_CDF( struct unur_gen *gen, double dom, double x0, double ul, doub
   }
   if ( (x0 < dom && _unur_FP_greater(f0,fdom)) ||
        (x0 > dom && _unur_FP_less(f0,fdom)) ) {
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   if (x0 > dom) {
     xs = dom;

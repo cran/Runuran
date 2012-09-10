@@ -59,7 +59,7 @@ _unur_lobatto5_adaptive (UNUR_LOBATTO_FUNCT funct, struct unur_gen *gen,
     return 0.;
   if (!_unur_isfinite(x+h)) {
     _unur_error(gen->genid,UNUR_ERR_INF,"boundaries of integration domain not finite");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   fl = FKT(x);
   fc = FKT(x+h/2.);
@@ -89,7 +89,7 @@ _unur_lobatto5_recursion (UNUR_LOBATTO_FUNCT funct, struct unur_gen *gen,
   double ierror;      
   if (++(*n_calls) > LOBATTO_MAX_CALLS) {
     *W_accuracy = 2;
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   flc = FKT(x+h/4);
   frc = FKT(x+3*h/4);
@@ -127,12 +127,12 @@ _unur_lobatto_eval_diff (struct unur_lobatto_table *Itable, double x, double h, 
   struct unur_lobatto_nodes *values;
   int n_values;
 #define clear_fx() if(fx!=NULL){*fx=-1.;}
-  CHECK_NULL(Itable,INFINITY);
+  CHECK_NULL(Itable,UNUR_INFINITY);
   values = Itable->values;
   n_values = Itable->n_values;
   if (!_unur_isfinite(x+h)) {
     clear_fx();
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   if (x < Itable->bleft || x+h > Itable->bright) {
     clear_fx();
@@ -179,7 +179,7 @@ _unur_lobatto_eval_CDF (struct unur_lobatto_table *Itable, double x)
   double xr;             
   double cdf;            
   int cur;               
-  CHECK_NULL(Itable,INFINITY);
+  CHECK_NULL(Itable, UNUR_INFINITY);
   if (x <= Itable->bleft)  return 0.;
   if (x >= Itable->bright) return 1.;
   values = Itable->values;
@@ -187,7 +187,7 @@ _unur_lobatto_eval_CDF (struct unur_lobatto_table *Itable, double x)
   area = Itable->integral;
   if (area <= 0.) {
     _unur_error(Itable->gen->genid,UNUR_ERR_NAN,"area below PDF 0.");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   cdf = 0;
   xr = Itable->bleft;
@@ -210,7 +210,7 @@ _unur_lobatto_eval_CDF (struct unur_lobatto_table *Itable, double x)
 double
 _unur_lobatto_integral (struct unur_lobatto_table *Itable)
 {
-  CHECK_NULL(Itable,INFINITY);
+  CHECK_NULL(Itable, UNUR_INFINITY);
   return Itable->integral;
 } 
 struct unur_lobatto_table *
