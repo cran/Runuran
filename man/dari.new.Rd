@@ -6,7 +6,7 @@
 \title{UNU.RAN generator based on Discrete Automatic Rejection Inversion (DARI)}
 
 \description{
-  UNU.RAN random variate generator for continuous distributions with
+  UNU.RAN random variate generator for discrete distributions with
   given probability mass function (PMF).
   It is based on Discrete Automatic Rejection Inversion (\sQuote{DARI}).
 

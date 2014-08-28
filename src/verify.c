@@ -127,7 +127,7 @@ Runuran_verify_hat (SEXP sexp_unur, SEXP sexp_n)
 
   /* run generator in verify mode and store result */
   chg_verify(gen,TRUE);
-  INTEGER_POINTER(sexp_failed)[0] = run_verify_hat(gen,n);
+  INTEGER(sexp_failed)[0] = run_verify_hat(gen,n);
   chg_verify(gen,FALSE);
 
   /* return ratio 'failed' / 'sample size' to R */

@@ -5,7 +5,7 @@
 \alias{unuran.packed-method}
 \alias{unuran.packed,unuran-method}
 \alias{unuran.packed<-}
-\alias{unuran.packed<--methods}
+\alias{unuran.packed<--method}
 \alias{unuran.packed<-,unuran-method}
 
 \title{Pack "unuran" object}

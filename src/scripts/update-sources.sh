@@ -50,6 +50,7 @@ if test ! -f ./src/unuran-src/unuran.h ; then
     grep -v "unuran_config\.h" | \
     cpio -vdump ../../R/Runuran/src/unuran-src;
     cp -v ./unuran.h.in ../../R/Runuran/src/unuran-src;
+    cp -v ./uniform/mrg31k3p.c ../../R/Runuran/src/unuran-src/uniform;
     )
 
     # Strip comments from UNU.RAN files

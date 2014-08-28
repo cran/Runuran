@@ -13,8 +13,8 @@
 
 /* R header files */
 #include <R.h>
-#include <Rdefines.h>
 #include <Rinternals.h>
+#include <Rdefines.h>
 #include <R_ext/Rdynload.h>
 
 /* UNU.RAN header files */
@@ -250,3 +250,16 @@ SEXP _Runuran_quantile_pinv (SEXP sexp_data, SEXP sexp_U, SEXP sexp_unur);
 /* Evaluate approximate quantile function:  use R data list (packed object)  */
 /*---------------------------------------------------------------------------*/
 
+
+/*****************************************************************************/
+/* Auxiliary URNG                                                            */
+
+SEXP Runuran_use_aux_urng (SEXP sexp_unur, SEXP sexp_set);
+/*---------------------------------------------------------------------------*/
+/* check, set or unset auxiliary URNG for given generator object.            */
+/*---------------------------------------------------------------------------*/
+
+SEXP Runuran_set_aux_seed (SEXP sexp_seed);
+/*---------------------------------------------------------------------------*/
+/* set seed for auxiliary URNG.                                              */
+/*---------------------------------------------------------------------------*/

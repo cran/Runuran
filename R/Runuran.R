@@ -160,7 +160,7 @@ up <- function(obj,x) {
 ##    Some Runuran object can be packed such that all data are stored as 
 ##    R object (and thus can be copied and saved within R)
 if(!isGeneric("unuran.packed"))
-  setGeneric("unuran.packed", function(unr) standardGeneric("unuran.packed"))
+        setGeneric("unuran.packed", function(unr) standardGeneric("unuran.packed"))
 
 setMethod("unuran.packed", "unuran", 
           function(unr) {
@@ -169,7 +169,7 @@ setMethod("unuran.packed", "unuran",
           } )
 
 if(!isGeneric("unuran.packed<-"))
-  setGeneric("unuran.packed<-", function(unr, value) standardGeneric("unuran.packed<-"))
+        setGeneric("unuran.packed<-", function(unr, value) standardGeneric("unuran.packed<-"))
 
 setReplaceMethod("unuran.packed", "unuran", 
                  function(unr, value) {
@@ -192,6 +192,34 @@ setReplaceMethod("unuran.packed", "unuran",
                    
                    return (unr)
                  } )
+
+
+## Second (auxiliary) URNG  -------------------------------------------------
+
+if(!isGeneric("use.aux.urng"))
+  setGeneric("use.aux.urng", function(unr) standardGeneric("use.aux.urng"))
+
+setMethod("use.aux.urng", "unuran", 
+          function(unr) {
+                  .Call("Runuran_use_aux_urng", unr, NULL, PACKAGE="Runuran")
+          } )
+
+          
+if(!isGeneric("use.aux.urng<-"))
+        setGeneric("use.aux.urng<-", function(unr, value) standardGeneric("use.aux.urng<-"))
+          
+setReplaceMethod("use.aux.urng", "unuran", 
+                 function(unr, value) {
+                         value <- as.logical(value)
+                         .Call("Runuran_use_aux_urng", unr, value, PACKAGE="Runuran")
+                         return (unr)
+                 } )
+
+set.aux.seed <- function(seed) {
+        seed <- as.integer(seed)
+        if (seed <= 0) stop("seed must be positive integer");
+        invisible(.Call("Runuran_set_aux_seed", seed, PACKAGE="Runuran"))
+}
 
 
 ## Printing -----------------------------------------------------------------

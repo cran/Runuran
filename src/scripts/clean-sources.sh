@@ -18,9 +18,9 @@ rm -rf configure config.log config.status autom4te.cache
 
 # Remove compiled files
 (cd ./src && rm -rf Runuran.so *.o )
-(cd ./inst/doc && \
-    rm -f *.aux *.bbl *.blg *.log *.out *.toc && \
-    rm -f Runuran.R Runuran.pdf Runuran.tex )
+#(cd ./inst/doc && \
+#    rm -f *.aux *.bbl *.blg *.log *.out *.toc && \
+#    rm -f Runuran.R Runuran.pdf Runuran.tex )
 
 # Remove exported header files files
 (cd ./inst/include && rm -f Runuran_ext.h unuran.h )

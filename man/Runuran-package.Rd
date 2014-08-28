@@ -17,8 +17,8 @@
   \tabular{ll}{
     Package: \tab Runuran       \cr
     Type:    \tab Package       \cr
-    Version: \tab 0.20.0        \cr
-    Date:    \tab 2012-09-10    \cr
+    Version: \tab 0.21.0        \cr
+    Date:    \tab 2014-08-28    \cr
     License: \tab GPL 2 or later\cr
   }
   \pkg{Runuran} provides an interface to the UNU.RAN library for
@@ -36,7 +36,7 @@
   
   \describe{
     \item{}{\bold{[Special Generator]} --
-      Generators for paricular distributions. Their syntax is similar to
+      Generators for particular distributions. Their syntax is similar to
       the corresponding \R built-in functions.}
     \item{}{\bold{[Universal]} --
       Functions that offer an interface to a carefully selected
@@ -79,7 +79,7 @@
       versions of the original distributions. Therefore the arguments
       \code{lb} (lower border) and \code{ub} (upper border) are
       available for all these functions.
-    \item Allmost all \code{ur\ldots} functions are based on fast numerical
+    \item Almost all \code{ur\ldots} functions are based on fast numerical
       inversion algorithms. This is important for example for generating
       order statistics, quasi-Monte Carlo methods or random vectors from
       copulas.

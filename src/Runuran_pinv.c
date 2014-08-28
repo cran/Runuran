@@ -105,20 +105,20 @@ _Runuran_pack_pinv (struct unur_gen *gen, SEXP sexp_unur)
 
   /* method ID (int) */
   PROTECT(sexp_mid = NEW_INTEGER(1));
-  INTEGER_POINTER(sexp_mid)[0] = UNUR_METH_PINV;
+  INTEGER(sexp_mid)[0] = UNUR_METH_PINV;
 
   /* order (int) */
   PROTECT(sexp_order = NEW_INTEGER(1));
-  INTEGER_POINTER(sexp_order)[0] = GEN->order;
+  INTEGER(sexp_order)[0] = GEN->order;
 
   /* Umax (double) */
   PROTECT(sexp_Umax = NEW_NUMERIC(1));
-  NUMERIC_POINTER(sexp_Umax)[0] = GEN->Umax;
+  REAL(sexp_Umax)[0] = GEN->Umax;
 
   /* guide table (int[]) */
   PROTECT(sexp_guide = NEW_INTEGER(GEN->guide_size));
   for (i=0; i<GEN->guide_size; i++) {
-    INTEGER_POINTER(sexp_guide)[i] = iv_size*GEN->guide[i];
+    INTEGER(sexp_guide)[i] = iv_size*GEN->guide[i];
   }
 
   /* total number of coefficients for polynomials */
@@ -129,7 +129,7 @@ _Runuran_pack_pinv (struct unur_gen *gen, SEXP sexp_unur)
    *   cdfi, z[order-1], u[order-2], z[order-2], ..., u[0], z[0], xi  
    */
   PROTECT(sexp_iv = NEW_NUMERIC(n_coeff));
-  iv = NUMERIC_POINTER(sexp_iv);
+  iv = REAL(sexp_iv);
   for (i=0,n=-1; i<=GEN->n_ivs; i++) {
     iv[++n] = GEN->iv[i].cdfi;
     k = GEN->order - 1;
@@ -162,8 +162,8 @@ _Runuran_pack_pinv (struct unur_gen *gen, SEXP sexp_unur)
 
   /* set domain of distribution and store in slot 'dom' */
   PROTECT(sexp_dom = NEW_NUMERIC(2));
-  NUMERIC_POINTER(sexp_dom)[0] = DISTR.domain[0];
-  NUMERIC_POINTER(sexp_dom)[1] = DISTR.domain[1];
+  REAL(sexp_dom)[0] = DISTR.domain[0];
+  REAL(sexp_dom)[1] = DISTR.domain[1];
   SET_SLOT(sexp_unur, install("dom"), sexp_dom);
 
   /* o.k. */
@@ -202,7 +202,7 @@ _Runuran_sample_pinv (SEXP sexp_data, int n)
   PROTECT(sexp_res = NEW_NUMERIC(n));
   for (i=0; i<n; i++) {
     U = unif_rand();   /* FIXME: R built-in URNG hard coded ! */
-    NUMERIC_POINTER(sexp_res)[i] = 
+    REAL(sexp_res)[i] = 
       _pinv_eval (U, Umax, order, guide_size, guide, iv);
   }
 
@@ -243,7 +243,7 @@ _Runuran_quantile_pinv (SEXP sexp_data, SEXP sexp_U, SEXP sexp_unur)
   double *iv = REAL(VECTOR_ELT(sexp_data, piv));
 
   /* Extract U */
-  U = NUMERIC_POINTER(sexp_U);
+  U = REAL(sexp_U);
   n = length(sexp_U);
  
   /* evaluate inverse CDF */
@@ -251,7 +251,7 @@ _Runuran_quantile_pinv (SEXP sexp_data, SEXP sexp_U, SEXP sexp_unur)
   for (i=0; i<n; i++) {
     if (ISNAN(U[i]))
       /* if NA or NaN is given then we simply return the same value */
-      NUMERIC_POINTER(sexp_res)[i] = U[i];
+      REAL(sexp_res)[i] = U[i];
     else {
 
       if (U[i] <= 0. ||  U[i] >= 1.) {
@@ -262,13 +262,13 @@ _Runuran_quantile_pinv (SEXP sexp_data, SEXP sexp_U, SEXP sexp_unur)
 	if (sexp_dom == R_NilValue)
 	  sexp_dom = GET_SLOT(sexp_unur, install("dom"));
 	if (U[i] < 0.5 )
-	  NUMERIC_POINTER(sexp_res)[i] = NUMERIC_POINTER(sexp_dom)[0];
+	  REAL(sexp_res)[i] = REAL(sexp_dom)[0];
 	if (U[i] > 0.5 )
-	  NUMERIC_POINTER(sexp_res)[i] = NUMERIC_POINTER(sexp_dom)[1];
+	  REAL(sexp_res)[i] = REAL(sexp_dom)[1];
       }
 
       else {
-	NUMERIC_POINTER(sexp_res)[i] = 
+	REAL(sexp_res)[i] = 
 	  _pinv_eval (U[i], Umax, order, guide_size, guide, iv);
       }
     }

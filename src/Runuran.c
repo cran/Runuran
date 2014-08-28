@@ -35,6 +35,7 @@
 
 #include "Runuran.h"
 #include "Runuran_ext.h"
+#include <time.h>
 
 /* internal header files for UNU.RAN */
 #include <unur_source.h>
@@ -79,6 +80,7 @@ static double _Runuran_R_unif_rand (void *unused);
 /*---------------------------------------------------------------------------*/
 /* Wrapper for R built-in uniform random number generator.                   */
 /*---------------------------------------------------------------------------*/
+
 
 /*****************************************************************************/
 
@@ -138,7 +140,7 @@ Runuran_init (SEXP sexp_obj, SEXP sexp_distr, SEXP sexp_method)
 
   /* set slot 'inversion' to true when 'gen' implements an inversion method. */
   PROTECT(sexp_is_inversion = NEW_LOGICAL(1));
-  LOGICAL_POINTER(sexp_is_inversion)[0] = unur_gen_is_inversion(gen);
+  LOGICAL(sexp_is_inversion)[0] = unur_gen_is_inversion(gen);
   SET_SLOT(sexp_obj, install("inversion"), sexp_is_inversion);
 
   /* make R external pointer and store pointer to structure */
@@ -234,13 +236,13 @@ _Runuran_sample_unur (struct unur_gen *gen, int n)
   case UNUR_DISTR_CEMP:   /* empirical continuous univariate distribution */
     PROTECT(sexp_res = NEW_NUMERIC(n));
     for (i=0; i<n; i++) {
-      NUMERIC_POINTER(sexp_res)[i] = unur_sample_cont(gen); }
+      REAL(sexp_res)[i] = unur_sample_cont(gen); }
     break;
 
   case UNUR_DISTR_DISCR:  /* discrete univariate distribution */
     PROTECT(sexp_res = NEW_NUMERIC(n));
     for (i=0; i<n; i++) {
-      NUMERIC_POINTER(sexp_res)[i] = (double) unur_sample_discr(gen); }
+      REAL(sexp_res)[i] = (double) unur_sample_discr(gen); }
     break;
 
   case UNUR_DISTR_CVEC:   /* continuous mulitvariate distribution */
@@ -342,7 +344,7 @@ Runuran_quantile (SEXP sexp_unur, SEXP sexp_U)
 
   /* check whether UNU.RAN object implements inversion method */
   sexp_is_inversion = GET_SLOT(sexp_unur, install("inversion"));
-  if ( ! LOGICAL_POINTER(sexp_is_inversion)[0]) {
+  if ( ! LOGICAL(sexp_is_inversion)[0]) {
     error("[UNU.RAN - error] invalid UNU.RAN object: inversion method required!\n\
 \tUse methods 'HINV', 'NINV', 'PINV'; or 'DGT'");
   }
@@ -389,7 +391,7 @@ _Runuran_quantile_unur (struct unur_gen *gen, SEXP sexp_U)
   SEXP sexp_res = R_NilValue;
 
   /* Extract U */
-  U = NUMERIC_POINTER(sexp_U);
+  U = REAL(sexp_U);
   n = length(sexp_U);
 
   /* evaluate inverse CDF */
@@ -397,9 +399,9 @@ _Runuran_quantile_unur (struct unur_gen *gen, SEXP sexp_U)
   for (i=0; i<n; i++) {
     if (ISNAN(U[i]))
       /* if NA or NaN is given then we simply return the same value */
-      NUMERIC_POINTER(sexp_res)[i] = U[i];
+      REAL(sexp_res)[i] = U[i];
     else 
-      NUMERIC_POINTER(sexp_res)[i] = unur_quantile(gen,U[i]); 
+      REAL(sexp_res)[i] = unur_quantile(gen,U[i]); 
   }
   UNPROTECT(1);
 
@@ -535,20 +537,20 @@ Runuran_PDF (SEXP sexp_obj, SEXP sexp_x, SEXP sexp_islog)
 
     if (funct_missing) {
       /* function not implemented */
-      NUMERIC_POINTER(sexp_res)[i] = NA_REAL;
+      REAL(sexp_res)[i] = NA_REAL;
       continue;
     }
 
     if (ISNAN(x[i])) {
       /* if NA or NaN is given then we simply return the same value */
-      NUMERIC_POINTER(sexp_res)[i] = x[i];
+      REAL(sexp_res)[i] = x[i];
       continue;
     }
 
     switch (unur_distr_get_type(distr)) {
     case UNUR_DISTR_CONT:
       /* univariate continuous distribution  --> evaluate PDF */
-      NUMERIC_POINTER(sexp_res)[i] = (islog)
+      REAL(sexp_res)[i] = (islog)
 	? unur_distr_cont_eval_logpdf(x[i], distr)
 	: unur_distr_cont_eval_pdf(x[i], distr);
       break;
@@ -556,9 +558,9 @@ Runuran_PDF (SEXP sexp_obj, SEXP sexp_x, SEXP sexp_islog)
     case UNUR_DISTR_DISCR:
       /* discrete univariate distribution  --> evaluate PMF */
       if (x[i] < INT_MIN || x[i] > INT_MAX) 
-	NUMERIC_POINTER(sexp_res)[i] = 0.;
+	REAL(sexp_res)[i] = 0.;
       else
-	NUMERIC_POINTER(sexp_res)[i] = unur_distr_discr_eval_pmf ((int) x[i], distr);
+	REAL(sexp_res)[i] = unur_distr_discr_eval_pmf ((int) x[i], distr);
       /* remark: logPMF yet not implemented */
       break;
 
@@ -655,7 +657,7 @@ Runuran_CDF (SEXP sexp_obj, SEXP sexp_x)
   for (i=0; i<n; i++) {
     if (ISNAN(x[i])) {
       /* if NA or NaN is given then we simply return the same value */
-      NUMERIC_POINTER(sexp_res)[i] = x[i];
+      REAL(sexp_res)[i] = x[i];
       continue;
     }
 
@@ -663,19 +665,19 @@ Runuran_CDF (SEXP sexp_obj, SEXP sexp_x)
     case UNUR_DISTR_CONT:
       /* univariate continuous distribution */
       if (distr->data.cont.cdf != NULL)
-	NUMERIC_POINTER(sexp_res)[i] = unur_distr_cont_eval_cdf(x[i], distr);
+	REAL(sexp_res)[i] = unur_distr_cont_eval_cdf(x[i], distr);
       else
-	NUMERIC_POINTER(sexp_res)[i] = unur_pinv_eval_approxcdf(gen, x[i]);
+	REAL(sexp_res)[i] = unur_pinv_eval_approxcdf(gen, x[i]);
       break;
 
     case UNUR_DISTR_DISCR:
       /* discrete univariate distribution */
       if (x[i] < INT_MIN) 
-	NUMERIC_POINTER(sexp_res)[i] = 0.;
+	REAL(sexp_res)[i] = 0.;
       else if (x[i] > INT_MAX) 
-	NUMERIC_POINTER(sexp_res)[i] = 1.;
+	REAL(sexp_res)[i] = 1.;
       else
-	NUMERIC_POINTER(sexp_res)[i] = unur_distr_discr_eval_cdf ((int) x[i], distr);
+	REAL(sexp_res)[i] = unur_distr_discr_eval_cdf ((int) x[i], distr);
       break;
 
     default:
@@ -882,6 +884,19 @@ R_init_Runuran (DllInfo *info  ATTRIBUTE__UNUSED)
   unur_set_default_urng( unur_urng_new( _Runuran_R_unif_rand, NULL) );
   unur_set_default_urng_aux( unur_urng_new( _Runuran_R_unif_rand, NULL) );
 
+  /* We use a built-in generator from the UNU.RAN library for the auxiliary URNG */
+  {
+    UNUR_URNG *aux;
+    /* create URNG object */
+    aux = unur_urng_new( unur_urng_MRG31k3p, NULL );
+    unur_urng_set_reset( aux, unur_urng_MRG31k3p_reset );
+    unur_urng_set_seed( aux, unur_urng_MRG31k3p_seed);
+    /* seed URNG object */
+    unur_urng_seed (aux, (long) time(NULL));
+    /* set as auxiliary generator */
+    unur_set_default_urng_aux( aux );
+  }
+
   /* Declare some C routines to be callable from other packages */ 
   R_RegisterCCallable("Runuran", "cont_init",   (DL_FUNC) Runuran_ext_cont_init);
   R_RegisterCCallable("Runuran", "cont_params", (DL_FUNC) unur_distr_cont_get_pdfparams);
@@ -1060,5 +1075,93 @@ SEXP _Runuran_tag(void)
 
   return tag;
 } /* end _Runuran_tag() */
+
+/*---------------------------------------------------------------------------*/
+
+SEXP Runuran_use_aux_urng (SEXP sexp_unur, SEXP sexp_set)
+     /*----------------------------------------------------------------------*/
+     /* check, set or unset auxiliary URNG for given generator object        */
+     /*                                                                      */
+     /* Parameters:                                                          */
+     /*   unur ... 'Runuran' generator object                                */ 
+     /*   set  ... whether we use an auxiliary URNG                          */
+     /*                                                                      */
+     /* Return:                                                              */
+     /*   old value of 'set'                                                 */ 
+     /*----------------------------------------------------------------------*/
+{
+  SEXP sexp_gen;                   /* S4 class containing generator object */
+  struct unur_gen *gen = NULL;     /* UNU.RAN generator object */
+  int set;                         /* value which we have to set */
+  SEXP sexp_old = R_NilValue;      /* old value of set */
+  const char *class;               /* class name of 'unr' */ 
+
+  /* first argument must be S4 class */
+  if (!IS_S4_OBJECT(sexp_unur))
+    error("[UNU.RAN - error] argument invalid: 'unr' must be UNU.RAN generator object");
+
+  /* we need a generator object */ 
+  class = translateChar(STRING_ELT(GET_CLASS(sexp_unur), 0));
+  if (strcmp(class,"unuran")) 
+    error("[UNU.RAN - error] argument invalid: 'unr' must be UNU.RAN generator object");
+
+  /* extract pointer to UNU.RAN generator object */
+  sexp_gen = GET_SLOT(sexp_unur, install("unur"));
+  if (! isNull(sexp_gen)) {
+    CHECK_UNUR_PTR(sexp_gen);
+    gen = R_ExternalPtrAddr(sexp_gen);
+    if (gen == NULL) {
+      error("[UNU.RAN - error] broken UNU.RAN object");
+    }
+  }
+
+  /* read old value of 'set' */
+  PROTECT(sexp_old = NEW_LOGICAL(1));
+  if (unur_get_urng_aux(gen) == NULL) {
+    LOGICAL(sexp_old)[0] = NA_LOGICAL;
+  }
+  else {
+    LOGICAL(sexp_old)[0] = (unur_get_urng(gen) == unur_get_urng_aux(gen)) ? FALSE : TRUE;
+  }
+
+  /* set new value */
+  if (! isNull(sexp_set)) {
+    set = LOGICAL(sexp_set)[0];
+    if (unur_get_urng_aux(gen) == NULL) {
+      error("[UNU.RAN - error] generator object does not support auxiliary URNG");
+    }
+    else {
+      if (set)
+	unur_chgto_urng_aux_default(gen);
+      else
+	unur_chg_urng_aux(gen,unur_get_urng(gen));
+    }
+  }
+
+  /* return old value of 'set' */
+  UNPROTECT(1);
+  return (sexp_old);
+
+} /* end of Runuran_use_aux_urng() */
+
+/*---------------------------------------------------------------------------*/
+
+SEXP Runuran_set_aux_seed (SEXP sexp_seed)
+     /*----------------------------------------------------------------------*/
+     /* set seed for auxiliary URNG                                          */
+     /*                                                                      */
+     /* Parameters:                                                          */
+     /*   seed  ... seed for auxiliary URNG                                  */ 
+     /*                                                                      */
+     /* Return:                                                              */
+     /*   NULL                                                               */ 
+     /*----------------------------------------------------------------------*/
+{
+  unsigned long seed = INTEGER(sexp_seed)[0];
+  if (seed <= 0) 
+    error("[UNU.RAN - error] seed is non-positive");
+  unur_urng_seed (unur_get_default_urng_aux(), seed);
+  return R_NilValue;
+} /* end of Runuran_set_aux_seed() */
 
 /*---------------------------------------------------------------------------*/

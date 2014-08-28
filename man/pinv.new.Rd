@@ -106,6 +106,8 @@ pinvd.new(distr, uresolution=1.e-10, smooth=FALSE)
 
 \references{
   G. Derflinger, W. H\"ormann, and J. Leydold (2010):
+  Random variate generation by numerical inversion when only the density
+  is known. 
   ACM Trans. Model. Comput. Simul., 20:4, #18
 }
 

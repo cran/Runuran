@@ -81,13 +81,13 @@ up(obj, x)
 
 \examples{
 ## Create an UNU.RAN distribution object (for standard Gaussian)
-## and evaluate density for some points
+## and evaluate distribution function for some points
 distr <- udnorm()
 up(distr, 1.5)
 up(distr, -3:3)
 
 ## Create an UNU.RAN generator object (for standard Gaussian)
-## and evaluate density of underyling distribution
+## and evaluate distribution function of underyling distribution
 unr <- tdrd.new(udnorm())
 up(unr, 1.5)
 up(unr, -3:3)

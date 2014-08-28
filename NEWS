@@ -1,4 +1,24 @@
 
+Version 0.21.0: 2014-08-28
+
+	- new method use.aux.urng() for using a second auxiliary
+	  URNG in Runuran objects that are based on the
+	  acceptence-rejection method.
+	  This makes this kind of genenator suitable for 
+	  correlation induction.
+
+	- new function set.aux.seed() for seeding the auxiliary URNG.
+
+	- moved vignettes from directory inst/doc/ into 
+	  directory vignettes/.
+
+	- fixed some typos
+
+	- internal:
+	  added directory src/scripts with scripts for updating
+	  documentation.
+
+
 Version 0.20.0: 2012-09-10
 
 	- internal:

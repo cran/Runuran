@@ -58,7 +58,7 @@
 /*****************************************************************************/
 /* array for storing list elements                                           */
 
-#define MAX_LIST  (10)       /* maximum number of list entries */
+#define MAX_LIST  (11)       /* maximum number of list entries */
 
 struct Rlist {
   int len;                   /* length of list (depends on method) */
@@ -79,7 +79,7 @@ void add_string(struct Rlist *list, char *key, const char *string)
 {
   /* check length of list */
   if (list->len >= MAX_LIST)
-    error("Runuran: Interval error! Please send bug report");
+    error("Runuran: Internal error! Please send bug report");
 
   /* store name of list entry */
   list->names[list->len] = key;
@@ -97,7 +97,7 @@ void add_string(struct Rlist *list, char *key, const char *string)
 void add_numeric(struct Rlist *list, char *key, double num)
 {
   if (list->len >= MAX_LIST)
-    error("Runuran: Interval error! Please send bug report");
+    error("Runuran: Internal error! Please send bug report");
 
   list->names[list->len] = key;
   PROTECT(list->values[list->len] = NEW_NUMERIC(1));
@@ -112,7 +112,7 @@ void add_numeric_list(struct Rlist *list, char *key, double *num, int n_num)
   int i;
 
   if (list->len >= MAX_LIST)
-    error("Runuran: Interval error! Please send bug report");
+    error("Runuran: Internal error! Please send bug report");
 
   list->names[list->len] = key;
   PROTECT(list->values[list->len] = NEW_NUMERIC(n_num));
@@ -126,7 +126,7 @@ void add_numeric_list(struct Rlist *list, char *key, double *num, int n_num)
 void add_integer(struct Rlist *list, char *key, int inum)
 {
   if (list->len >= MAX_LIST)
-    error("Runuran: Interval error! Please send bug report");
+    error("Runuran: Internal error! Please send bug report");
 
   list->names[list->len] = key;
   PROTECT(list->values[list->len] = NEW_INTEGER(1));
@@ -264,7 +264,7 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
       int i;
 
       if (list.len+2 >= MAX_LIST)
-      	error("Runuran: Interval error! Please send bug report");
+      	error("Runuran: Internal error! Please send bug report");
 
       list.names[list.len] = "genparam";
       PROTECT(list.values[list.len] = NEW_NUMERIC(GEN->n_gen_param));
@@ -320,7 +320,7 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
       int i;
 
       if (list.len+1 >= MAX_LIST)
-      	error("Runuran: Interval error! Please send bug report");
+      	error("Runuran: Internal error! Please send bug report");
 
       list.names[list.len] = "genparam";
       PROTECT(list.values[list.len] = NEW_NUMERIC(GEN->n_gen_param));
@@ -384,7 +384,7 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
       int j,n;
 
       if (list.len+4 >= MAX_LIST)
-	error("Runuran: Interval error! Please send bug report");
+	error("Runuran: Internal error! Please send bug report junk");
 
       list.names[list.len] = "cdfi";
       PROTECT(list.values[list.len] = NEW_NUMERIC(GEN->n_ivs + 1));

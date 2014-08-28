@@ -4,7 +4,10 @@
 # Run this script in the top-level Runuran directory.
 # The script updates list of distributions in
 #    man/Runuran.distributions.Rd
-#    inst/doc/src/tab-distributions.tex
+#    vignettes/inputs/tab-distributions.tex
+# and list of special generators in
+#    man/Runuran.special.generators.Rd
+#    vignettes/inputs/tab-generators.tex
 # ---------------------------------------------------------------------------
 
 use strict;
@@ -13,8 +16,8 @@ use Getopt::Std;
 
 # --- Constants -------------------------------------------------------------
 
-my $ur_Vignette = "./inst/doc/src/tab-generators.tex";
-my $ud_Vignette = "./inst/doc/src/tab-distributions.tex";
+my $ur_Vignette = "./vignettes/inputs/tab-generators.tex";
+my $ud_Vignette = "./vignettes/inputs/tab-distributions.tex";
 my $generators_Rd_file = "./man/Runuran.special.generators.Rd";
 my $distributions_Rd_file = "./man/Runuran.distributions.Rd";
 
