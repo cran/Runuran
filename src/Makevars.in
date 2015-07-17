@@ -1,4 +1,4 @@
-PKG_CPPFLAGS=-I. -Iunuran-src -DHAVE_CONFIG_H ##  -Wall -Wextra -pedantic
+PKG_CPPFLAGS=-I. -Iunuran-src -DHAVE_CONFIG_H     ## -Wall -Wextra -pedantic
 SOURCES=@UNURAN_SRC@ Runuran.c Runuran_distr.c Runuran_pinv.c performance.c distributions.c mixture.c verify.c Runuran_ext.c
 OBJECTS=$(SOURCES:.c=.o)
 ## for Windows prior to 2.6.0

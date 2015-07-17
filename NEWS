@@ -1,4 +1,9 @@
 
+Version 0.22.0: 2015-07-17
+
+ 	- explicitly import functions from standard packages
+
+
 Version 0.21.0: 2014-08-28
 
 	- new method use.aux.urng() for using a second auxiliary
