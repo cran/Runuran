@@ -1,4 +1,9 @@
 
+Version 0.23.0: 2015-08-18
+
+ 	- fixed problem with methods "initialize" and "plot"
+
+
 Version 0.22.0: 2015-07-17
 
  	- explicitly import functions from standard packages

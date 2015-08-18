@@ -1,6 +1,6 @@
-172436b1ae64c47f2f2fef127c1d2030 *DESCRIPTION
-1e18b42e12fe96b821da111cca4fb10d *NAMESPACE
-e376e0efa8495c3e3be3d3195af5b3a0 *NEWS
+5244ada3d445f89b4390aa79e3442c77 *DESCRIPTION
+a525e5a522b1deea8be7eeac3874770f *NAMESPACE
+cb6582f6e52752dc2dcbcd62cda87b97 *NEWS
 27a7c05fd715cda8a159a129f0c6c951 *R/Runuran.R
 2a11f8a88561e0acb1a21f4f390a4ba2 *R/deprecated.R
 632a9130579c782a631971a09dc620aa *R/distributions.R
@@ -18,11 +18,11 @@ a88cd3d382dbda4df908a270a08e85d9 *configure.ac
 8b6ee0f54e49b3bc8466c54055e3c6a6 *configure.win
 941f09bb6dbea8757258d7caa575f369 *inst/doc/Runuran.R
 706b55db08e0c4586db8679e79ece6e0 *inst/doc/Runuran.Rnw
-2d43a57005adea632c3fe218b25cea07 *inst/doc/Runuran.pdf
+b038b29f3fc41f5112f239bf03911db0 *inst/doc/Runuran.pdf
 3ac81dd617329365aec10a588c45e462 *inst/include/Runuran_ext.h
 fb1cb1f07309fe7d10564a2fc0bcc309 *inst/include/Runuran_stubs.c
 5c2909112eb86d0b721dc3ebcc1d3ea4 *inst/include/unuran.h
-0f7354a0399f1d0f60af62533de80438 *man/Runuran-package.Rd
+333e08106d1189891f7062a296351b24 *man/Runuran-package.Rd
 e0a9b61f9270fe513a4dde54f8038c45 *man/Runuran.distributions.Rd
 c57a8ebbce4763f05f6a8290e3c7cd9b *man/Runuran.special.generators.Rd
 3c98c520ba71da6160e3273503e2b28b *man/ars.new.Rd
@@ -117,7 +117,7 @@ ca3fcdcb971da8eef4c322ce3dd68b78 *man/urt.Rd
 9532e88bebcbf05b8869f2364f0c3fb1 *man/urweibull.Rd
 9604e02c7081e62cc0da9aead8fb8fcf *man/use.aux.urng-method.Rd
 1675c4076dbf2b8a3234989cd5bcdaf1 *man/vnrou.new.Rd
-0a1dc161683656d455f3390874807d1a *src/Makevars.in
+39eb058a46cba4a5a02493dde74a7928 *src/Makevars.in
 1352863f0b640e1a0981f28f999942ba *src/README
 bbb6819681bf912779cbcae5e977abf3 *src/Runuran.c
 9d6ce26920fea07f43547aa49a247793 *src/Runuran.h
@@ -491,4 +491,4 @@ e1c7e3f1c14aec1d8ae56f8147b0d306 *vignettes/inputs/pitfalls.Rnw
 8d6c13c969a4a65726819d1cde002bc1 *vignettes/inputs/tab-generators.tex
 df628bc82940f63e77513949303d52a3 *vignettes/inputs/title.tex
 bb4ab047c1708fd56e5b6cc238e196ff *vignettes/inputs/universal.Rnw
-04a577c5bc7b77446a9d261af546b225 *vignettes/inputs/version.tex
+245a088dc947d10788c67c87a847f436 *vignettes/inputs/version.tex

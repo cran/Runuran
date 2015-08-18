@@ -1,6 +1,7 @@
 useDynLib(Runuran)
 
 importFrom("methods", "is", "new")
+importMethodsFrom("methods", "initialize", "show")
 importFrom("stats", "pnbinom", "ppois")
 
 exportClass(unuran)
