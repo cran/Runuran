@@ -31,56 +31,10 @@
  *                                                                           *
  *****************************************************************************/
 
-/*---------------------------------------------------------------------------*/
-
 #include "Runuran.h"
-#include "Runuran_ext.h"
-#include <time.h>
 
 /* internal header files for UNU.RAN */
 #include <unur_source.h>
-
-/*---------------------------------------------------------------------------*/
-
-static SEXP _Runuran_sample_unur (struct unur_gen *gen, int n);
-/*---------------------------------------------------------------------------*/
-/* Sample from generator object: use UNU.RAN object                          */
-/*---------------------------------------------------------------------------*/
-
-static SEXP _Runuran_sample_data (SEXP sexp_data, int n);
-/*---------------------------------------------------------------------------*/
-/* Sample from generator object: use R data list (packed object)             */
-/*---------------------------------------------------------------------------*/
-
-static SEXP _Runuran_quantile_unur (struct unur_gen *gen, SEXP sexp_U);
-/*---------------------------------------------------------------------------*/
-/* Evaluate approximate quantile function: use UNU.RAN object                */
-/*---------------------------------------------------------------------------*/
-
-static SEXP _Runuran_quantile_data (SEXP sexp_data, SEXP sexp_U, SEXP sexp_unur);
-/*---------------------------------------------------------------------------*/
-/* Evaluate approximate quantile function:  use R data list (packed object)  */
-/*---------------------------------------------------------------------------*/
-
-static void _Runuran_error_handler ( 
-	const char *objid, const char *file, int line,
-        const char *errortype, int errorcode, const char *reason );
-/*---------------------------------------------------------------------------*/
-/* Error handler for UNU.RAN routines.                                       */
-/*---------------------------------------------------------------------------*/
-
-static void _Runuran_error_suppress ( 
-	const char *objid, const char *file, int line,
-        const char *errortype, int errorcode, const char *reason );
-/*---------------------------------------------------------------------------*/
-/* Error handler for UNU.RAN routines that suppresses all warnings/errors.   */
-/*---------------------------------------------------------------------------*/
-
-static double _Runuran_R_unif_rand (void *unused);
-/*---------------------------------------------------------------------------*/
-/* Wrapper for R built-in uniform random number generator.                   */
-/*---------------------------------------------------------------------------*/
-
 
 /*****************************************************************************/
 
@@ -299,7 +253,7 @@ _Runuran_sample_data (SEXP sexp_data, int n)
 
   switch (mid) {
   case UNUR_METH_PINV:
-    sexp_res = _Runuran_sample_pinv(sexp_data,n);
+    PROTECT(sexp_res = _Runuran_sample_pinv(sexp_data,n));
     break;
   default:
     errorcall_return(R_NilValue,"[UNU.RAN - error] broken UNU.RAN object");
@@ -309,6 +263,7 @@ _Runuran_sample_data (SEXP sexp_data, int n)
   PutRNGstate();
 
   /* return result to R */
+  UNPROTECT(1);
   return sexp_res;
  
 } /* end of _Runuran_sample_data() */
@@ -862,69 +817,6 @@ Runuran_pack (SEXP sexp_unur)
   return R_NilValue;
 
 } /* end of Runuran_pack() */
-
-/*---------------------------------------------------------------------------*/
-
-void 
-R_init_Runuran (DllInfo *info  ATTRIBUTE__UNUSED) 
-     /*----------------------------------------------------------------------*/
-     /* Initialization routine when loading the DLL                          */
-     /*                                                                      */
-     /* Parameters:                                                          */
-     /*   info ... passed by R and describes the DLL                         */
-     /*                                                                      */
-     /* Return:                                                              */
-     /*   (void)                                                             */
-     /*----------------------------------------------------------------------*/
-{
-  /* Set new UNU.RAN error handler */
-  unur_set_error_handler( _Runuran_error_handler );
-
-  /* Set R built-in generator as default URNG */
-  unur_set_default_urng( unur_urng_new( _Runuran_R_unif_rand, NULL) );
-  unur_set_default_urng_aux( unur_urng_new( _Runuran_R_unif_rand, NULL) );
-
-  /* We use a built-in generator from the UNU.RAN library for the auxiliary URNG */
-  {
-    UNUR_URNG *aux;
-    /* create URNG object */
-    aux = unur_urng_new( unur_urng_MRG31k3p, NULL );
-    unur_urng_set_reset( aux, unur_urng_MRG31k3p_reset );
-    unur_urng_set_seed( aux, unur_urng_MRG31k3p_seed);
-    /* seed URNG object */
-    unur_urng_seed (aux, (long) time(NULL));
-    /* set as auxiliary generator */
-    unur_set_default_urng_aux( aux );
-  }
-
-  /* Declare some C routines to be callable from other packages */ 
-  R_RegisterCCallable("Runuran", "cont_init",   (DL_FUNC) Runuran_ext_cont_init);
-  R_RegisterCCallable("Runuran", "cont_params", (DL_FUNC) unur_distr_cont_get_pdfparams);
-
-  /* Register native routines */ 
-  /* Not implemented yet */ 
-  /*   R_registerRoutines(info, NULL, Runuran_CallEntries, NULL, NULL); */
-  /*   R_useDynamicSymbols(info, FALSE); */
-
-} /* end of R_init_Runuran() */
-
-/*---------------------------------------------------------------------------*/
-
-void
-R_unload_Runuran (DllInfo *info  ATTRIBUTE__UNUSED)
-     /*----------------------------------------------------------------------*/
-     /* Clear memory before unloading the DLL.                               */
-     /*                                                                      */
-     /* Parameters:                                                          */
-     /*   info ... passed by R and describes the DLL                         */
-     /*                                                                      */
-     /* Return:                                                              */
-     /*   (void)                                                             */
-     /*----------------------------------------------------------------------*/
-{
-  unur_urng_free(unur_get_default_urng());
-  unur_urng_free(unur_get_default_urng_aux());
-} /* end of R_unload_Runuran() */
 
 /*---------------------------------------------------------------------------*/
 

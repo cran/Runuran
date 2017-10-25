@@ -23,7 +23,7 @@ rm -rf configure config.log config.status autom4te.cache
 #    rm -f Runuran.R Runuran.pdf Runuran.tex )
 
 # Remove exported header files files
-(cd ./inst/include && rm -f Runuran_ext.h unuran.h )
+(cd ./inst/include && rm -f Runuran.h Runuran_ext.h unuran.h )
 
 # Remove UNU.RAN files
 (cd ./src/unuran-src && rm -rf * )

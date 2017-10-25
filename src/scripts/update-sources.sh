@@ -59,7 +59,8 @@ if test ! -f ./src/unuran-src/unuran.h ; then
     done
 
     # Copy files into inst/include directory
-    cp -v ./src/Runuran_ext.h ./inst/include/
+    cp -v ./src/Runuran_ext.h       ./inst/include/
+    cp -v ./src/Runuran.h           ./inst/include/
     cp -v ./src/unuran-src/unuran.h ./inst/include/
 
 fi

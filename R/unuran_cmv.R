@@ -91,10 +91,9 @@ setMethod( "initialize", "unuran.cmv",
             .Object@env <- new.env()
             
             ## Create UNUR_DISTR object
-            .Object@distr <-.Call("Runuran_cmv_init",
+            .Object@distr <-.Call(C_Runuran_cmv_init,
                                   .Object, .Object@env,
-                                  .Object@ndim, .Object@pdf, mode, center, ll, ur, name,
-                                  PACKAGE="Runuran")
+                                  .Object@ndim, .Object@pdf, mode, center, ll, ur, name)
             
             ## Check UNU.RAN object
             if (is.null(.Object@distr)) {

@@ -1,4 +1,13 @@
 
+Version 0.24.0: 2017-10-25
+
+	- export some C functions
+
+	- register native routines
+
+	- fixed unprotected variables in C code
+
+
 Version 0.23.0: 2015-08-18
 
  	- fixed problem with methods "initialize" and "plot"

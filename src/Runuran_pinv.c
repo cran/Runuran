@@ -245,7 +245,10 @@ _Runuran_quantile_pinv (SEXP sexp_data, SEXP sexp_U, SEXP sexp_unur)
   /* Extract U */
   U = REAL(sexp_U);
   n = length(sexp_U);
- 
+
+  /* domain of distribution */
+  PROTECT(sexp_dom = GET_SLOT(sexp_unur, install("dom")));
+  
   /* evaluate inverse CDF */
   PROTECT(sexp_res = NEW_NUMERIC(n));
   for (i=0; i<n; i++) {
@@ -259,8 +262,6 @@ _Runuran_quantile_pinv (SEXP sexp_data, SEXP sexp_U, SEXP sexp_unur)
 
 	if (U[i] < 0. ||  U[i] > 1.)
 	  warning("[UNU.RAN - warning] argument out of domain: U not in [0,1]");
-	if (sexp_dom == R_NilValue)
-	  sexp_dom = GET_SLOT(sexp_unur, install("dom"));
 	if (U[i] < 0.5 )
 	  REAL(sexp_res)[i] = REAL(sexp_dom)[0];
 	if (U[i] > 0.5 )
@@ -275,7 +276,7 @@ _Runuran_quantile_pinv (SEXP sexp_data, SEXP sexp_U, SEXP sexp_unur)
   }
 
   /* return result to R */
-  UNPROTECT(1);
+  UNPROTECT(2);
   return sexp_res;
  
 } /* end of _Runuran_quantile_pinv() */

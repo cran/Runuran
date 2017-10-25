@@ -1,4 +1,4 @@
-useDynLib(Runuran)
+useDynLib(Runuran, .registration=TRUE, .fixes="C_")
 
 importFrom("methods", "is", "new")
 importMethodsFrom("methods", "initialize", "show")

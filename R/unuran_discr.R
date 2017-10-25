@@ -89,11 +89,10 @@ setMethod( "initialize", "unuran.discr",
             .Object@env <- new.env()
             
             ## Create UNUR_DISTR object
-            .Object@distr <-.Call("Runuran_discr_init",
+            .Object@distr <-.Call(C_Runuran_discr_init,
                                   .Object, .Object@env,
                                   .Object@cdf, pv, .Object@pmf,
-                                  mode, c(lb,ub), sum, name,
-                                  PACKAGE="Runuran")
+                                  mode, c(lb,ub), sum, name)
             
             ## Check UNU.RAN object
             if (is.null(.Object@distr)) {

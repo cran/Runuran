@@ -28,7 +28,7 @@ udbeta <- function (shape1,shape2,lb=0,ub=1) {
   if (missing (shape1) || missing (shape2))
     stop ("argument 'shape1' or 'shape2' missing")
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "beta", c(shape1,shape2), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "beta", c(shape1,shape2), c(lb,ub))
   distr
 }
 
@@ -50,7 +50,7 @@ urcauchy <- function (n,location=0,scale=1,lb=-Inf,ub=Inf) {
 
 udcauchy <- function (location=0,scale=1,lb=-Inf,ub=Inf) {
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "cauchy", c(location,scale), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "cauchy", c(location,scale), c(lb,ub))
   distr
 }
 
@@ -64,7 +64,7 @@ udchi <- function (df,lb=0,ub=Inf) {
   if (missing (df))
     stop ("argument 'df' missing")
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "chi", c(df), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "chi", c(df), c(lb,ub))
   distr
 }
 
@@ -78,7 +78,7 @@ udchisq <- function (df,lb=0,ub=Inf) {
   if (missing (df))
     stop ("argument 'df' missing")
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "chisquare", c(df), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "chisquare", c(df), c(lb,ub))
   distr
 }
 
@@ -90,7 +90,7 @@ urexp <- function (n,rate=1,lb=0,ub=Inf) {
 
 udexp <- function (rate=1,lb=0,ub=Inf) {
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "exponential", c(1./rate), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "exponential", c(1./rate), c(lb,ub))
   distr
 }
 
@@ -104,7 +104,7 @@ udf <- function (df1,df2,lb=0,ub=Inf) {
   if (missing (df1) || missing (df2) )
     stop ("argument 'df1' or 'df2' missing")
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "F", c(df1,df2), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "F", c(df1,df2), c(lb,ub))
   distr
 }
 
@@ -118,7 +118,7 @@ udfrechet <- function (shape,location=0,scale=1,lb=location,ub=Inf) {
   if (missing (shape))
     stop ("argument 'shape' missing")
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "extremeII", c(shape,location,scale), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "extremeII", c(shape,location,scale), c(lb,ub))
   distr
 }
 
@@ -132,7 +132,7 @@ udgamma <- function (shape,scale=1,lb=0,ub=Inf) {
   if (missing (shape))
     stop ("argument 'shape' missing")
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "gamma", c(shape,scale), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "gamma", c(shape,scale), c(lb,ub))
   distr
 }
 
@@ -142,8 +142,7 @@ udghyp <- function (lambda,alpha,beta,delta,mu, lb=-Inf,ub=Inf) {
       || missing (delta) || missing (mu))
     stop ("argument 'lambda', 'alpha', 'beta', 'delta', or 'mu' missing")
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "ghyp", c(lambda,alpha,beta,delta,mu),
-                      c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "ghyp", c(lambda,alpha,beta,delta,mu), c(lb,ub))
   distr
 }
 
@@ -159,7 +158,7 @@ udgig <- function (theta,psi,chi, lb=0,ub=Inf) {
   if (missing (theta) || missing (psi) || missing (chi) )
     stop ("argument 'theta', 'psi' or 'chi' missing")
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "gig2", c(theta,psi,chi), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "gig2", c(theta,psi,chi), c(lb,ub))
   distr
 }
 
@@ -167,7 +166,7 @@ udgiga <- function (theta,omega,eta=1, lb=0,ub=Inf) {
   if (missing (theta) || missing (omega) )
     stop ("argument 'theta' or 'omega' missing")
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "gig", c(theta,omega,eta), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "gig", c(theta,omega,eta), c(lb,ub))
   distr
 }
 
@@ -179,7 +178,7 @@ urextremeI <- function (n,location=0,scale=1,lb=-Inf,ub=Inf) {
 
 udgumbel <- function (location=0,scale=1,lb=-Inf,ub=Inf) {
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "extremeI", c(location,scale), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "extremeI", c(location,scale), c(lb,ub))
   distr
 }
 
@@ -195,7 +194,7 @@ udhyperbolic <- function (alpha,beta,delta,mu, lb=-Inf,ub=Inf) {
   if (missing (alpha) || missing (beta) || missing (delta) || missing (mu))
     stop ("argument 'alpha', 'beta', 'delta',or 'mu' missing")
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "hyperbolic", c(alpha,beta,delta,mu), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "hyperbolic", c(alpha,beta,delta,mu), c(lb,ub))
   distr
 }
 
@@ -204,7 +203,7 @@ udig <- function (mu,lambda, lb=0,ub=Inf) {
   if (missing (mu) || missing (lambda) )
     stop ("argument 'mu' or 'lambda' missing")
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "ig", c(mu,lambda), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "ig", c(mu,lambda), c(lb,ub))
   distr
 }
 
@@ -216,7 +215,7 @@ urlaplace <- function (n,location=0,scale=1,lb=-Inf,ub=Inf) {
 
 udlaplace <- function (location=0,scale=1,lb=-Inf,ub=Inf) {
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "laplace", c(location,scale), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "laplace", c(location,scale), c(lb,ub))
   distr
 }
 
@@ -227,7 +226,7 @@ urlnorm <- function (n,meanlog=0,sdlog=1,lb=0,ub=Inf) {
 
 udlnorm <- function (meanlog=0,sdlog=1, lb=0,ub=Inf) {
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "lognormal", c(meanlog,sdlog), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "lognormal", c(meanlog,sdlog), c(lb,ub))
   distr
 }
 
@@ -239,7 +238,7 @@ urlogis <- function (n,location=0,scale=1,lb=-Inf,ub=Inf) {
 
 udlogis <- function (location=0,scale=1,lb=-Inf,ub=Inf) {
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "logistic", c(location,scale), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "logistic", c(location,scale), c(lb,ub))
   distr
 }
 
@@ -253,7 +252,7 @@ udlomax <- function (shape,scale=1,lb=0,ub=Inf) {
   if (missing (shape))
     stop ("argument 'shape' missing")
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "lomax", c(shape,scale), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "lomax", c(shape,scale), c(lb,ub))
   distr
 }
 
@@ -262,8 +261,7 @@ udmeixner <- function (alpha,beta,delta,mu, lb=-Inf,ub=Inf) {
   if (missing (alpha) || missing (beta) || missing (delta) || missing (mu))
     stop ("argument 'alpha', 'beta', 'delta', or 'mu' missing")
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "meixner", c(alpha,beta,delta,mu),
-                      c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "meixner", c(alpha,beta,delta,mu), c(lb,ub))
   distr
 }
 
@@ -275,7 +273,7 @@ urnorm <- function (n,mean=0,sd=1,lb=-Inf,ub=Inf) {
 
 udnorm <- function (mean=0,sd=1,lb=-Inf,ub=Inf) {
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "normal", c(mean,sd), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "normal", c(mean,sd), c(lb,ub))
   distr
 }
 
@@ -289,7 +287,7 @@ udpareto <- function (k,a,lb=k,ub=Inf) {
   if (missing (k) || missing (a))
     stop ("argument 'k' or 'a' missing")
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "pareto", c(k,a), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "pareto", c(k,a), c(lb,ub))
   distr
 }
 
@@ -302,7 +300,7 @@ urplanck <- function (n,a,lb=1.e-12,ub=Inf) {
 
 #udplanck <- function (a,lb=1.e-12,ub=Inf) { 
 #  distr <- new ("unuran.cont",empty=TRUE)
-#  distr@distr <-.Call("Runuran_std_cont", distr, "planck", c(a), c(lb,ub), PACKAGE="Runuran")
+#  distr@distr <-.Call(C_Runuran_std_cont, distr, "planck", c(a), c(lb,ub))
 #  distr
 #}
 ## TODO
@@ -317,7 +315,7 @@ udpowerexp <- function (shape,lb=-Inf,ub=Inf) {
   if (missing (shape))
     stop ("argument 'shape' missing")
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "powerexponential", c(shape), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "powerexponential", c(shape), c(lb,ub))
   distr
 }
 
@@ -329,14 +327,14 @@ urrayleigh <- function (n,scale=1,lb=0,ub=Inf) {
 
 udrayleigh <- function (scale=1,lb=0,ub=Inf) {
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "rayleigh", c(scale), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "rayleigh", c(scale), c(lb,ub))
   distr
 }
 
 ## -- Slash distribution ----------------------------------------------------
 udslash <- function (lb=-Inf,ub=Inf) {
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "slash", numeric(0), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "slash", numeric(0), c(lb,ub))
   distr
 }
 
@@ -350,7 +348,7 @@ udt <- function (df,lb=-Inf,ub=Inf) {
   if (missing (df))
     stop ("argument 'df' missing")
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "student", c(df), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "student", c(df), c(lb,ub))
   distr
 }
 
@@ -369,7 +367,7 @@ urtriang <- function (n,a,m,b,lb=a,ub=b) {
 
 #udtriang <- function (df,lb=-Inf,ub=Inf) { 
 #  distr <- new ("unuran.cont",empty=TRUE)
-#  distr@distr <-.Call("Runuran_std_cont", distr, "student", c(df), c(lb,ub), PACKAGE="Runuran")
+#  distr@distr <-.Call(C_Runuran_std_cont, distr, "student", c(df), c(lb,ub))
 #  distr
 #}
 ## TODO
@@ -379,8 +377,7 @@ udvg <- function (lambda, alpha, beta, mu, lb=-Inf, ub=Inf) {
   if (missing (lambda) || missing (alpha) || missing (beta) || missing (mu))
     stop ("argument 'lambda', 'alpha', 'beta', or 'mu' missing")
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "vg", c(lambda,alpha,beta,mu),
-                      c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "vg", c(lambda,alpha,beta,mu), c(lb,ub))
   distr
 }
 
@@ -394,7 +391,7 @@ udweibull <- function (shape,scale=1,lb=0,ub=Inf) {
   if (missing (shape))
     stop ("argument 'shape' missing")
   distr <- new ("unuran.cont",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_cont", distr, "weibull", c(shape,scale), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_cont, distr, "weibull", c(shape,scale), c(lb,ub))
   distr
 }
 
@@ -414,7 +411,7 @@ udbinom <- function (size,prob,lb=0,ub=size) {
   if (missing (size) || missing (prob))
     stop ("argument 'size' or 'prob' missing")
   distr <- new ("unuran.discr",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_discr", distr, "binomial", c(size,prob), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_discr, distr, "binomial", c(size,prob), c(lb,ub))
   distr
 }
 
@@ -434,7 +431,7 @@ udgeom <- function (prob,lb=0,ub=Inf) {
   if (missing (prob))
     stop ("argument 'prob' missing")
   distr <- new ("unuran.discr",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_discr", distr, "geometric", c(prob), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_discr, distr, "geometric", c(prob), c(lb,ub))
   distr
 }
 
@@ -448,7 +445,7 @@ udhyper <- function (m,n,k,lb=max(0,k-n),ub=min(k,m)) {
   if ( missing (m) || missing (n) || missing(k))
     stop ("argument 'm', 'n' or 'k' missing")
   distr <- new ("unuran.discr",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_discr", distr, "hypergeometric", c(m+n,m,k), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_discr, distr, "hypergeometric", c(m+n,m,k), c(lb,ub))
   distr
 }
 
@@ -468,7 +465,7 @@ udlogarithmic <- function (shape,lb=1,ub=Inf) {
   if (missing (shape))
     stop ("argument 'shape' missing")
   distr <- new ("unuran.discr",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_discr", distr, "logarithmic", c(shape), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_discr, distr, "logarithmic", c(shape), c(lb,ub))
   distr
 }
 
@@ -488,7 +485,7 @@ udnbinom <- function (size,prob,lb=0,ub=Inf) {
   if (missing (size) || missing (prob))
     stop ("argument 'size' or 'prob' missing")
   distr <- new ("unuran.discr",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_discr", distr, "negativebinomial", c(prob,size), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_discr, distr, "negativebinomial", c(prob,size), c(lb,ub))
   distr
 }
 
@@ -508,7 +505,7 @@ udpois <- function (lambda,lb=0,ub=Inf) {
   if (missing (lambda))
     stop ("argument 'lambda' missing")
   distr <- new ("unuran.discr",empty=TRUE)
-  distr@distr <-.Call("Runuran_std_discr", distr, "poisson", c(lambda), c(lb,ub), PACKAGE="Runuran")
+  distr@distr <-.Call(C_Runuran_std_discr, distr, "poisson", c(lambda), c(lb,ub))
   distr
 }
 

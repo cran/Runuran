@@ -67,11 +67,11 @@ setMethod( "initialize", "unuran",
 
                   ## Create UNU.RAN object
                   if (is.character(distr)) {
-                          .Object@unur <-.Call("Runuran_init", .Object, distr, method, PACKAGE="Runuran")
+                          .Object@unur <-.Call(C_Runuran_init, .Object, distr, method)
                   } else { if (class(distr)=="unuran.discr" ||
                                class(distr)=="unuran.cont"  ||
                                class(distr)=="unuran.cmv") {
-                          .Object@unur <-.Call("Runuran_init", .Object, distr@distr, method, PACKAGE="Runuran")
+                          .Object@unur <-.Call(C_Runuran_init, .Object, distr@distr, method)
                           .Object@distr <- distr
                   } else {
                           stop("'distr' must be a character string or a Runuran distribution object", call.=FALSE)
@@ -98,19 +98,19 @@ unuran.new <- function(distr,method="auto") {
 ## ur
 ## ( We avoid using a method as this has an expensive overhead. )
 ur <- function(unr,n=1) { 
-        .Call("Runuran_sample", unr, n, PACKAGE="Runuran")
+        .Call(C_Runuran_sample, unr, n)
 }
 
 ## unuran.sample: deprecated name for ur()
 unuran.sample <- function(unr,n=1) { 
-        .Call("Runuran_sample", unr, n, PACKAGE="Runuran")
+        .Call(C_Runuran_sample, unr, n)
 }
 
 ## Quantile -----------------------------------------------------------------
 
 ## uq
 uq <- function(unr,U) { 
-        .Call("Runuran_quantile", unr, U, PACKAGE="Runuran")
+        .Call(C_Runuran_quantile, unr, U)
 }
 
 ## PDF & PMF ----------------------------------------------------------------
@@ -120,7 +120,7 @@ ud <- function(obj,x,islog=FALSE) {
   if ( ! (is(obj,"unuran.cont") || is(obj,"unuran.discr") ||
           is(obj,"unuran") ) )
     stop("argument 'obj' must be UNU.RAN object")
-  .Call("Runuran_PDF", obj, x, islog, PACKAGE="Runuran")
+  .Call(C_Runuran_PDF, obj, x, islog)
 }
 
 ## CDF ----------------------------------------------------------------------
@@ -130,7 +130,7 @@ up <- function(obj,x) {
   if ( ! (is(obj,"unuran.cont") || is(obj,"unuran.discr") ||
           is(obj,"unuran") ) )
     stop("argument 'obj' must be UNU.RAN object")
-  .Call("Runuran_CDF", obj, x, PACKAGE="Runuran")
+  .Call(C_Runuran_CDF, obj, x)
 }
 
 ## Packing ------------------------------------------------------------------
@@ -186,7 +186,7 @@ setReplaceMethod("unuran.packed", "unuran",
                    }
                    if (value && !is.packed) {
                      ## pack data
-                     .Call("Runuran_pack", unr, PACKAGE="Runuran")
+                     .Call(C_Runuran_pack, unr)
                    }
                    ## otherwise: nothing to do
                    
@@ -201,7 +201,7 @@ if(!isGeneric("use.aux.urng"))
 
 setMethod("use.aux.urng", "unuran", 
           function(unr) {
-                  .Call("Runuran_use_aux_urng", unr, NULL, PACKAGE="Runuran")
+                  .Call(C_Runuran_use_aux_urng, unr, NULL)
           } )
 
           
@@ -211,14 +211,14 @@ if(!isGeneric("use.aux.urng<-"))
 setReplaceMethod("use.aux.urng", "unuran", 
                  function(unr, value) {
                          value <- as.logical(value)
-                         .Call("Runuran_use_aux_urng", unr, value, PACKAGE="Runuran")
+                         .Call(C_Runuran_use_aux_urng, unr, value)
                          return (unr)
                  } )
 
 set.aux.seed <- function(seed) {
         seed <- as.integer(seed)
         if (seed <= 0) stop("seed must be positive integer");
-        invisible(.Call("Runuran_set_aux_seed", seed, PACKAGE="Runuran"))
+        invisible(.Call(C_Runuran_set_aux_seed, seed))
 }
 
 
@@ -231,7 +231,7 @@ setMethod( "print", "unuran",
             cat("\tmethod:   ",x@method.str,"\n")
             cat("\tdistr:    ",x@distr.str,"\n")
             cat("\tinversion:",x@inversion,"\n\n")
-            cat(.Call("Runuran_print", x, FALSE, PACKAGE="Runuran"))
+            cat(.Call(C_Runuran_print, x, FALSE))
             cat("")
 } )
 
@@ -246,11 +246,11 @@ unuran.details <- function(unr, show=TRUE, return.list=FALSE, debug=FALSE) {
     cat("\tmethod:   ",unr@method.str,"\n")
     cat("\tdistr:    ",unr@distr.str,"\n")
     cat("\tinversion:",unr@inversion,"\n\n")
-    info <- .Call("Runuran_print", unr, TRUE, PACKAGE="Runuran")
+    info <- .Call(C_Runuran_print, unr, TRUE)
     cat(info)
   }
   if (isTRUE(return.list) || isTRUE(debug)) {
-    data <- .Call("Runuran_performance", unr, debug, PACKAGE="Runuran")
+    data <- .Call(C_Runuran_performance, unr, debug)
     invisible(data)
   }
 }
@@ -286,7 +286,7 @@ mixt.new <- function (prob, comp, inversion=FALSE) {
   obj@method.str <- "mixt"
 
   ## Create UNU.RAN object
-  obj@unur <- .Call("Runuran_mixt", obj, prob, comp, inversion, PACKAGE="Runuran")
+  obj@unur <- .Call(C_Runuran_mixt, obj, prob, comp, inversion)
   if (is.null(obj@unur)) {
     stop("Cannot create UNU.RAN object", call.=FALSE)
   }
@@ -311,7 +311,7 @@ unuran.verify.hat <- function (unr, n=1e5, show = TRUE) {
     stop ("invalid sample size 'n'");
   
   ## run test
-  failed <- .Call("Runuran_verify_hat", unr, n, PACKAGE="Runuran")
+  failed <- .Call(C_Runuran_verify_hat, unr, n)
   ratio <- failed / n
   perc <- round(100*ratio,digits=2)
 
