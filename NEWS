@@ -1,4 +1,24 @@
 
+Version 0.26.0: 2019-03-13
+
+	- new function Runuran.options()
+
+	- internal:
+	  make CRAN - rchk happy.
+	  functions ud(), up() and unuran.is.inversion() are a bit faster.
+	  use package 'testthat' for new tests.
+	  use package 'roxygen2' for creating new help pages.
+	  new function .Runuran.stop() for creating error messages
+	  with correct user level function names.
+
+
+Version 0.25.0: 2018-03-23
+
+	- new functions arou.new()
+
+	- new functions tabl.new()
+
+
 Version 0.24.0: 2017-10-25
 
 	- export some C functions

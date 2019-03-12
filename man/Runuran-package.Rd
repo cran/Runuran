@@ -17,8 +17,8 @@
   \tabular{ll}{
     Package: \tab Runuran       \cr
     Type:    \tab Package       \cr
-    Version: \tab 0.24          \cr
-    Date:    \tab 2017-10-25    \cr
+    Version: \tab 0.26          \cr
+    Date:    \tab 2019-03-13    \cr
     License: \tab GPL 2 or later\cr
   }
   \pkg{Runuran} provides an interface to the UNU.RAN library for
@@ -111,10 +111,12 @@
   
   \tabular{lcl}{ 
     \emph{Function}         \tab        \tab \emph{Method} \cr
+    \code{\link{arou.new}}  \tab \ldots \tab Automatic Ratio-of-Uniforms method \cr
     \code{\link{ars.new}}   \tab \ldots \tab Adaptive Rejection Sampling \cr
     \code{\link{itdr.new}}  \tab \ldots \tab Inverse Transformed Density Rejection \cr
     \code{\link{pinv.new}}  \tab \ldots \tab Polynomial interpolation of INVerse CDF \cr
     \code{\link{srou.new}}  \tab \ldots \tab Simple Ratio-Of-Uniforms method \cr
+    \code{\link{tabl.new}}  \tab \ldots \tab TABLe based rejection \cr
     \code{\link{tdr.new}}   \tab \ldots \tab Transformed Density Rejection \cr
   }
   

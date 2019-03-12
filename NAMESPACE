@@ -27,3 +27,5 @@ exportPattern("^ur")
 exportPattern("^ud")
 export(uq,up)
 export(set.aux.seed)
+
+export(Runuran.options)

@@ -117,20 +117,24 @@ uq <- function(unr,U) {
 
 ## ud
 ud <- function(obj,x,islog=FALSE) {
-  if ( ! (is(obj,"unuran.cont") || is(obj,"unuran.discr") ||
-          is(obj,"unuran") ) )
-    stop("argument 'obj' must be UNU.RAN object")
-  .Call(C_Runuran_PDF, obj, x, islog)
+    cl <- class(obj)
+    if (! cl %in% c("unuran.cont", "unuran.discr", "unuran")) {
+        stop("argument 'obj' must be UNU.RAN object")
+    }
+
+    .Call(C_Runuran_PDF, obj, x, islog)
 }
 
 ## CDF ----------------------------------------------------------------------
 
 ## up
 up <- function(obj,x) {
-  if ( ! (is(obj,"unuran.cont") || is(obj,"unuran.discr") ||
-          is(obj,"unuran") ) )
-    stop("argument 'obj' must be UNU.RAN object")
-  .Call(C_Runuran_CDF, obj, x)
+    cl <- class(obj)
+    if (! cl %in% c("unuran.cont", "unuran.discr", "unuran")) {
+        stop("argument 'obj' must be UNU.RAN object")
+    }
+    
+    .Call(C_Runuran_CDF, obj, x)
 }
 
 ## Packing ------------------------------------------------------------------
@@ -355,12 +359,13 @@ unuran.verify.hat <- function (unr, n=1e5, show = TRUE) {
 
 unuran.is.inversion <- function (unr) {
 
-  ## check arguments
-  if (! is(unr,"unuran"))
-    stop ("invalid argument 'unr'");
+    ## check arguments
+    if ( class(unr) != "unuran") {
+        stop ("invalid argument 'unr'");
+    }
 
-  ## return result
-  unr@inversion
+    ## return result
+    unr@inversion
 }
 
 ## End ----------------------------------------------------------------------

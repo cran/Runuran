@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2017 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2019 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 struct unur_gen *
@@ -67,7 +67,7 @@ _unur_tabl_create( struct unur_par *par )
   gen = _unur_generic_create( par, sizeof(struct unur_tabl_gen) );
   COOKIE_SET(gen,CK_TABL_GEN);
   if (!(gen->distr->set & UNUR_DISTR_SET_PDFAREA))
-    if (unur_distr_cont_upd_pdfarea(gen->distr)!=UNUR_SUCCESS)
+    if (_unur_distr_cont_upd_pdfarea(gen->distr, TRUE)!=UNUR_SUCCESS)
       _unur_warning(GENTYPE,UNUR_ERR_DISTR_REQUIRED,"area below PDF, use default instead");
   gen->genid = _unur_set_genid(GENTYPE);
   SAMPLE = _unur_tabl_getSAMPLE(gen);
@@ -216,7 +216,7 @@ _unur_tabl_get_intervals_from_slopes( struct unur_par *par, struct unur_gen *gen
   }
   iv->next = NULL;
   gen->distr->set &= ~UNUR_DISTR_SET_PDFAREA;
-  unur_distr_cont_upd_pdfarea( gen->distr );
+  _unur_distr_cont_upd_pdfarea( gen->distr, TRUE );
   return UNUR_SUCCESS;
 } 
 int
@@ -280,7 +280,7 @@ _unur_tabl_get_intervals_from_cpoints( struct unur_par *par, struct unur_gen *ge
   DISTR.trunc[0] = DISTR.BD_LEFT = GEN->bleft;
   DISTR.trunc[1] = DISTR.BD_RIGHT = GEN->bright;
   gen->distr->set &= ~UNUR_DISTR_SET_PDFAREA;
-  unur_distr_cont_upd_pdfarea( gen->distr );
+  _unur_distr_cont_upd_pdfarea( gen->distr, TRUE );
   return UNUR_SUCCESS;
 } 
 int

@@ -820,34 +820,109 @@ Runuran_pack (SEXP sexp_unur)
 
 /*---------------------------------------------------------------------------*/
 
-void
-_Runuran_set_error_handler(int status)
+SEXP Runuran_set_error_level (SEXP sexp_level)
      /*----------------------------------------------------------------------*/
-     /* set status of error handler (on / off).                              */
+     /* Set verbosity level of UNU.RAN error handler.                        */
+     /* Pack Runuran generator object into R list                            */
      /*                                                                      */
-     /* Parameter:                                                           */
-     /*   status ... 0 = suppress all warnings / error messages              */
-     /*              1 = print (almost all) warnings and error messages      */
+     /* Parameters:                                                          */
+     /*   level ... verbosity level (integer)                                */ 
+     /*                                                                      */
+     /* Return:                                                              */
+     /*   old level                                                          */
      /*----------------------------------------------------------------------*/
 {
-  /* Set UNU.RAN error handler */
-  if (status)
-    unur_set_error_handler( _Runuran_error_handler );
-  else
-    unur_set_error_handler( _Runuran_error_suppress );
+  int level;
+  int old_level;
+  SEXP sexp_old_level;
+
+  /* Extract and check verbosity level */
+  level = *(INTEGER (AS_INTEGER (sexp_level)));
+  if (level < 0L || level > 3L) {
+    error("verbosity 'level' of UNU.RAN error handler must be 0, 1, 2, or 3");
+  }
+
+  /* set new verbosity level */
+  old_level = _Runuran_set_error_handler(level);
+
+  /* return old one */
+  PROTECT(sexp_old_level = NEW_INTEGER(1));
+  INTEGER(sexp_old_level)[0] = old_level;
+  UNPROTECT(1);
+
+  return sexp_old_level;
+
+} /* end of Runuran_set_error_level() */
+
+/*---------------------------------------------------------------------------*/
+
+int
+_Runuran_set_error_handler(int level)
+     /*----------------------------------------------------------------------*/
+     /* set verbosity level of UNU.RAN error handler.                        */
+     /*                                                                      */
+     /* Parameter:                                                           */
+     /*   level ... 0 = suppress all warnings / error messages               */
+     /*             1 = print errors only                                    */
+     /*             2 = print (almost all) warnings and error messages       */
+     /*             3 = print all warnings and error messages                */
+     /*                                                                      */
+     /* Return:                                                              */
+     /*   old verbosity level (integer)                                      */
+     /*----------------------------------------------------------------------*/
+{
+  int old_level;
+  UNUR_ERROR_HANDLER *old_handler;
+
+  /* Switch UNU.RAN error handler */
+  switch(level) {
+  case 0:
+    old_handler = unur_set_error_handler( _Runuran_error_handler_suppress );
+    break;
+  case 1:
+    old_handler = unur_set_error_handler( _Runuran_error_handler_error );
+    break;
+  case 2:
+  default:
+    old_handler = unur_set_error_handler( _Runuran_error_handler_warning );
+    break;
+  case 3:
+    old_handler = unur_set_error_handler( _Runuran_error_handler_print );
+    break;
+  }
+
+  /* Return level of old error handler */
+  if (old_handler == _Runuran_error_handler_suppress) {
+    old_level = 0L;
+  }
+  else if (old_handler == _Runuran_error_handler_error) {
+    old_level = 1L;
+  }
+  else if (old_handler == _Runuran_error_handler_warning) {
+    old_level = 2L;
+  }
+  else if (old_handler == _Runuran_error_handler_print) {
+    old_level = 3L;
+  }
+  else {
+    old_level = RUNURAN_DEFAULT_ERROR_HANDLER_LEVEL;
+  }
+
+  return old_level;
 }
 
 /*---------------------------------------------------------------------------*/
 
 void
-_Runuran_error_handler( const char *objid     ATTRIBUTE__UNUSED,
-			const char *file      ATTRIBUTE__UNUSED,
-			int line              ATTRIBUTE__UNUSED,
-			const char *errortype,
-			int errorcode,
-			const char *reason )   
+_Runuran_error_handler_print( const char *objid     ATTRIBUTE__UNUSED,
+			      const char *file      ATTRIBUTE__UNUSED,
+			      int line              ATTRIBUTE__UNUSED,
+			      const char *errortype,
+			      int errorcode,
+			      const char *reason )   
      /*----------------------------------------------------------------------*/
-     /* Error handler for UNU.RAN routines                                   */
+     /* Error handler for UNU.RAN routines:                                  */
+     /* Show all errors and warnings                                         */
      /*                                                                      */
      /* Parameters:                                                          */
      /*   objid     ... id/type of object                                    */
@@ -861,21 +936,6 @@ _Runuran_error_handler( const char *objid     ATTRIBUTE__UNUSED,
      /*   (void)                                                             */
      /*----------------------------------------------------------------------*/
 {
-#ifdef RUNURAN_DEBUG
-#else
-  /* we suppress some warnings */
-  if (errortype[0] == 'w') {
-    switch (errorcode) {
-      /* we do not print warnings for the following codes: */
-    case UNUR_ERR_DISTR_REQUIRED:
-      return;
-
-    default:
-      break;
-    }
-  }
-#endif
-
   /* print warning or error message */
   Rprintf("[UNU.RAN - %s] %s",errortype,unur_get_strerror(errorcode));
   if (reason && strlen(reason))
@@ -893,17 +953,94 @@ _Runuran_error_handler( const char *objid     ATTRIBUTE__UNUSED,
   _unur_error_handler_default( objid, file, line, errortype, errorcode, reason );
 #endif
 
-} /* end of _Runuran_error_handler() */
+} /* end of _Runuran_error_handler_print() */
 
 /*---------------------------------------------------------------------------*/
 
 void
-_Runuran_error_suppress( const char *objid     ATTRIBUTE__UNUSED,
-			 const char *file      ATTRIBUTE__UNUSED,
-			 int line              ATTRIBUTE__UNUSED,
-			 const char *errortype ATTRIBUTE__UNUSED,
-			 int errorcode         ATTRIBUTE__UNUSED,
-			 const char *reason    ATTRIBUTE__UNUSED )
+_Runuran_error_handler_warning( const char *objid     ATTRIBUTE__UNUSED,
+				const char *file      ATTRIBUTE__UNUSED,
+				int line              ATTRIBUTE__UNUSED,
+				const char *errortype,
+				int errorcode,
+				const char *reason )   
+     /*----------------------------------------------------------------------*/
+     /* Error handler for UNU.RAN routines:                                  */
+     /* Show errors and most of the warnings                                 */
+     /*                                                                      */
+     /* Parameters:                                                          */
+     /*   objid     ... id/type of object                                    */
+     /*   file      ... source file name (__FILE__)                          */
+     /*   line      ... source line number (__LINE__)                        */
+     /*   errortype ... "warning" or "error"                                 */
+     /*   errorcode ... UNU.RAN error code                                   */
+     /*   reason    ... short description of reason                          */
+     /*                                                                      */
+     /* Return:                                                              */
+     /*   (void)                                                             */
+     /*----------------------------------------------------------------------*/
+{
+  /* we suppress some warnings */
+  if (errortype[0] == 'w') {
+    switch (errorcode) {
+      /* we do not print warnings for the following codes: */
+    case UNUR_ERR_DISTR_REQUIRED:
+      return;
+
+    default:
+      break;
+    }
+  }
+
+  /* print error message or warning */ 
+  _Runuran_error_handler_print(objid, file, line, errortype, errorcode, reason);
+
+} /* end of _Runuran_error_handler_warning() */
+
+/*---------------------------------------------------------------------------*/
+
+void
+_Runuran_error_handler_error( const char *objid     ATTRIBUTE__UNUSED,
+			      const char *file      ATTRIBUTE__UNUSED,
+			      int line              ATTRIBUTE__UNUSED,
+			      const char *errortype,
+			      int errorcode,
+			      const char *reason )   
+     /*----------------------------------------------------------------------*/
+     /* Error handler for UNU.RAN routines:                                  */
+     /* Show only errors                                                     */
+     /*                                                                      */
+     /* Parameters:                                                          */
+     /*   objid     ... id/type of object                                    */
+     /*   file      ... source file name (__FILE__)                          */
+     /*   line      ... source line number (__LINE__)                        */
+     /*   errortype ... "warning" or "error"                                 */
+     /*   errorcode ... UNU.RAN error code                                   */
+     /*   reason    ... short description of reason                          */
+     /*                                                                      */
+     /* Return:                                                              */
+     /*   (void)                                                             */
+     /*----------------------------------------------------------------------*/
+{
+  /* we suppress some warnings */
+  if (errortype[0] == 'w') {
+      return;
+  }
+
+  /* print error message or warning */ 
+  _Runuran_error_handler_print(objid, file, line, errortype, errorcode, reason);
+
+} /* end of _Runuran_error_handler_error() */
+
+/*---------------------------------------------------------------------------*/
+
+void
+_Runuran_error_handler_suppress( const char *objid     ATTRIBUTE__UNUSED,
+				 const char *file      ATTRIBUTE__UNUSED,
+				 int line              ATTRIBUTE__UNUSED,
+				 const char *errortype ATTRIBUTE__UNUSED,
+				 int errorcode         ATTRIBUTE__UNUSED,
+				 const char *reason    ATTRIBUTE__UNUSED )
      /*----------------------------------------------------------------------*/
      /* Error handler that suppresses all warnings/errors.                   */
      /* Error handler for UNU.RAN routines                                   */
@@ -921,7 +1058,7 @@ _Runuran_error_suppress( const char *objid     ATTRIBUTE__UNUSED,
      /*----------------------------------------------------------------------*/
 {
   ; /* nothing to do */
-} /* end of _Runuran_error_suppress() */
+} /* end of _Runuran_error_handler_suppress() */
 
 /*---------------------------------------------------------------------------*/
 

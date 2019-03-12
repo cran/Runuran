@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2017 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2019 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -873,9 +873,17 @@ int
 unur_distr_cont_upd_pdfarea( struct unur_distr *distr )
 {
   _unur_check_NULL( NULL, distr, UNUR_ERR_NULL );
+  return _unur_distr_cont_upd_pdfarea(distr, FALSE);
+} 
+int 
+_unur_distr_cont_upd_pdfarea( struct unur_distr *distr, int silent_check_updfunc )
+{
+  CHECK_NULL(distr, UNUR_ERR_NULL);
   _unur_check_distr_object( distr, CONT, UNUR_ERR_DISTR_INVALID );
   if (DISTR.upd_area == NULL) {
-    _unur_error(distr->name,UNUR_ERR_DISTR_DATA,"");
+    if (! silent_check_updfunc) {
+      _unur_error(distr->name,UNUR_ERR_DISTR_DATA,"");
+    }
     return UNUR_ERR_DISTR_DATA;
   }
   if (((DISTR.upd_area)(distr)!=UNUR_SUCCESS) || DISTR.area <= 0.) {

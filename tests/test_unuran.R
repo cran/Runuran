@@ -84,7 +84,8 @@ unr <- new("unuran", "normal()", "pinv")
 unr
 print(unr)
 unuran.details(unr)
-print(unuran.details(unr,show=TRUE,return.list=TRUE))
+print(unuran.details(unr,show=FALSE,return.list=TRUE))
+print(unuran.details(unr,show=FALSE,debug=TRUE))
 unuran.is.inversion(unr)
 
 ## remove (so that valgrind does not see lost memory from UNU.RAN)
@@ -354,6 +355,7 @@ unuran.details(unr)
 unuran.details(unr,show=TRUE,return.list=TRUE)
 unuran.details(unr,show=FALSE,return.list=TRUE)
 print(unuran.details(unr,show=FALSE,return.list=TRUE))
+print(unuran.details(unr,show=FALSE,debug=TRUE))
 unuran.details(unr,show=FALSE,return.list=FALSE)
 rm(unr)
 

@@ -109,6 +109,11 @@ SEXP Runuran_verify_hat (SEXP sexp_unur, SEXP sexp_n);
 /* Verify hat of UNU.RAN generator object that implements rejection method.  */
 /*---------------------------------------------------------------------------*/
 
+SEXP Runuran_set_error_level (SEXP sexp_level);
+/*---------------------------------------------------------------------------*/
+/* Set verbosity level of UNU.RAN error handler.                             */
+/*---------------------------------------------------------------------------*/
+
 
 /*****************************************************************************/
 /* Meta methods                                                              */
@@ -202,23 +207,26 @@ UNUR_DISTR *_Runuran_get_std_discr( const char *name, const double *params, int 
 /* Handle fatal error: print error message and exit.                         */
 /*---------------------------------------------------------------------------*/
 
-void _Runuran_set_error_handler(int status);
+#define RUNURAN_DEFAULT_ERROR_HANDLER_LEVEL (2L)
+int _Runuran_set_error_handler(int level);
 /*---------------------------------------------------------------------------*/
-/* set status of error handler (on / off).                                   */
+/* set verbosity level of UNU.RAN error handler.                             */
 /*---------------------------------------------------------------------------*/
 
-void _Runuran_error_handler ( 
+void _Runuran_error_handler_print ( 
+	const char *objid, const char *file, int line,
+        const char *errortype, int errorcode, const char *reason );
+void _Runuran_error_handler_warning ( 
+	const char *objid, const char *file, int line,
+        const char *errortype, int errorcode, const char *reason );
+void _Runuran_error_handler_error ( 
+	const char *objid, const char *file, int line,
+        const char *errortype, int errorcode, const char *reason );
+void _Runuran_error_handler_suppress ( 
 	const char *objid, const char *file, int line,
         const char *errortype, int errorcode, const char *reason );
 /*---------------------------------------------------------------------------*/
-/* Error handler for UNU.RAN routines.                                       */
-/*---------------------------------------------------------------------------*/
-
-void _Runuran_error_suppress ( 
-	const char *objid, const char *file, int line,
-        const char *errortype, int errorcode, const char *reason );
-/*---------------------------------------------------------------------------*/
-/* Error handler for UNU.RAN routines that suppresses all warnings/errors.   */
+/* Error handlers for UNU.RAN routines.                                       */
 /*---------------------------------------------------------------------------*/
 
 void _Runuran_free(SEXP sexp_gen);

@@ -145,7 +145,8 @@ run_verify_hat(struct unur_gen *gen, int n)
   int dim;                   /* dimension of distribution object */
   double *x = NULL;
   int failed = 0;
-
+  int old_error_handler = RUNURAN_DEFAULT_ERROR_HANDLER_LEVEL;
+  
   /* get state for the R built-in URNG */
   GetRNGstate();
 
@@ -158,7 +159,7 @@ run_verify_hat(struct unur_gen *gen, int n)
   }
 
   /* switch off error messages */
-  _Runuran_set_error_handler(0);
+  old_error_handler = _Runuran_set_error_handler(0);
 
   /* run generator */
   for (i=0; i<n; i++) {
@@ -182,7 +183,7 @@ run_verify_hat(struct unur_gen *gen, int n)
     case UNUR_DISTR_CVEMP:  /* empirical continuous multivariate distribution */
     case UNUR_DISTR_MATR:   /* matrix distribution */
     default:
-      _Runuran_set_error_handler(1);
+      _Runuran_set_error_handler(old_error_handler);
       error("[UNU.RAN - error] '%s': Distribution type not support",
 	    unur_distr_get_name(unur_get_distr(gen)) );
     }
@@ -195,7 +196,7 @@ run_verify_hat(struct unur_gen *gen, int n)
   }
 
   /* switch on error messages */
-  _Runuran_set_error_handler(1);
+  _Runuran_set_error_handler(old_error_handler);
   
   /* update state for the R built-in URNG */
   PutRNGstate();

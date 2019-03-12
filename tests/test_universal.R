@@ -14,6 +14,66 @@ source("test_routines.R")
 ##                                                                          #
 #############################################################################
 
+## --- AROU (Automatic Ratio-Of-Uniforms Method) ----------------------------
+
+ur.arou.norm <- function (n) {
+        pdf <- function (x) { exp(-0.5*x^2) }
+        dpdf <- function (x) { -x*exp(-0.5*x^2) }
+        gen <- arou.new(pdf=pdf, dpdf=dpdf, lb=-Inf, ub=Inf)
+        ur(gen,n)
+}
+unur.test.cont("ur.arou.norm", rfunc=ur.arou.norm, pfunc=pnorm)
+rm(ur.arou.norm)
+
+ur.arou.norm.wod <- function (n) {
+        pdf <- function (x) { exp(-0.5*x^2) }
+        gen <- arou.new(pdf=pdf, lb=-Inf, ub=Inf)
+        ur(gen,n)
+}
+unur.test.cont("ur.arou.norm.wod", rfunc=ur.arou.norm.wod, pfunc=pnorm)
+rm(ur.arou.norm.wod)
+
+ur.arou.norm.wl <- function (n) {
+        logpdf <- function (x) { -0.5*x^2 }
+        dlogpdf <- function (x) { -x }
+        gen <- arou.new(pdf=logpdf, dpdf=dlogpdf, islog=TRUE, lb=-Inf, ub=Inf)
+        ur(gen,n)
+}
+unur.test.cont("ur.arou.norm.wl", rfunc=ur.arou.norm.wl, pfunc=pnorm)
+rm(ur.arou.norm.wl)
+
+ur.arou.norm.wlwod <- function (n) {
+        logpdf <- function (x) { -0.5*x^2 }
+        gen <- arou.new(pdf=logpdf, islog=TRUE, lb=-Inf, ub=Inf)
+        ur(gen,n)
+}
+unur.test.cont("ur.arou.norm.wlwod", rfunc=ur.arou.norm.wlwod, pfunc=pnorm)
+rm(ur.arou.norm.wlwod)
+
+## test arguments passed to PDF
+ur.arou.norm.param <- function (n) {
+        pdf <- function (x,a) { exp(a*x^2) }
+        gen <- arou.new(pdf=pdf, lb=-Inf, ub=Inf, a=-1/2)
+        ur(gen,n)
+}
+unur.test.cont("ur.arou.norm.param", rfunc=ur.arou.norm.param, pfunc=pnorm)
+rm(ur.arou.norm.param)
+
+ur.arou.norm.R <- function (n) {
+        gen <- arou.new(pdf=dnorm, lb=-Inf, ub=Inf)
+        ur(gen,n)
+}
+unur.test.cont("ur.arou.norm.R", rfunc=ur.arou.norm.R, pfunc=pnorm)
+rm(ur.arou.norm.R)
+
+ur.arou.t.R <- function (n,df) {
+        gen <- arou.new(pdf=dt, lb=-Inf, ub=Inf, df=df)
+        ur(gen,n)
+}
+unur.test.cont("ur.arou.t.R", rfunc=ur.arou.t.R, pfunc=pt, df=8)
+rm(ur.arou.t.R)
+
+
 ## --- ARS (Adaptive Rejection Sampling) ------------------------------------
 
 ur.ars.norm.wl <- function (n) {
@@ -105,6 +165,23 @@ ur.srou.2.norm <- function (n) {
 }
 unur.test.cont("ur.srou.2.norm", rfunc=ur.srou.2.norm, pfunc=pnorm)
 rm(ur.srou.2.norm)
+
+
+## --- TABL (TABLe based Rejection) -----------------------------------------
+
+ur.tabl.norm <- function (n) {
+        gen <- tabl.new(pdf=dnorm, lb=-Inf, ub=Inf, mode=0)
+        ur(gen,n)
+}
+unur.test.cont("ur.tabl.norm", rfunc=ur.tabl.norm, pfunc=pnorm)
+rm(ur.tabl.norm)
+
+ur.tabl.2.norm <- function (n) {
+        gen <- tabl.new(pdf=dnorm, lb=-Inf, ub=Inf, mode=0)
+        ur(gen,n)
+}
+unur.test.cont("ur.tabl.2.norm", rfunc=ur.tabl.2.norm, pfunc=pnorm)
+rm(ur.tabl.2.norm)
 
 
 ## --- TDR (Transformed Density Rejection) ----------------------------------

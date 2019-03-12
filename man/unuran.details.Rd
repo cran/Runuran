@@ -30,8 +30,8 @@ unuran.details(unr, show=TRUE, return.list=FALSE, debug=FALSE)
   generator object to the console.
 
   If \code{return.list} is \code{TRUE} then a list that contains some of
-  these data is returned. This an experimental feature and components of
-  the list may be extended on request.
+  these data is returned. This is an experimental feature and components of
+  the list may be extended in future releases.
 
   The components of the returned list depend on the particular method.
   However, the following are common to all objects:

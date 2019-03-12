@@ -63,30 +63,34 @@
 struct Rlist {
   int len;                   /* length of list (depends on method) */
   char *names[MAX_LIST];     /* names of list elements */
-  SEXP values[MAX_LIST];     /* pointers to list elements */
+  SEXP values;               /* pointer to R list */
 };
 
 /* functions for appending list elements */
 static void add_string(struct Rlist *list, char *key, const char *string);
 static void add_numeric(struct Rlist *list, char *key, double num);
-static void add_numeric_list(struct Rlist *list, char *key, double *num, int n_num);
+static void add_numeric_vec(struct Rlist *list, char *key, double *num, int n_num);
 static void add_integer(struct Rlist *list, char *key, int inum);
+static void add_integer_vec(struct Rlist *list, char *key, int *inum, int n_num);
 
 /*****************************************************************************/
 /* add list elements                                                         */
 
 void add_string(struct Rlist *list, char *key, const char *string)
 {
+  SEXP val;
+
   /* check length of list */
   if (list->len >= MAX_LIST)
-    error("Runuran: Internal error! Please send bug report");
+    error("Runuran: Internal error! Please send bug report.");
 
   /* store name of list entry */
   list->names[list->len] = key;
 
   /* create R object for list entry */
-  PROTECT(list->values[list->len] = allocVector(STRSXP,1));
-  SET_STRING_ELT(list->values[list->len], 0, mkChar(string));
+  val = allocVector(STRSXP,1);
+  SET_STRING_ELT(val, 0, mkChar(string));
+  SET_VECTOR_ELT(list->values, list->len, val);
 
   /* update length of list */
   ++list->len;
@@ -96,28 +100,37 @@ void add_string(struct Rlist *list, char *key, const char *string)
 
 void add_numeric(struct Rlist *list, char *key, double num)
 {
+  SEXP val;
+
   if (list->len >= MAX_LIST)
-    error("Runuran: Internal error! Please send bug report");
+    error("Runuran: Internal error! Please send bug report.");
 
   list->names[list->len] = key;
-  PROTECT(list->values[list->len] = NEW_NUMERIC(1));
-  REAL(list->values[list->len])[0] = num;
+
+  val = NEW_NUMERIC(1);
+  REAL(val)[0] = num;
+  SET_VECTOR_ELT(list->values, list->len, val);
+
   ++list->len;
 } /* end of add_numeric() */
 
 /* ------------------------------------------------------------------------- */
 
-void add_numeric_list(struct Rlist *list, char *key, double *num, int n_num)
+void add_numeric_vec(struct Rlist *list, char *key, double *num, int n_num)
 {
   int i;
+  SEXP val;
 
   if (list->len >= MAX_LIST)
-    error("Runuran: Internal error! Please send bug report");
+    error("Runuran: Internal error! Please send bug report.");
 
   list->names[list->len] = key;
-  PROTECT(list->values[list->len] = NEW_NUMERIC(n_num));
+
+  val = NEW_NUMERIC(n_num);
   for (i=0; i<n_num; i++)
-    REAL(list->values[list->len])[i] = num[i];
+    REAL(val)[i] = num[i];
+  SET_VECTOR_ELT(list->values, list->len, val);
+
   ++list->len;
 } /* end of add_numeric_list() */
 
@@ -125,15 +138,41 @@ void add_numeric_list(struct Rlist *list, char *key, double *num, int n_num)
 
 void add_integer(struct Rlist *list, char *key, int inum)
 {
+  SEXP val;
+
   if (list->len >= MAX_LIST)
-    error("Runuran: Internal error! Please send bug report");
+    error("Runuran: Internal error! Please send bug report.");
 
   list->names[list->len] = key;
-  PROTECT(list->values[list->len] = NEW_INTEGER(1));
-  INTEGER(list->values[list->len])[0] = inum;
+
+  val = NEW_INTEGER(1);
+  INTEGER(val)[0] = inum;
+  SET_VECTOR_ELT(list->values, list->len, val);
+
   ++list->len;
 } /* end of add_integer() */
 
+/* ------------------------------------------------------------------------- */
+
+void add_integer_vec(struct Rlist *list, char *key, int *inum, int n_num)
+{
+  int i;
+  SEXP val;
+
+  if (list->len >= MAX_LIST)
+    error("Runuran: Internal error! Please send bug report.");
+
+  list->names[list->len] = key;
+
+  val = NEW_INTEGER(n_num);
+  for (i=0; i<n_num; i++)
+    INTEGER(val)[i] = inum[i];
+  SET_VECTOR_ELT(list->values, list->len, val);
+
+  ++list->len;
+} /* end of add_integer_list() */
+
+/* ------------------------------------------------------------------------- */
 
 /*****************************************************************************/
 
@@ -162,7 +201,6 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
 
   /* array of list elements */
   struct Rlist list;
-  list.len = 0;
 
   /* debug or not debug */
   debug = *(LOGICAL( AS_LOGICAL(sexp_debug) ));
@@ -182,6 +220,10 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
     warningcall_immediate(R_NilValue,"[UNU.RAN - warning] empty UNU.RAN object");
     return R_NilValue;
   }
+
+  /* create temporary R list */
+  PROTECT(list.values = allocVector(VECSXP, MAX_LIST));
+  list.len = 0;
 
   /* we use macros to get an overview of used keywords and */
   /* to minimize the risk of typos.                        */
@@ -213,7 +255,7 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
 #define TRUNC(left,right)    {				\
     double tmp[2];					\
     tmp[0]=(left); tmp[1]=(right);			\
-    add_numeric_list(&list,"truncated.domain",(tmp),2);	\
+    add_numeric_vec(&list,"truncated.domain",(tmp),2);	\
   } 
 #define AREA_PDF(num)        add_numeric(&list,"area.pdf",(num))
 
@@ -258,25 +300,11 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
     break;
     /* ..................................................................... */
   case UNUR_METH_DSTD:
-    METHOD("DSTD"); KIND_OTHER; CLASS_DISCR;
 #define GEN ((struct unur_dstd_gen*)gen->datap)
+    METHOD("DSTD"); KIND_OTHER; CLASS_DISCR;
     if (debug) {
-      int i;
-
-      if (list.len+2 >= MAX_LIST)
-      	error("Runuran: Internal error! Please send bug report");
-
-      list.names[list.len] = "genparam";
-      PROTECT(list.values[list.len] = NEW_NUMERIC(GEN->n_gen_param));
-      for (i=0; i<GEN->n_gen_param; i++)
-	REAL(list.values[list.len])[i] = GEN->gen_param[i];
-      ++list.len;
-
-      list.names[list.len] = "geniparam";
-      PROTECT(list.values[list.len] = NEW_INTEGER(GEN->n_gen_iparam));
-      for (i=0; i<GEN->n_gen_iparam; i++)
-	INTEGER(list.values[list.len])[i] = GEN->gen_iparam[i];
-      ++list.len;
+      add_numeric_vec(&list, "genparam", GEN->gen_param, GEN->n_gen_param);
+      add_integer_vec(&list, "geniparam", GEN->gen_iparam, GEN->n_gen_iparam);
     }
 #undef GEN
     break;
@@ -314,19 +342,10 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
     break;
     /* ..................................................................... */
   case UNUR_METH_CSTD:
-    METHOD("CSTD"); KIND_OTHER; CLASS_CONT;
 #define GEN ((struct unur_cstd_gen*)gen->datap)
+    METHOD("CSTD"); KIND_OTHER; CLASS_CONT;
     if (debug) {
-      int i;
-
-      if (list.len+1 >= MAX_LIST)
-      	error("Runuran: Internal error! Please send bug report");
-
-      list.names[list.len] = "genparam";
-      PROTECT(list.values[list.len] = NEW_NUMERIC(GEN->n_gen_param));
-      for (i=0; i<GEN->n_gen_param; i++)
-	REAL(list.values[list.len])[i] = GEN->gen_param[i];
-      ++list.len;
+      add_numeric_vec(&list, "genparam", GEN->gen_param, GEN->n_gen_param);
     }
 #undef GEN
     break;
@@ -382,38 +401,43 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
 
     if (debug) {
       int j,n;
+      SEXP val;
 
       if (list.len+4 >= MAX_LIST)
-	error("Runuran: Internal error! Please send bug report junk");
+	error("Runuran: Internal error! Please send bug report.");
 
       list.names[list.len] = "cdfi";
-      PROTECT(list.values[list.len] = NEW_NUMERIC(GEN->n_ivs + 1));
+      val = NEW_NUMERIC(GEN->n_ivs + 1);
       for (n=0; n<=GEN->n_ivs; n++)
-	REAL(list.values[list.len])[n] = GEN->iv[n].cdfi;
+	REAL(val)[n] = GEN->iv[n].cdfi;
+      SET_VECTOR_ELT(list.values, list.len, val);
       ++list.len;
 
       list.names[list.len] = "xi";
-      PROTECT(list.values[list.len] = NEW_NUMERIC(GEN->n_ivs + 1));
+      val = NEW_NUMERIC(GEN->n_ivs + 1);
       for (n=0; n<=GEN->n_ivs; n++)
-	REAL(list.values[list.len])[n] = GEN->iv[n].xi;
+	REAL(val)[n] = GEN->iv[n].xi;
+      SET_VECTOR_ELT(list.values, list.len, val);
       ++list.len;
 
       /* points for constructing Newton interpolation */
       list.names[list.len] = "ui";
-      PROTECT(list.values[list.len] = allocMatrix(REALSXP, GEN->n_ivs, GEN->order));
+      val = allocMatrix(REALSXP, GEN->n_ivs, GEN->order);
       for (n=0; n<GEN->n_ivs; n++) {
 	for (j=0; j<GEN->order; j++)
-	  REAL(list.values[list.len])[n + j*GEN->n_ivs] = GEN->iv[n].ui[j];
+	  REAL(val)[n + j*GEN->n_ivs] = GEN->iv[n].ui[j];
       }
+      SET_VECTOR_ELT(list.values, list.len, val);
       ++list.len;
 
-      /* coefficients Newton interpolation */
+      /* coefficients for Newton interpolation */
       list.names[list.len] = "zi";
-      PROTECT(list.values[list.len] = allocMatrix(REALSXP, GEN->n_ivs, GEN->order));
+      val = allocMatrix(REALSXP, GEN->n_ivs, GEN->order);
       for (n=0; n<GEN->n_ivs; n++) {
 	for (j=0; j<GEN->order; j++)
-	  REAL(list.values[list.len])[n + j*GEN->n_ivs] = GEN->iv[n].zi[j];
+	  REAL(val)[n + j*GEN->n_ivs] = GEN->iv[n].zi[j];
       }
+      SET_VECTOR_ELT(list.values, list.len, val);
       ++list.len;
     }
 #undef GEN
@@ -563,24 +587,21 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
     METHOD("NA"); 
   }
 
-
+  /* create final list */
+  PROTECT(sexp_list = allocVector(VECSXP, list.len)); 
+  for(i = 0; i < list.len; i++)
+    SET_VECTOR_ELT(sexp_list, i, VECTOR_ELT(list.values, i));
+    
   /* an array of the "names" attribute of the objects in our list */
   PROTECT(sexp_names = allocVector(STRSXP, list.len));
   for(i = 0; i < list.len; i++)
     SET_STRING_ELT(sexp_names, i,  mkChar(list.names[i]));
-
-  /* create R list */
-  PROTECT(sexp_list = allocVector(VECSXP, list.len)); 
-
-  /* attach list elements */
-  for(i = 0; i < list.len; i++)
-    SET_VECTOR_ELT(sexp_list, i, list.values[i]);
  
   /* attach attribute names */
   setAttrib(sexp_list, R_NamesSymbol, sexp_names);
 
-
-  UNPROTECT(list.len+2);
+  /* return list */
+  UNPROTECT(3);
   return sexp_list;
 
 } /* end of Runuran_performance() */
