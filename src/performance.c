@@ -78,8 +78,6 @@ static void add_integer_vec(struct Rlist *list, char *key, int *inum, int n_num)
 
 void add_string(struct Rlist *list, char *key, const char *string)
 {
-  SEXP val;
-
   /* check length of list */
   if (list->len >= MAX_LIST)
     error("Runuran: Internal error! Please send bug report.");
@@ -88,10 +86,8 @@ void add_string(struct Rlist *list, char *key, const char *string)
   list->names[list->len] = key;
 
   /* create R object for list entry */
-  val = allocVector(STRSXP,1);
-  SET_STRING_ELT(val, 0, mkChar(string));
-  SET_VECTOR_ELT(list->values, list->len, val);
-
+  SET_VECTOR_ELT(list->values, list->len, mkString(string));
+  
   /* update length of list */
   ++list->len;
 } /* end of add_string() */
@@ -100,17 +96,11 @@ void add_string(struct Rlist *list, char *key, const char *string)
 
 void add_numeric(struct Rlist *list, char *key, double num)
 {
-  SEXP val;
-
   if (list->len >= MAX_LIST)
     error("Runuran: Internal error! Please send bug report.");
 
   list->names[list->len] = key;
-
-  val = NEW_NUMERIC(1);
-  REAL(val)[0] = num;
-  SET_VECTOR_ELT(list->values, list->len, val);
-
+  SET_VECTOR_ELT(list->values, list->len, ScalarReal(num));
   ++list->len;
 } /* end of add_numeric() */
 
@@ -138,17 +128,11 @@ void add_numeric_vec(struct Rlist *list, char *key, double *num, int n_num)
 
 void add_integer(struct Rlist *list, char *key, int inum)
 {
-  SEXP val;
-
   if (list->len >= MAX_LIST)
     error("Runuran: Internal error! Please send bug report.");
 
   list->names[list->len] = key;
-
-  val = NEW_INTEGER(1);
-  INTEGER(val)[0] = inum;
-  SET_VECTOR_ELT(list->values, list->len, val);
-
+  SET_VECTOR_ELT(list->values, list->len, ScalarInteger(inum));
   ++list->len;
 } /* end of add_integer() */
 

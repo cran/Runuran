@@ -1,4 +1,4 @@
-e9bdea3da3f6aa629cc3cc7351fee205 *DESCRIPTION
+73fd3400c4b414bc0a7de5169bf8a7f4 *DESCRIPTION
 9991be6bb45fe1ca86ea096c006aed79 *NAMESPACE
 10b86d1b71780fd7bdb3c98602eae90e *NEWS
 6e0c6640886f21d80552a3ff2c73c975 *R/Runuran.R
@@ -12,6 +12,7 @@ ec389f13306dbdffd60a4a0c06399f05 *R/unuran_cont.R
 43f490db558802c0a540150c3602564f *R/unuran_distr.R
 905b46496281cd1a13e377979d8d9996 *R/utils.R
 ae3a66723e7d209263268bff3b362614 *R/zzz.R
+f0a9166d009dab35e02bd553783243b4 *THANKS
 7751f1db3950c2849d11af2af3caadb5 *TODO
 ac9d5f5edd2ef317af7dffd52508cdd1 *build/vignette.rds
 8e7313c30880992759ee3bc346a08d47 *cleanup
@@ -20,13 +21,13 @@ a88cd3d382dbda4df908a270a08e85d9 *configure.ac
 8b6ee0f54e49b3bc8466c54055e3c6a6 *configure.win
 941f09bb6dbea8757258d7caa575f369 *inst/doc/Runuran.R
 706b55db08e0c4586db8679e79ece6e0 *inst/doc/Runuran.Rnw
-2819383f97b777f666a65fb4ce63c016 *inst/doc/Runuran.pdf
+6f21ee49d9655aeefac7903aa794aebe *inst/doc/Runuran.pdf
 a8b5eb6e914255052600c7f9259868e4 *inst/include/Runuran.h
 78a02cf786a5dfb4a547af5743e1f3f4 *inst/include/Runuran_API.h
 3ac81dd617329365aec10a588c45e462 *inst/include/Runuran_ext.h
 fb1cb1f07309fe7d10564a2fc0bcc309 *inst/include/Runuran_stubs.c
 213b121bb2d58cafe4fb6fa777616801 *inst/include/unuran.h
-913d607fc53e88a5779e9c53af555bc4 *man/Runuran-package.Rd
+b0e32999fc1c51554d6d38a0d03efbb9 *man/Runuran-package.Rd
 e0a9b61f9270fe513a4dde54f8038c45 *man/Runuran.distributions.Rd
 76721357bff75c460749780bbbfc8e54 *man/Runuran.options.Rd
 c57a8ebbce4763f05f6a8290e3c7cd9b *man/Runuran.special.generators.Rd
@@ -137,7 +138,7 @@ c76769276be9e541419921139f7d043e *src/config.w32
 86c1b24f43c2c6b5acf4cf9b2ce3c6cb *src/distributions.c
 b5860ae567717823427218759838c7a5 *src/init.c
 03c915e50b615ac64d965f18dc8bf8fe *src/mixture.c
-e3628ff677e8e16da36d5fcde689ace9 *src/performance.c
+76bd4d7bf1b968ee312118917cf6e461 *src/performance.c
 a1d657d7973cb0e7bcb38703e4b072b9 *src/scripts/README
 2926a0745ad7eb6e26b88c76c8cc313e *src/scripts/clean-sources.sh
 d87c29e9d09cac7ca7c60be005f46e8b *src/scripts/update-API.pl
@@ -482,7 +483,6 @@ f8228324dd390dbf37fbaa2b4773df51 *tests/test_advanced.R
 0cb769fda1e38233e678bfcbbeb41be6 *tests/test_auxurng.R
 c2473d9c9164a38f4e93e60e0ab891fa *tests/test_deprecated.R
 935083e3916acdf167aae1f7186cdf79 *tests/test_details.R
-ccf9259a71846f7ea194852018bfcb58 *tests/test_details.Rout.save
 1caf2d2662b61d3a53cb8b4ed3f092d2 *tests/test_distributions_cont.R
 80b5b3acec6e8117b985e64701756464 *tests/test_distributions_discr.R
 21c767b56b86115a6ae1cdb34b7f3b92 *tests/test_packed.R
@@ -505,4 +505,4 @@ e1c7e3f1c14aec1d8ae56f8147b0d306 *vignettes/inputs/pitfalls.Rnw
 8d6c13c969a4a65726819d1cde002bc1 *vignettes/inputs/tab-generators.tex
 df628bc82940f63e77513949303d52a3 *vignettes/inputs/title.tex
 bb4ab047c1708fd56e5b6cc238e196ff *vignettes/inputs/universal.Rnw
-7e6a56065646036979fed39928afc6ea *vignettes/inputs/version.tex
+5020c466b50b55ffffafc2859bb613e5 *vignettes/inputs/version.tex
