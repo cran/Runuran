@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2019 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2020 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -313,6 +313,7 @@ _unur_dstd_inversion_init( struct unur_par *par, struct unur_gen *gen )
 	return UNUR_SUCCESS;
       }
     }
+    /* FALLTHROUGH */
   default: 
     if (gen) _unur_warning(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
     return UNUR_FAILURE;

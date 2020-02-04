@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2019 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2020 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -114,9 +114,11 @@ _unur_set_params_weibull( UNUR_DISTR *distr, const double *params, int n_params 
   switch (n_params) {
   case 3:
     DISTR.zeta = zeta;
+    /* FALLTHROUGH */
   case 2:
     DISTR.alpha = alpha;
     n_params = 3;           
+    /* FALLTHROUGH */
   default:
     break;
   }

@@ -85,6 +85,9 @@ R_init_Runuran (DllInfo *info  ATTRIBUTE__UNUSED)
  
   /* Declare some C routines to be callable from other packages */ 
 
+  /* #pragma GCC diagnostic push */
+  /* #pragma GCC diagnostic ignored "-Wcast-function-type" */
+
   /* For project 'RunuranTEMPL': */
   R_RegisterCCallable("Runuran", "cont_init",   (DL_FUNC) Runuran_ext_cont_init);
   R_RegisterCCallable("Runuran", "cont_params", (DL_FUNC) unur_distr_cont_get_pdfparams);
@@ -129,10 +132,11 @@ R_init_Runuran (DllInfo *info  ATTRIBUTE__UNUSED)
 
   RREGDEF(unur_pinv_new);
   
+  /* #pragma GCC diagnostic pop */
+  
 } /* end of R_init_Runuran() */
 
 /*---------------------------------------------------------------------------*/
-
 
 void
 R_unload_Runuran (DllInfo *info  ATTRIBUTE__UNUSED)

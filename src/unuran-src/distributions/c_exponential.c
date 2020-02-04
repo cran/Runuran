@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2019 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2020 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -109,9 +109,11 @@ _unur_set_params_exponential( UNUR_DISTR *distr, const double *params, int n_par
   switch (n_params) {
   case 2:
     DISTR.theta = theta;
+    /* FALLTHROUGH */
   case 1:
     DISTR.sigma = sigma;
     n_params = 2;           
+    /* FALLTHROUGH */
   default:
     break;
   }

@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2019 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2020 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 int _unur_matrix_transform_diagonal (int dim, const double *M, const double *D, double *res);

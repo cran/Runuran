@@ -1,3 +1,13 @@
+Version 0.28.0: 2020-02-03
+
+	- internal:
+	  removed deprecated statement from configure.ac
+
+
+Version 0.27.0: 2019-03-14
+
+	- fixed unPTROTECTed variable in C code
+	
 
 Version 0.26.0: 2019-03-13
 

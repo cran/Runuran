@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2019 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2020 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -100,9 +100,11 @@ _unur_set_params_logistic( UNUR_DISTR *distr, const double *params, int n_params
   switch (n_params) {
   case 2:
     DISTR.beta = beta;
+    /* FALLTHROUGH */
   case 1:
     DISTR.alpha = alpha;
     n_params = 2;           
+    /* FALLTHROUGH */
   default:
     break;
   }

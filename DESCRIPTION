@@ -1,8 +1,8 @@
 Package: Runuran
 Type: Package
 Title: R Interface to the 'UNU.RAN' Random Variate Generators
-Version: 0.27
-Date: 2019-03-14
+Version: 0.28
+Date: 2020-02-04
 Authors@R: c(person("Josef", "Leydold", role = c("aut", "cre"),
     email = "josef.leydold@wu.ac.at"),
     person("Wolfgang", "H\"ormann", role = "aut"))
@@ -22,9 +22,9 @@ License: GPL (>= 2)
 URL: http://statmath.wu.ac.at/unuran/
 RoxygenNote: 6.1.1
 NeedsCompilation: yes
-Packaged: 2019-03-14 13:13:44 UTC; leydold
+Packaged: 2020-02-03 22:37:16 UTC; leydold
 Author: Josef Leydold [aut, cre],
   Wolfgang H"ormann [aut]
 Maintainer: Josef Leydold <josef.leydold@wu.ac.at>
 Repository: CRAN
-Date/Publication: 2019-03-14 14:33:34 UTC
+Date/Publication: 2020-02-04 07:40:09 UTC

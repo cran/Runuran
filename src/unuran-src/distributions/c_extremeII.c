@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2019 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2020 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -110,9 +110,11 @@ _unur_set_params_extremeII( UNUR_DISTR *distr, const double *params, int n_param
   switch (n_params) {
   case 3:
     DISTR.theta = theta;
+    /* FALLTHROUGH */
   case 2:
     DISTR.zeta = zeta;
     n_params = 3;           
+    /* FALLTHROUGH */
   default:
     break;
   }
