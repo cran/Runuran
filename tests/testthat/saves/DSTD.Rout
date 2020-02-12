@@ -1,0 +1,64 @@
+
+Object is UNU.RAN object:
+	method:    dstd 
+	distr:     binomial(20,0.5) 
+	inversion: FALSE 
+
+generator ID: DSTD.010
+
+distribution:
+   name      = binomial (20,0.5)  [UNU.RAN standard distribution]
+   type      = discrete univariate distribution
+   domain    = (0, 20)
+
+method: DSTD (special generator for Discrete STandarD distribution)
+   variant = 0  
+
+performance characteristics:
+   E [#urn] = 3.22  [approx.]
+
+parameters:
+   variant = 0  [default]
+
+table of precomputed double constants: 10
+   [0] = 0.5
+   [1] = 0.5
+   [2] = 10
+   [3] = 10.5
+   [4] = 4.53425
+   [5] = 30.2088
+   [6] = 1
+   [7] = 21
+   [8] = 0
+   [9] = 0
+table of precomputed integer constants: 3
+   [0] = 20
+   [1] = 20
+   [2] = 10
+
+NULL
+$method
+[1] "DSTD"
+
+$type
+[1] "other"
+
+$distr.class
+[1] "discr"
+
+$method
+[1] "DSTD"
+
+$type
+[1] "other"
+
+$distr.class
+[1] "discr"
+
+$genparam
+ [1]  0.500000  0.500000 10.000000 10.500000  4.534252 30.208825  1.000000
+ [8] 21.000000  0.000000  0.000000
+
+$geniparam
+[1] 20 20 10
+

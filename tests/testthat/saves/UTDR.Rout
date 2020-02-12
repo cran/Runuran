@@ -1,0 +1,55 @@
+
+Object is UNU.RAN object:
+	method:    utdr 
+	distr:     normal(1,2) 
+	inversion: FALSE 
+
+generator ID: UTDR.024
+
+distribution:
+   name      = normal (1,2)  [UNU.RAN standard distribution]
+   type      = continuous univariate distribution
+   functions = PDF
+   domain    = (-inf, inf)
+   mode      = 1   
+   area(PDF) = 1
+
+method: UTDR (Universal Transformed Density Rejection -- 3 point method)
+
+performance characteristics:
+   rejection constant = 1.33  [approx.]
+
+parameters:
+   deltafactor = 1e-05  [default]
+
+NULL
+$method
+[1] "UTDR"
+
+$type
+[1] "ar"
+
+$distr.class
+[1] "cont"
+
+$rejection.constant
+[1] NA
+
+$area.hat
+[1] NA
+
+$method
+[1] "UTDR"
+
+$type
+[1] "ar"
+
+$distr.class
+[1] "cont"
+
+$rejection.constant
+[1] NA
+
+$area.hat
+[1] NA
+

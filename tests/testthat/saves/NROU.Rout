@@ -1,0 +1,63 @@
+
+Object is UNU.RAN object:
+	method:    nrou 
+	distr:     normal(1,2) 
+	inversion: FALSE 
+
+generator ID: NROU.018
+
+distribution:
+   name      = normal (1,2)  [UNU.RAN standard distribution]
+   type      = continuous univariate distribution
+   functions = PDF
+   domain    = (-inf, inf)
+   center    = 1  [= mode]
+
+method: NROU (Naive Ratio-Of-Uniforms)
+   r = 1
+
+performance characteristics:
+   bounding rectangle = (-0.766269,0.766269) x (0,0.446667)
+   area(hat) = 0.684533
+   rejection constant = 1.36907
+
+parameters:
+   r = 1  [default]
+   center = 1  [default]
+   v = 0.446667  [numeric.]
+   u = (-0.766269, 0.766269)  [numeric.]
+
+[ Hint: You can set "v" to avoid numerical estimate. ]
+[ Hint: You can set "u" to avoid slow (and inexact) numerical estimates. ]
+
+NULL
+$method
+[1] "NROU"
+
+$type
+[1] "ar"
+
+$distr.class
+[1] "cont"
+
+$rejection.constant
+[1] 1.369067
+
+$area.hat
+[1] 1.369067
+
+$method
+[1] "NROU"
+
+$type
+[1] "ar"
+
+$distr.class
+[1] "cont"
+
+$rejection.constant
+[1] 1.369067
+
+$area.hat
+[1] 1.369067
+

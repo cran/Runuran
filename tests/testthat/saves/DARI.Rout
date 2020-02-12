@@ -1,0 +1,58 @@
+
+Object is UNU.RAN object:
+	method:    dari 
+	distr:     binomial(20,0.5) 
+	inversion: FALSE 
+
+generator ID: DARI.005
+
+distribution:
+   name      = binomial (20,0.5)  [UNU.RAN standard distribution]
+   type      = discrete univariate distribution
+   functions = PMF
+   domain    = (0, 20)
+   mode      = 10   
+   sum(PMF)  = 1   
+
+
+method: DARI (Discrete Automatic Rejection Inversion)
+   use table of size 21
+
+performance characteristics:
+   sum(hat) = 1.12551
+   rejection constant = 1.12551
+
+parameters:
+   tablesize = 21  [default]
+
+NULL
+$method
+[1] "DARI"
+
+$type
+[1] "ar"
+
+$distr.class
+[1] "discr"
+
+$rejection.constant
+[1] 1.125509
+
+$area.hat
+[1] 1.125509
+
+$method
+[1] "DARI"
+
+$type
+[1] "ar"
+
+$distr.class
+[1] "discr"
+
+$rejection.constant
+[1] 1.125509
+
+$area.hat
+[1] 1.125509
+

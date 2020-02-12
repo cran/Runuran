@@ -1,0 +1,57 @@
+
+Object is UNU.RAN object:
+	method:    itdr 
+	distr:     gamma(0.5) 
+	inversion: FALSE 
+
+generator ID: ITDR.015
+
+distribution:
+   name      = gamma (0.5)  [UNU.RAN standard distribution]
+   type      = continuous univariate distribution
+   functions = PDF dPDF
+   domain    = (0, inf)
+   pole/mode = 0
+
+method: ITDR (Inverse Transformed Density Rejection -- 2 point method)
+
+performance characteristics:
+   area(hat) = 1.05325  [ = 0.440083 + 0.264049 + 0.349113 ]
+   rejection constant = 1.05325
+
+parameters:
+   cp = -0.500001   [computed]
+   ct = -0.500001   [computed]
+   xi = 0.500002   [computed]
+
+NULL
+$method
+[1] "ITDR"
+
+$type
+[1] "ar"
+
+$distr.class
+[1] "cont"
+
+$rejection.constant
+[1] 1.053245
+
+$area.hat
+[1] 1.053245
+
+$method
+[1] "ITDR"
+
+$type
+[1] "ar"
+
+$distr.class
+[1] "cont"
+
+$rejection.constant
+[1] 1.053245
+
+$area.hat
+[1] 1.053245
+

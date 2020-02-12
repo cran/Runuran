@@ -98,19 +98,24 @@ unuran.new <- function(distr,method="auto") {
 ## ur
 ## ( We avoid using a method as this has an expensive overhead. )
 ur <- function(unr,n=1) { 
-        .Call(C_Runuran_sample, unr, n)
+    .Call(C_Runuran_sample, unr, n)
 }
 
 ## unuran.sample: deprecated name for ur()
 unuran.sample <- function(unr,n=1) { 
-        .Call(C_Runuran_sample, unr, n)
+    .Call(C_Runuran_sample, unr, n)
 }
 
 ## Quantile -----------------------------------------------------------------
 
 ## uq
 uq <- function(unr,U) { 
-        .Call(C_Runuran_quantile, unr, U)
+    cl <- class(unr)
+    if (cl != "unuran") {
+        stop("argument 'unr' must be UNU.RAN object; method not implemented for distribution objects")
+    }
+
+    .Call(C_Runuran_quantile, unr, U)
 }
 
 ## PDF & PMF ----------------------------------------------------------------
@@ -118,6 +123,9 @@ uq <- function(unr,U) {
 ## ud
 ud <- function(obj,x,islog=FALSE) {
     cl <- class(obj)
+    if (cl == "unuran.cmv") {
+        stop("method not implemented for objects of class 'unuran.cmv'")
+    }
     if (! cl %in% c("unuran.cont", "unuran.discr", "unuran")) {
         stop("argument 'obj' must be UNU.RAN object")
     }
@@ -130,6 +138,9 @@ ud <- function(obj,x,islog=FALSE) {
 ## up
 up <- function(obj,x) {
     cl <- class(obj)
+    if (cl == "unuran.cmv") {
+        stop("method not implemented for objects of class 'unuran.cmv'")
+    }
     if (! cl %in% c("unuran.cont", "unuran.discr", "unuran")) {
         stop("argument 'obj' must be UNU.RAN object")
     }
@@ -245,7 +256,10 @@ setMethod( "show", "unuran",
 ## unuran.details
 ## (print for information and hints)
 unuran.details <- function(unr, show=TRUE, return.list=FALSE, debug=FALSE) {
-  if (isTRUE(show)) {
+    if (class(unr) != "unuran") {
+        .Runuran.stop("Argument 'unr' must be of class 'unuran'.")
+    }
+    if (isTRUE(show)) {
     cat("\nObject is UNU.RAN object:\n")
     cat("\tmethod:   ",unr@method.str,"\n")
     cat("\tdistr:    ",unr@distr.str,"\n")

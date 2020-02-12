@@ -1,0 +1,62 @@
+
+Object is UNU.RAN object:
+	method:    dsrou 
+	distr:     binomial(20,0.5) 
+	inversion: FALSE 
+
+generator ID: DSROU.008
+
+distribution:
+   name      = binomial (20,0.5)  [UNU.RAN standard distribution]
+   type      = discrete univariate distribution
+   functions = PMF
+   domain    = (0, 20)
+   mode      = 10   
+   sum(PMF)  = 1
+   F(mode)   = [unknown]
+
+
+method: DSROU (Discrete Simple Ratio-Of-Uniforms)
+
+performance characteristics:
+   enveloping rectangle = (-2.05836,0) x (0,0.400224)  [left]
+                          (0,2.38232) x (0,0.419758)  [right]
+   area(hat) = 0.823803 + 1 = 1.8238
+   rejection constant = 3.64761
+
+parameters:
+   cdfatmode = [not set]
+
+[ Hint: You can set "cdfatmode" to reduce the rejection constant. ]
+
+NULL
+$method
+[1] "DSROU"
+
+$type
+[1] "ar"
+
+$distr.class
+[1] "discr"
+
+$rejection.constant
+[1] 3.647606
+
+$area.hat
+[1] 3.647606
+
+$method
+[1] "DSROU"
+
+$type
+[1] "ar"
+
+$distr.class
+[1] "discr"
+
+$rejection.constant
+[1] 3.647606
+
+$area.hat
+[1] 3.647606
+

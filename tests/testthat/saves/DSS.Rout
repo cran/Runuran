@@ -1,0 +1,39 @@
+
+Object is UNU.RAN object:
+	method:    dss 
+	distr:     binomial(20,0.5) 
+	inversion: FALSE 
+
+generator ID: DSS.009
+
+distribution:
+   name      = binomial (20,0.5)  [UNU.RAN standard distribution]
+   type      = discrete univariate distribution
+   functions = PMF
+   domain    = (0, 20)
+
+method: DSS (Simple Sequential Search)
+
+performance characteristics: slow
+
+parameters: none
+
+NULL
+$method
+[1] "DSS"
+
+$type
+[1] "inv"
+
+$distr.class
+[1] "discr"
+
+$method
+[1] "DSS"
+
+$type
+[1] "inv"
+
+$distr.class
+[1] "discr"
+

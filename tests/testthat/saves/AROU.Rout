@@ -1,0 +1,72 @@
+
+Object is UNU.RAN object:
+	method:    arou 
+	distr:     normal(1,2) 
+	inversion: FALSE 
+
+generator ID: AROU.011
+
+distribution:
+   name      = normal (1,2)  [UNU.RAN standard distribution]
+   type      = continuous univariate distribution
+   functions = PDF dPDF
+   domain    = (-inf, inf)
+   center    = 1  [= mode]
+
+method: AROU (Automatic Ratio-Of-Uniforms)
+
+performance characteristics:
+   area(hat) = 0.500934
+   rejection constant = 1.00187
+   area ratio squeeze/hat = 0.994435
+   # segments = 50
+
+parameters:
+   max_sqhratio = 0.99  [default]
+   max_segments = 100  [default]
+
+[ Hint: You can set "max_sqhratio" closer to 1 to decrease rejection constant. ]
+
+NULL
+$method
+[1] "AROU"
+
+$type
+[1] "ar"
+
+$distr.class
+[1] "cont"
+
+$rejection.constant
+[1] 1.001868
+
+$area.hat
+[1] 1.001868
+
+$area.squeeze
+[1] 0.9962926
+
+$intervals
+[1] 50
+
+$method
+[1] "AROU"
+
+$type
+[1] "ar"
+
+$distr.class
+[1] "cont"
+
+$rejection.constant
+[1] 1.001868
+
+$area.hat
+[1] 1.001868
+
+$area.squeeze
+[1] 0.9962926
+
+$intervals
+[1] 50
+

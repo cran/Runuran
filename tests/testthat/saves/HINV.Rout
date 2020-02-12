@@ -1,0 +1,65 @@
+
+Object is UNU.RAN object:
+	method:    hinv 
+	distr:     normal(1,2) 
+	inversion: TRUE 
+
+generator ID: HINV.014
+
+distribution:
+   name      = normal (1,2)  [UNU.RAN standard distribution]
+   type      = continuous univariate distribution
+   functions = CDF PDF
+   domain    = (-inf, inf)
+   mode      = 1
+
+method: HINV (Hermite approximation of INVerse CDF)
+   order of polynomial = 3
+
+performance characteristics:
+   truncated domain = (-12.5525,14.5525)
+   Prob(X<domain)   = 1e-11
+   Prob(X>domain)   = 1e-11
+   u-error         <= 9.39999e-11  (mean = 2.24802e-11)
+   # intervals      = 1021
+
+parameters:
+   order = 3  [default]
+   u_resolution = 1e-10  [default]
+   boundary = (-12.5525,14.5525)  [computed]
+
+[ Hint: You can set "order=5" to decrease #intervals ]
+[ Hint: You can decrease the u-error by decreasing "u_resolution".
+	(it is bounded by the machine epsilon, however.) ]
+
+NULL
+$method
+[1] "HINV"
+
+$type
+[1] "inv"
+
+$distr.class
+[1] "cont"
+
+$truncated.domain
+[1] -12.55253  14.55253
+
+$intervals
+[1] 1021
+
+$method
+[1] "HINV"
+
+$type
+[1] "inv"
+
+$distr.class
+[1] "cont"
+
+$truncated.domain
+[1] -12.55253  14.55253
+
+$intervals
+[1] 1021
+

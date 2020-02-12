@@ -287,6 +287,7 @@ Runuran_quantile (SEXP sexp_unur, SEXP sexp_U)
   SEXP sexp_is_inversion;
   SEXP sexp_gen;
   SEXP sexp_data;
+  const char *class;               /* class name of 'unur' */ 
   struct unur_gen *gen;
 
   /* first argument must be S4 class */
@@ -295,7 +296,13 @@ Runuran_quantile (SEXP sexp_unur, SEXP sexp_U)
 
   /* check type of U */
   if (TYPEOF(sexp_U)!=REALSXP)
-    error("[UNU.RAN - error] argument invalid: 'U' must be number or vector");
+    error("[UNU.RAN - error] argument invalid: 'U' must be numeric");
+
+  /* check class name */
+  class = translateChar(STRING_ELT(GET_CLASS(sexp_unur), 0));
+  if (strcmp(class,"unuran")) {
+    error("[UNU.RAN - error] argument invalid: 'unr' must be UNU.RAN object");
+  }
 
   /* check whether UNU.RAN object implements inversion method */
   sexp_is_inversion = GET_SLOT(sexp_unur, install("inversion"));
@@ -424,6 +431,14 @@ Runuran_PDF (SEXP sexp_obj, SEXP sexp_x, SEXP sexp_islog)
   int funct_missing = FALSE;
   int n = 1;
   int i;
+
+  /* first argument must be S4 class */
+  if (!IS_S4_OBJECT(sexp_obj))
+    error("[UNU.RAN - error] argument invalid: 'unr' must be UNU.RAN object");
+
+  /* check type of x */
+  if (TYPEOF(sexp_x)!=REALSXP && TYPEOF(sexp_x)!=INTSXP)
+    error("[UNU.RAN - error] argument invalid: 'x' must be numeric");
 
   /* get class name */ 
   class = translateChar(STRING_ELT(GET_CLASS(sexp_obj), 0));
@@ -554,6 +569,14 @@ Runuran_CDF (SEXP sexp_obj, SEXP sexp_x)
   double *x;                       /* pointer to array arguments for PDF */
   int n = 1;
   int i;
+
+  /* first argument must be S4 class */
+  if (!IS_S4_OBJECT(sexp_obj))
+    error("[UNU.RAN - error] argument invalid: 'unr' must be UNU.RAN object");
+
+  /* check type of x */
+  if (TYPEOF(sexp_x)!=REALSXP && TYPEOF(sexp_x)!=INTSXP)
+    error("[UNU.RAN - error] argument invalid: 'x' must be numeric");
 
   /* get class name */
   class = translateChar(STRING_ELT(GET_CLASS(sexp_obj), 0));

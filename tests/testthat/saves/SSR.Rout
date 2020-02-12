@@ -1,0 +1,58 @@
+
+Object is UNU.RAN object:
+	method:    ssr 
+	distr:     normal(1,2) 
+	inversion: FALSE 
+
+generator ID: SSR.021
+
+distribution:
+   name      = normal (1,2)  [UNU.RAN standard distribution]
+   type      = continuous univariate distribution
+   functions = PDF
+   domain    = (-inf, inf)
+   mode      = 1   
+   area(PDF) = 1
+   F(mode)   = [unknown]
+
+method: SSR (Simple Setup Rejection)
+
+performance characteristics:
+   rejection constant = 4
+
+parameters:
+   cdfatmode = [not set]
+
+[ Hint: You can set "cdfatmode" to reduce the rejection constant. ]
+
+NULL
+$method
+[1] "SSR"
+
+$type
+[1] "ar"
+
+$distr.class
+[1] "cont"
+
+$rejection.constant
+[1] NA
+
+$area.hat
+[1] NA
+
+$method
+[1] "SSR"
+
+$type
+[1] "ar"
+
+$distr.class
+[1] "cont"
+
+$rejection.constant
+[1] NA
+
+$area.hat
+[1] NA
+

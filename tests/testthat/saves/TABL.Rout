@@ -1,0 +1,81 @@
+
+Object is UNU.RAN object:
+	method:    tabl 
+	distr:     normal(1,2) 
+	inversion: FALSE 
+
+generator ID: TABL.022
+
+distribution:
+   name      = normal (1,2)  [UNU.RAN standard distribution]
+   type      = continuous univariate distribution
+   functions = PDF
+   domain    = (-1e+20, 1e+20)
+   mode      = 1   
+   area(PDF) = 1
+
+method: TABL (Ahrens' TABLe Method)
+   variant   = immediate acceptance [ia = on]
+
+performance characteristics:
+   area(hat) = 1.03827
+   rejection constant = 1.03827
+   area ratio squeeze/hat = 0.928734
+   # intervals = 74
+
+parameters:
+   variant_ia = on  [default]
+   max_sqhratio = 0.9  [default]
+   max_intervals = 1000  [default]
+
+[ Hint: You can set "max_sqhratio" closer to 1 to decrease rejection constant. ]
+
+NULL
+$method
+[1] "TABL"
+
+$type
+[1] "ar"
+
+$distr.class
+[1] "cont"
+
+$type
+[1] "ar"
+
+$rejection.constant
+[1] 1.038268
+
+$area.hat
+[1] 1.038268
+
+$area.squeeze
+[1] 0.9642743
+
+$intervals
+[1] 74
+
+$method
+[1] "TABL"
+
+$type
+[1] "ar"
+
+$distr.class
+[1] "cont"
+
+$type
+[1] "ar"
+
+$rejection.constant
+[1] 1.038268
+
+$area.hat
+[1] 1.038268
+
+$area.squeeze
+[1] 0.9642743
+
+$intervals
+[1] 74
+

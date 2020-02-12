@@ -1,0 +1,49 @@
+
+Object is UNU.RAN object:
+	method:    ninv 
+	distr:     normal(1,2) 
+	inversion: TRUE 
+
+generator ID: NINV.016
+
+distribution:
+   name      = normal (1,2)  [UNU.RAN standard distribution]
+   type      = continuous univariate distribution
+   functions = CDF
+   domain    = (-inf, inf)
+
+method: NINV (Numerical INVersion)
+   Regula falsi
+
+performance characteristics:
+   average number of iterations = 6.38  [approx.]
+   starting points = -0.34898, 2.34898  (CDF = 0.25, 0.75)   [default]
+
+parameters:
+   useregula  [default]
+   u_resolution = -1  [disabled]  [default]
+   x_resolution = 1e-08    [default]
+   max_iter = 100  [default]
+
+[ Hint: You can increase accuracy by decreasing "x_resolution". ]
+[ Hint: You can increase "max_iter" if you encounter problems with accuracy. ]
+
+NULL
+$method
+[1] "NINV"
+
+$type
+[1] "inv"
+
+$distr.class
+[1] "cont"
+
+$method
+[1] "NINV"
+
+$type
+[1] "inv"
+
+$distr.class
+[1] "cont"
+

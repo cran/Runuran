@@ -1,0 +1,46 @@
+
+Object is UNU.RAN object:
+	method:    cstd 
+	distr:     normal(1,2) 
+	inversion: FALSE 
+
+generator ID: CSTD.013
+
+distribution:
+   name      = normal (1,2)  [UNU.RAN standard distribution]
+   type      = continuous univariate distribution
+   domain    = (-inf, inf)
+
+method: CSTD (special generator for Continuous STandarD distribution)
+   variant = 0  
+
+performance characteristics:
+   E [#urn] = 1.49  [approx.]
+
+parameters:
+   variant = 0  [default]
+
+table of precomputed constants: none
+
+NULL
+$method
+[1] "CSTD"
+
+$type
+[1] "other"
+
+$distr.class
+[1] "cont"
+
+$method
+[1] "CSTD"
+
+$type
+[1] "other"
+
+$distr.class
+[1] "cont"
+
+$genparam
+numeric(0)
+

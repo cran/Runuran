@@ -1,0 +1,41 @@
+
+Object is UNU.RAN object:
+	method:    dau 
+	distr:     binomial(20,0.5) 
+	inversion: FALSE 
+
+generator ID: DAU.006
+
+distribution:
+   name      = binomial (20,0.5)  [UNU.RAN standard distribution]
+   type      = discrete univariate distribution
+   functions = PV  [length=21, created from PMF]
+   domain    = (0, 20)
+
+method: DAU (Alias-Urn)
+
+performance characteristics:
+   E [#look-ups] = 2
+
+parameters:
+   urnfactor = 1  [default]
+
+NULL
+$method
+[1] "DAU"
+
+$type
+[1] "other"
+
+$distr.class
+[1] "discr"
+
+$method
+[1] "DAU"
+
+$type
+[1] "other"
+
+$distr.class
+[1] "discr"
+

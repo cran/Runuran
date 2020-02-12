@@ -1,0 +1,77 @@
+
+Object is UNU.RAN object:
+	method:    tdr 
+	distr:     normal(1,2) 
+	inversion: FALSE 
+
+generator ID: TDR.023
+
+distribution:
+   name      = normal (1,2)  [UNU.RAN standard distribution]
+   type      = continuous univariate distribution
+   functions = PDF dPDF
+   domain    = (-inf, inf)
+   center    = 1  [= mode]
+
+method: TDR (Transformed Density Rejection)
+   variant   = PS (proportional squeeze)
+   T_c(x)    = -1/sqrt(x)  ... c = -1/2
+
+performance characteristics:
+   area(hat) = 1.0019
+   rejection constant = 1.0019
+   area ratio squeeze/hat = 0.992792
+   # intervals = 48
+
+parameters:
+   variant_ps = on  [default]
+   c = -0.5  [default]
+   max_sqhratio = 0.99  [default]
+   max_intervals = 100  [default]
+
+[ Hint: You may use "variant_ia" for faster generation times. ]
+[ Hint: You can set "max_sqhratio" closer to 1 to decrease rejection constant. ]
+
+NULL
+$method
+[1] "TDR"
+
+$type
+[1] "iar"
+
+$distr.class
+[1] "cont"
+
+$rejection.constant
+[1] 1.001902
+
+$area.hat
+[1] 1.001902
+
+$area.squeeze
+[1] 0.9946802
+
+$intervals
+[1] 48
+
+$method
+[1] "TDR"
+
+$type
+[1] "iar"
+
+$distr.class
+[1] "cont"
+
+$rejection.constant
+[1] 1.001902
+
+$area.hat
+[1] 1.001902
+
+$area.squeeze
+[1] 0.9946802
+
+$intervals
+[1] 48
+

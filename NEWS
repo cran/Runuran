@@ -1,3 +1,23 @@
+Version 0.30.0: 2020-02-12
+
+	- disabled all output tests on CRAN:
+	  The results of C call Rprintf() differ on different OS.
+
+
+Version 0.29.0: 2020-02-08
+
+	- up() and uq():
+	  some error messages give more useful informations
+	  
+	- internal:
+	  reorganized some checks
+	  
+	  removed checks for unuran.details()
+	  which print too many digits and are thus
+	  too sensitive against round-off errors
+	  on different platforms
+
+
 Version 0.28.0: 2020-02-03
 
 	- internal:
@@ -6,7 +26,7 @@ Version 0.28.0: 2020-02-03
 
 Version 0.27.0: 2019-03-14
 
-	- fixed unPTROTECTed variable in C code
+	- fixed unPTROTECTed variables in C code
 	
 
 Version 0.26.0: 2019-03-13

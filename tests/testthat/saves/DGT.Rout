@@ -1,0 +1,41 @@
+
+Object is UNU.RAN object:
+	method:    dgt 
+	distr:     binomial(20,0.5) 
+	inversion: TRUE 
+
+generator ID: DGT.007
+
+distribution:
+   name      = binomial (20,0.5)  [UNU.RAN standard distribution]
+   type      = discrete univariate distribution
+   functions = PV  [length=21, created from PMF]
+   domain    = (0, 20)
+
+method: DGT (Guide Table)
+
+performance characteristics:
+   E [#look-ups] = 2
+
+parameters:
+   guidefactor = 1  [default]
+
+NULL
+$method
+[1] "DGT"
+
+$type
+[1] "inv"
+
+$distr.class
+[1] "discr"
+
+$method
+[1] "DGT"
+
+$type
+[1] "inv"
+
+$distr.class
+[1] "discr"
+

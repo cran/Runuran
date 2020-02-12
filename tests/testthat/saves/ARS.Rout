@@ -1,0 +1,62 @@
+
+Object is UNU.RAN object:
+	method:    ars 
+	distr:     normal(1,2) 
+	inversion: FALSE 
+
+generator ID: ARS.012
+
+distribution:
+   name      = normal (1,2)  [UNU.RAN standard distribution]
+   type      = continuous univariate distribution
+   functions = logPDF dlogPDF
+   domain    = (-inf, inf)
+
+method: ARS (Adaptive Rejection Sampling)
+   T_c(x) = log(x)  ... c = 0
+
+performance characteristics:
+   area(hat) = 1.82369  [ log = 0.60086 ]
+   rejection constant = 1.82369
+   # intervals = 4
+
+parameters:
+   cpoints = 2  [default]
+
+NULL
+$method
+[1] "ARS"
+
+$type
+[1] "iar"
+
+$distr.class
+[1] "cont"
+
+$rejection.constant
+[1] 1.823687
+
+$area.hat
+[1] 1.823687
+
+$intervals
+[1] 4
+
+$method
+[1] "ARS"
+
+$type
+[1] "iar"
+
+$distr.class
+[1] "cont"
+
+$rejection.constant
+[1] 1.823687
+
+$area.hat
+[1] 1.823687
+
+$intervals
+[1] 4
+

@@ -1,0 +1,62 @@
+
+Object is UNU.RAN object:
+	method:    srou 
+	distr:     normal(1,2) 
+	inversion: FALSE 
+
+generator ID: SROU.020
+
+distribution:
+   name      = normal (1,2)  [UNU.RAN standard distribution]
+   type      = continuous univariate distribution
+   functions = PDF
+   domain    = (-inf, inf)
+   mode      = 1   
+   area(PDF) = 1
+   F(mode)   = [unknown]
+
+method: SROU (Simple Ratio-Of-Uniforms)
+   r = 1  
+
+performance characteristics:
+   bounding rectangle = (-2.23903,2.23903) x (0,0.446622)
+   area(hat) = 2
+   rejection constant = 4
+
+parameters:
+     r = 1  [default]
+   cdfatmode = [not set]
+
+[ Hint: You can set "cdfatmode" to reduce the rejection constant. ]
+
+NULL
+$method
+[1] "SROU"
+
+$type
+[1] "ar"
+
+$distr.class
+[1] "cont"
+
+$rejection.constant
+[1] 4
+
+$area.hat
+[1] 4
+
+$method
+[1] "SROU"
+
+$type
+[1] "ar"
+
+$distr.class
+[1] "cont"
+
+$rejection.constant
+[1] 4
+
+$area.hat
+[1] 4
+

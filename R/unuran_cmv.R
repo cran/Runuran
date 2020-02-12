@@ -69,6 +69,9 @@ setMethod( "initialize", "unuran.cmv",
             if( (! is.null(ur)) && length(ur)!=ndim ) 
               stop("argument 'ur' must have length 'dim'", call.=FALSE)
 
+            if( isTRUE(any(ur <= ll)) )
+              stop("arguments 'll' and 'ur' invalid: condition 'll' < 'ur' violated")  
+              
             if(! (is.numeric(mode) || is.null(mode)) )
               stop("invalid argument 'mode'", call.=FALSE)
             if( (! is.null(mode)) && length(mode)!=ndim ) 

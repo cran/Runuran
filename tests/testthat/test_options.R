@@ -4,15 +4,15 @@
 ##
 ## --------------------------------------------------------------------------
 
-context("[Runuran.options] - set package options")
-
-## --------------------------------------------------------------------------
-
 mkmsg.e <- function(...) { makemsg.e("Runuran\\.options",...) }
 
 ## --------------------------------------------------------------------------
 
-test_that("[opts-01] calling Runuran.options", {
+context("[options] - set package options")
+
+## --------------------------------------------------------------------------
+
+test_that("[options-01] calling Runuran.options", {
     old.opts <- Runuran.options()
 
     expect_equivalent(Runuran.options("error.level")[[1L]], "warning")
@@ -37,11 +37,11 @@ test_that("[opts-01] calling Runuran.options", {
 
 ## --------------------------------------------------------------------------
 
-context("[Runuran.options] - Invalid arguments")
+context("[options] - Invalid arguments")
 
 ## --------------------------------------------------------------------------
 
-test_that("[opts-i01] calling Runuran.options with invalid arguments", {
+test_that("[options-i01] calling Runuran.options with invalid arguments", {
 
     ## invalid options
     msg <- mkmsg.e("Invalid argument '1'")
@@ -61,6 +61,6 @@ test_that("[opts-i01] calling Runuran.options with invalid arguments", {
 
 ## --------------------------------------------------------------------------
 
-## context("[Runuran.options] - Handling NA and NaNs")
+## context("[options] - Handling NA and NaNs")
 
 ## -- End -------------------------------------------------------------------
