@@ -141,11 +141,14 @@ Runuran_discr_init (SEXP sexp_obj, SEXP sexp_env,
 
   /* set probability vector */
   if (!isNull(sexp_pv)) {
-    pv = REAL(AS_NUMERIC(sexp_pv));
-    if (ISNAN(pv[0]))
+    sexp_pv = PROTECT(AS_NUMERIC(sexp_pv));
+    pv = REAL(sexp_pv);
+    if (ISNAN(pv[0])) {
       errorcall_return(R_NilValue,"[UNU.RAN - error] invalid argument 'pv'");
+    }
     n_pv = length(sexp_pv);
     error |= unur_distr_discr_set_pv(distr,pv,n_pv);
+    UNPROTECT(1);
   }
 
   /* store pointers to R objects */
@@ -164,8 +167,8 @@ Runuran_discr_init (SEXP sexp_obj, SEXP sexp_env,
   }
 
   /* set mode, center and PDFarea of distribution */
-  mode = REAL(AS_NUMERIC(sexp_mode))[0];
-  sum = REAL(AS_NUMERIC(sexp_sum))[0];
+  mode = *REAL(AS_NUMERIC(sexp_mode));
+  sum = *REAL(AS_NUMERIC(sexp_sum));
 
   if (!ISNAN(mode))
     error |= unur_distr_discr_set_mode(distr, (int) mode);
@@ -329,9 +332,9 @@ Runuran_cont_init (SEXP sexp_obj, SEXP sexp_env,
   }
 
   /* set mode, center and PDFarea of distribution */
-  mode = REAL(AS_NUMERIC(sexp_mode))[0];
-  center = REAL(AS_NUMERIC(sexp_center))[0];
-  area = REAL(AS_NUMERIC(sexp_area))[0];
+  mode = *REAL(AS_NUMERIC(sexp_mode));
+  center = *REAL(AS_NUMERIC(sexp_center));
+  area = *REAL(AS_NUMERIC(sexp_area));
 
   if (!ISNAN(mode))
     error |= unur_distr_cont_set_mode(distr, mode);

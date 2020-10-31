@@ -54,9 +54,9 @@ Runuran_mixt (SEXP sexp_obj, SEXP sexp_prob, SEXP sexp_comp, SEXP sexp_inversion
 {
   struct unur_gen **comp;      /* pointer to list of UNU.RAN objects */
   double *prob;                /* probality vector */
-  int n_prob, n_comp;          /* number of components */
+  int n_comp;                  /* number of components */
   int useinversion;            /* whether inversion method should be used */
-
+  
   SEXP sexp_unur;              /* pointer to element in R list 'comp' */
   SEXP sexp_gen;               /* R pointer to generator object */
 
@@ -66,18 +66,11 @@ Runuran_mixt (SEXP sexp_obj, SEXP sexp_prob, SEXP sexp_comp, SEXP sexp_inversion
   int i;
 
   /* extract boolean */
-  useinversion = LOGICAL(AS_LOGICAL(sexp_inversion))[0];
-
-  /* extract probability vector */
-  prob = REAL(AS_NUMERIC(sexp_prob));
-  n_prob = length(sexp_prob);
-  if (ISNAN(prob[0])) {
-    errorcall_return(R_NilValue,"[UNU.RAN - error] invalid argument 'prob'");
-  }
+  useinversion = *LOGICAL(AS_LOGICAL(sexp_inversion));
 
   /* extract length of component vector */
   n_comp = length(sexp_comp);
-  if(n_prob != n_comp) {
+  if(n_comp != length(sexp_prob)) {
     errorcall_return(R_NilValue,"[UNU.RAN - error] 'prob' and 'comp' must have same length");
   }
 
@@ -100,11 +93,24 @@ Runuran_mixt (SEXP sexp_obj, SEXP sexp_prob, SEXP sexp_comp, SEXP sexp_inversion
     }
   }
 
+  /* extract probability vector */
+  PROTECT(sexp_prob = AS_NUMERIC(sexp_prob));
+  prob = REAL(sexp_prob);
+
   /* create UNU.RAN generator for mixture */
-  par = unur_mixt_new(n_comp, prob, comp);
-  if (useinversion) unur_mixt_set_useinversion(par,TRUE);
-  gen = unur_init(par);
- 
+  if (! ISNAN(prob[0])) {
+    par = unur_mixt_new(n_comp, prob, comp);
+    if (useinversion) unur_mixt_set_useinversion(par,TRUE);
+    gen = unur_init(par);
+  }
+  /* we do not need 'sexp_prob' any more */
+  UNPROTECT(1);
+
+  /* check that 'prob' had contained useful data */
+  if (ISNAN(prob[0])) {
+    errorcall_return(R_NilValue,"[UNU.RAN - error] invalid argument 'prob'");
+  }
+  
   /* 'gen' must not be a NULL pointer */
   if (gen == NULL) {
     errorcall_return(R_NilValue,"[UNU.RAN - error] cannot create UNU.RAN object");

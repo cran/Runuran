@@ -475,8 +475,13 @@ Runuran_PDF (SEXP sexp_obj, SEXP sexp_x, SEXP sexp_islog)
     error("[UNU.RAN - error] broken UNU.RAN object");
   }
 
+  if ( ! ((distr->type == UNUR_DISTR_CONT) || (distr->type == UNUR_DISTR_DISCR)) ) {
+    error("[UNU.RAN - error] invalid distribution type");
+  }
+  
   /* extract x */
-  x = REAL(AS_NUMERIC(sexp_x));
+  sexp_x = PROTECT(AS_NUMERIC(sexp_x));
+  x = REAL(sexp_x);
   n = length(sexp_x);
 
   /* whether we have to return the log-density */
@@ -517,7 +522,8 @@ Runuran_PDF (SEXP sexp_obj, SEXP sexp_x, SEXP sexp_islog)
       continue;
     }
 
-    switch (unur_distr_get_type(distr)) {
+    /* switch (unur_distr_get_type(distr)) { */
+    switch (distr->type) {
     case UNUR_DISTR_CONT:
       /* univariate continuous distribution  --> evaluate PDF */
       REAL(sexp_res)[i] = (islog)
@@ -535,12 +541,13 @@ Runuran_PDF (SEXP sexp_obj, SEXP sexp_x, SEXP sexp_islog)
       break;
 
     default:
-      error("[UNU.RAN - error] invalid distribution type");
+      /* this code should not be reachable */
+      error("[UNU.RAN - error] internal error");
     }
   }
   
   /* return result to R */
-  UNPROTECT(1);
+  UNPROTECT(2);
   return sexp_res;
 
 } /* end of Runuran_PDF() */
@@ -612,6 +619,10 @@ Runuran_CDF (SEXP sexp_obj, SEXP sexp_x)
   else {
     error("[UNU.RAN - error] broken UNU.RAN object");
   }
+  
+  if ( ! ((distr->type == UNUR_DISTR_CONT) || (distr->type == UNUR_DISTR_DISCR)) ) {
+    error("[UNU.RAN - error] invalid distribution type");
+  }
 
   /* check objects */
   if (distr->type == UNUR_DISTR_DISCR && distr->data.discr.cdf == NULL)
@@ -625,7 +636,8 @@ Runuran_CDF (SEXP sexp_obj, SEXP sexp_x)
   }
 
   /* extract x */
-  x = REAL(AS_NUMERIC(sexp_x));
+  sexp_x = PROTECT(AS_NUMERIC(sexp_x));
+  x = REAL(sexp_x);
   n = length(sexp_x);
 
   /* allocate memory for result */
@@ -639,7 +651,7 @@ Runuran_CDF (SEXP sexp_obj, SEXP sexp_x)
       continue;
     }
 
-    switch (unur_distr_get_type(distr)) {
+    switch (distr->type) {
     case UNUR_DISTR_CONT:
       /* univariate continuous distribution */
       if (distr->data.cont.cdf != NULL)
@@ -659,12 +671,13 @@ Runuran_CDF (SEXP sexp_obj, SEXP sexp_x)
       break;
 
     default:
-      error("[UNU.RAN - error] invalid distribution type");
+      /* this code should not be reachable */
+      error("[UNU.RAN - error] internal error");
     }
   }
 
   /* return result to R */
-  UNPROTECT(1);
+  UNPROTECT(2);
   return sexp_res;
 
 } /* end of Runuran_CDF() */
@@ -1175,6 +1188,7 @@ SEXP Runuran_use_aux_urng (SEXP sexp_unur, SEXP sexp_set)
   else {
     LOGICAL(sexp_old)[0] = (unur_get_urng(gen) == unur_get_urng_aux(gen)) ? FALSE : TRUE;
   }
+  UNPROTECT(1);
 
   /* set new value */
   if (! isNull(sexp_set)) {
@@ -1191,7 +1205,6 @@ SEXP Runuran_use_aux_urng (SEXP sexp_unur, SEXP sexp_set)
   }
 
   /* return old value of 'set' */
-  UNPROTECT(1);
   return (sexp_old);
 
 } /* end of Runuran_use_aux_urng() */
