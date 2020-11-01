@@ -1180,6 +1180,13 @@ SEXP Runuran_use_aux_urng (SEXP sexp_unur, SEXP sexp_set)
     }
   }
 
+  /* check if UNU.RAN generator supports auxiliary URNG */
+  if (! isNull(sexp_set)) {
+    if (unur_get_urng_aux(gen) == NULL) {
+      error("[UNU.RAN - error] generator object does not support auxiliary URNG");
+    }
+  }
+  
   /* read old value of 'set' */
   PROTECT(sexp_old = NEW_LOGICAL(1));
   if (unur_get_urng_aux(gen) == NULL) {
@@ -1188,23 +1195,18 @@ SEXP Runuran_use_aux_urng (SEXP sexp_unur, SEXP sexp_set)
   else {
     LOGICAL(sexp_old)[0] = (unur_get_urng(gen) == unur_get_urng_aux(gen)) ? FALSE : TRUE;
   }
-  UNPROTECT(1);
 
   /* set new value */
   if (! isNull(sexp_set)) {
     set = LOGICAL(sexp_set)[0];
-    if (unur_get_urng_aux(gen) == NULL) {
-      error("[UNU.RAN - error] generator object does not support auxiliary URNG");
-    }
-    else {
-      if (set)
-	unur_chgto_urng_aux_default(gen);
-      else
-	unur_chg_urng_aux(gen,unur_get_urng(gen));
-    }
+    if (set)
+      unur_chgto_urng_aux_default(gen);
+    else
+      unur_chg_urng_aux(gen,unur_get_urng(gen));
   }
 
   /* return old value of 'set' */
+  UNPROTECT(1);
   return (sexp_old);
 
 } /* end of Runuran_use_aux_urng() */
