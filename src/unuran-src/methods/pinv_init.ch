@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2020 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2021 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 struct unur_gen *
@@ -81,17 +81,17 @@ _unur_pinv_check_par( struct unur_gen *gen )
   switch (GEN->smooth) {
   case 2:
     if (GEN->order < 5) {
-      _unur_warning(gen->genid,UNUR_ERR_GENERIC,"order must be >= 5 when smoothness equals 2");
+      _unur_warning(gen->genid,UNUR_ERR_GENERIC,"order must be >= 5 when smoothness = 2");
       GEN->order = 5;
       gen->set |= PINV_SET_ORDER_COR;
     }
     if (GEN->order % 3 != 2) {
-      _unur_warning(gen->genid,UNUR_ERR_GENERIC,"order must be 2 mod 3 when smoothness equals 2");
+      _unur_warning(gen->genid,UNUR_ERR_GENERIC,"order must be 2 mod 3 when smoothness = 2");
       GEN->order = 2 + 3 * (GEN->order / 3);
       gen->set |= PINV_SET_ORDER_COR;
     }
     if (DISTR.pdf == NULL || DISTR.dpdf == NULL) {
-      _unur_warning(gen->genid,UNUR_ERR_DISTR_REQUIRED,"PDF or dPDF --> try smoothness=1 instead");
+      _unur_warning(gen->genid,UNUR_ERR_DISTR_REQUIRED,"PDF and dPDF required for smoothness = 2 --> try smoothness=1 instead");
       GEN->smooth = 1;
       gen->set |= PINV_SET_SMOOTH_COR;
     }
@@ -100,12 +100,12 @@ _unur_pinv_check_par( struct unur_gen *gen )
     }
   case 1:
     if (GEN->order % 2 != 1) {
-      _unur_warning(gen->genid,UNUR_ERR_GENERIC,"order must be odd when smoothness equals 1");
+      _unur_warning(gen->genid,UNUR_ERR_GENERIC,"order must be odd when smoothness = 1");
       GEN->order += 1;
       gen->set |= PINV_SET_ORDER_COR;
     }
     if (DISTR.pdf == NULL) {
-      _unur_warning(gen->genid,UNUR_ERR_DISTR_REQUIRED,"PDF --> use smoothness=0 instead");
+      _unur_warning(gen->genid,UNUR_ERR_DISTR_REQUIRED,"PDF required --> use smoothness=0 instead");
       GEN->smooth = 0;
       gen->set |= PINV_SET_SMOOTH_COR;
     }

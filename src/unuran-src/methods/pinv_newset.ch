@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2020 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2021 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 struct unur_par *
@@ -14,8 +14,8 @@ unur_pinv_new( const struct unur_distr *distr )
   par = _unur_par_new( sizeof(struct unur_pinv_par) );
   COOKIE_SET(par,CK_PINV_PAR);
   par->distr   = distr;           
-  PAR->order = 5;                
-  PAR->smooth = 0;               
+  PAR->order = 5L;               
+  PAR->smooth = 0L;              
   PAR->u_resolution = 1.0e-10;   
   PAR->bleft = -1.e100;          
   PAR->bright = 1.e100;          
@@ -51,7 +51,7 @@ unur_pinv_set_smoothness( struct unur_par *par, int smooth)
 {
   _unur_check_NULL( GENTYPE, par, UNUR_ERR_NULL );
   _unur_check_par_object( par, PINV );
-  if (smooth<0 || smooth>2) {
+  if (smooth < 0L || smooth > 2L) {
     _unur_warning(GENTYPE,UNUR_ERR_PAR_SET,"smoothness must be 0, 1, or 2");
     return UNUR_ERR_PAR_SET;
   }

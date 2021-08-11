@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2020 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2021 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 UNUR_DISTR *unur_distr_matr_new( int n_rows, int n_cols );

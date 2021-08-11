@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2020 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2021 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -68,14 +68,13 @@ static int _unur_pinv_chebyshev_points (double *pt, int order, int smooth);
 static int _unur_pinv_newton_cpoints (double *xval, int order, struct unur_pinv_interval *iv, 
 				      double h, double *chebyshev, int smooth, int use_upoints);
 static int _unur_pinv_newton_create (struct unur_gen *gen, struct unur_pinv_interval *iv, 
-				     double *xval);
+				     double *xval, int smooth);
 static int _unur_pinv_linear_create (struct unur_gen *gen, struct unur_pinv_interval *iv, 
 				     double *xval);
 static double _unur_pinv_newton_eval (double q, double *ui, double *zi, int order);
-static double _unur_pinv_newton_maxerror (struct unur_gen *gen, struct unur_pinv_interval *iv, 
-					  double *xval, int use_linear);
+static double _unur_pinv_newton_maxerror (struct unur_gen *gen, struct unur_pinv_interval *iv, double *xval);
+static double _unur_pinv_linear_maxerror (struct unur_gen *gen, struct unur_pinv_interval *iv);
 static int _unur_pinv_newton_testpoints (double *utest, double ui[], int order);
-static int _unur_pinv_linear_testpoints (double *utest, double *ui, int order);
 static int _unur_pinv_cubic_hermite_is_monotone();
 static int _unur_pinv_interval( struct unur_gen *gen, int i, double x, double cdfx );
 static int _unur_pinv_lastinterval( struct unur_gen *gen );

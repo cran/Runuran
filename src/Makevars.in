@@ -1,4 +1,4 @@
-PKG_CPPFLAGS=-I. -Iunuran-src -DHAVE_CONFIG_H  ## -Wall -Wextra -pedantic -Wno-cast-function-type
+PKG_CPPFLAGS=-I. -Iunuran-src -DHAVE_CONFIG_H   ##  -Wall -Wextra -pedantic -Wno-cast-function-type
 SOURCES=@UNURAN_SRC@ Runuran.c init.c Runuran_distr.c Runuran_pinv.c performance.c distributions.c mixture.c verify.c Runuran_ext.c
 OBJECTS=$(SOURCES:.c=.o)
 

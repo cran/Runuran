@@ -58,10 +58,11 @@
 /* Detailed discription of possible flags in file `./utils/debug.h'          */
 /*                                                                           */
 /* Debugging information is written into the log file.                       */
-/* It only works if the library is built with the ----enable-logging         */
+/* It only works if the library is built with the --enable-logging           */
 /* configure flag.                                                           */
 
-#define UNUR_DEBUGFLAG_DEFAULT   UNUR_DEBUG_INIT
+/* #define UNUR_DEBUGFLAG_DEFAULT   UNUR_DEBUG_INIT */
+#define UNUR_DEBUGFLAG_DEFAULT   UNUR_DEBUG_ALL
 
 
 /*****************************************************************************

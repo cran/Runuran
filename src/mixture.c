@@ -59,6 +59,7 @@ Runuran_mixt (SEXP sexp_obj, SEXP sexp_prob, SEXP sexp_comp, SEXP sexp_inversion
   
   SEXP sexp_unur;              /* pointer to element in R list 'comp' */
   SEXP sexp_gen;               /* R pointer to generator object */
+  SEXP sexp_is_inversion;      /* Slot 'inversion' */
 
   struct unur_par *par;
   struct unur_gen *gen = NULL; /* pointer to UNU.RAN object */
@@ -100,7 +101,9 @@ Runuran_mixt (SEXP sexp_obj, SEXP sexp_prob, SEXP sexp_comp, SEXP sexp_inversion
   /* create UNU.RAN generator for mixture */
   if (! ISNAN(prob[0])) {
     par = unur_mixt_new(n_comp, prob, comp);
-    if (useinversion) unur_mixt_set_useinversion(par,TRUE);
+    if (useinversion) {
+      unur_mixt_set_useinversion(par,TRUE);
+    }
     gen = unur_init(par);
   }
   /* we do not need 'sexp_prob' any more */
@@ -116,6 +119,11 @@ Runuran_mixt (SEXP sexp_obj, SEXP sexp_prob, SEXP sexp_comp, SEXP sexp_inversion
     errorcall_return(R_NilValue,"[UNU.RAN - error] cannot create UNU.RAN object");
   }
 
+  /* set slot 'inversion' to true when 'gen' implements an inversion method. */
+  PROTECT(sexp_is_inversion = NEW_LOGICAL(1));
+  LOGICAL(sexp_is_inversion)[0] = useinversion;
+  SET_SLOT(sexp_obj, install("inversion"), sexp_is_inversion);
+    
   /* make R external pointer and store pointer to structure */
   PROTECT(sexp_gen = R_MakeExternalPtr(gen, _Runuran_tag(), sexp_obj));
   
@@ -123,7 +131,7 @@ Runuran_mixt (SEXP sexp_obj, SEXP sexp_prob, SEXP sexp_comp, SEXP sexp_inversion
   R_RegisterCFinalizer(sexp_gen, _Runuran_free);
 
   /* return pointer to R */
-  UNPROTECT(1);
+  UNPROTECT(2);
   return (sexp_gen);
 
 } /* end of Runuran_mixture() */

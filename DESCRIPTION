@@ -1,8 +1,8 @@
 Package: Runuran
 Type: Package
 Title: R Interface to the 'UNU.RAN' Random Variate Generators
-Version: 0.33
-Date: 2020-11-01
+Version: 0.34
+Date: 2021-08-11
 Authors@R: c(person("Josef", "Leydold", role = c("aut", "cre"),
     email = "josef.leydold@wu.ac.at"),
     person("Wolfgang", "H\"ormann", role = "aut"))
@@ -20,11 +20,11 @@ Collate: unuran_distr.R unuran_cont.R unuran_discr.R unuran_cmv.R
         utils.R zzz.R
 License: GPL (>= 2)
 URL: http://statmath.wu.ac.at/unuran/
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
 NeedsCompilation: yes
-Packaged: 2020-11-01 13:45:29 UTC; leydold
+Packaged: 2021-08-11 16:07:18 UTC; leydold
 Author: Josef Leydold [aut, cre],
   Wolfgang H"ormann [aut]
 Maintainer: Josef Leydold <josef.leydold@wu.ac.at>
 Repository: CRAN
-Date/Publication: 2020-11-01 16:00:19 UTC
+Date/Publication: 2021-08-11 16:40:05 UTC
