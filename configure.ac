@@ -1,9 +1,9 @@
 dnl Process this file with autoconf to produce a configure script.
 
 dnl --- Initialize ----------------------------------------------------------- 
-AC_PREREQ(2.63)
+AC_PREREQ([2.71])
 AC_INIT([Runuran],[0.34],[unuran@statmath.wu.ac.at])
-AC_CONFIG_HEADER([src/config.h])
+AC_CONFIG_HEADERS([src/config.h])
 
 dnl --- Configure flags ------------------------------------------------------
 dnl UNU.RAN allows to write information about distribution and a log file.
@@ -58,14 +58,13 @@ dnl libm: the standard math library
 AC_CHECK_LIB([m], [sqrt])
 
 dnl --- Checks for header files ----------------------------------------------
-AC_HEADER_STDC
-AC_CHECK_HEADERS([float.h limits.h stdlib.h string.h sys/time.h unistd.h])
+AC_CHECK_HEADERS([float.h limits.h stdlib.h string.h unistd.h])
+AC_CHECK_HEADERS_ONCE([sys/time.h])
 
 dnl --- Checks for typedefs, structures, and compiler characteristics --------
 AC_C_CONST
 AC_C_INLINE
 AC_TYPE_SIZE_T
-AC_HEADER_TIME
 
 dnl --- Checks for library functions -----------------------------------------
 AC_CHECK_FUNCS([floor gettimeofday pow sqrt strcasecmp strchr strtol strtoul])

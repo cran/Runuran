@@ -883,7 +883,7 @@ _unur_mvtdr_etable_new( struct unur_gen *gen, int size )
   int n;
   _unur_mvtdr_etable_free(gen);
   GEN->etable_size = size;
-  GEN->etable = malloc( size * sizeof(E_TABLE*) );
+  GEN->etable = _unur_xmalloc( size * sizeof(E_TABLE*) );
   if (GEN->etable==NULL) {
     _unur_error(gen->genid,UNUR_ERR_MALLOC,""); return UNUR_ERR_MALLOC; }
   for (n = 0; n< size; n++) 

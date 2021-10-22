@@ -17,8 +17,8 @@
   \tabular{ll}{
     Package: \tab Runuran       \cr
     Type:    \tab Package       \cr
-    Version: \tab 0.34          \cr
-    Date:    \tab 2021-08-11    \cr
+    Version: \tab 0.35          \cr
+    Date:    \tab 2021-10-22    \cr
     License: \tab GPL 2 or later\cr
   }
   \pkg{Runuran} provides an interface to the UNU.RAN library for
@@ -232,7 +232,7 @@
 \references{
   J. Leydold and W. H\"ormann (2000-2008):
   UNU.RAN User Manual, see
-  \url{http://statmath.wu.ac.at/unuran/}.
+  \url{https://statmath.wu.ac.at/unuran/}.
   
   W. H\"ormann, J. Leydold, and G. Derflinger (2004):
   Automatic Nonuniform Random Variate Generation.

@@ -1,3 +1,9 @@
+Version 0.35.0: 2021-10-22
+
+	- internal:
+	  fixed issues with autoconf-2.71
+
+
 Version 0.34.0: 2021-08-11
 
 	- pinv.new():

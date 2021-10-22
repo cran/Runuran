@@ -81,7 +81,7 @@
 \references{
   J. Leydold and W. H\"ormann (2000-2007):
   UNU.RAN User Manual, see
-  \url{http://statmath.wu.ac.at/unuran/}.
+  \url{https://statmath.wu.ac.at/unuran/}.
   
   W. H\"ormann, J. Leydold, and G. Derflinger (2004):
   Automatic Nonuniform Random Variate Generation.

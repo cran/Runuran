@@ -63,7 +63,7 @@ distr <- new("unuran.cont", pdf=pdf, dpdf=dpdf, islog=TRUE, lb=-Inf, ub=Inf)
 \references{
   J. Leydold and W. H\"ormann (2000-2007):
   UNU.RAN User Manual, see
-  \url{http://statmath.wu.ac.at/unuran/}.
+  \url{https://statmath.wu.ac.at/unuran/}.
 }
 
 \seealso{
