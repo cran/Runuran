@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2021 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2022 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -87,8 +87,14 @@ int
 _unur_upd_mode_gig2( UNUR_DISTR *distr )
 {
   register const double *params = DISTR.params;
-  DISTR.mode =
-    ((theta-1.)+sqrt((theta-1.)*(theta-1.) + psi*chi)) / psi;
+  if (theta >= 1.) {
+    DISTR.mode =
+      ((theta-1.)+sqrt((theta-1.)*(theta-1.) + psi*chi)) / psi;
+  }
+  else { 
+    DISTR.mode = chi /
+      ((1.-theta)+sqrt((1.-theta)*(1.-theta) + psi*chi));
+  }
   if (DISTR.mode < DISTR.domain[0]) 
     DISTR.mode = DISTR.domain[0];
   else if (DISTR.mode > DISTR.domain[1]) 

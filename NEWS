@@ -1,3 +1,10 @@
+Version 0.36.0: 2022-05-05
+
+	- internal:
+	  fixed issue in Rd file
+	  fixed deprecated usage of class() in if statements
+
+
 Version 0.35.0: 2021-10-22
 
 	- internal:

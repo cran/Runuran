@@ -17,8 +17,8 @@
   \tabular{ll}{
     Package: \tab Runuran       \cr
     Type:    \tab Package       \cr
-    Version: \tab 0.35          \cr
-    Date:    \tab 2021-10-22    \cr
+    Version: \tab 0.36          \cr
+    Date:    \tab 2022-05-05    \cr
     License: \tab GPL 2 or later\cr
   }
   \pkg{Runuran} provides an interface to the UNU.RAN library for
@@ -34,20 +34,20 @@
   \pkg{Runuran} compiles four sets of functions of increasing power (and
   thus complexity):
   
-  \describe{
-    \item{}{\bold{[Special Generator]} --
+  \itemize{
+    \item{\bold{[Special Generator]} --
       Generators for particular distributions. Their syntax is similar to
       the corresponding \R built-in functions.}
-    \item{}{\bold{[Universal]} --
+    \item{\bold{[Universal]} --
       Functions that offer an interface to a carefully selected
       collection of UNU.RAN methods with their most important
       parameters.}
-    \item{}{\bold{[Distribution]} --
+    \item{\bold{[Distribution]} --
       Functions that create objects for important distributions.
       These objects can then be used in combination with one of the
       universal methods which is best suited for a particular
       application.}
-    \item{}{\bold{[Advanced]} --
+    \item{\bold{[Advanced]} --
       Wrapper to the UNU.RAN string API. This gives access to all
       UNU.RAN methods and their variants.}
   }

@@ -15,7 +15,7 @@
                        TRUE, parent.frame(2L))
     }
 
-    switch(class(calledby),
+    switch(class(calledby)[1],
            "call" = 
                stop(deparse(calledby),":\n   ",..., call.=FALSE),
            
@@ -33,7 +33,7 @@
 ##                       TRUE, parent.frame(2L))
 ##    }
 ##
-##    switch(class(calledby),
+##    switch(class(calledby)[1],
 ##           "call" = 
 ##               warning(deparse(calledby),":\n   ",..., call.=FALSE),
 ##           
@@ -51,7 +51,7 @@
 ##                       TRUE, parent.frame(2L))
 ##    }
 ##
-##    switch(class(calledby),
+##    switch(class(calledby)[1],
 ##           "call" = 
 ##               message(deparse(calledby),":\n   ",...),
 ##           

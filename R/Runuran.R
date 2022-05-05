@@ -68,9 +68,7 @@ setMethod( "initialize", "unuran",
                   ## Create UNU.RAN object
                   if (is.character(distr)) {
                           .Object@unur <-.Call(C_Runuran_init, .Object, distr, method)
-                  } else { if (class(distr)=="unuran.discr" ||
-                               class(distr)=="unuran.cont"  ||
-                               class(distr)=="unuran.cmv") {
+                  } else { if (is(distr, "unuran.distr")) {
                           .Object@unur <-.Call(C_Runuran_init, .Object, distr@distr, method)
                           .Object@distr <- distr
                   } else {
@@ -110,8 +108,7 @@ unuran.sample <- function(unr,n=1) {
 
 ## uq
 uq <- function(unr,U) { 
-    cl <- class(unr)
-    if (cl != "unuran") {
+    if (!is(unr, "unuran")) {
         stop("argument 'unr' must be UNU.RAN object; method not implemented for distribution objects")
     }
 
@@ -122,11 +119,11 @@ uq <- function(unr,U) {
 
 ## ud
 ud <- function(obj,x,islog=FALSE) {
-    cl <- class(obj)
-    if (cl == "unuran.cmv") {
+    if (is(obj, "unuran.cmv")) {
         stop("method not implemented for objects of class 'unuran.cmv'")
     }
-    if (! cl %in% c("unuran.cont", "unuran.discr", "unuran")) {
+    if (! (is(obj, "unuran") || is(obj, "unuran.distr")) ) {
+        ## we need one of "unuran", "unuran.cont", "unuran.discr"
         stop("argument 'obj' must be UNU.RAN object")
     }
 
@@ -137,11 +134,11 @@ ud <- function(obj,x,islog=FALSE) {
 
 ## up
 up <- function(obj,x) {
-    cl <- class(obj)
-    if (cl == "unuran.cmv") {
+    if (is(obj, "unuran.cmv")) {
         stop("method not implemented for objects of class 'unuran.cmv'")
     }
-    if (! cl %in% c("unuran.cont", "unuran.discr", "unuran")) {
+    if (! (is(obj, "unuran") || is(obj, "unuran.distr")) ) {
+        ## we need one of "unuran", "unuran.cont", "unuran.discr"
         stop("argument 'obj' must be UNU.RAN object")
     }
     
@@ -256,7 +253,7 @@ setMethod( "show", "unuran",
 ## unuran.details
 ## (print for information and hints)
 unuran.details <- function(unr, show=TRUE, return.list=FALSE, debug=FALSE) {
-    if (class(unr) != "unuran") {
+    if (! is(unr,"unuran")) {
         .Runuran.stop("Argument 'unr' must be of class 'unuran'.")
     }
     if (isTRUE(show)) {
@@ -323,11 +320,13 @@ mixt.new <- function (prob, comp, inversion=FALSE) {
 unuran.verify.hat <- function (unr, n=1e5, show = TRUE) {
 
   ## check arguments
-  if (! is(unr,"unuran"))
-    stop ("invalid argument 'unr'");
-  if (! (is.numeric(n) && n>10) )
-    stop ("invalid sample size 'n'");
-  
+  if (! is(unr,"unuran")) {
+      stop ("invalid argument 'unr'");
+  }
+  if (! (is.numeric(n) && n>10) ) {
+      stop ("invalid sample size 'n'");
+  }
+
   ## run test
   failed <- .Call(C_Runuran_verify_hat, unr, n)
   ratio <- failed / n
@@ -374,7 +373,7 @@ unuran.verify.hat <- function (unr, n=1e5, show = TRUE) {
 unuran.is.inversion <- function (unr) {
 
     ## check arguments
-    if ( class(unr) != "unuran") {
+    if ( !is(unr, "unuran")) {
         stop ("invalid argument 'unr'");
     }
 
