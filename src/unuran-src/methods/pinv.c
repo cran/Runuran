@@ -75,7 +75,7 @@ static double _unur_pinv_newton_eval (double q, double *ui, double *zi, int orde
 static double _unur_pinv_newton_maxerror (struct unur_gen *gen, struct unur_pinv_interval *iv, double *xval);
 static double _unur_pinv_linear_maxerror (struct unur_gen *gen, struct unur_pinv_interval *iv);
 static int _unur_pinv_newton_testpoints (double *utest, double ui[], int order);
-static int _unur_pinv_cubic_hermite_is_monotone();
+static int _unur_pinv_cubic_hermite_is_monotone(struct unur_gen *gen, double *ui, double *zi, double *xval);
 static int _unur_pinv_interval( struct unur_gen *gen, int i, double x, double cdfx );
 static int _unur_pinv_lastinterval( struct unur_gen *gen );
 #ifdef UNUR_ENABLE_LOGGING

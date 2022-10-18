@@ -1,6 +1,6 @@
-e45fc92227a3cb674bb516dff3bd6243 *DESCRIPTION
+223f0789aa4b07f6c902b7677548b66e *DESCRIPTION
 9991be6bb45fe1ca86ea096c006aed79 *NAMESPACE
-05374c6cef5c93b3cb8b006cbf6a2a94 *NEWS
+bdabe31df8263bd76bc49079b7cb00af *NEWS
 f6262ba4462b0e93ff07ce065ae75c9c *R/Runuran.R
 2a11f8a88561e0acb1a21f4f390a4ba2 *R/deprecated.R
 ff81493df146d6252db84197e9cd3b3c *R/distributions.R
@@ -14,20 +14,20 @@ abd5b1d7fe61e3388081de2003b03071 *R/utils.R
 ae3a66723e7d209263268bff3b362614 *R/zzz.R
 f0a9166d009dab35e02bd553783243b4 *THANKS
 7751f1db3950c2849d11af2af3caadb5 *TODO
-2f1c2f34b6424304444b6e5befde2efd *build/vignette.rds
+a675b5079b70c5554e177a0e5f9574e8 *build/vignette.rds
 8e7313c30880992759ee3bc346a08d47 *cleanup
 5c14dcce375142322b7500a396b71ab8 *configure
 df8a44be99689253d0edd3c55db53f42 *configure.ac
 8b6ee0f54e49b3bc8466c54055e3c6a6 *configure.win
 941f09bb6dbea8757258d7caa575f369 *inst/doc/Runuran.R
 706b55db08e0c4586db8679e79ece6e0 *inst/doc/Runuran.Rnw
-0f2873709ef0ba0eed40dd3d2b06cc1f *inst/doc/Runuran.pdf
+a5df0a7381f37b7a6dc4bb99fc262ab9 *inst/doc/Runuran.pdf
 a8b5eb6e914255052600c7f9259868e4 *inst/include/Runuran.h
 78a02cf786a5dfb4a547af5743e1f3f4 *inst/include/Runuran_API.h
 3ac81dd617329365aec10a588c45e462 *inst/include/Runuran_ext.h
 fb1cb1f07309fe7d10564a2fc0bcc309 *inst/include/Runuran_stubs.c
 a19b7f46e22c75cfca54f67de3ee1895 *inst/include/unuran.h
-524fe15484e279c3171c45119e5e36a7 *man/Runuran-package.Rd
+551b8c3389e46ec14d50ee658d4d2baa *man/Runuran-package.Rd
 e0a9b61f9270fe513a4dde54f8038c45 *man/Runuran.distributions.Rd
 76721357bff75c460749780bbbfc8e54 *man/Runuran.options.Rd
 c57a8ebbce4763f05f6a8290e3c7cd9b *man/Runuran.special.generators.Rd
@@ -125,7 +125,7 @@ ca3fcdcb971da8eef4c322ce3dd68b78 *man/urt.Rd
 9532e88bebcbf05b8869f2364f0c3fb1 *man/urweibull.Rd
 9604e02c7081e62cc0da9aead8fb8fcf *man/use.aux.urng-method.Rd
 1675c4076dbf2b8a3234989cd5bcdaf1 *man/vnrou.new.Rd
-533a5619c73595682d61b60d91a6bb15 *src/Makevars.in
+231c7a6b06dc607ebae74e28aafe7b31 *src/Makevars.in
 03ac815845060c5e564a0a17e9f7e967 *src/README
 eb8e881a8956eaf5fbc984d35889c128 *src/Runuran.c
 a8b5eb6e914255052600c7f9259868e4 *src/Runuran.h
@@ -333,7 +333,7 @@ b9f370a2fda0ff47899c5e271a4463f7 *src/unuran-src/methods/norta.c
 19065a880af6e7bdef1f4784be364084 *src/unuran-src/methods/nrou.c
 3a4499cc55a399e6e8d018583e0fd822 *src/unuran-src/methods/nrou.h
 56893565a2e083b9f4781ae7f9cae287 *src/unuran-src/methods/nrou_struct.h
-155b5a52e51a2644295e65a46be77786 *src/unuran-src/methods/pinv.c
+25e1da5f69e18c86778889fd17622be5 *src/unuran-src/methods/pinv.c
 03a97b16ea913ad9cd99c1771f039e50 *src/unuran-src/methods/pinv.h
 7eb5aee7d5398404f9cc6c9a48688ec6 *src/unuran-src/methods/pinv_debug.ch
 04622fe9e6be52d7e7fb5e4fd204d417 *src/unuran-src/methods/pinv_info.ch
@@ -525,4 +525,4 @@ e1c7e3f1c14aec1d8ae56f8147b0d306 *vignettes/inputs/pitfalls.Rnw
 8d6c13c969a4a65726819d1cde002bc1 *vignettes/inputs/tab-generators.tex
 df628bc82940f63e77513949303d52a3 *vignettes/inputs/title.tex
 bb4ab047c1708fd56e5b6cc238e196ff *vignettes/inputs/universal.Rnw
-7feac1b374e7f99c021a6f36f980c769 *vignettes/inputs/version.tex
+774831f7d2a1cc218627723db3905740 *vignettes/inputs/version.tex
