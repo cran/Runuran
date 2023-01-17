@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2022 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2023 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 typedef double UNUR_LOBATTO_FUNCT(double x, struct unur_gen *gen);

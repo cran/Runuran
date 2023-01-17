@@ -1,4 +1,14 @@
 
+Version 0.38.0: 2023-01-17
+
+	- pinv.new():
+	  fixed issue with PDFs that almost vanish at the boundary of
+	  the domain
+
+	- internal:
+	  replaced deprecated C function sprintf() by snprintf()
+
+
 Version 0.37.0: 2022-10-18
 
 	- internal:

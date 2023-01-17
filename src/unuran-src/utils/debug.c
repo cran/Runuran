@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2022 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2023 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -47,7 +47,7 @@ _unur_make_genid( const char *gentype )
 #if HAVE_DECL_SNPRINTF
   snprintf(genid, len+5, "%s.%03d", gentype, count);
 #else
-  sprintf(genid, "%s.%03d", gentype, count);
+  #error Function snprintf() required.
 #endif
   return genid;
 } 

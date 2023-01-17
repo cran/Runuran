@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2022 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2023 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #include <unur_source.h>
@@ -41,6 +41,7 @@
 #define PINV_SET_VARIANT        0x0040u  
 #define PINV_SET_MAX_IVS        0x0080u  
 #define PINV_SET_KEEPCDF        0x0100u  
+#define PINV_SET_N_EXTRA_TP     0x4000u  
 #define GENTYPE "PINV"         
 static struct unur_gen *_unur_pinv_init (struct unur_par *par);
 static struct unur_gen *_unur_pinv_create (struct unur_par *par);
@@ -74,6 +75,7 @@ static int _unur_pinv_linear_create (struct unur_gen *gen, struct unur_pinv_inte
 static double _unur_pinv_newton_eval (double q, double *ui, double *zi, int order);
 static double _unur_pinv_newton_maxerror (struct unur_gen *gen, struct unur_pinv_interval *iv, double *xval);
 static double _unur_pinv_linear_maxerror (struct unur_gen *gen, struct unur_pinv_interval *iv);
+static double _unur_pinv_maxerror_extra (struct unur_gen *gen, struct unur_pinv_interval *iv, double *xval);
 static int _unur_pinv_newton_testpoints (double *utest, double ui[], int order);
 static int _unur_pinv_cubic_hermite_is_monotone(struct unur_gen *gen, double *ui, double *zi, double *xval);
 static int _unur_pinv_interval( struct unur_gen *gen, int i, double x, double cdfx );

@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2022 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2023 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 struct unur_distr *
@@ -1111,6 +1111,12 @@ _unur_str_par_set( UNUR_PAR *par, const char *key, char *value, struct unur_slis
 		 case 'b':
 			 if ( !strcmp(key, "boundary") ) {
 				 result = _unur_str_par_set_dd(par,key,type_args,args,unur_pinv_set_boundary);
+				 break;
+			 }
+			 break;
+		 case 'e':
+			 if ( !strcmp(key, "extra_testpoints") ) {
+				 result = _unur_str_par_set_i(par,key,type_args,args,unur_pinv_set_extra_testpoints);
 				 break;
 			 }
 			 break;

@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2022 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2023 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 #undef __BEGIN_DECLS
@@ -423,6 +423,7 @@ UNUR_PAR *unur_pinv_new( const UNUR_DISTR *distribution );
 int unur_pinv_set_order( UNUR_PAR *parameters, int order);
 int unur_pinv_set_smoothness( UNUR_PAR *parameters, int smoothness);
 int unur_pinv_set_u_resolution( UNUR_PAR *parameters, double u_resolution);
+int unur_pinv_set_extra_testpoints( UNUR_PAR *parameters, int n_points);
 int unur_pinv_set_use_upoints( UNUR_PAR *parameters, int use_upoints );
 int unur_pinv_set_usepdf( UNUR_PAR *parameters );
 int unur_pinv_set_usecdf( UNUR_PAR *parameters );

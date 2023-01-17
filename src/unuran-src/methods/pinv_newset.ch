@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2022 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2023 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 struct unur_par *
@@ -22,6 +22,7 @@ unur_pinv_new( const struct unur_distr *distr )
   PAR->sleft = TRUE;             
   PAR->sright = TRUE;            
   PAR->max_ivs = PINV_DEFAULT_MAX_IVS; 
+  PAR->n_extra_testpoints = 0L;  
   par->method   = UNUR_METH_PINV; 
   par->variant  = 0u;             
   if (DISTR_IN.pdf != NULL)
@@ -74,6 +75,19 @@ unur_pinv_set_u_resolution( struct unur_par *par, double u_resolution )
   }
   PAR->u_resolution = u_resolution;
   par->set |= PINV_SET_U_RESOLUTION;
+  return UNUR_SUCCESS;
+} 
+int
+unur_pinv_set_extra_testpoints( struct unur_par *par, int n_points)
+{
+  _unur_check_NULL( GENTYPE, par, UNUR_ERR_NULL );
+  _unur_check_par_object( par, PINV );
+  if (n_points < 0) {
+    _unur_warning(GENTYPE,UNUR_ERR_PAR_SET,"number of extra test point < 0");
+    return UNUR_ERR_PAR_SET;
+  }
+  PAR->n_extra_testpoints = n_points;
+  par->set |= PINV_SET_N_EXTRA_TP;
   return UNUR_SUCCESS;
 } 
 int

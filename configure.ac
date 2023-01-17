@@ -79,7 +79,7 @@ AH_BOTTOM([#if !HAVE_DECL_HYPOT
 #define hypot _unur_hypot
 #endif])
 
-AC_CHECK_DECLS([getopt, vsnprintf])
+AC_CHECK_DECLS([getopt, snprintf, vsnprintf])
 
 dnl Check for C99 functions */
 AC_CHECK_DECLS(isfinite,,,[#include <math.h>])

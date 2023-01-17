@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2022 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2023 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 struct unur_pinv_par { 
@@ -10,6 +10,7 @@ struct unur_pinv_par {
   int sleft;               
   int sright;              
   int max_ivs;             
+  int n_extra_testpoints;  
 };
 struct unur_pinv_interval {
   double *ui;  
@@ -26,6 +27,7 @@ struct unur_pinv_gen {
   int     guide_size;      
   double  Umax;            
   double  u_resolution;    
+  int n_extra_testpoints;  
   int smooth;              
   double  bleft;           
   double  bright;          

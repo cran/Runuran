@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2022 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2023 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 int
@@ -16,7 +16,7 @@ _unur_pinv_preprocessing (struct unur_gen *gen)
     if (_unur_pinv_pdfarea(gen) != UNUR_SUCCESS) 
       return UNUR_FAILURE;
     if (GEN->area < 0.99 * area_approx) {
-      _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"integration of pdf: numerical problems with cut-off points");
+      _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"integration of pdf: numerical problems with cut-off points of computational domain");
       return UNUR_FAILURE;
     }
   }

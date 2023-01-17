@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2022 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2023 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 int
@@ -37,7 +37,9 @@ _unur_pinv_create_table( struct unur_gen *gen )
       return UNUR_ERR_GEN_CONDITION;
     }
     if(!_unur_FP_less(GEN->iv[i].xi+h,GEN->bright)) {
-      h = GEN->bright - GEN->iv[i].xi;
+      if (! (GEN->iv[i].xi+h < GEN->bright)) {
+	h = GEN->bright - GEN->iv[i].xi;
+      }
       cont = FALSE;    
       right_bd = TRUE; 
     }
@@ -264,10 +266,13 @@ _unur_pinv_newton_maxerror (struct unur_gen *gen, struct unur_pinv_interval *iv,
   COOKIE_CHECK(iv,CK_PINV_IV,UNUR_FAILURE);
   _unur_pinv_newton_testpoints(testu,ui,GEN->order);
   for(i=0; i<GEN->order; i++) {
+    if (_unur_FP_is_infinity(testu[i])) {
+      continue;
+    }
     x = _unur_pinv_newton_eval(testu[i], ui, zi, GEN->order);
     if (! (xval[i] <= x0+x && x0+x <= xval[i+1]) )
       if (! _unur_FP_same(xval[i], xval[i+1]))
-	return 1002.;
+	return DBL_MAX;
     if (i==0 || xval==NULL)
       u = _unur_pinv_Udiff(gen, x0, x, NULL);
     else
@@ -280,6 +285,46 @@ _unur_pinv_newton_maxerror (struct unur_gen *gen, struct unur_pinv_interval *iv,
   if (GEN->order == 3 && GEN->smooth==1 && xval!=NULL &&
       ! _unur_pinv_cubic_hermite_is_monotone(gen,ui,zi,xval))
     return 1003.;
+  if (GEN->n_extra_testpoints > 0) {
+    uerror = _unur_pinv_maxerror_extra(gen, iv, xval);
+    if (uerror>maxerror) maxerror = uerror;
+  }
+  return maxerror;
+} 
+double
+_unur_pinv_maxerror_extra (struct unur_gen *gen, struct unur_pinv_interval *iv, double *xval)
+{
+  double x0 = iv->xi;    
+  double *ui = iv->ui;   
+  double *zi = iv->zi;   
+  double maxerror = 0.;  
+  double uerror;         
+  double x;              
+  double u;              
+  int i,j;               
+  double u0, du;
+  int n_testu;
+  double testu;
+  COOKIE_CHECK(gen,CK_PINV_GEN,UNUR_FAILURE);
+  COOKIE_CHECK(iv,CK_PINV_IV,UNUR_FAILURE);
+  for(i=0; i<GEN->order; i++) {
+    if ( (i==0 && _unur_iszero(ui[0])) ||
+	 (i>0  && _unur_FP_same(ui[i-1],ui[i])) ) {
+      continue;
+    }
+    n_testu = GEN->n_extra_testpoints;
+    u0 = (i==0) ? 0. : ui[i-1];
+    du = (ui[i] - u0) / (n_testu + 1.);
+    for(j=1; j < n_testu; j++) {
+      testu = u0 + j * du;
+      x = _unur_pinv_newton_eval(testu, ui, zi, GEN->order);
+      u = u0 + _unur_pinv_Udiff(gen, xval[i], x+x0-xval[i], NULL);
+      if (!_unur_isfinite(u))
+	return UNUR_INFINITY;
+      uerror = fabs(u - testu);
+      if (uerror>maxerror) maxerror = uerror;
+    }
+  }
   return maxerror;
 } 
 double
@@ -319,7 +364,7 @@ _unur_pinv_newton_testpoints (double *utest, double *ui, int order)
   for(k=0; k<order; k++) {
     if ( (k==0 && _unur_iszero(ui[0])) ||
     	 (k>0  && _unur_FP_same(ui[k-1],ui[k])) ) {
-      utest[k] = ui[k]; 
+      utest[k] = UNUR_INFINITY;
       continue;
     }
     x = (k>0) ? 0.5*(ui[k-1]+ui[k]) : 0.5*ui[k];

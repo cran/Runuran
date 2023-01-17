@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2022 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2023 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 struct unur_gen *
@@ -53,6 +53,7 @@ _unur_pinv_create( struct unur_par *par )
   GEN->order = PAR->order;            
   GEN->smooth = PAR->smooth;          
   GEN->u_resolution = PAR->u_resolution; 
+  GEN->n_extra_testpoints = PAR->n_extra_testpoints; 
   GEN->bleft_par  = PAR->bleft;          
   GEN->bright_par = PAR->bright;
   GEN->sleft  = PAR->sleft;              
