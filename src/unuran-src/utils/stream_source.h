@@ -1,4 +1,4 @@
-/* Copyright (c) 2000-2023 Wolfgang Hoermann and Josef Leydold */
+/* Copyright (c) 2000-2024 Wolfgang Hoermann and Josef Leydold */
 /* Department of Statistics and Mathematics, WU Wien, Austria  */
 
 void _unur_log_printf (const char *genid, const char *filename, int line, const char *format, ...)

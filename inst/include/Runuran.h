@@ -171,19 +171,6 @@ UNUR_DISTR *_Runuran_get_std_discr( const char *name, const double *params, int 
 /* Create UNU.RAN object for distribution 'name'.                            */
 /*---------------------------------------------------------------------------*/
 
-
-/*---------------------------------------------------------------------------*/
-/* Registering native routines */
-/* Not implemented yet (it seems to be slower) */ 
-/* static const R_CallMethodDef Runuran_CallEntries[] = { */
-/*     {"Runuran_init", (DL_FUNC) &Runuran_init, 2}, */
-/*     {"Runuran_sample", (DL_FUNC) &Runuran_sample, 2}, */
-/*     {NULL, NULL, 0} */
-/* }; */
-/* Remark: This list has to be updated before usage. */
-/*---------------------------------------------------------------------------*/
-
-
 /*****************************************************************************/
 /*                                                                           */
 /*   Internal functions (not used by .Call from R)                           */

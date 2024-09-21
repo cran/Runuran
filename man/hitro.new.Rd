@@ -88,7 +88,8 @@ hitro.new(dim=1, pdf, ll=NULL, ur=NULL, mode=NULL, center=NULL,
   Research Report Series / Department of Statistics and Mathematics,
   Nr. 27, December 2005 Department of Statistics and Mathematics,
   Wien, Wirtschaftsuniv., 2005.
-  \url{https://epub.wu.ac.at/id/eprint/1400}
+  \doi{10.57938/168a5370-8110-4aaa-878a-8add2de7e245},
+  \url{https://research.wu.ac.at/en/publications/automatic-markov-chain-monte-carlo-procedures-for-sampling-from-m-7}
 }
 
 \author{

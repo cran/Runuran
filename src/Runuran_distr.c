@@ -152,7 +152,7 @@ Runuran_discr_init (SEXP sexp_obj, SEXP sexp_env,
   }
 
   /* store pointers to R objects */
-  Rdistr = Calloc(1,struct Runuran_distr_discr);
+  Rdistr = R_Calloc(1,struct Runuran_distr_discr);
   Rdistr->env = sexp_env;
   Rdistr->cdf = sexp_cdf;
   Rdistr->pmf = sexp_pmf;
@@ -184,7 +184,7 @@ Runuran_discr_init (SEXP sexp_obj, SEXP sexp_env,
 
   /* check return codes */
   if (error) {
-    Free(Rdistr);
+    R_Free(Rdistr);
     unur_distr_free (distr); 
     _Runuran_fatal();
   } 
@@ -299,7 +299,7 @@ Runuran_cont_init (SEXP sexp_obj, SEXP sexp_env,
   islog = LOGICAL(sexp_islog)[0];
 
   /* store pointers to R objects */
-  Rdistr = Calloc(1,struct Runuran_distr_cont);
+  Rdistr = R_Calloc(1,struct Runuran_distr_cont);
   Rdistr->env = sexp_env;
   Rdistr->cdf = sexp_cdf;
   Rdistr->pdf = sexp_pdf;
@@ -352,7 +352,7 @@ Runuran_cont_init (SEXP sexp_obj, SEXP sexp_env,
 
   /* check return codes */
   if (error) {
-    Free(Rdistr);
+    R_Free(Rdistr);
     unur_distr_free (distr); 
     _Runuran_fatal();
   } 
@@ -481,7 +481,7 @@ Runuran_cmv_init (SEXP sexp_obj, SEXP sexp_env,
   dim = INTEGER(sexp_dim);
 
   /* store pointers to R objects */
-  Rdistr = Calloc(1,struct Runuran_distr_cmv);
+  Rdistr = R_Calloc(1,struct Runuran_distr_cmv);
   Rdistr->env = sexp_env;
   Rdistr->pdf = sexp_pdf;
 
@@ -522,7 +522,7 @@ Runuran_cmv_init (SEXP sexp_obj, SEXP sexp_env,
 
   /* check return codes */
   if (error) {
-    Free(Rdistr);
+    R_Free(Rdistr);
     unur_distr_free (distr); 
     _Runuran_fatal();
   } 
@@ -732,7 +732,7 @@ _Runuran_distr_free (SEXP sexp_distr)
 
   /* free structure that stores R object */
   Rdistr = unur_distr_get_extobj(distr);
-  Free(Rdistr);
+  R_Free(Rdistr);
 
   /* free distribution object */
   unur_distr_free(distr);
