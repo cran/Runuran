@@ -4,12 +4,16 @@
  *                                                                           *
  *****************************************************************************/
 
-/* R header files */
-#include <R.h>
-#include <Rinternals.h>
-
 /* UNU.RAN header files */
 #include <unuran.h>
+
+/* R header files */
+#ifndef R_NO_REMAP
+# define R_NO_REMAP
+#endif
+
+#include <R.h>
+#include <Rinternals.h>
 
 /*****************************************************************************/
 /* Create UNU.RAN object for distribution defined in pure C code.            */

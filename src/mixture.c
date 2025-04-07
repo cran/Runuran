@@ -67,35 +67,35 @@ Runuran_mixt (SEXP sexp_obj, SEXP sexp_prob, SEXP sexp_comp, SEXP sexp_inversion
   int i;
 
   /* extract boolean */
-  useinversion = *LOGICAL(AS_LOGICAL(sexp_inversion));
+  useinversion = *LOGICAL(Rf_coerceVector(sexp_inversion, LGLSXP));
 
   /* extract length of component vector */
-  n_comp = length(sexp_comp);
-  if(n_comp != length(sexp_prob)) {
-    errorcall_return(R_NilValue,"[UNU.RAN - error] 'prob' and 'comp' must have same length");
+  n_comp = Rf_length(sexp_comp);
+  if(n_comp != Rf_length(sexp_prob)) {
+    Rf_errorcall(R_NilValue,"[UNU.RAN - error] 'prob' and 'comp' must have same length");
   }
 
   /* extract components */
-  if (! IS_LIST(sexp_comp)) {
-    errorcall_return(R_NilValue,"[UNU.RAN - error] invalid argument 'comp'");
+  if (! Rf_isVectorList(sexp_comp)) {
+    Rf_errorcall(R_NilValue,"[UNU.RAN - error] invalid argument 'comp'");
   }
   comp = (struct unur_gen**) R_alloc(n_comp, sizeof(struct unur_gen *) );
 
   for (i=0; i<n_comp; i++) {
     sexp_unur = VECTOR_ELT(sexp_comp, i);
-    if (! IS_S4_OBJECT(sexp_unur)) {
-      error("[UNU.RAN - error] argument 'comp[%d]' does not contain UNU.RAN objects",i+1);
+    if (! Rf_isS4(sexp_unur)) {
+      Rf_error("[UNU.RAN - error] argument 'comp[%d]' does not contain UNU.RAN objects",i+1);
     }
-    sexp_gen = GET_SLOT(sexp_unur, install("unur"));
+    sexp_gen = R_do_slot(sexp_unur, Rf_install("unur"));
     CHECK_UNUR_PTR(sexp_gen);
-    if (isNull(sexp_gen) || 
+    if (Rf_isNull(sexp_gen) || 
 	((comp[i]=R_ExternalPtrAddr(sexp_gen)) == NULL) ) {
-      error("[UNU.RAN - error] invalid argument 'comp[%d]'. maybe packed?",i+1);
+      Rf_error("[UNU.RAN - error] invalid argument 'comp[%d]'. maybe packed?",i+1);
     }
   }
 
   /* extract probability vector */
-  PROTECT(sexp_prob = AS_NUMERIC(sexp_prob));
+  PROTECT(sexp_prob = Rf_coerceVector(sexp_prob, REALSXP));
   prob = REAL(sexp_prob);
 
   /* create UNU.RAN generator for mixture */
@@ -111,18 +111,18 @@ Runuran_mixt (SEXP sexp_obj, SEXP sexp_prob, SEXP sexp_comp, SEXP sexp_inversion
 
   /* check that 'prob' had contained useful data */
   if (ISNAN(prob[0])) {
-    errorcall_return(R_NilValue,"[UNU.RAN - error] invalid argument 'prob'");
+    Rf_errorcall(R_NilValue,"[UNU.RAN - error] invalid argument 'prob'");
   }
   
   /* 'gen' must not be a NULL pointer */
   if (gen == NULL) {
-    errorcall_return(R_NilValue,"[UNU.RAN - error] cannot create UNU.RAN object");
+    Rf_errorcall(R_NilValue,"[UNU.RAN - error] cannot create UNU.RAN object");
   }
 
   /* set slot 'inversion' to true when 'gen' implements an inversion method. */
-  PROTECT(sexp_is_inversion = NEW_LOGICAL(1));
+  PROTECT(sexp_is_inversion = Rf_allocVector(LGLSXP, 1));
   LOGICAL(sexp_is_inversion)[0] = useinversion;
-  SET_SLOT(sexp_obj, install("inversion"), sexp_is_inversion);
+  R_do_slot_assign(sexp_obj, Rf_install("inversion"), sexp_is_inversion);
     
   /* make R external pointer and store pointer to structure */
   PROTECT(sexp_gen = R_MakeExternalPtr(gen, _Runuran_tag(), sexp_obj));

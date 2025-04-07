@@ -1,0 +1,85 @@
+
+/*---------------------------------------------------------------------------*/
+/* List of R API functions and variables                                     */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/* Rf_    //  API                                                            */
+
+Rf_allocMatrix();
+Rf_allocVector();
+Rf_coerceVector();
+Rf_error();
+Rf_errorcall();
+Rf_eval();
+Rf_install();
+Rf_isNull();
+Rf_isS4();
+Rf_isVectorList();
+Rf_lang2();
+Rf_length();
+Rf_mkChar();
+Rf_mkString();
+Rf_ScalarReal();
+Rf_ScalarInteger();
+Rf_setAttrib();
+Rf_translateChar();
+Rf_warning();
+Rf_warningcall_immediate();
+
+/*---------------------------------------------------------------------------*/
+/* R_   // API                                                               */
+
+R_alloc();
+R_Calloc();
+R_ClearExternalPtr();
+R_ExternalPtrAddr();
+R_forceSymbols();
+R_Free();
+R_MakeExternalPtr();
+R_NilValue;
+R_RegisterCCallable();
+R_RegisterCFinalizer();
+R_registerRoutines();
+R_useDynamicSymbols();
+
+/*---------------------------------------------------------------------------*/
+/* API                                                                       */
+
+CHAR();
+INTEGER();
+LOGICAL();
+REAL();
+TYPEOF();
+
+PROTECT();
+UNPROTECT();
+
+GetRNGstate();
+PutRNGstate();
+unif_rand();
+
+Rprintf();
+
+SET_STRING_ELT();
+SET_VECTOR_ELT();
+STRING_ELT();
+VECTOR_ELT();
+
+ISNAN();
+NA_REAL;
+
+/*---------------------------------------------------------------------------*/
+/* experimental API                                                          */
+
+R_do_slot();
+R_do_slot_assign();
+
+/*---------------------------------------------------------------------------*/
+/* non-API ????                                                              */
+
+NA_LOGICAL;
+// Occurs twice in WRE but bot in variable index
+// (in opposition to NA_REAL
+
+/*---------------------------------------------------------------------------*/

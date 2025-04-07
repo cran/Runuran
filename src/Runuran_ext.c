@@ -40,19 +40,19 @@ SEXP Runuran_ext_cont_init
 
   /* extract parameters */
   if (! (sexp_params && TYPEOF(sexp_params)==REALSXP) )
-    error("[Runuran-Ext] invalid argument 'params'");
+    Rf_error("[Runuran-Ext] invalid argument 'params'");
   params = REAL(sexp_params);
-  n_params = length(sexp_params);
+  n_params = Rf_length(sexp_params);
 
   /* extract domain of distribution */
-  if (! (sexp_domain && TYPEOF(sexp_domain)==REALSXP && length(sexp_domain)==2) )
-    error("[Runuran-Ext] invalid argument 'domain'");
+  if (! (sexp_domain && TYPEOF(sexp_domain)==REALSXP && Rf_length(sexp_domain)==2) )
+    Rf_error("[Runuran-Ext] invalid argument 'domain'");
   domain = REAL(sexp_domain);
 
   /* create continuous distribution object */
   distr = unur_distr_cont_new();
   if (distr == NULL)
-    error("[Runuran-Ext] cannot create UNU.RAN object");
+    Rf_error("[Runuran-Ext] cannot create UNU.RAN object");
 
   /* set CDF, PDF and its derivative */
   if (islog) {
@@ -80,7 +80,7 @@ SEXP Runuran_ext_cont_init
   /* check return codes */
   if (errcode) {
     unur_distr_free (distr);
-    error("[Runuran-Ext] cannot create UNU.RAN object");
+    Rf_error("[Runuran-Ext] cannot create UNU.RAN object");
   }
 
   /* make R external pointer and store pointer to structure */

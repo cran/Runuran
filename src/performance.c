@@ -80,13 +80,13 @@ void add_string(struct Rlist *list, char *key, const char *string)
 {
   /* check length of list */
   if (list->len >= MAX_LIST)
-    error("Runuran: Internal error! Please send bug report.");
+    Rf_error("Runuran: Internal error! Please send bug report.");
 
   /* store name of list entry */
   list->names[list->len] = key;
 
   /* create R object for list entry */
-  SET_VECTOR_ELT(list->values, list->len, mkString(string));
+  SET_VECTOR_ELT(list->values, list->len, Rf_mkString(string));
   
   /* update length of list */
   ++list->len;
@@ -97,10 +97,10 @@ void add_string(struct Rlist *list, char *key, const char *string)
 void add_numeric(struct Rlist *list, char *key, double num)
 {
   if (list->len >= MAX_LIST)
-    error("Runuran: Internal error! Please send bug report.");
+    Rf_error("Runuran: Internal error! Please send bug report.");
 
   list->names[list->len] = key;
-  SET_VECTOR_ELT(list->values, list->len, ScalarReal(num));
+  SET_VECTOR_ELT(list->values, list->len, Rf_ScalarReal(num));
   ++list->len;
 } /* end of add_numeric() */
 
@@ -112,11 +112,11 @@ void add_numeric_vec(struct Rlist *list, char *key, double *num, int n_num)
   SEXP val;
 
   if (list->len >= MAX_LIST)
-    error("Runuran: Internal error! Please send bug report.");
+    Rf_error("Runuran: Internal error! Please send bug report.");
 
   list->names[list->len] = key;
 
-  val = NEW_NUMERIC(n_num);
+  val = Rf_allocVector(REALSXP, n_num);
   for (i=0; i<n_num; i++)
     REAL(val)[i] = num[i];
   SET_VECTOR_ELT(list->values, list->len, val);
@@ -129,10 +129,10 @@ void add_numeric_vec(struct Rlist *list, char *key, double *num, int n_num)
 void add_integer(struct Rlist *list, char *key, int inum)
 {
   if (list->len >= MAX_LIST)
-    error("Runuran: Internal error! Please send bug report.");
+    Rf_error("Runuran: Internal error! Please send bug report.");
 
   list->names[list->len] = key;
-  SET_VECTOR_ELT(list->values, list->len, ScalarInteger(inum));
+  SET_VECTOR_ELT(list->values, list->len, Rf_ScalarInteger(inum));
   ++list->len;
 } /* end of add_integer() */
 
@@ -144,11 +144,11 @@ void add_integer_vec(struct Rlist *list, char *key, int *inum, int n_num)
   SEXP val;
 
   if (list->len >= MAX_LIST)
-    error("Runuran: Internal error! Please send bug report.");
+    Rf_error("Runuran: Internal error! Please send bug report.");
 
   list->names[list->len] = key;
 
-  val = NEW_INTEGER(n_num);
+  val = Rf_allocVector(INTSXP, n_num);
   for (i=0; i<n_num; i++)
     INTEGER(val)[i] = inum[i];
   SET_VECTOR_ELT(list->values, list->len, val);
@@ -187,26 +187,26 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
   struct Rlist list;
 
   /* debug or not debug */
-  debug = *(LOGICAL( AS_LOGICAL(sexp_debug) ));
+  debug = *(LOGICAL( Rf_coerceVector(sexp_debug, LGLSXP)));
 
   /* slot 'data' should not be pesent */
-  sexp_data = GET_SLOT(sexp_unur, install("data"));
-  if (! isNull(sexp_data)) {
+  sexp_data = R_do_slot(sexp_unur, Rf_install("data"));
+  if (! Rf_isNull(sexp_data)) {
     Rprintf("Object is PACKED !\n\n");
     return R_NilValue;
   }
 
   /* Extract pointer to UNU.RAN generator */
-  sexp_gen = GET_SLOT(sexp_unur, install("unur"));
+  sexp_gen = R_do_slot(sexp_unur, Rf_install("unur"));
   CHECK_UNUR_PTR(sexp_gen);
-  if (isNull(sexp_gen) || 
+  if (Rf_isNull(sexp_gen) || 
       ((gen=R_ExternalPtrAddr(sexp_gen)) == NULL) ) {
-    warningcall_immediate(R_NilValue,"[UNU.RAN - warning] empty UNU.RAN object");
+    Rf_warningcall_immediate(R_NilValue,"[UNU.RAN - warning] empty UNU.RAN object");
     return R_NilValue;
   }
 
   /* create temporary R list */
-  PROTECT(list.values = allocVector(VECSXP, MAX_LIST));
+  PROTECT(list.values = Rf_allocVector(VECSXP, MAX_LIST));
   list.len = 0;
 
   /* we use macros to get an overview of used keywords and */
@@ -388,17 +388,17 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
       SEXP val;
 
       if (list.len+4 >= MAX_LIST)
-	error("Runuran: Internal error! Please send bug report.");
+	Rf_error("Runuran: Internal error! Please send bug report.");
 
       list.names[list.len] = "cdfi";
-      val = NEW_NUMERIC(GEN->n_ivs + 1);
+      val = Rf_allocVector(REALSXP, GEN->n_ivs + 1);
       for (n=0; n<=GEN->n_ivs; n++)
 	REAL(val)[n] = GEN->iv[n].cdfi;
       SET_VECTOR_ELT(list.values, list.len, val);
       ++list.len;
 
       list.names[list.len] = "xi";
-      val = NEW_NUMERIC(GEN->n_ivs + 1);
+      val = Rf_allocVector(REALSXP, GEN->n_ivs + 1);
       for (n=0; n<=GEN->n_ivs; n++)
 	REAL(val)[n] = GEN->iv[n].xi;
       SET_VECTOR_ELT(list.values, list.len, val);
@@ -406,7 +406,7 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
 
       /* points for constructing Newton interpolation */
       list.names[list.len] = "ui";
-      val = allocMatrix(REALSXP, GEN->n_ivs, GEN->order);
+      val = Rf_allocMatrix(REALSXP, GEN->n_ivs, GEN->order);
       for (n=0; n<GEN->n_ivs; n++) {
 	for (j=0; j<GEN->order; j++)
 	  REAL(val)[n + j*GEN->n_ivs] = GEN->iv[n].ui[j];
@@ -416,7 +416,7 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
 
       /* coefficients for Newton interpolation */
       list.names[list.len] = "zi";
-      val = allocMatrix(REALSXP, GEN->n_ivs, GEN->order);
+      val = Rf_allocMatrix(REALSXP, GEN->n_ivs, GEN->order);
       for (n=0; n<GEN->n_ivs; n++) {
 	for (j=0; j<GEN->order; j++)
 	  REAL(val)[n + j*GEN->n_ivs] = GEN->iv[n].zi[j];
@@ -572,17 +572,17 @@ Runuran_performance (SEXP sexp_unur, SEXP sexp_debug)
   }
 
   /* create final list */
-  PROTECT(sexp_list = allocVector(VECSXP, list.len)); 
+  PROTECT(sexp_list = Rf_allocVector(VECSXP, list.len)); 
   for(i = 0; i < list.len; i++)
     SET_VECTOR_ELT(sexp_list, i, VECTOR_ELT(list.values, i));
     
   /* an array of the "names" attribute of the objects in our list */
-  PROTECT(sexp_names = allocVector(STRSXP, list.len));
+  PROTECT(sexp_names = Rf_allocVector(STRSXP, list.len));
   for(i = 0; i < list.len; i++)
-    SET_STRING_ELT(sexp_names, i,  mkChar(list.names[i]));
+    SET_STRING_ELT(sexp_names, i,  Rf_mkChar(list.names[i]));
  
   /* attach attribute names */
-  setAttrib(sexp_list, R_NamesSymbol, sexp_names);
+  Rf_setAttrib(sexp_list, R_NamesSymbol, sexp_names);
 
   /* return list */
   UNPROTECT(3);

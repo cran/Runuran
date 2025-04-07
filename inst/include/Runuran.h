@@ -11,14 +11,18 @@
 
 /*---------------------------------------------------------------------------*/
 
-/* R header files */
-#include <R.h>
-#include <Rinternals.h>
-#include <Rdefines.h>
-#include <R_ext/Rdynload.h>
-
 /* UNU.RAN header files */
 #include <unuran.h>
+
+/* R header files */
+#ifndef R_NO_REMAP
+# define R_NO_REMAP
+#endif
+
+#include <R.h>
+#include <Rinternals.h>
+#include <R_ext/Rdynload.h>
+
 
 /*****************************************************************************/
 /*                                                                           */
@@ -189,7 +193,7 @@ UNUR_DISTR *_Runuran_get_std_discr( const char *name, const double *params, int 
 /*****************************************************************************/
 
 #define _Runuran_fatal() \
-  errorcall_return(R_NilValue,"[UNU.RAN - error] cannot create UNU.RAN distribution object")
+  Rf_errorcall(R_NilValue,"[UNU.RAN - error] cannot create UNU.RAN distribution object")
 /*---------------------------------------------------------------------------*/
 /* Handle fatal error: print error message and exit.                         */
 /*---------------------------------------------------------------------------*/
@@ -240,7 +244,7 @@ SEXP _Runuran_distr_tag(void);
 /* Check pointer to R UNU.RAN generator object.                              */
 #define ALLWAYS_CHECK_UNUR_PTR(s) do { \
     if (TYPEOF(s) != EXTPTRSXP || R_ExternalPtrTag(s) != _Runuran_tag()) \
-      error("[UNU.RAN - error] invalid UNU.RAN object");		 \
+      Rf_error("[UNU.RAN - error] invalid UNU.RAN object");		 \
   } while (0)
 
 #ifdef RUNURAN_DEBUG
@@ -254,7 +258,7 @@ SEXP _Runuran_distr_tag(void);
 #ifdef RUNURAN_DEBUG
 #define CHECK_DISTR_PTR(s) do { \
     if (TYPEOF(s) != EXTPTRSXP || R_ExternalPtrTag(s) != _Runuran_distr_tag()) \
-      error("[UNU.RAN - error] invalid UNU.RAN distribution object");	\
+      Rf_error("[UNU.RAN - error] invalid UNU.RAN distribution object");	\
   } while (0)
 #else
 #define CHECK_DISTR_PTR(s)  do {} while(0)

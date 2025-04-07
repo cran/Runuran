@@ -251,6 +251,7 @@ test_that("[distr-discr-i01] unuran.discr.new() with invalid arguments", {
     ## test: 'pv' must be a numeric array
     msg <- "invalid argument 'pv'"
     expect_error(unuran.discr.new(pv=dbinom, lb=0, ub=10), msg)
+    expect_error(unuran.discr.new(pv=c(NA,1:3), lb=0, ub=10), msg)
 
     ## test: 'mode' must be numeric
     msg <- "invalid argument 'mode'"

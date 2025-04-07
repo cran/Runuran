@@ -65,27 +65,27 @@ Runuran_verify_hat (SEXP sexp_unur, SEXP sexp_n)
   int (*chg_verify)(UNUR_GEN *generator,int verify);
 
   /* first argument must be S4 class */
-  if (!IS_S4_OBJECT(sexp_unur))
-    error("[UNU.RAN - error] argument invalid: 'unr' must be UNU.RAN object");
+  if (!Rf_isS4(sexp_unur))
+    Rf_error("[UNU.RAN - error] argument invalid: 'unr' must be UNU.RAN object");
 
   /* UNU.RAN must not be packed */
-  if (! isNull( GET_SLOT(sexp_unur, install("data")) ) ) {
+  if (! Rf_isNull( R_do_slot(sexp_unur, Rf_install("data")) ) ) {
     /* the generator object is packed */
-    error("[UNU.RAN - error] cannot run this function on packed UNU.RAN objects");
+    Rf_error("[UNU.RAN - error] cannot run this function on packed UNU.RAN objects");
   }
 
   /* Extract and check sample size */
-  n = *(INTEGER (AS_INTEGER (sexp_n)));
+  n = *(INTEGER (Rf_coerceVector(sexp_n, INTSXP)));
   if (n<=0) {
-    error("sample size 'n' must be positive integer");
+    Rf_error("sample size 'n' must be positive integer");
   }
 
   /* Extract pointer to UNU.RAN generator */
-  sexp_gen = GET_SLOT(sexp_unur, install("unur"));
+  sexp_gen = R_do_slot(sexp_unur, Rf_install("unur"));
   CHECK_UNUR_PTR(sexp_gen);
-  if (isNull(sexp_gen) || 
+  if (Rf_isNull(sexp_gen) || 
       ((gen=R_ExternalPtrAddr(sexp_gen)) == NULL) ) {
-    errorcall_return(R_NilValue,"[UNU.RAN - error] broken UNU.RAN object");
+    Rf_errorcall(R_NilValue,"[UNU.RAN - error] broken UNU.RAN object");
   }
 
   /* get function for toggling verify mode */
@@ -117,13 +117,13 @@ Runuran_verify_hat (SEXP sexp_unur, SEXP sexp_n)
   case UNUR_METH_VNROU:  METHOD(vnrou);
 
   default:
-    errorcall_return(R_NilValue,"[UNU.RAN - error] Method not supported");
+    Rf_errorcall(R_NilValue,"[UNU.RAN - error] Method not supported");
   }
 
 #undef METHOD
 
   /* create R object for storing result */
-  PROTECT(sexp_failed = NEW_INTEGER(1));
+  PROTECT(sexp_failed = Rf_allocVector(INTSXP, 1));
 
   /* run generator in verify mode and store result */
   chg_verify(gen,TRUE);
@@ -184,8 +184,8 @@ run_verify_hat(struct unur_gen *gen, int n)
     case UNUR_DISTR_MATR:   /* matrix distribution */
     default:
       _Runuran_set_error_handler(old_error_handler);
-      error("[UNU.RAN - error] '%s': Distribution type not support",
-	    unur_distr_get_name(unur_get_distr(gen)) );
+      Rf_error("[UNU.RAN - error] '%s': Distribution type not support",
+	       unur_distr_get_name(unur_get_distr(gen)) );
     }
 
     /* check for sampling error */
